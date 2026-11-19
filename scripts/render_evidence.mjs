@@ -13,7 +13,8 @@ md.core.ruler.after('inline', 'local_source_citations', state => {
       if (token.type === 'link_open') {
         const href = token.attrGet('href') || '';
         const local = /^\/(?:private|tmp|var|Users|home|workspace|workspaces|mnt)\//.test(href)
-          || /^[A-Za-z]:[\\/]/.test(href);
+          || /^[A-Za-z]:[\\/]/.test(href)
+          || /^(?:\.{1,2}\/)*(?:work\/|formal_oet\/|original-(?:task|answer)\.md(?:$|[:#?]))/.test(href);
         links.push(local);
         if (local) {
           token.tag = 'span';

@@ -1,0 +1,90 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.IsRestrictedLip"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.IsLip"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.restrictedLipMatrices"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.lipMatrices"}
+      ],
+      "representation": "GaugeFamily 的 G.dist i 对应 d_i，I 有限非空，每个分量满足冻结模块的 ExtendedPseudoMetric。φ 与 dom φ 使用冻结模块的算子和定义域。受限谓词要求 U ⊆ dom φ，并对每个 x,y ∈ U 和 j ∈ I 给出输出距离的行和上界，允许 U 为空。全域谓词取 U = dom φ，此时子集条件自反。两个证书族分别取满足对应谓词的所有 ENNReal 矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.IsRestrictedCoLip"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.restrictedCoLipMatrices"}
+      ],
+      "representation": "同一规范族 G 和算子 φ 下，谓词要求 U.Nonempty 与 U ⊆ dom φ，并对每个 x,y ∈ U 和 j ∈ I 要求 K 的加权行和不超过像点距离。证书族由满足该谓词的全部矩阵组成，矩阵条目允许为 +∞。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.CoeffMatrix"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.entry"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.entry_mul"},
+        {"file": "LCH01/Bounds.lean", "name": "LCH01.rowSum"}
+      ],
+      "representation": "CoeffMatrix I 是 Matrix I I ENNReal。entry M i j 指 M j i，即第 j 个输出行、第 i 个输入列。对任意 i,j，entry_mul 给出标准矩阵乘积 (A * B) 的通道条目，等于对所有中间分量 k 求和的 A[k→j] * B[i→k]。rowSum 对所有输入分量求和。乘积与行和采用 ENNReal 算术，其中 0 * ⊤ = ⊤ * 0 = 0。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.Channel"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.SingleInputRow"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.isDiag_iff_singleInputRows"}
+      ],
+      "representation": "Channel I 的 c=(i,j) 从输入 i 指向输出 j。SingleInputRow M c 要求第 j 行每个 k ≠ i 的条目为零，保留条目可为零。矩阵对角性用 mathlib 的 Matrix.IsDiag 表示，与每个同分量通道 (j,j) 满足该行条件等价。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.rowSum_singleInput"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.lip_singleInput"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.lip_diagonal"}
+      ],
+      "representation": "rowSum_singleInput 对任意输入向量给出单输入行的精确求和等式。取向量 i ↦ d_i(x,y)，对任意 x,y ∈ U，将等式代入合法受限 Lip 上界，得到通道 (i,j) 的标量上界。若 L 为对角矩阵，任取 j 得到对应的 (j,j) 标量上界。",
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.coLip_entry_le"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.coLip_channel_pos"}
+      ],
+      "representation": "对任意合法受限 co-Lip 矩阵 K、通道 (i,j) 和 x,y ∈ U，coLip_entry_le 从行和取出 K[i→j] * d_i(x,y) 作为输出距离的下界。若 K[i→j] > 0 且 d_i(x,y) > 0，coLip_channel_pos 推出 d_j(φ(x),φ(y)) > 0。",
+      "dependencies": ["CH02-D02", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.coLip_reflects_zero"}
+      ],
+      "representation": "假设 K 是合法受限 co-Lip 矩阵且每个对角条目为正。对任意 x,y ∈ U，用冻结模块的 GaugeZeroRelated G.dist 表示族零距。结论由 φ(x) 与 φ(y) 的全分量零距推出 x 与 y 的全分量零距。",
+      "dependencies": ["CH02-D02", "CH02-D03", "CH02-P20"]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.scalar_two_sided"}
+      ],
+      "representation": "在同一 U 上取合法的受限 Lip 矩阵 L 和受限 co-Lip 矩阵 K。对给定 j，仅假设 L 的第 j 行满足 SingleInputRow L (j,j)。对任意 x,y ∈ U，用两个不等式的合取表示 K[j→j] * d_j(x,y) ≤ d_j(φ(x),φ(y)) ≤ L[j→j] * d_j(x,y)。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D07", "CH02-P19", "CH02-P20"]
+    }
+  ]
+}

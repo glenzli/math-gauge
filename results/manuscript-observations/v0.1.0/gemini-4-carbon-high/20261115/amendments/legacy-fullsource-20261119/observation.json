@@ -1,0 +1,156 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "gemini-4-carbon-high",
+  "record_id": "20261115",
+  "source_record": {
+    "path": "results/v0.6.0/gemini-4-carbon-high/20261115/record.json",
+    "bytes": 180901,
+    "sha256": "9fc4d75a578beb6727d7171acda62e3755fa275f03610fc69de89bc88fbbeb1d"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "ee1c06a9fe9be0288d84ed4d1d72bf14250a313c7049dceab472c341602922fa",
+    "private_baseline_sha256": "8ffe4f1491e3f53dbfebc705589c54ff65dd5d1b9ff1d4f85e085a1a66a40c36",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 8,
+    "total_groups": 8,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 4,
+    "not_run": 0,
+    "delivery_failed": 1,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "97ab040c5c759043203b48248a3f3522597fed91046ad4d7b3f3d394cd8a17f8",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "全文读取packet原答至末尾，先独立枚举后对照prior-review；不改主评分或原答。 旧复合演算1组保留，新识别完整有向极值/Pareto存在理论1组。",
+      "candidates": [
+        {
+          "id": "F01",
+          "group_id": "G01",
+          "title": "条件有向完备与Pareto极值存在",
+          "statement": "任意有向下界族的逐项sup合法；输入分量距离有限时任意下向有向上界族的inf合法；每个可行下/上矩阵有Pareto极大/极小支配元。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "3.2(4)明确用有限和/有向极限交换和Zorn，条件不足时也给实际∞距离不取到反例。M4不强制取得理论，属超出“别虚报最优”的独立存在定理；旧观察漏列，和Carbon medium同尺度新增一组。",
+          "proof_review": "3.2(4)明确用有限和/有向极限交换和Zorn，条件不足时也给实际∞距离不取到反例。M4不强制取得理论，属超出“别虚报最优”的独立存在定理；旧观察漏列，和Carbon medium同尺度新增一组。",
+          "nontrivial_step": "3.2(4)明确用有限和/有向极限交换和Zorn，条件不足时也给实际∞距离不取到反例。M4不强制取得理论，属超出“别虚报最优”的独立存在定理；旧观察漏列，和Carbon medium同尺度新增一组。",
+          "value_rationale": "可在相应研究情境复用；价值标签不是主动额外成果计数门槛。",
+          "reason": "3.2(4)明确用有限和/有向极限交换和Zorn，条件不足时也给实际∞距离不取到反例。M4不强制取得理论，属超出“别虚报最优”的独立存在定理；旧观察漏列，和Carbon medium同尺度新增一组。",
+          "decision": "accepted",
+          "citations": [
+            {
+              "source_sha256": "97ab040c5c759043203b48248a3f3522597fed91046ad4d7b3f3d394cd8a17f8",
+              "start_byte": 12892,
+              "end_byte": 18729,
+              "quote": "**定理 3.2（序结构、行解耦与凸性）**：设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。\n1. **单调闭包性**：在偏序集 $(\\bar{\\mathbb{R}}_+^{I \\times I}, \\leq)$ 中，$\\mathcal{L}^+(\\phi)$ 是**上闭集**（$L^+ \\in \\mathcal{L}^+(\\phi),\\, L^+ \\leq M \\implies M \\in \\mathcal{L}^+(\\phi)$），而 $\\mathcal{L}^-(\\phi)$ 与 $\\mathcal{R}(\\phi)$ 均为**下闭集**（$M \\leq L^- \\in \\mathcal{L}^-(\\phi) \\implies M \\in \\mathcal{L}^-(\\phi)$；$S \\leq R \\in \\mathcal{R}(\\phi) \\implies S \\in \\mathcal{R}(\\phi)$）。\n2. **行直积解耦**：三类集合均按输出行 $i \\in I$ 直积分解（各行约束彼此独立，耦合仅发生于同一行内各输入列 $j \\in I$ 之间）。\n3. **凸性**：对任意 $A, B \\in \\mathcal{L}^+(\\phi)$（或 $\\mathcal{L}^-(\\phi)$）及满足 $\\alpha + \\beta = 1$ 的 $\\alpha, \\beta \\in [0, 1]$，有 $\\alpha A + \\beta B \\in \\mathcal{L}^+(\\phi)$（或 $\\mathcal{L}^-(\\phi)$）。\n4. **有向极值的可达性**：\n   - **(i) 下界上确界封闭**：对任意非空上向有向族 $\\{L^{-, \\lambda}\\}_{\\lambda \\in \\Lambda} \\subseteq \\mathcal{L}^-(\\phi)$（即任二元有公共上界于族中），其逐元上确界 $\\sup_{\\lambda \\in \\Lambda} L^{-, \\lambda} \\in \\mathcal{L}^-(\\phi)$。由 Zorn 引理，$\\mathcal{L}^-(\\phi)$ 中任一元素均被某个**极大下 Lipschitz 矩阵**控制；特别当 $|I|=1$ 时，$\\mathcal{L}^-(\\phi) = [0, \\ell^*(\\phi)]$ 必含唯一最大元 $\\ell^*(\\phi) \\in \\bar{\\mathbb{R}}_+$。\n   - **(ii) 有限距离下的上界下确界封闭**：若在 $\\mathrm{dom}(\\phi)$ 上各分量距离均有限（$\\forall\\, x, y \\in \\mathrm{dom}(\\phi),\\, \\forall\\, j \\in I,\\; d_j(x, y) < +\\infty$），则对任意非空下向有向族 $\\{L^{+, \\lambda}\\}_{\\lambda \\in \\Lambda} \\subseteq \\mathcal{L}^+(\\phi)$，其逐元下确界 $\\inf_{\\lambda \\in \\Lambda} L^{+, \\lambda} \\in \\mathcal{L}^+(\\phi)$。由 Zorn 引理，此时每个上 Lipschitz 矩阵均控制某个**极小（Pareto 最优）上 Lipschitz 矩阵**；当 $|I|=1$ 且 $\\phi$ 规范相容时，$\\mathcal{L}^+(\\phi) = [L^*(\\phi), +\\infty]$ 含唯一最小元 $L^*(\\phi)$。\n\n**证明**：\n(1)–(2) 由乘加单调性及前提蕴涵链直接得出。\n(3) 任取 $x, y \\in \\mathrm{dom}(\\phi),\\, i \\in I$。对 $A, B \\in \\mathcal{L}^+(\\phi)$，利用分配律（含 $d_i(\\phi(x), \\phi(y)) = +\\infty$ 时 $(\\alpha + \\beta)\\cdot(+\\infty) = 1 \\cdot (+\\infty) = +\\infty$）：\n\n$$d_i(\\phi(x), \\phi(y)) = (\\alpha + \\beta) d_i(\\phi(x), \\phi(y)) \\leq \\alpha \\sum_{j \\in I} A_{ij} d_j(x, y) + \\beta \\sum_{j \\in I} B_{ij} d_j(x, y) = \\sum_{j \\in I} (\\alpha A_{ij} + \\beta B_{ij}) d_j(x, y).$$\n\n$\\mathcal{L}^-(\\phi)$ 的凸性反向同理。\n(4-i) 在 $\\bar{\\mathbb{R}}_+$ 中，乘法与有限和均保持上向有向族的上确界（对有限集 $I$ 归纳：因 $\\Lambda$ 上向有向，$\\sup_\\lambda u_\\lambda + \\sup_\\mu v_\\mu = \\sup_{\\lambda, \\mu}(u_\\lambda + v_\\mu) \\leq \\sup_\\nu (u_\\nu + v_\\nu)$），故\n\n$$\\sum_{j \\in I} \\Bigl(\\sup_{\\lambda \\in \\Lambda} L^{-, \\lambda}_{ij}\\Bigr) d_j(x, y) = \\sum_{j \\in I} \\sup_{\\lambda \\in \\Lambda} \\bigl(L^{-, \\lambda}_{ij} d_j(x, y)\\bigr) = \\sup_{\\lambda \\in \\Lambda} \\sum_{j \\in I} L^{-, \\lambda}_{ij} d_j(x, y) \\leq d_i(\\phi(x), \\phi(y)).$$\n\n(4-ii) 当 $d_j(x, y) < +\\infty$ 时，乘以有限非负实数 $c = d_j(x, y) \\in [0, +\\infty)$ 保持任意非空下确界：$\\bigl(\\inf_\\lambda L^{+, \\lambda}_{ij}\\bigr) c = \\inf_\\lambda (L^{+, \\lambda}_{ij} c)$；再由 $I$ 有限及下向有向性，$\\sum_{j \\in I} \\inf_\\lambda (L^{+, \\lambda}_{ij} d_j(x, y)) = \\inf_\\lambda \\sum_{j \\in I} L^{+, \\lambda}_{ij} d_j(x, y) \\geq d_i(\\phi(x), \\phi(y))$。$\\square$\n\n> **注记与三个精确边界反例（说明上述定理条件的不可省性）**：\n> 1. **存在 $+\\infty$ 距离时，$\\mathcal{L}^+(\\phi)$ 的下确界未必可达**：设 $\\mathcal{X} = \\{a, b, \\bot\\}$，$I = \\{1\\}$，$d_1(a, b) = +\\infty$，取恒等算子 $\\mathrm{id}_{\\mathcal{X}}$。对任意 $c > 0$，$c \\cdot d_1(a, b) = c \\cdot (+\\infty) = +\\infty = d_1(a, b)$，故 $(0, +\\infty] \\subseteq \\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}})$；但 $c = 0$ 时 $0 \\cdot (+\\infty) = 0 < +\\infty = d_1(a, b)$，故 $\\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}}) = (0, +\\infty]$，其下确界 $0 \\notin \\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}})$。\n> 2. **多分量 $|I| \\geq 2$ 时，不存在唯一逐元最小/最大矩阵**：设 $\\mathcal{X} = \\{a, b, \\bot\\}$，$I = \\{1, 2\\}$，$d_1(a, b) = d_2(a, b) = 1$，取 $\\phi = \\mathrm{id}_{\\mathcal{X}}$。则单位阵 $I_{\\mathrm{mat}} = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$ 与置换阵 $P = \\begin{pmatrix} 0 & 1 \\\\ 1 & 0 \\end{pmatrix}$ **同时**属于 $\\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}}) \\cap \\mathcal{L}^-(\\mathrm{id}_{\\mathcal{X}})$，但其逐元下确界 $\\min(I_{\\mathrm{mat}}, P) = \\mathbf{0} \\notin \\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}})$，逐元上确界 $\\max(I_{\\mathrm{mat}}, P) = \\begin{pmatrix} 1 & 1 \\\\ 1 & 1 \\end{pmatrix} \\notin \\mathcal{L}^-(\\mathrm{id}_{\\mathcal{X}})$（因 $1 + 1 \\not\\leq 1$）。同理，对 $\\mathcal{R}(\\mathrm{id}_{\\mathcal{X}})$，$\\begin{pmatrix} 1/2 & +\\infty \\\\ +\\infty & 1/2 \\end{pmatrix}$ 与 $\\begin{pmatrix} +\\infty & 1/2 \\\\ 1/2 & +\\infty \\end{pmatrix}$ 均属于 $\\mathcal{R}(\\mathrm{id}_{\\mathcal{X}})$，但逐元上确界 $\\mathbf{\\infty} \\notin \\mathcal{R}(\\mathrm{id}_{\\mathcal{X}})$。这严格证明了在一般规范空间中，必须以**容许矩阵集**（而非单一矩阵值泛函）作为基础定义。\n> 3. **不可区分矩阵集 $\\mathcal{R}(\\phi)$ 对递增序列上确界一般不封闭**：在 $\\mathcal{X} = \\{a, b, \\bot\\}$，$I = \\{1\\}$，$d_1(a, b) = 1$ 上取 $\\mathrm{id}_{\\mathcal{X}}$。对任意 $r < 1$，$d_1(x, y) \\leq r \\implies x = y \\implies d_1(x, y) = 0$，但 $r = 1$ 不满足，故 $\\mathcal{R}(\\mathrm{id}_{\\mathcal{X}}) = [0, 1)$。\n\n---\n\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        },
+        {
+          "id": "F02",
+          "group_id": "G02",
+          "title": "闭阈值复合半群及支撑同态桥",
+          "statement": "零化diamond半群、L/K合法复合、R(L+)ᵀ≤S混合拉回及κ(AB)=κ(A)diamondκ(B)共同闭合。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "3.4-3.5给有限支撑、min∅、0/∞和真实复合域的完整证明；必要代数同态与混合零化演算合一组保留旧观察，普通L/K乘法不拆。是否超出直接代入门槛请root结合其他模型同机制统一。",
+          "proof_review": "3.4-3.5给有限支撑、min∅、0/∞和真实复合域的完整证明；必要代数同态与混合零化演算合一组保留旧观察，普通L/K乘法不拆。是否超出直接代入门槛请root结合其他模型同机制统一。",
+          "nontrivial_step": "3.4-3.5给有限支撑、min∅、0/∞和真实复合域的完整证明；必要代数同态与混合零化演算合一组保留旧观察，普通L/K乘法不拆。是否超出直接代入门槛请root结合其他模型同机制统一。",
+          "value_rationale": "可在相应研究情境复用；价值标签不是主动额外成果计数门槛。",
+          "reason": "3.4-3.5给有限支撑、min∅、0/∞和真实复合域的完整证明；必要代数同态与混合零化演算合一组保留旧观察，普通L/K乘法不拆。是否超出直接代入门槛请root结合其他模型同机制统一。",
+          "decision": "accepted",
+          "citations": [
+            {
+              "source_sha256": "97ab040c5c759043203b48248a3f3522597fed91046ad4d7b3f3d394cd8a17f8",
+              "start_byte": 21168,
+              "end_byte": 29731,
+              "quote": "**定理 3.4（复合演算定理）**：设 $\\phi, \\psi \\in \\mathcal{X}_{\\mathrm{op}}$。\n1. **$\\diamond$-积的半群性质**：运算 $\\diamond$ 在 $\\bar{\\mathbb{R}}_+^{I \\times I}$ 上满足结合律 $(T \\diamond S) \\diamond R = T \\diamond (S \\diamond R)$，且以 $E_{\\diamond}$ 为左单位元（$E_{\\diamond} \\diamond R = R$）。\n2. **上界次可乘律**：若 $L^+ \\in \\mathcal{L}^+(\\phi)$，$M^+ \\in \\mathcal{L}^+(\\psi)$，则 $M^+ L^+ \\in \\mathcal{L}^+(\\psi \\circ \\phi)$。\n3. **下界超可乘律**：若 $L^- \\in \\mathcal{L}^-(\\phi)$，$M^- \\in \\mathcal{L}^-(\\psi)$，则 $M^- L^- \\in \\mathcal{L}^-(\\psi \\circ \\phi)$。\n4. **不可区分复合律**：若 $R \\in \\mathcal{R}(\\phi)$，$S \\in \\mathcal{R}(\\psi)$，则 $S \\diamond R \\in \\mathcal{R}(\\psi \\circ \\phi)$。\n5. **混合拉回律（Lipschitz 传递不可区分域）**：若 $L^+ \\in \\mathcal{L}^+(\\phi)$，$S \\in \\mathcal{R}(\\psi)$，则对任意满足矩阵不等式\n\n   $$R (L^+)^{\\mathsf{T}} \\;\\leq\\; S \\qquad \\Bigl(\\text{即 } \\forall\\, i, k \\in I,\\; \\sum_{j \\in I} R_{ij} L^+_{kj} \\leq S_{ik}\\Bigr)$$\n\n   的矩阵 $R \\in \\bar{\\mathbb{R}}_+^{I \\times I}$，均有 $R \\in \\mathcal{R}(\\psi \\circ \\phi)$。\n\n**证明**：\n1. 有限集上的最小值小于 $+\\infty$ 当且仅当存在某元素小于 $+\\infty$。故 $(T \\diamond S)_{im} < +\\infty \\iff \\exists\\, k \\in I,\\, (T_{ik} < +\\infty \\wedge S_{km} < +\\infty)$。于是\n\n   $$((T \\diamond S) \\diamond R)_{ij} = \\min\\bigl\\{R_{mj} \\;\\big|\\; \\exists\\, k \\in I,\\, T_{ik} < +\\infty \\wedge S_{km} < +\\infty\\bigr\\} = (T \\diamond (S \\diamond R))_{ij}.$$\n\n   又因 $(E_{\\diamond})_{ik} < +\\infty \\iff k = i$，故 $(E_{\\diamond} \\diamond R)_{ij} = R_{ij}$。\n2. 任取 $x, y \\in \\mathrm{dom}(\\psi \\circ \\phi)$，则 $x, y \\in \\mathrm{dom}(\\phi)$ 且 $\\phi(x), \\phi(y) \\in \\mathrm{dom}(\\psi)$。由引理 1.2：\n\n   $$d_i\\bigl(\\psi(\\phi(x)), \\psi(\\phi(y))\\bigr) \\leq \\sum_{k \\in I} M^+_{ik} d_k(\\phi(x), \\phi(y)) \\leq \\sum_{k \\in I} M^+_{ik} \\sum_{j \\in I} L^+_{kj} d_j(x, y) = \\sum_{j \\in I} (M^+ L^+)_{ij} d_j(x, y).$$\n\n   （注：若某中间分量 $L^+_{kj} = +\\infty$ 而外层 $M^+_{ik} = 0$，由 $0 \\cdot (+\\infty) = 0$ 该无穷项在复合中自动消去！）\n3. 将 (2) 中不等号全部反向即得 $M^- L^- \\in \\mathcal{L}^-(\\psi \\circ \\phi)$。\n4. 设 $x, y \\in \\mathrm{dom}(\\psi \\circ \\phi)$ 且 $\\forall\\, j \\in I,\\, d_j(x, y) \\leq (S \\diamond R)_{ij}$。对每个 $k \\in I$：若 $S_{ik} = +\\infty$，显然 $d_k(\\phi(x), \\phi(y)) \\leq +\\infty = S_{ik}$；若 $S_{ik} < +\\infty$，则对一切 $j \\in I$ 有 $d_j(x, y) \\leq (S \\diamond R)_{ij} \\leq R_{kj}$，由 $R \\in \\mathcal{R}(\\phi)$ 得 $d_k(\\phi(x), \\phi(y)) = 0 \\leq S_{ik}$。综上 $\\forall\\, k \\in I,\\, d_k(\\phi(x), \\phi(y)) \\leq S_{ik}$，再由 $S \\in \\mathcal{R}(\\psi)$ 得 $d_i((\\psi \\circ \\phi)(x), (\\psi \\circ \\phi)(y)) = 0$。\n5. 若 $\\forall\\, j \\in I,\\, d_j(x, y) \\leq R_{ij}$，则对任意 $k \\in I$，\n\n   $$d_k(\\phi(x), \\phi(y)) \\leq \\sum_{j \\in I} L^+_{kj} d_j(x, y) \\leq \\sum_{j \\in I} L^+_{kj} R_{ij} = \\bigl(R(L^+)^{\\mathsf{T}}\\bigr)_{ik} \\leq S_{ik},$$\n\n   于是由 $S \\in \\mathcal{R}(\\psi)$ 立得 $d_i((\\psi \\circ \\phi)(x), (\\psi \\circ \\phi)(y)) = 0$。$\\square$\n\n---\n\n### 3.5 三类矩阵间的代数对偶、互斥律与几何推论\n\n定义逐元**零-无穷支集对偶映射** $\\kappa : \\bar{\\mathbb{R}}_+^{I \\times I} \\to \\{0, +\\infty\\}^{I \\times I}$ 为：\n\n$$\\kappa(A)_{ij} := \\begin{cases} +\\infty, & A_{ij} = 0, \\\\ 0, & A_{ij} > 0. \\end{cases}$$\n\n**定理 3.5（对偶同态、互斥律与几何性质）**：设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。\n1. **支集对偶幺半群同态**：$\\kappa$ 是从乘性矩阵幺半群 $(\\bar{\\mathbb{R}}_+^{I \\times I}, \\cdot, I_{\\mathrm{mat}}, \\leq)$ 到不可区分矩阵半群 $(\\bar{\\mathbb{R}}_+^{I \\times I}, \\diamond, E_{\\diamond}, \\geq)$ 的**反序幺半群同态**，即：\n   - $A \\leq B \\implies \\kappa(B) \\leq \\kappa(A)$，$\\kappa(\\mathbf{0}) = \\mathbf{\\infty}$，$\\kappa(\\mathbf{\\infty}) = \\mathbf{0}$，$\\kappa(I_{\\mathrm{mat}}) = E_{\\diamond}$；\n   - 对任意 $A, B \\in \\bar{\\mathbb{R}}_+^{I \\times I}$，恒有 **$\\kappa(AB) = \\kappa(A) \\diamond \\kappa(B)$**；\n   - 对任意算子 $\\phi$，有映射关系\n\n     $$L^+ \\in \\mathcal{L}^+(\\phi) \\implies \\kappa(L^+) \\in \\mathcal{R}(\\phi).$$\n\n   （推论：若 $R \\in \\mathcal{R}(\\phi)$ 且 $M^+ \\in \\mathcal{L}^+(\\psi)$，则 $\\kappa(M^+) \\diamond R \\in \\mathcal{R}(\\psi \\circ \\phi)$。）\n2. **上下界独立见证相容律**：设 $L^- \\in \\mathcal{L}^-(\\phi)$，$L^+ \\in \\mathcal{L}^+(\\phi)$。若输入分量 $k \\in I$ 在 $\\mathrm{dom}(\\phi)$ 上**独立可见**——即存在 $x, y \\in \\mathrm{dom}(\\phi)$ 使 $0 < d_k(x, y) < +\\infty$ 且 $\\forall\\, j \\neq k,\\, d_j(x, y) = 0$——则对一切 $i \\in I$ 必有 $L^-_{ik} \\leq L^+_{ik}$。（注：若缺乏独立见证，如 §3.2 注记 2 中 $d_1 = d_2$，取 $L^- = I_{\\mathrm{mat}},\\, L^+ = P$ 时可有 $L^-_{11} = 1 > 0 = L^+_{11}$。）\n3. **下界扩张与不可区分坍缩的互斥律**：设 $L^- \\in \\mathcal{L}^-(\\phi)$，$R \\in \\mathcal{R}(\\phi)$。若存在 $x, y \\in \\mathrm{dom}(\\phi)$ 落入第 $i$ 行的不可区分盒（$\\forall\\, j \\in I,\\, d_j(x, y) \\leq R_{ij}$）且在某分量 $k \\in I$ 上可区分（$d_k(x, y) > 0$），则必有 **$L^-_{ik} = 0$**。\n4. **规范单射性与规范球坍缩定理**：\n   - **(i) 规范单射性（可区分性保持）**：若存在 $L^- \\in \\mathcal{L}^-(\\phi)$ 使得每一列均非零（$\\forall\\, j \\in I,\\, \\exists\\, i \\in I,\\, L^-_{ij} > 0$），则 $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 上保持规范可区分性：\n\n     $$\\forall\\, x, y \\in \\mathrm{dom}(\\phi),\\qquad \\phi(x) \\sim_{\\mathcal{G}} \\phi(y) \\implies x \\sim_{\\mathcal{G}} y.$$\n\n   - **(ii) 局部规范球坍缩**：若 $R \\in \\mathcal{R}(\\phi)$，任取中心 $x_0 \\in \\mathcal{X} \\setminus \\{\\bot\\}$ 与半径向量 $\\boldsymbol{\\rho} = (\\rho_j)_{j \\in I} \\in \\bar{\\mathbb{R}}_+^I$，记闭规范球 $\\bar{B}_{\\mathcal{G}}(x_0, \\boldsymbol{\\rho}) := \\{x \\in \\mathcal{X} \\setminus \\{\\bot\\} \\mid \\forall\\, j \\in I,\\, d_j(x_0, x) \\leq \\rho_j\\}$。若第 $i$ 行满足 $\\forall\\, j \\in I,\\; 2\\rho_j \\leq R_{ij}$，则当输入落入 $\\bar{B}_{\\mathcal{G}}(x_0, \\boldsymbol{\\rho}) \\cap \\mathrm{dom}(\\phi)$ 时，其输出在分量 $i$ 下完全不可区分：\n\n     $$\\forall\\, x, y \\in \\bar{B}_{\\mathcal{G}}(x_0, \\boldsymbol{\\rho}) \\cap \\mathrm{dom}(\\phi),\\qquad d_i(\\phi(x), \\phi(y)) = 0.$$\n\n**证明**：\n1. 反序性与 $\\kappa(I_{\\mathrm{mat}}) = E_{\\diamond}$ 由定义即得。证 $\\kappa(AB) = \\kappa(A) \\diamond \\kappa(B)$：在 $\\bar{\\mathbb{R}}_+$ 中 $(AB)_{ij} = \\sum_{k \\in I} A_{ik} B_{kj} > 0 \\iff \\exists\\, k \\in I,\\, (A_{ik} > 0 \\wedge B_{kj} > 0)$。另一方面，$\\kappa(A)_{ik} < +\\infty \\iff A_{ik} > 0$，且此时 $\\kappa(B)_{kj} \\in \\{0, +\\infty\\}$ 取 $0$ 当且仅当 $B_{kj} > 0$；故 $(\\kappa(A) \\diamond \\kappa(B))_{ij} = 0 \\iff \\exists\\, k \\in I,\\, (A_{ik} > 0 \\wedge B_{kj} > 0)$，否则同为 $+\\infty$。\n   再证 $L^+ \\in \\mathcal{L}^+(\\phi) \\implies \\kappa(L^+) \\in \\mathcal{R}(\\phi)$：若 $\\forall\\, j \\in I,\\, d_j(x, y) \\leq \\kappa(L^+)_{ij}$，则当 $L^+_{ij} > 0$ 时 $\\kappa(L^+)_{ij} = 0 \\implies d_j(x, y) = 0 \\implies L^+_{ij} d_j(x, y) = 0$（含 $L^+_{ij} = +\\infty$）；当 $L^+_{ij} = 0$ 时亦有 $0 \\cdot d_j(x, y) = 0$（含 $d_j(x, y) = +\\infty$）。求和得 $d_i(\\phi(x), \\phi(y)) \\leq 0$，即 $d_i(\\phi(x), \\phi(y)) = 0$。推论结合定理 3.4(4) 立得。\n2. 将独立见证点对 $(x, y)$ 代入夹逼不等式，因 $j \\neq k$ 项均为 $0$，得 $L^-_{ik} d_k(x, y) \\leq L^+_{ik} d_k(x, y)$。因 $0 < d_k(x, y) < +\\infty$，约去 $d_k(x, y)$ 即得 $L^-_{ik} \\leq L^+_{ik}$。\n3. 在题设点对 $(x, y)$ 处，由 $R \\in \\mathcal{R}(\\phi)$ 得 $d_i(\\phi(x), \\phi(y)) = 0$；代入下界得 $0 \\leq L^-_{ik} d_k(x, y) \\leq \\sum_{j \\in I} L^-_{ij} d_j(x, y) \\leq 0$。因 $d_k(x, y) > 0$，无论 $d_k(x, y)$ 有限还是 $+\\infty$，$L^-_{ik} d_k(x, y) = 0$ 均迫使 $L^-_{ik} = 0$。\n4. **(i)** 设 $\\phi(x) \\sim_{\\mathcal{G}} \\phi(y)$。对任意 $j \\in I$，取 $i \\in I$ 使 $L^-_{ij} > 0$，由 $L^-_{ij} d_j(x, y) \\leq d_i(\\phi(x), \\phi(y)) = 0$ 及 $L^-_{ij} > 0$ 得 $d_j(x, y) = 0$。\n   **(ii)** 任取 $x, y \\in \\bar{B}_{\\mathcal{G}}(x_0, \\boldsymbol{\\rho}) \\cap \\mathrm{dom}(\\phi)$。对每个 $j \\in I$，由对称性与三角不等式：\n\n   $$d_j(x, y) \\leq d_j(x, x_0) + d_j(x_0, y) = d_j(x_0, x) + d_j(x_0, y) \\leq \\rho_j + \\rho_j = 2\\rho_j \\leq R_{ij}.$$\n\n   由 $R \\in \\mathcal{R}(\\phi)$ 即得 $d_i(\\phi(x), \\phi(y)) = 0$。$\\square$\n\n---\n\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        },
+        {
+          "id": "F03",
+          "group_id": "G03",
+          "title": "三矩阵定义、存在、单调凸性及直接几何边界",
+          "statement": "上/下/阈值矩阵、∞保零等价、区域单调、独立轴夹逼、正交与球坍缩。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "M1-M6要求的定义和存在/边界，独立轴K≤L是消正有限因子的直接代入；局部球坍缩只是三角式+阈值定义，非独立额外结构。",
+          "proof_review": "M1-M6要求的定义和存在/边界，独立轴K≤L是消正有限因子的直接代入；局部球坍缩只是三角式+阈值定义，非独立额外结构。",
+          "nontrivial_step": "M1-M6要求的定义和存在/边界，独立轴K≤L是消正有限因子的直接代入；局部球坍缩只是三角式+阈值定义，非独立额外结构。",
+          "value_rationale": "可在相应研究情境复用；价值标签不是主动额外成果计数门槛。",
+          "reason": "M1-M6要求的定义和存在/边界，独立轴K≤L是消正有限因子的直接代入；局部球坍缩只是三角式+阈值定义，非独立额外结构。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "97ab040c5c759043203b48248a3f3522597fed91046ad4d7b3f3d394cd8a17f8",
+              "start_byte": 4439,
+              "end_byte": 12825,
+              "quote": "## §2 核心定义：三类扩展算子估计矩阵\n\n设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，其有效定义域为 $\\mathrm{dom}(\\phi) = \\{x \\in \\mathcal{X} \\mid \\phi(x) \\neq \\bot\\}$。\n\n**定义 2.1（扩展上 Lipschitz 矩阵）**：称矩阵 $L^+ = (L^+_{ij})_{i, j \\in I} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为算子 $\\phi$ 的一个**扩展上 Lipschitz 矩阵**（简称**上 Lipschitz 矩阵**），若\n\n$$\\forall\\, x, y \\in \\mathrm{dom}(\\phi),\\qquad \\mathbf{d}(\\phi(x), \\phi(y)) \\;\\leq\\; L^+\\, \\mathbf{d}(x, y),$$\n\n即对每个输出分量 $i \\in I$ 及任意 $x, y \\in \\mathrm{dom}(\\phi)$，\n\n$$d_i(\\phi(x), \\phi(y)) \\;\\leq\\; \\sum_{j \\in I} L^+_{ij}\\, d_j(x, y).$$\n\n记 $\\phi$ 的全体上 Lipschitz 矩阵之集为 $\\mathcal{L}^+(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{I \\times I}$。若存在有限矩阵 $L^+ \\in [0, +\\infty)^{I \\times I} \\cap \\mathcal{L}^+(\\phi)$，则称 $\\phi$ 是**有限矩阵-Lipschitz 的**。\n\n---\n\n**定义 2.2（扩展下 Lipschitz 矩阵）**：称矩阵 $L^- = (L^-_{ij})_{i, j \\in I} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为算子 $\\phi$ 的一个**扩展下 Lipschitz 矩阵**（或**余 Lipschitz 矩阵**，简称**下 Lipschitz 矩阵**），若\n\n$$\\forall\\, x, y \\in \\mathrm{dom}(\\phi),\\qquad L^-\\, \\mathbf{d}(x, y) \\;\\leq\\; \\mathbf{d}(\\phi(x), \\phi(y)),$$\n\n即对每个输出分量 $i \\in I$ 及任意 $x, y \\in \\mathrm{dom}(\\phi)$，\n\n$$\\sum_{j \\in I} L^-_{ij}\\, d_j(x, y) \\;\\leq\\; d_i(\\phi(x), \\phi(y)).$$\n\n记 $\\phi$ 的全体下 Lipschitz 矩阵之集为 $\\mathcal{L}^-(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{I \\times I}$。若 $L^- \\in \\mathcal{L}^-(\\phi)$ 且 $L^+ \\in \\mathcal{L}^+(\\phi)$，则 $(L^-, L^+)$ 给出 $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 上的**双侧矩阵夹逼估计**：\n\n$$L^-\\, \\mathbf{d}(x, y) \\;\\leq\\; \\mathbf{d}(\\phi(x), \\phi(y)) \\;\\leq\\; L^+\\, \\mathbf{d}(x, y).$$\n\n---\n\n**定义 2.3（不可区分矩阵 / 坍缩阈值矩阵）**：称矩阵 $R = (R_{ij})_{i, j \\in I} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为算子 $\\phi$ 的一个**不可区分矩阵**（或**坍缩阈值矩阵**），若对任意 $x, y \\in \\mathrm{dom}(\\phi)$ 及每个输出分量 $i \\in I$：\n\n$$\\bigl(\\forall\\, j \\in I,\\; d_j(x, y) \\leq R_{ij}\\bigr) \\implies d_i(\\phi(x), \\phi(y)) = 0.$$\n\n记 $\\phi$ 的全体不可区分矩阵之集为 $\\mathcal{R}(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{I \\times I}$。\n\n---\n\n### 2.4 关键设计说明（自洽性与忠实性论证）\n\n1. **为何在有效定义域 $\\mathrm{dom}(\\phi)$ 上量化而非全集 $\\mathcal{X}$？**\n   考察常值算子 $\\phi_c$（固定 $c \\in \\mathcal{X} \\setminus \\{\\bot\\}$，对 $x \\neq \\bot$ 令 $\\phi_c(x) = c$，$\\phi_c(\\bot) = \\bot$）。直觉上常值算子必须允许零上界 $L^+ = \\mathbf{0}$。若将定义 2.1 量化到全集 $\\mathcal{X}$，取 $x \\in \\mathrm{dom}(\\phi_c)$ 与 $y = \\bot$，由 CH1 (iv) 及 $0 \\cdot (+\\infty) = 0$ 得：\n\n   $$d_i(\\phi_c(x), \\phi_c(\\bot)) = d_i(c, \\bot) = +\\infty \\;>\\; 0 = \\sum_{j \\in I} 0 \\cdot d_j(x, \\bot),$$\n\n   导致常值算子反而不能取 $L^+ = \\mathbf{0}$！同理，对部分定义算子若取 $x \\in \\mathrm{dom}(\\phi)$ 与 $y \\in (\\mathcal{X}\\setminus\\{\\bot\\})\\setminus\\mathrm{dom}(\\phi)$，$d_i(\\phi(x), \\bot) = +\\infty$ 会迫使一切有限边界的部分算子退化为 $+\\infty$。限制在有效定义域 $\\mathrm{dom}(\\phi)$ 上不仅消除了吸收元奇异性，而且对任意子集 $A \\subseteq \\mathcal{X} \\setminus \\{\\bot\\}$，可通过**定义域截断算子**\n\n   $$\\iota_A(x) := \\begin{cases} x, & x \\in A, \\\\ \\bot, & x \\notin A \\end{cases} \\quad (\\iota_A \\in \\mathcal{X}_{\\mathrm{op}})$$\n\n   将算子在局部区域 $A$ 上的限制直接实现为算子复合 $\\phi|_A := \\phi \\circ \\iota_A \\in \\mathcal{X}_{\\mathrm{op}}$（其有效定义域恰为 $\\mathrm{dom}(\\phi) \\cap A$）。\n\n2. **为何矩阵元素引入 $+\\infty$ 在多分量规范空间中具有非平凡结构价值？**\n   在单一度量下，非 Lipschitz 函数的常数退化为单一 $+\\infty$；但在多伪度量下，允许 $+\\infty$ 与 $0 \\cdot (+\\infty) = 0$ 协同工作，能够同时保留**分量无关性（$0$ 元）**与**其余分量的有限 Lipschitz 控制**。例如在 $\\mathbb{R}^2 \\cup \\{\\bot\\}$（$d_1 = |\\Delta x_1|,\\, d_2 = |\\Delta x_2|$）上取 $\\phi(x_1, x_2) = (x_1^2, 3x_2)$：它虽非全局有限 Lipschitz，但拥有扩展上 Lipschitz 矩阵\n\n   $$L^+ = \\begin{pmatrix} +\\infty & 0 \\\\ 0 & 3 \\end{pmatrix} \\in \\mathcal{L}^+(\\phi).$$\n\n   由于 $0 \\cdot d_2(x, y) = 0$ 且 $(+\\infty)\\cdot 0 = 0$，第一行严格编码了“第一输出分量虽对 $x_1$ 无有限 Lipschitz 上界，但完全不依赖于 $x_2$”，第二行则完整保留了精确常数 $3$。\n\n3. **为何不可区分矩阵采用闭不等号 $\\leq$ 而非严格不等号 $<$？**\n   若改为 $\\bigl(\\forall\\, j \\in I,\\, d_j(x, y) < R_{ij}\\bigr) \\implies d_i(\\phi(x), \\phi(y)) = 0$，则只要将第 $i$ 行某一个元素取为 $R_{ij_0} = 0$，前提中 $d_{j_0}(x, y) < 0$ 便恒假，导致该行其余元素可任意取 $+\\infty$ 而空真成立，失去几何意义。采用闭阈值 $\\leq$ 时，$R_{ij} = 0$ 恰对应零距条件 $d_j(x, y) = 0$，$R_{ij} \\in (0, +\\infty)$ 对应有限吸收半径，$R_{ij} = +\\infty$ 则严格表达“输出 $i$ 的不可区分性完全不受输入分量 $j$ 影响（即使 $d_j(x, y) = +\\infty$）”。\n\n4. **不可区分矩阵与 Lipschitz 矩阵的统一代数形式**：\n   在 $\\bar{\\mathbb{R}}_+$ 上定义支集放大算子 $\\sigma(t) := (+\\infty)\\cdot t$（当 $t=0$ 时为 $0$，$t>0$ 时为 $+\\infty$）及超阈算子 $\\theta_r(t) := 0$（$t \\leq r$）、$+\\infty$（$t > r$），则定义 2.3 完全等价于同型求和不等式：\n\n   $$R \\in \\mathcal{R}(\\phi) \\iff \\forall\\, x, y \\in \\mathrm{dom}(\\phi),\\; \\forall\\, i \\in I:\\quad (+\\infty)\\cdot d_i(\\phi(x), \\phi(y)) \\;\\leq\\; \\sum_{j \\in I} \\theta_{R_{ij}}\\bigl(d_j(x, y)\\bigr).$$\n\n   特别当 $R = \\mathbf{0}$ 时，$\\theta_0(t) = (+\\infty)\\cdot t$，该式与 $L^+ = \\mathbf{\\infty} \\in \\mathcal{L}^+(\\phi)$ 的定义不等式**逐字同一**。\n\n---\n\n## §3 基本性质与严格论证\n\n### 3.1 存在性与规范相容性定理\n\n**定理 3.1（非空性判准与统一表达定理）**：对任意算子 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$：\n1. $\\mathbf{0} \\in \\mathcal{L}^-(\\phi)$ 恒成立，故 $\\mathcal{L}^-(\\phi)$ 无条件非空；\n2. 下列五款相互等价：\n   - **(a)** $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 上规范相容；\n   - **(b)** $\\mathcal{L}^+(\\phi) \\neq \\emptyset$；\n   - **(c)** $\\mathbf{\\infty} \\in \\mathcal{L}^+(\\phi)$；\n   - **(d)** $\\mathcal{R}(\\phi) \\neq \\emptyset$；\n   - **(e)** $\\mathbf{0} \\in \\mathcal{R}(\\phi)$。\n\n特别地，若 $(\\mathcal{X}, \\mathcal{G}, \\bot)$ 满足族分离性，则对 $\\mathcal{X}_{\\mathrm{op}}$ 中**一切算子**（无论是否连续或有限 Lipschitz），$\\mathcal{L}^+(\\phi), \\mathcal{L}^-(\\phi), \\mathcal{R}(\\phi)$ 均非空。\n\n**证明**：\n1. 对任意 $x, y \\in \\mathrm{dom}(\\phi)$ 与 $i \\in I$，$\\sum_{j \\in I} 0 \\cdot d_j(x, y) = 0 \\leq d_i(\\phi(x), \\phi(y))$，故 $\\mathbf{0} \\in \\mathcal{L}^-(\\phi)$。\n2. **(a) $\\Rightarrow$ (c)**：设 $\\phi$ 规范相容，任取 $x, y \\in \\mathrm{dom}(\\phi)$ 与 $i \\in I$。若 $\\forall\\, j \\in I,\\, d_j(x, y) = 0$，由规范相容性有 $d_i(\\phi(x), \\phi(y)) = 0 \\leq 0 = \\sum_{j \\in I} (+\\infty)\\cdot d_j(x, y)$；若存在 $j_0 \\in I$ 使 $d_{j_0}(x, y) > 0$，则由 CH1 算术有 $(+\\infty)\\cdot d_{j_0}(x, y) = +\\infty$，从而 $\\sum_{j \\in I} (+\\infty)\\cdot d_j(x, y) = +\\infty \\geq d_i(\\phi(x), \\phi(y))$。故 $\\mathbf{\\infty} \\in \\mathcal{L}^+(\\phi)$。\n   **(c) $\\Rightarrow$ (b)**：显然。\n   **(b) $\\Rightarrow$ (a)**：设存在 $L^+ \\in \\mathcal{L}^+(\\phi)$。若 $x, y \\in \\mathrm{dom}(\\phi)$ 满足 $\\forall\\, j \\in I,\\, d_j(x, y) = 0$，则对每个 $i \\in I$，由 $L^+_{ij} \\cdot 0 = 0$（含 $L^+_{ij} = +\\infty$ 情形）得 $d_i(\\phi(x), \\phi(y)) \\leq \\sum_{j \\in I} L^+_{ij} \\cdot 0 = 0$，即 $d_i(\\phi(x), \\phi(y)) = 0$。\n   **(a) $\\Leftrightarrow$ (e)**：因 $d_j(x, y) \\leq 0 \\iff d_j(x, y) = 0$，故 $\\mathbf{0} \\in \\mathcal{R}(\\phi)$ 的定义条件即为规范相容性。\n   **(e) $\\Rightarrow$ (d)** 显然；**(d) $\\Rightarrow$ (e)**：若 $R \\in \\mathcal{R}(\\phi)$，当 $\\forall\\, j,\\, d_j(x, y) \\leq 0$ 时必有 $d_j(x, y) \\leq R_{ij}$，故 $d_i(\\phi(x), \\phi(y)) = 0$，得 $\\mathbf{0} \\in \\mathcal{R}(\\phi)$。$\\square$\n\n---\n\n"
+            },
+            {
+              "source_sha256": "97ab040c5c759043203b48248a3f3522597fed91046ad4d7b3f3d394cd8a17f8",
+              "start_byte": 18729,
+              "end_byte": 20504,
+              "quote": "### 3.3 典范算子与局部化单调性\n\n**命题 3.3（基本算子的特征矩阵）**：\n1. **恒等算子** $\\mathrm{id}_{\\mathcal{X}}$（$\\mathrm{dom}(\\mathrm{id}_{\\mathcal{X}}) = \\mathcal{X} \\setminus \\{\\bot\\} \\neq \\emptyset$）：$I_{\\mathrm{mat}} \\in \\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}}) \\cap \\mathcal{L}^-(\\mathrm{id}_{\\mathcal{X}})$，且 $E_{\\diamond} \\in \\mathcal{R}(\\mathrm{id}_{\\mathcal{X}})$。\n2. **定义域截断与区域单调性**：对任意子集 $A \\subseteq B \\subseteq \\mathcal{X} \\setminus \\{\\bot\\}$ 及 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，记 $\\phi|_A := \\phi \\circ \\iota_A$，则\n\n   $$\\mathcal{L}^+(\\phi|_B) \\subseteq \\mathcal{L}^+(\\phi|_A), \\qquad \\mathcal{L}^-(\\phi|_B) \\subseteq \\mathcal{L}^-(\\phi|_A), \\qquad \\mathcal{R}(\\phi|_B) \\subseteq \\mathcal{R}(\\phi|_A).$$\n\n3. **输出分量坍缩的充要刻画**：对任意 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，\n\n   $$\\mathbf{0} \\in \\mathcal{L}^+(\\phi) \\iff \\bigl(\\forall\\, x, y \\in \\mathrm{dom}(\\phi),\\; \\phi(x) \\sim_{\\mathcal{G}} \\phi(y)\\bigr) \\iff \\mathbf{\\infty} \\in \\mathcal{R}(\\phi).$$\n\n   （按行同样成立：第 $i$ 行可取全 $0$ 上界 $\\iff \\phi$ 在 $\\mathrm{dom}(\\phi)$ 上恒输出 $i$-不可区分值 $\\iff$ 第 $i$ 行可取全 $+\\infty$ 不可区分阈值。）\n\n**证明**：(1) 对 $\\mathrm{id}_{\\mathcal{X}}$，$(I_{\\mathrm{mat}}\\mathbf{d}(x, y))_i = d_i(x, y)$；若 $\\forall\\, j,\\, d_j(x, y) \\leq (E_{\\diamond})_{ij}$，取 $j = i$ 得 $d_i(x, y) \\leq 0$，即 $d_i(x, y) = 0$。(2) 因 $\\mathrm{dom}(\\phi|_A) = \\mathrm{dom}(\\phi) \\cap A \\subseteq \\mathrm{dom}(\\phi) \\cap B = \\mathrm{dom}(\\phi|_B)$ 且在交集上取值相同。(3) 由 $d_i(\\phi(x), \\phi(y)) \\leq 0 \\iff d_i(\\phi(x), \\phi(y)) = 0$ 及 $d_j(x, y) \\leq +\\infty$ 恒真即得。$\\square$\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

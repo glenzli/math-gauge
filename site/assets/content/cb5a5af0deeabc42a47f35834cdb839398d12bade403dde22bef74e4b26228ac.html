@@ -1,0 +1,72 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>结论</h2>
+<p><strong>就正文推论 #h-93b9c20ea18b4e59 的两条集合包含而言，所给 Lean 实现准确且完整。</strong> 两个分支分别证明了分量保证域之并和联合保证域之并包含于相应的真实误差容许区域；合并包装定理也保留了正文的非空分量族与有限阈值前提。</p>
+<p>这里的“全局拟合含义”是指：<strong>路径证书之并内的点</strong>满足误差界。它并不声称证书之并覆盖整个输入域，也不声称集合包含可以反向。</p>
+<p>以下判断基于附件中展示的源码及题目允许使用的辅助声明；未另行运行 Lean 编译。</p>
+<h2>正文与 Lean 的对应关系</h2>
+<table>
+<thead>
+<tr>
+<th>正文对象或条件</th>
+<th>Lean 对应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup></mrow><annotation encoding="application/x-tex">\phi^\natural</annotation></semantics></math></span>、代理 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span>、输入域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span></td>
+<td><code>target</code>、<code>proxy</code>、<code>N.U</code></td>
+</tr>
+<tr>
+<td>可达路径 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span>、路径域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">U_q</annotation></semantics></math></span>、路径链 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span></td>
+<td><code>N.ReachablePath</code>、<code>N.path_domain q.nodes</code>、<code>N.path_chain q.nodes</code></td>
+</tr>
+<tr>
+<td>网络表示 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi mathvariant="script">N</mi></msub><msub><mo>≡</mo><mi>U</mi></msub><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi_{\mathcal N}\equiv_U\phi</annotation></semantics></math></span></td>
+<td><code>N.represents proxy</code></td>
+</tr>
+<tr>
+<td>路径采样 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span></td>
+<td><code>path_component_sample N sample q j</code></td>
+</tr>
+<tr>
+<td>路径可评估集 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{\rm res}(q)</annotation></semantics></math></span></td>
+<td><code>path_evaluable_components N sample q</code></td>
+</tr>
+<tr>
+<td>路径残差上界 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q,j}</annotation></semantics></math></span></td>
+<td><code>path_empirical_residual_upper ... q j</code></td>
+</tr>
+<tr>
+<td>路径分量、联合保证域</td>
+<td><code>path_component_empirical_guarantee_domain</code>、<code>path_joint_empirical_guarantee_domain</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo>=</mo><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>+</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf A_q=\mathbf L_q+\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+</tr>
+<tr>
+<td>对有相应采样的路径取并</td>
+<td>集合构造式中的 <code>∃ q</code>，并要求 <code>j ∈ path_evaluable_components ... q</code> 或 <code>J ⊆ path_evaluable_components ... q</code></td>
+</tr>
+</tbody>
+</table>
+<p>路径可评估意味着全局可评估，这一点源码由 <code>path_evaluable_subset_evaluable_components</code> 证明。因此，Lean 对路径可评估性的表达与正文中先要求 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">j\in I_{\rm res}</annotation></semantics></math></span>、再要求 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">S_{q,j}\ne\varnothing</annotation></semantics></math></span> 一致。</p>
+<p>联合保证域有一个值得说明的<strong>表示差异</strong>：Lean 将其展开为“<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">x\in U_q</annotation></semantics></math></span>，且对每个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span> 满足该分量的不等式”；正文写成各分量保证域的交。由于正文及最终包装定理要求 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\ne\varnothing</annotation></semantics></math></span>，两种写法相等：从交中任选一个分量即可得到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">x\in U_q</annotation></semantics></math></span>，其余条件逐项对应。这个等价性是上述定义的直接集合论推论；附件中不必将它作为独立定理使用。</p>
+<h2>源码已证明什么</h2>
+<p><code>path_component_guarantee_union_subset_proxy_error</code> 正是分量形式的包含。其证明取左侧见证 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span>，然后：</p>
+<ol>
+<li>由路径保证域成员资格得到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">x\in U_q</annotation></semantics></math></span>，再由 <code>N.path_domain_subset_source</code> 得到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>N</mi><mi mathvariant="normal">.</mi><mi>U</mi></mrow><annotation encoding="application/x-tex">x\in N.U</annotation></semantics></math></span>；</li>
+<li>由 <code>proxy_path_component_guarantee_error_bound</code> 得到
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+d_j(\phi(x),\phi^\natural(x))\le \tau_j.
+</annotation></semantics></math></span></li>
+</ol>
+<p><code>path_joint_guarantee_union_subset_proxy_error</code> 对联合形式做同样的事。它使用的是<strong>同一条见证路径</strong>满足 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">J\subseteq I_{\rm res}(q)</annotation></semantics></math></span>，随后对每个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span> 应用路径局部上界。</p>
+<p>最后，<code>path_guarantee_union_subset_proxy_error_text</code> 将两项合并，并保留正文前提。它要求在参与相关并集的路径上有合法路径 Lip 矩阵；这正是定义和使用相应路径证书所需的数据。<code>hpathV</code> 要求各路径域包含于 <code>Vstar</code>，由正文的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 和路径域包含于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 可得。</p>
+<p>包装中的全局可评估性、阈值有限性及 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 非空性在包含证明体中没有被使用，并不造成缺口：底层集合包含定理在这些方面更一般，而包装保留了正文的使用语境。</p>
+<p>Lean 的残差和锚点距离定义在空采样上也有格论意义下的总值；正文则只在路径可评估时使用这些证书。目标定理的左侧明确筛选了路径可评估性，所以这种总值化不会把正文未定义的空采样路径错误地纳入结论。</p>
+<h2>需要区分的后续推论</h2>
+<p>源码的目标定理直接给出的是<strong>误差区域的集合包含</strong>，不是一个单独打包的 <code>InFittingBall</code> 结论。若需要后一种接口，可以补充一个简单包装：以左侧并集为拟合域，使用已证明的包含、<code>N.represents proxy</code>、目标 Lip 证书给出的定义域条件、有限阈值，以及测距对称性，构造 <code>InFittingBall</code>。这不是正文所列两条包含的缺失分支。</p>
+<p>同样，若要推出在整个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 上拟合，还必须另有“该路径保证域之并覆盖 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span>”的条件；正文和源码均未作此断言。事实上，包含可能严格：例如令一个分量的底层非吸收部分为实数、距离为绝对值，目标与代理都取恒等算子，网络只有一条恒等路径，样本为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>0</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{0\}</annotation></semantics></math></span>，修正为零，并选 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>q</mi></msub><mo>=</mo><msup><mi>L</mi><mo>∗</mo></msup><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">L_q=L^*=1</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\tau=1</annotation></semantics></math></span>。此时真实误差在整个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mi mathvariant="double-struck">R</mi></mrow><annotation encoding="application/x-tex">U=\mathbb R</annotation></semantics></math></span> 上为零，而该证书只保证 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi mathvariant="normal">∣</mi><mi>x</mi><mi mathvariant="normal">∣</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2|x|\le1</annotation></semantics></math></span> 的点。</p>
+<hr>
+<p><strong>材料归属：</strong> Zhe Li（Glen Li / glenzli），<a href="https://glenzli.com/books/oet/">The Operator Evolution Theory</a>，<a href="https://orcid.org/0009-0006-6536-3453">ORCID</a>，<a href="https://gitlab.com/glenzli/oet-public">公共源码</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。以上是对附件的审阅与重述，未修改附件。</p>
+</div>

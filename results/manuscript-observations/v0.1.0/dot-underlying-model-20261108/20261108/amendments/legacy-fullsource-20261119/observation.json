@@ -1,0 +1,123 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "dot-underlying-model-20261108",
+  "record_id": "20261108",
+  "source_record": {
+    "path": "results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json",
+    "bytes": 16666,
+    "sha256": "5a01c48600002c0706a3ad513e0219f529d6754b394d2d9b434271b9205f52e3"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "61f7bc2a97e12592b37cfe2192c55a345f9d2eddfebc77fe24d5a7b89b9d8354",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 4,
+    "total_groups": 4,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "2ee1899cd37cda03a3fc5b05263cbcd9f72f078264d76b03b9be30388bc7b1ec",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "完整重读本题最终正文。普通上下矩阵链式复合排除；C/Z/L组合传播按同一新控制演算合并1组。定义及基础端点不是独立额外。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "普通矩阵链式复合及必需边界",
+          "statement": "上/下控制的复合律、控制存在性、无最优矩阵和塌缩阈值端点。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "旧S01覆盖的普通矩阵复合保持排除；本轮将其未覆盖的C/Z/L组合另列S02。",
+          "proof_review": "普通矩阵复合由保序性及代入；上界存在性用全∞矩阵；相同分量和纯∞点对见证最优性边界。阈值定义及开端点属于本题必须落实的不可分辨语义。",
+          "nontrivial_step": "这些没有超出所选基本控制定义的普通推论及必要边界。",
+          "value_rationale": "本轮以正确闭合、额外范围和独立结构为计组门槛；价值仅描述用途。本项不另形成额外成果组。",
+          "reason": "数学核查成立，普通上下矩阵链式复合不另计组，原题必需项不计额外。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "2ee1899cd37cda03a3fc5b05263cbcd9f72f078264d76b03b9be30388bc7b1ec",
+              "start_byte": 3066,
+              "end_byte": 6137,
+              "quote": "2. **复合性质。** 若\n\\[\nA_\\phi\\in\\mathsf U(\\phi),\\quad A_\\psi\\in\\mathsf U(\\psi),\n\\]\n则\n\\[\nA_\\psi A_\\phi\\in\\mathsf U(\\psi\\circ\\phi).\n\\]\n同样，\n\\[\nB_\\phi\\in\\mathsf L(\\phi),\\quad B_\\psi\\in\\mathsf L(\\psi)\n\\quad\\Longrightarrow\\quad\nB_\\psi B_\\phi\\in\\mathsf L(\\psi\\circ\\phi).\n\\]\n例如上控制的证明为\n\\[\n\\Delta_{\\psi\\circ\\phi}(x,y)\n\\le A_\\psi\\Delta_\\phi(x,y)\n\\le A_\\psi A_\\phi\\Delta(x,y).\n\\]\n下控制同理。题设算术下，有限非负矩阵乘法具有所需的单调性、结合律和分配律，故含 \\(0\\) 与 \\(\\infty\\) 的情形也成立。恒等算子以上、下单位矩阵为控制矩阵。\n\n3. **上控制的存在性恰好是不可区分性保持。** 有\n\\[\n\\mathsf U(\\phi)\\ne\\varnothing\n\\quad\\Longleftrightarrow\\quad\nx\\sim y\\Longrightarrow\\phi(x)\\sim\\phi(y).\n\\tag{1}\n\\]\n正向由 \\(A0=0\\) 得到。反向取每个元素都是 \\(\\infty\\) 的矩阵：输入向量为零时用右侧条件；输入向量非零时，每一行乘积均为 \\(\\infty\\)，不等式自动成立。\n\n因此，**允许无穷系数仍不能使每一个算子都有 Lip 上控制矩阵**。例如令 \\(\\mathcal X=\\{a,b,\\bot\\}\\)，只有一个伪度量，且 \\(d(a,b)=0\\)。定义 \\(\\phi(a)=a\\)、\\(\\phi(b)=\\phi(\\bot)=\\bot\\)，则输入距离为零而输出距离为无穷，任何系数都无法控制。\n\n若规范族分离点，则 (1) 对所有算子自动成立；不分离时，(1) 等价于算子能下降为商集 \\(\\mathcal X/{\\sim}\\) 上的映射。统一的表达应允许 \\(\\mathsf U(\\phi)\\) 为空，而不是以无穷系数掩盖这项障碍。\n\n4. **非退化下控制给出商意义上的单射性。** 若 \\(B\\in\\mathsf L(\\phi)\\)，且每个输入列 \\(j\\) 都有某个 \\(i\\) 满足 \\(b_{ij}>0\\)，则\n\\[\n\\phi(x)\\sim\\phi(y)\\Longrightarrow x\\sim y.\n\\]\n因为输出向量为零迫使每个正系数所乘的输入距离为零。这不是原集合上的单射性；只有再加族分离性，才能得到通常的单射结论。\n\n## 3. 不宜预设一个“最佳矩阵”\n\n\\(\\mathsf U(\\phi)\\) 和 \\(\\mathsf L(\\phi)\\) 是可行矩阵集合，一般不能分别用一个最小、最大矩阵代替。\n\n例如取两项完全相同的度量 \\(d_1=d_2=d\\)，并令 \\(\\phi\\) 为恒等算子，且存在 \\(0<d(x,y)<\\infty\\) 的点对。下列两个矩阵都是上控制矩阵，也都是下控制矩阵：\n\\[\nM_1=\\begin{pmatrix}1&0\\\\1&0\\end{pmatrix},\\qquad\nM_2=\\begin{pmatrix}0&1\\\\0&1\\end{pmatrix}.\n\\]\n如果有最小上控制矩阵，它必须同时小于等于 \\(M_1,M_2\\)，只能是零矩阵，而零矩阵不可行。如果有最大下控制矩阵，它必须同时大于等于两者，每一行在上述点对上至少给出 \\(2d(x,y)\\)，也不可行。\n\n甚至标量上控制系数的下确界也可能不被取到：取 \\(\\mathcal X=\\{p,\\bot\\}\\)，\\(d(p,\\bot)=\\infty\\)，\\(\\phi\\) 为恒等算子。每个 \\(a>0\\) 都可行，\\(a=0\\) 却不可行。故上控制系数的下确界是零，但零不是上控制系数。\n\n因此可以在可行集上另设优化目标，但必须区分“下确界”“最优值可达”与“按分量序的最小元”。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "塌缩阈值、零距关系与上控制的组合演算",
+          "statement": "为开阈值C在0处的空条件引入零距布尔矩阵Z，并证明Z(psi phi)>=Z(psi) odot Z(phi)、上控制和C的混合消隐判据，以及C_{ij}(psi phi)>=max_{k:Z_ik(psi)=1} C_kj(phi)。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "基础M5由C的定义和端点已完成；完整的C/Z/L组合演算未被要求。",
+          "proof_review": "布尔乘法中存在k给两次零距蕴含。混合式(7)先用A上界将中间距离严格压入后级C，再由开阈值性质归零。式(8)在有限指标中择取达到最大阈值的k，输入距离严格小于它则先用C再用Z；空索引max=0给平凡下界。C=∞仍只约束有限输入距离，原文未越过此端点；全局量词使复合的中间点可合法使用。",
+          "nontrivial_step": "完整连接数值上控制、开塌缩尺度及布尔零距关系三种不同载体，实际给出混合传播和专用max组合，而非把C照搬为普通矩阵乘法。",
+          "value_rationale": "本轮以正确闭合、额外范围和独立结构为计组门槛；价值仅描述用途。该构造提供可复用的接口或精确刻画。",
+          "reason": "接受1个中性额外组；Z定义、布尔法、混合法和max法同组去重。旧审只据直接代入/高价值排除整个段落，遗漏了此完整组合结构。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "2ee1899cd37cda03a3fc5b05263cbcd9f72f078264d76b03b9be30388bc7b1ec",
+              "start_byte": 7942,
+              "end_byte": 9966,
+              "quote": "### 零阈值处的补充：零距离保持矩阵\n\n严格阈值在零处是空条件，不能记录零距离本身如何传播。为此可另外定义布尔矩阵\n\\[\nZ_{ij}(\\phi)=1\n\\quad\\Longleftrightarrow\\quad\n\\bigl[d_j(x,y)=0\\Longrightarrow d_i(\\phi(x),\\phi(y))=0\\bigr]\n\\quad(\\forall x,y).\n\\tag{4}\n\\]\n若 \\(C_{ij}>0\\)，则 \\(Z_{ij}=1\\)，但逆命题不成立。例如实数上的恒等算子保持零距离，却没有正的统一塌缩半径。\n\n这个布尔矩阵还有自然的复合规律：用布尔矩阵乘法 \\(\\odot\\)，则\n\\[\nZ(\\psi\\circ\\phi)\\ge Z(\\psi)\\odot Z(\\phi).\n\\tag{5}\n\\]\n因为只要存在中间分量 \\(k\\)，使输入第 \\(j\\) 分量为零先迫使 \\(\\phi\\) 的第 \\(k\\) 分量为零，再迫使 \\(\\psi\\circ\\phi\\) 的第 \\(i\\) 分量为零，复合算子就有相应性质。这里的单分量蕴含不应与 (1) 的“所有输入分量同时为零”混淆。\n\n## 5. 上下控制与塌缩的联系\n\n这些矩阵互补，但不能相互取代。\n\n**下控制限制塌缩。** 若 \\(B\\in\\mathsf L(\\phi)\\) 且 \\(b_{ij}>0\\)，则\n\\[\nd_i(\\phi(x),\\phi(y))=0\\Longrightarrow d_j(x,y)=0.\n\\tag{6}\n\\]\n因而，如果同时有正塌缩阈值 \\(C_{ij}>0\\)，则不存在满足\n\\[\n0<d_j(x,y)<C_{ij}\n\\]\n的点对。这并非矛盾：例如离散空间可以有距离间隙。\n\n**上控制可传递塌缩条件。** 若 \\(A\\in\\mathsf U(\\phi)\\)，则对任意中间分量 \\(k\\)，\n\\[\n\\sum_j a_{kj}d_j(x,y)<C_{ik}(\\psi)\n\\quad\\Longrightarrow\\quad\nd_i(\\psi(\\phi(x)),\\psi(\\phi(y)))=0.\n\\tag{7}\n\\]\n这是因为左侧先保证 \\(\\phi\\) 的第 \\(k\\) 输出距离小于 \\(\\psi\\) 的塌缩阈值。\n\n此外，由 (4) 直接得到\n\\[\nC_{ij}(\\psi\\circ\\phi)\n\\ge\n\\max_{k:Z_{ik}(\\psi)=1} C_{kj}(\\phi),\n\\qquad \\max\\varnothing:=0.\n\\tag{8}\n\\]\n确实，任何严格小于右侧某个阈值的输入距离，先使中间第 \\(k\\) 分量归零，再经 \\(Z_{ik}(\\psi)=1\\) 使最终第 \\(i\\) 分量归零；最后应用 (3)。\n\n塌缩阈值矩阵因此有自己的传播规则，不能未经证明就照搬 Lip 矩阵的普通乘法。\n\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

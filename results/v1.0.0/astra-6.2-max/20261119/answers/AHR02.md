@@ -1,0 +1,27 @@
+**两条包含式的结论都准确。现有 Lean 全局定理要求每条可达路径都有合法 Lip 证书，因此只覆盖了正文的一部分适用情形。** 正文先固定路径 \(q\) 和在该路径上可评估的分量，再取路径证书 \(L_q\)。一条没有任何样本的可达路径不会进入两个并集，正文的证明也用不到它的证书。[正文的取证条件](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/source.md:89>) · [正文推论](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/source.md:242>)
+
+### 源码已证明的结论
+
+记 \(E_q=I_{\mathrm{res}}(q)\)。分量声明用 `∃ q` 表达并集成员资格，要求 \(j\in E_q\) 且 \(x\in U_{q,j}\)。联合声明同样要求存在**同一条**路径 \(q\)，使 \(J\subseteq E_q\) 且 \(x\in U_{q,J}\)。两者都使用正文的矩阵 \(L_q+L^*\) 和路径残差 \(\hat\varepsilon_{q,j}\)。从这个路径见证，`hxq.1` 给出 \(x\in U_q\subseteq U\)，网络表示给出 \(c_q(x)=\phi(x)\)，局部上界随即给出右侧要求的真实误差界。`_text` 声明也保留了全局可评估性、有限阈值和 \(J\ne\varnothing\)。[分量声明](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520>) · [联合声明](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:552>) · [合并声明](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:588>)
+
+三个声明都把 `hLq` 写成对**所有** `N.ReachablePath` 的要求，连不参加并集的路径也要证明 `IsLipMatrix`。另一个全路径条件 `hpathV` 有正文依据，因为 \(U_q\subseteq U\subseteq V^*\)。
+
+### 额外前提确实会排除的例子
+
+取单分量 \(I=J=\{j\}\)，令 \(X=\{\bot,a,b,c\}\)，\(U=V^*=\{a,b,c\}\)。在 \(U\) 上按 \(\{a\}\)、\(\{b,c\}\) 分成两个零距类，类间距离为 \(1\)。令 \(\bot\) 自距为零，与 \(U\) 中各点距离为 \(\infty\)。这满足附件的扩展伪度量公理。
+
+构造两个一步即停的节点。路径 \(p\) 接收 \(a\) 并输出 \(a\)。路径 \(r\) 接收 \(b,c\)，分别输出 \(a,c\)。各节点在自己的输入域外取 \(\bot\)。代理取该网络的外延算子，目标在 \(U\) 上恒为 \(a\) 并固定 \(\bot\)，故可取 \(L^*=0\)。令 \(S_j=\{a\}\)，\(\delta_{o,j}=\tau_j=0\)。
+
+路径 \(p\) 可取 \(L_p=0\)，其锚点距离和残差均为零。两个保证域并集都是 \(\{a\}\)，真实误差达标集是 \(\{a,b\}\)，正文两式均成立。路径 \(r\) 没有样本，却是可达路径。若它有合法标量 Lip 系数 \(L\)，以 \(b,c\) 代入就要求
+\[
+1=d(a,c)=d(c_r(b),c_r(c))\le L\,d(b,c)=L\cdot0=0.
+\]
+在 `ENNReal` 中即使 \(L=\top\) 也有 \(L\cdot0=0\)。因此本例无法满足源码的 `hLq`。[扩展伪度量公理](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean:15>) · [IsLipMatrix 定义](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean:21>)
+
+### 可如何补齐
+
+可以保留 `Lq` 的全函数类型，只把**合法性**限制到参加并集的路径。记 \(H(q)\) 表示 \(L_q\) 是 \(c_q\) 在 \(U_q\) 上的合法 Lip 矩阵。分量声明采用 \(\forall q,\ j\in E_q\Rightarrow H(q)\)，联合声明采用 \(\forall q,\ J\subseteq E_q\Rightarrow H(q)\)。原证明拆开并集成员时已经取得路径 \(q\) 及相应的入并条件 \(h\)，把 `hLq q` 换成 `hLq q h`，即可调用已有局部上界。[分量局部引理](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:152>) · [联合局部引理](</private/tmp/math-gauge-astra62-max-20261119/sessions/AHR02/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:244>)
+
+我用 Lean 4.29.1 核验了附件原模块，也分别核验了上述两条放宽前提的证明。原模块证明的是全路径均有证书的版本，两条放宽前提的证明是本次审阅的补充。
+
+原文与附件实现出自 Zhe Li（Glen Li / glenzli）的 *The Operator Evolution Theory*。[作品主页](https://glenzli.com/books/oet/) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)

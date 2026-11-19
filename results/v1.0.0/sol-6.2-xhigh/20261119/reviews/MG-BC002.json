@@ -1,0 +1,52 @@
+{
+  "case_id": "MG-BC002",
+  "response_sha256": "55572853b5b4cb2746bba7daf8274eb7b03a9eefd165bb91917acce1838d5f99",
+  "reviewer": "Codex independent research reviewer /root/tx_v11_integration_architecture",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "背景R3，全部任务完成；正确条件prox理论与真实流分开。真实流全局适定、唯一平衡0、距离/能量指数衰减和半群叠层均证明。条件三点证书/FNE证明有效。实际模型则对任意固定t>0以小初值epsilon e1展开Jacobian，反对称项为-epsilon^2 e^-t(1-e^-t)^3+O(epsilon^4)，故每个正tau的真实流都不可能是任何凸函数的prox。部署段准确区分真实流、时间tau与隐式Euler prox_(tau f)，未把非prox误说成非FNE。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "准确指出实际流不具备凸prox表示，保护条件定理本身，不把流的收缩性当作表示认证。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "给出本f的真实Jacobian小初值展开，对每个固定t>0得到非零反对称系数；同时证明C1凸prox必须Jacobian对称。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "背景反证、原收敛结论、条件证书及实际可用部署解释全部完成。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "abf20cd5dc37b9c605451371af65b6f15ac08c6e3ee2c199af62e8a88f213c23",
+    "native_final_sha256": "55572853b5b4cb2746bba7daf8274eb7b03a9eefd165bb91917acce1838d5f99",
+    "collection_sha256": "ae1ae3b4d893730ccba8792938ede1453d67b8ccae69262468315bcff9a28337",
+    "physical_attempt": 1,
+    "task_sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af",
+    "rubric_sha256": "a9664da66d113b6ac0098ba8997a6fa247281873ebad84f726f3757f6216fd59",
+    "reference_sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3"
+  },
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "background_R": 3,
+  "assessment": {
+    "background_check": {
+      "background_R": 3,
+      "complete": true,
+      "false_endorsement": false,
+      "notes": "背景R3，全部任务完成；正确条件prox理论与真实流分开。真实流全局适定、唯一平衡0、距离/能量指数衰减和半群叠层均证明。条件三点证书/FNE证明有效。实际模型则对任意固定t>0以小初值epsilon e1展开Jacobian，反对称项为-epsilon^2 e^-t(1-e^-t)^3+O(epsilon^4)，故每个正tau的真实流都不可能是任何凸函数的prox。部署段准确区分真实流、时间tau与隐式Euler prox_(tau f)，未把非prox误说成非FNE。"
+    }
+  }
+}

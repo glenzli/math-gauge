@@ -1,0 +1,520 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p><strong>结论：部分覆盖。</strong> 对“节点域加细保持外延等价”这一结论，源码的证明是正确的，构造版本完整覆盖了这一情形。但抽象关系 <code>NodeDomainRefinement</code> 的定义比正文宽。另外有两类关联缺口：源码没有把这个关系和正文的构造连起来，也没有把构造与正文的入口片、边域公式之间的对应写成定理。对这三点我都在 Lean 里做了检查，代码见附录。</p>
+<h2>一、核对方式</h2>
+<ul>
+<li>用 <code>lake build</code> 编译 <code>network_refinement</code> 和 <code>domain_refinement_construction</code>，编译通过，源码中没有 <code>sorry</code>。</li>
+<li>对 <code>refinement_preserves_local_equivalence</code>、<code>NodePartitionData.network_extensional_eq</code>、<code>network_path_projection</code>、<code>self_loop_choice_iff</code>、<code>local_op_eq_restrict</code> 执行 <code>#print axioms</code>，结果只依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</li>
+<li>下文提到的补充定理和反例写在临时文件里，用 <code>lake env lean</code> 编译通过，同样只依赖这三条公理，没有 <code>sorryAx</code>。</li>
+</ul>
+<h2>二、定义的逐项对应</h2>
+<p>源码对正文定义给了两种形式化：<strong>构造</strong>（<code>NodePartitionData</code> → <code>presentation</code> → <code>prune</code>）和<strong>关系</strong>（<code>NodeDomainRefinement N N'</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>正文条款</th>
+<th>构造 <code>NodePartitionData</code></th>
+<th>关系 <code>NodeDomainRefinement</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有限非空分划 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><msub><mo>⨆</mo><mi>a</mi></msub><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">U_\beta=\bigsqcup_a U_{\beta,a}</annotation></semantics></math></span>，各块非空</td>
+<td><code>count_pos</code>、<code>nonempty</code>、<code>disjoint</code>、<code>cover</code>（等于 <code>N.node_dom target</code>）</td>
+<td>同名字段</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">dom</mi><mo>⁡</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo>=</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\operatorname{dom}f_{\beta,a}=U_{\beta,a}</annotation></semantics></math></span> 且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><msub><mo>≡</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></msub><msub><mi>f</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">f_{\beta,a}\equiv_{U_{\beta,a}}f_\beta</annotation></semantics></math></span></td>
+<td><code>local_domain</code>、<code>local_eq</code>；已证 <code>local_op_eq_restrict</code>，即 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo>=</mo><msub><mi>f</mi><mi>β</mi></msub><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></msub></mrow><annotation encoding="application/x-tex">f_{\beta,a}=f_\beta\vert_{U_{\beta,a}}</annotation></semantics></math></span></td>
+<td><code>local_domain</code>、<code>local_equiv</code></td>
+</tr>
+<tr>
+<td>用子节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\beta_a</annotation></semantics></math></span> 替换 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span></td>
+<td>标签类型 <code>{v // v ≠ target} ⊕ Fin count</code></td>
+<td>字段 <code>source</code>（单射）、<code>old_node_present</code>、<code>piece_node_present_iff_reached</code></td>
+</tr>
+<tr>
+<td>入口片取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>U</mi><mi>β</mi><mrow><mi>i</mi><mi>n</mi></mrow></msubsup><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">U_\beta^{in}\cap U_{\beta,a}</annotation></semantics></math></span></td>
+<td><code>entry := lift_label (N.entry x) x</code>；<strong>源码未把公式写成定理</strong></td>
+<td>由 <code>entry_projection</code> 加 <code>entry_mem</code> 迫使成立</td>
+</tr>
+<tr>
+<td>入边 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>γ</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\gamma\to\beta}\cap U_{\beta,a}</annotation></semantics></math></span>、出边 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>γ</mi></mrow></msub><mo>∩</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D_{\beta\to\gamma}\cap f_{\beta,a}(U_{\beta,a})</annotation></semantics></math></span>、自环双交公式</td>
+<td><code>choice</code> 经 <code>lift_label</code> 定义；<strong>只有自环一条有定理</strong>（<code>self_loop_choice_iff</code>），而且是剪枝前的</td>
+<td><strong>只在实际产生的输出上约束</strong>（<code>choice_projection</code>）</td>
+</tr>
+<tr>
+<td>删除未经过的子节点（按 @h-ced8c7236326e104）</td>
+<td><code>presentation.prune</code>，即 <code>prune_choice</code> 把指向被删节点的转移改为 stop</td>
+<td><code>piece_node_present_iff_reached</code></td>
+</tr>
+<tr>
+<td>结论 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><msub><mo>≡</mo><mi>U</mi></msub><msub><mi>ϕ</mi><mi mathvariant="script">N</mi></msub></mrow><annotation encoding="application/x-tex">\phi_{\mathcal N&#x27;}\equiv_U\phi_{\mathcal N}</annotation></semantics></math></span></td>
+<td><code>network_extensional_eq</code>：外延算子全域相等，强于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>≡</mo><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\equiv_U</annotation></semantics></math></span></td>
+<td><code>refinement_preserves_local_equivalence</code>：在 <code>N.U</code> 上局部等价</td>
+</tr>
+</tbody>
+</table>
+<p><strong>正文证明中的中间结论：</strong></p>
+<ul>
+<li>加细结果是有限网络：构造版本把所有义务都做成了一个完整的 <code>FiniteOperatorNetwork</code>，所以这一点已被证明；关系版本则把它当作前提。</li>
+<li>路径按实际输入重新着色，投影回去恰好是原路径：<code>network_path_labels</code> 和 <code>network_path_projection</code> 已证，因此路径长度不变。</li>
+<li>自环在不同次经过时可以选不同子块：<code>colour_path</code> 用当前输入选块，这一点被正确实现了。</li>
+</ul>
+<p><strong>关系版本证明的实际结构。</strong> 它是一个投影模拟论证：</p>
+<ol>
+<li><code>node_eval_eq</code>：新节点在自身定义域上的取值等于原节点。</li>
+<li><code>terminal_projection</code>：沿实际输入的路由投影回原网络。</li>
+<li>由 <code>terminal_path_unique</code> 得 <code>path_projection</code>。</li>
+<li><code>eval_projected</code> 给出求值相等。</li>
+</ol>
+<p>这个证明完全没有用到 <code>piece_disjoint</code>、<code>piece_cover</code> 等分划性质，所以结论适用于比正文更大的一类网络。</p>
+<h2>三、不足 1：抽象关系比正文定义宽</h2>
+<p><code>choice_projection</code> 只约束 <code>N'.node_actual_input_domain v</code> 的像上的路由。节点输出像中实际没有产生的点，路由完全不受约束。正文则在整个输出像上规定了边域公式。</p>
+<p><strong>反例（已在 Lean 中验证，<code>relation_admits_extra_edge</code>）：</strong></p>
+<ul>
+<li>取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo>=</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathcal X=\{\bot=0,1,2\}</annotation></semantics></math></span>。</li>
+<li>原网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span>：单节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>β</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mrow></mrow><annotation encoding="application/x-tex">f_\beta=\mathrm{id}</annotation></semantics></math></span>（定义域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{1,2\}</annotation></semantics></math></span>），<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U=\{1\}</annotation></semantics></math></span>，没有边。</li>
+<li>正文对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span> 的节点域加细只有两种：
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q=1</annotation></semantics></math></span> 时，结果与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span> 同构，没有边；</li>
+<li>分划为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo><mo separator="true">,</mo><mo stretchy="false">{</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{1\},\{2\}</annotation></semantics></math></span> 时，子节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\beta_2</annotation></semantics></math></span> 不会被经过，删除后剩下的节点算子定义域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{1\}</annotation></semantics></math></span>。</li>
+</ul>
+</li>
+<li><code>loopNet</code>：与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span> 相同，只是在从不实际产生的输出 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span> 上加一条自环，自环边域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{2\}</annotation></semantics></math></span>。它仍是合法的有限网络：输入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span> 一步终止。</li>
+<li>用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q=1</annotation></semantics></math></span> 的数据可以构造出 <code>NodeDomainRefinement baseNet loopNet</code> 的实例，因此 <code>NetworkRefinement baseNet loopNet</code> 成立。</li>
+<li>但 <code>loopNet</code> 不是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span> 任何一次正文加细的结果：
+<ul>
+<li>节点域加细的结果都没有边；</li>
+<li>代数加细得到两个都被经过的节点，而 <code>loopNet</code> 只有一个节点。</li>
+</ul>
+</li>
+<li>Lean 中验证的具体差别：
+<ul>
+<li>两者的边域分别为 <code>∅</code> 与 <code>{2}</code>，<code>presentation_data</code> 不相等；</li>
+<li>终止域分别是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{1,2\}</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{1\}</annotation></semantics></math></span>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>数学影响：</strong></p>
+<ul>
+<li>作为“定义”，这个关系并没有刻画正文的节点域加细。它只确定节点集、局域算子、入口，以及实际输出上的路由，未产生输出上的边与终止域是任意的。</li>
+<li>正文的加细保持节点标签图的无环性：新边投影后都是原边，自环只来自原自环。这个关系却会把无环网络“加细”成有环网络，所以凡依赖完整边数据的结论都不能经由它传递，例如属于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="script">X</mi><mrow><mi>n</mi><mi>e</mi><mi>t</mi></mrow><mrow><mi>d</mi><mi>a</mi><mi>g</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">\mathcal X^{dag}_{net}</annotation></semantics></math></span>、对象等同、表示层读出、多步加细可达集。</li>
+<li>对本题的命题没有危害：前提更宽，定理反而更强，外延等价仍然成立。</li>
+<li>是否存在加细后继，两种定义等价：关系的分划数据总能生成正文的加细，反方向见下一节的桥接。</li>
+</ul>
+<p><strong>修复方向：</strong></p>
+<ul>
+<li>要么把它改名、改文档，说明它是“投影模拟”这一充分条件，不再作为正文的定义；</li>
+<li>要么增加一个精确字段：对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo></mrow><annotation encoding="application/x-tex">z\in</annotation></semantics></math></span> <code>N'.node_image v</code> 和所有 <code>w'</code>，
+<code>N'.choice v z = .next w'</code> ⟺ <code>N.choice (π v) z = .next (π w')</code> ∧ ∀ b, <code>source w' = .inr b → z ∈ piece b</code>。
+这条字段对 <code>w'</code> 只遍历仍然存在的节点，因而已经包含了剪枝。现有证明不需要改，补充的 <code>network_edge_domain</code> 正好提供这条字段的满足性。</li>
+</ul>
+<h2>四、不足 2：关系与构造没有桥接</h2>
+<p>源码在文档里说明两者各自证明，但没有任何定理说明 <code>P.network</code> 是 <code>NodeDomainRefinement</code> 的实例。后果是：</p>
+<ul>
+<li>关系版本的定理在源码中没有任何被验证的实例，原则上可能是空真的；</li>
+<li>正文的构造也从未进入 <code>NetworkRefinement</code>。</li>
+</ul>
+<p><strong>补充（已编译通过）：</strong></p>
+<ul>
+<li><code>NodePartitionData.to_refinement : NodeDomainRefinement N P.network</code>；</li>
+<li>由它得到推论 <code>refinement_preserves_local_equivalence (.node_domain P.to_refinement)</code>。</li>
+</ul>
+<p>证明的关键步骤是：在实际输出处，提升后的目标标签一定在终止路径的后继中出现，因此被剪枝保留。这一步用到 <code>terminal_path_suffix_of_next_at_prefix</code>。<code>old_node_present</code> 这一字段同时证明了正文的断言“只有子节点可能被删”。</p>
+<h2>五、不足 3：构造与正文公式的对应只证了一部分</h2>
+<p>源码只有剪枝前的自环路由定理。我补充了剪枝后网络的统一公式：</p>
+<ul>
+<li><code>network_edge_domain</code>：对存在的标签 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo separator="true">,</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">v,w</annotation></semantics></math></span>，
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msubsup><mi>D</mi><mrow><mi>v</mi><mo>→</mo><mi>w</mi></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">z\in D&#x27;_{v\to w}</annotation></semantics></math></span> ⟺ <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><mi mathvariant="normal">img</mi><mo>⁡</mo><msubsup><mi>f</mi><mi>v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">z\in\operatorname{img} f&#x27;_v</annotation></semantics></math></span> ∧ <code>N.choice (π v) z = next (π w)</code> ∧ （若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo>=</mo><msub><mi>β</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">w=\beta_b</annotation></semantics></math></span>，则 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>b</mi></mrow></msub></mrow><annotation encoding="application/x-tex">z\in U_{\beta,b}</annotation></semantics></math></span>）。
+它依次给出入边公式、出边公式、自环双交公式，以及无关边不变。终止域即像减去边域之并，因此 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>T</mi><msub><mi>β</mi><mi>a</mi></msub><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>T</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">T&#x27;_{\beta_a}=f_{\beta,a}(U_{\beta,a})\cap T_\beta</annotation></semantics></math></span>，在剪枝处再扩大。</li>
+<li><code>network_entry_domain</code>：入口片为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>U</mi><mrow><mi>π</mi><mi>v</mi></mrow><mrow><mi>i</mi><mi>n</mi></mrow></msubsup><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">U^{in}_{\pi v}\cap U_{\beta,a}</annotation></semantics></math></span>。</li>
+</ul>
+<h2>六、次要缺口</h2>
+<ul>
+<li>正文给出的长度界是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi mathvariant="script">N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\ell(\mathcal N)</annotation></semantics></math></span>，构造里用的是存储的 <code>N.depth_bound</code>。由路径投影可以推出 <code>evaluation_depth</code> 相等，但源码没有写出来。</li>
+<li>源码没有把结论封装成 <code>ExtensionalEquivalent N' N</code>（即 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 相同且局部等价），也没有给出 <code>NetworkObject</code> 编号层面的版本，以及关系沿重编号的传递。这几项都只是简单推论。</li>
+<li><code>RefinementRule</code> 和 <code>Irreducible</code> 是抽象的，没有用节点域加细来实例化。</li>
+</ul>
+<h2>七、对正文定义本身的说明</h2>
+<ul>
+<li>正文所说的“选取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">f_{\beta,a}</annotation></semantics></math></span>”其实没有选择余地，它唯一等于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>β</mi></msub><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></msub></mrow><annotation encoding="application/x-tex">f_\beta|_{U_{\beta,a}}</annotation></semantics></math></span>。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q=1</annotation></semantics></math></span> 的平凡分划，正文和 Lean 都允许，它产生的是重标号副本。讨论不可约性时，规则族 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span> 需要排除这种情形。这一点属于定义层面的观察，不是形式化错误。</li>
+<li>我逐条核对了正文证明的统一边域等式与终止域公式，没有发现问题。</li>
+</ul>
+<h2>八、已证与需补充</h2>
+<ul>
+<li><strong>源码已证：</strong>
+<ul>
+<li>构造得到有限网络，且外延算子全域相等；</li>
+<li>路径重新着色后投影回去恰好是原路径；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">f_{\beta,a}</annotation></semantics></math></span> 等于限制算子；</li>
+<li>自环路由（剪枝前）；</li>
+<li>关系版本的外延局部等价。</li>
+</ul>
+</li>
+<li><strong>需补充：</strong>
+<ul>
+<li>精确化关系，或把它重新定位为充分条件；</li>
+<li>桥接 <code>to_refinement</code>；</li>
+<li>边域与入口片公式；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi mathvariant="script">N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\ell(\mathcal N)</annotation></semantics></math></span> 长度界；</li>
+<li><code>ExtensionalEquivalent</code> 和对象层的封装。</li>
+</ul>
+</li>
+</ul>
+<p>前三项附录里已给出可编译的证明或修复所需的证明，后两项只是简单推论。</p>
+<h2>附录：验证代码（导入原模块，不修改原文件）</h2>
+<p><strong>A. 桥接</strong></p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_05_operator_networks.network_refinement
+import formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction
+namespace formal_oet.vol_01.ch_05_operator_networks
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_04_operator_chain_calculus FiniteOperatorNetwork
+variable {X V : Type} {bot : X} {N : FiniteOperatorNetwork X bot V} {target : V}
+namespace NodePartitionData
+variable (P : NodePartitionData N target)
+
+theorem colour_path_getElem : ∀ (p : List V) (y : X) (n : Nat) (hn : n &lt; p.length),
+    (P.colour_path p y)[n]'(by simpa using hn) =
+      P.lift_label p[n] (chain_eval_nodes_core N.node_op (p.take n) y)
+  | [], _, n, hn =&gt; by simp at hn
+  | v :: rest, y, 0, _ =&gt; by simp [colour_path, chain_eval_nodes_core]
+  | v :: rest, y, n + 1, hn =&gt; by
+      simp only [colour_path, List.getElem_cons_succ, List.take_succ_cons, chain_eval_nodes_core]
+      exact colour_path_getElem rest _ n (by simpa using hn)
+
+theorem lift_label_eq_inr {w : V} {z : X} {a : Fin P.count}
+    (h : P.lift_label w z = .inr a) : w = target ∧ P.piece_at z = a := by
+  classical
+  unfold lift_label at h
+  split_ifs at h with hw
+  · exact ⟨hw, Sum.inr.inj h⟩
+
+theorem chain_eval_subtype {Q : P.Label → Prop} (l : List {v // Q v}) (x : X) :
+    chain_eval_nodes_core (fun v : {v // Q v} =&gt; P.node_op v.val) l x =
+      chain_eval_nodes_core P.node_op (l.map Subtype.val) x := by
+  induction l generalizing x with
+  | nil =&gt; rfl
+  | cons v rest ih =&gt; exact ih _
+
+theorem ndp_eq (v : {v // P.presentation.Reached v}) :
+    node_domain_projection target (Subtype.val) v = P.projection v.val := by
+  rcases v with ⟨v, hv⟩; cases v &lt;;&gt; rfl
+
+theorem ndp_fun :
+    node_domain_projection target (Subtype.val : {v // P.presentation.Reached v} → P.Label) =
+      P.projection ∘ Subtype.val := funext P.ndp_eq
+
+noncomputable def to_refinement : NodeDomainRefinement N P.network where
+  target := target
+  part_count := P.count
+  part_count_pos := P.count_pos
+  piece := P.piece
+  piece_nonempty := P.nonempty
+  piece_disjoint := P.disjoint
+  piece_cover := P.cover
+  local_factor := P.local_op
+  local_domain := P.local_domain
+  local_equiv := fun a x hx =&gt; P.local_eq a x hx
+  source := Subtype.val
+  source_injective := Subtype.val_injective
+  old_node_present := by
+    intro β
+    obtain ⟨x, hx⟩ := N.node_reachable β.val
+    have hm : β.val ∈ (P.colour_path (N.path_of x) x.val).map P.projection := by
+      rw [P.colour_path_projection]; exact hx
+    obtain ⟨l, hl, hlβ⟩ := List.mem_map.mp hm
+    have hl' : l = .inl β := by
+      cases l with
+      | inl w =&gt; exact congrArg Sum.inl (Subtype.ext hlβ)
+      | inr a =&gt; exact absurd hlβ.symm β.property
+    subst hl'
+    exact ⟨⟨.inl β, x, hl⟩, rfl⟩
+  piece_node_present_iff_reached := by
+    intro a
+    constructor
+    · rintro ⟨⟨v, x, hv⟩, rfl⟩
+      obtain ⟨n, hn, hget⟩ := List.getElem_of_mem hv
+      have hlen : n &lt; (N.path_of x).length := by simpa [presentation] using hn
+      have hlab := P.colour_path_getElem (N.path_of x) x.val n hlen
+      have hget' := hlab.symm.trans hget
+      obtain ⟨ht, hpiece⟩ := P.lift_label_eq_inr hget'
+      have hmem := terminal_path_prefix_input_mem N.choice_next_mem
+        (N.entry_mem x) (N.path_terminal x) ⟨n, hlen⟩
+      refine ⟨x, ⟨n, hlen⟩, by simpa using ht, ?_⟩
+      have hdom : chain_eval_nodes_core N.node_op ((N.path_of x).take n) x.val ∈
+          N.node_dom target := by simpa [List.get_eq_getElem, ht] using hmem
+      have := P.mem_piece_at _ hdom
+      rw [hpiece] at this; exact this
+    · rintro ⟨x, n, hlab, hin⟩
+      refine ⟨⟨.inr a, x, ?_⟩, rfl⟩
+      change Sum.inr a ∈ P.colour_path (N.path_of x) x.val
+      have hlab' := P.colour_path_getElem (N.path_of x) x.val n.val n.isLt
+      have hpa := P.piece_at_unique _ a hin
+      have : (P.colour_path (N.path_of x) x.val)[n.val]'(by simp) = Sum.inr a := by
+        rw [hlab']
+        have h2 : (N.path_of x)[n.val] = target := by simpa [List.get_eq_getElem] using hlab
+        rw [h2]; unfold lift_label; simp only [↓reduceDIte]; exact congrArg Sum.inr hpa
+      rw [← this]; exact List.getElem_mem _
+  old_node_op_compat := by intro β' β hs; change P.node_op β'.val = _; rw [hs]; rfl
+  piece_node_op_compat := by intro β' a hs; change P.node_op β'.val = _; rw [hs]; rfl
+  same_input_domain := rfl
+  entry_projection := by
+    intro x
+    change node_domain_projection target Subtype.val (P.network.entry x) = N.entry x
+    rw [P.ndp_eq]; exact P.projection_lift _ _
+  choice_projection := by
+    intro v z hz
+    rw [P.ndp_eq, P.ndp_fun]
+    obtain ⟨y, ⟨x, pref, suffix, hpath, hy, hydom⟩, rfl⟩ := hz
+    change map_output_choice _ (prune_choice P.presentation.Reached P.choice v
+      ((P.node_op v.val).func y)) = _
+    unfold prune_choice
+    cases hc : P.choice v.val ((P.node_op v.val).func y) with
+    | stop =&gt;
+        simp only [map_output_choice]
+        unfold choice at hc
+        cases hN : N.choice (P.projection v.val) ((P.node_op v.val).func y) with
+        | stop =&gt; exact hN.symm
+        | next w =&gt; rw [hN] at hc; simp [map_output_choice] at hc
+    | next w' =&gt;
+        have hreach : P.presentation.Reached w' := by
+          have hlabels := P.presentation.prune_path_labels x
+          have hp' : P.presentation.path_of x =
+              pref.map Subtype.val ++ v.val :: suffix.map Subtype.val := by
+            rw [← hlabels]; change List.map Subtype.val (P.network.path_of x) = _
+            rw [hpath]; simp
+          have hyeq : y = chain_eval_nodes_core P.node_op (pref.map Subtype.val) x.val := by
+            rw [hy]; exact P.chain_eval_subtype pref x.val
+          have hnext : P.choice v.val ((P.node_op v.val).func
+                (chain_eval_nodes_core P.node_op (pref.map Subtype.val) x.val)) =
+              OutputChoice.next w' := by rw [← hyeq]; exact hc
+          obtain ⟨tail, htail⟩ := terminal_path_suffix_of_next_at_prefix
+            (P.presentation.path_terminal x) hp' hnext
+          refine ⟨x, ?_⟩; rw [hp', htail]; simp
+        simp only [hreach, ↓reduceDIte, map_output_choice]
+        unfold choice at hc
+        cases hN : N.choice (P.projection v.val) ((P.node_op v.val).func y) with
+        | stop =&gt; rw [hN] at hc; simp [map_output_choice] at hc
+        | next w =&gt;
+            rw [hN] at hc
+            simp only [map_output_choice, OutputChoice.next.injEq] at hc
+            subst hc
+            simp only [Function.comp_apply, P.projection_lift]
+            exact hN.symm
+end NodePartitionData
+
+theorem node_domain_construction_preserves_via_relation
+    {X V : Type} {bot : X} {N : FiniteOperatorNetwork X bot V} {target : V}
+    (P : NodePartitionData N target) :
+    LocalEquivalent P.network.extensional_operator N.extensional_operator N.U :=
+  refinement_preserves_local_equivalence (.node_domain P.to_refinement)
+end formal_oet.vol_01.ch_05_operator_networks
+</code></pre>
+<p><strong>B. 构造的边域与入口片公式</strong></p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction
+namespace formal_oet.vol_01.ch_05_operator_networks
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_04_operator_chain_calculus FiniteOperatorNetwork
+variable {X V : Type} {bot : X} {N : FiniteOperatorNetwork X bot V} {target : V}
+namespace NodePartitionData
+variable (P : NodePartitionData N target)
+
+theorem image_subset_original (v : P.Label) :
+    (P.node_op v).func '' dom (P.node_op v) ⊆ N.node_image (P.projection v) := by
+  rintro z ⟨y, hy, rfl⟩
+  exact ⟨y, P.node_domain_subset_original v hy, (P.node_apply_eq_original v y hy).symm⟩
+
+theorem lift_label_eq_iff {u : V} {z : X} (hz : z ∈ N.node_dom u) (w : P.Label) :
+    P.lift_label u z = w ↔ P.projection w = u ∧ ∀ b, w = .inr b → z ∈ P.piece b := by
+  classical
+  by_cases hu : u = target
+  · subst hu
+    simp only [lift_label, ↓reduceDIte]
+    cases w with
+    | inl w' =&gt; simp [projection, w'.property]
+    | inr b =&gt;
+      simp only [Sum.inr.injEq, projection, true_and]
+      constructor
+      · rintro rfl b' rfl; exact P.mem_piece_at z hz
+      · intro h; exact P.piece_at_unique z b (h b rfl)
+  · simp only [lift_label, hu, ↓reduceDIte]
+    cases w with
+    | inl w' =&gt;
+      simp only [Sum.inl.injEq, projection, reduceCtorEq, false_implies, implies_true, and_true]
+      constructor
+      · rintro rfl; rfl
+      · intro h; exact Subtype.ext h.symm
+    | inr b =&gt; simp [projection, Ne.symm hu]
+
+theorem network_edge_domain (v w : {v // P.presentation.Reached v}) (z : X) :
+    z ∈ P.network.edge_domain v w ↔
+      z ∈ (P.node_op v.val).func '' dom (P.node_op v.val) ∧
+        N.choice (P.projection v.val) z = .next (P.projection w.val) ∧
+        ∀ b, w.val = .inr b → z ∈ P.piece b := by
+  classical
+  change (z ∈ (P.node_op v.val).func '' dom (P.node_op v.val) ∧
+      prune_choice P.presentation.Reached P.choice v z = .next w) ↔ _
+  constructor
+  · rintro ⟨himg, hc⟩
+    refine ⟨himg, ?_⟩
+    have hzN := P.image_subset_original v.val himg
+    unfold prune_choice at hc
+    split at hc
+    · cases hc
+    · rename_i w' hw'
+      split at hc
+      · simp only [OutputChoice.next.injEq] at hc
+        subst hc
+        unfold choice map_output_choice at hw'
+        split at hw'
+        · cases hw'
+        · rename_i u hu
+          simp only [OutputChoice.next.injEq] at hw'
+          have hzu : z ∈ N.node_dom u := N.edge_domain_subset_node_dom ⟨hzN, hu⟩
+          obtain ⟨h1, h2⟩ := (P.lift_label_eq_iff hzu _).mp hw'
+          exact ⟨by rw [hu, h1], h2⟩
+      · cases hc
+  · rintro ⟨himg, hc, hpiece⟩
+    refine ⟨himg, ?_⟩
+    have hzN := P.image_subset_original v.val himg
+    have hzu : z ∈ N.node_dom (P.projection w.val) := N.edge_domain_subset_node_dom ⟨hzN, hc⟩
+    have hlift : P.lift_label (P.projection w.val) z = w.val :=
+      (P.lift_label_eq_iff hzu _).mpr ⟨rfl, hpiece⟩
+    have hP : P.choice v.val z = .next w.val := by simp [choice, hc, map_output_choice, hlift]
+    unfold prune_choice; rw [hP]; simp [w.property]
+
+theorem network_entry_domain (v : {v // P.presentation.Reached v}) (x : X) :
+    x ∈ P.network.entry_domain v ↔
+      x ∈ N.entry_domain (P.projection v.val) ∧ ∀ b, v.val = .inr b → x ∈ P.piece b := by
+  constructor
+  · rintro ⟨hx, he⟩
+    have he' : P.lift_label (N.entry ⟨x, hx⟩) x = v.val := congrArg Subtype.val he
+    obtain ⟨h1, h2⟩ := (P.lift_label_eq_iff (N.entry_mem ⟨x, hx⟩) _).mp he'
+    exact ⟨⟨hx, h1.symm⟩, h2⟩
+  · rintro ⟨⟨hx, he⟩, hp⟩
+    refine ⟨hx, Subtype.ext ?_⟩
+    change P.lift_label (N.entry ⟨x, hx⟩) x = v.val
+    exact (P.lift_label_eq_iff (N.entry_mem ⟨x, hx⟩) _).mpr ⟨he.symm, hp⟩
+end NodePartitionData
+end formal_oet.vol_01.ch_05_operator_networks
+</code></pre>
+<p><strong>C. 反例（关系比正文定义宽）</strong></p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_05_operator_networks.network_refinement
+import formal_oet.vol_01.ch_05_operator_networks.network_identity
+namespace formal_oet.vol_01.ch_05_operator_networks
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_04_operator_chain_calculus FiniteOperatorNetwork
+
+noncomputable def baseNet : FiniteOperatorNetwork (Fin 3) 0 Unit where
+  U := {1}
+  bot_not_mem := by simp
+  node_fintype := inferInstance
+  node_op := fun _ =&gt; id_operator
+  node_dom_nonempty := fun _ =&gt; ⟨1, by simp [dom, id_operator]⟩
+  entry := fun _ =&gt; ()
+  entry_mem := by
+    rintro ⟨x, hx⟩; simp only [Set.mem_singleton_iff] at hx; subst hx; simp [dom, id_operator]
+  choice := fun _ _ =&gt; .stop
+  choice_next_mem := by intro β γ y _ h; cases h
+  depth_bound := 1
+  path_of := fun _ =&gt; [()]
+  path_terminal := fun _ =&gt; TerminalPathFrom.stop rfl
+  path_length_le_depth := by intro x; simp
+  node_reachable := by intro β; exact ⟨⟨1, rfl⟩, by simp⟩
+
+noncomputable def loopNet : FiniteOperatorNetwork (Fin 3) 0 Unit where
+  U := {1}
+  bot_not_mem := by simp
+  node_fintype := inferInstance
+  node_op := fun _ =&gt; id_operator
+  node_dom_nonempty := fun _ =&gt; ⟨1, by simp [dom, id_operator]⟩
+  entry := fun _ =&gt; ()
+  entry_mem := by
+    rintro ⟨x, hx⟩; simp only [Set.mem_singleton_iff] at hx; subst hx; simp [dom, id_operator]
+  choice := fun _ z =&gt; if z = 2 then .next () else .stop
+  choice_next_mem := by
+    intro β γ y hy h
+    simp only [id_operator, id] at h ⊢
+    split_ifs at h with h2
+    · subst h2; simp [dom]
+  depth_bound := 1
+  path_of := fun _ =&gt; [()]
+  path_terminal := by
+    rintro ⟨x, hx⟩; simp only [Set.mem_singleton_iff] at hx; subst hx
+    exact TerminalPathFrom.stop (by simp [id_operator])
+  path_length_le_depth := by intro x; simp
+  node_reachable := by intro β; exact ⟨⟨1, rfl⟩, by simp⟩
+
+theorem actual_input_eq_one {M : FiniteOperatorNetwork (Fin 3) 0 Unit}
+    (hU : M.U = {1}) (hp : ∀ x, M.path_of x = [()]) {y : Fin 3}
+    (hy : y ∈ M.node_actual_input_domain ()) : y = 1 := by
+  rcases hy with ⟨x, pref, suffix, hpath, rfl, _⟩
+  rw [hp x] at hpath
+  cases pref with
+  | nil =&gt;
+      have h : x.val ∈ M.U := x.property
+      have h' : x.val ∈ ({1} : Set (Fin 3)) := hU ▸ h
+      simpa [FiniteOperatorNetwork.chain_eval_nodes, chain_eval_nodes_core] using h'
+  | cons a pref =&gt; have := congrArg List.length hpath; simp at this
+
+noncomputable def trivialRefinement (M : FiniteOperatorNetwork (Fin 3) 0 Unit)
+    (hU : M.U = {1}) (hop : M.node_op = fun _ =&gt; id_operator)
+    (hp : ∀ x, M.path_of x = [()]) (hc1 : M.choice () 1 = .stop) :
+    NodeDomainRefinement baseNet M where
+  target := ()
+  part_count := 1
+  part_count_pos := by decide
+  piece := fun _ =&gt; dom (id_operator : Operator (Fin 3) 0)
+  piece_nonempty := fun _ =&gt; ⟨1, by simp [dom, id_operator]⟩
+  piece_disjoint := by intro a b hab; exact absurd (Subsingleton.elim a b) hab
+  piece_cover := by
+    ext x; simp [FiniteOperatorNetwork.node_dom, baseNet,
+      FiniteOperatorNetwork.to_transition_graph, OperatorTransitionGraph.node_dom]
+  local_factor := fun _ =&gt; id_operator
+  local_domain := fun _ =&gt; rfl
+  local_equiv := fun _ _ _ =&gt; rfl
+  source := fun _ =&gt; .inr 0
+  source_injective := fun _ _ _ =&gt; rfl
+  old_node_present := fun β =&gt; absurd rfl β.property
+  piece_node_present_iff_reached := by
+    intro a
+    have ha : a = 0 := Subsingleton.elim _ _
+    subst ha
+    simp only [exists_const, true_iff]
+    refine ⟨⟨1, rfl⟩, ⟨0, by simp [baseNet]⟩, rfl, ?_⟩
+    simp [baseNet, FiniteOperatorNetwork.chain_eval_nodes, chain_eval_nodes_core, dom, id_operator]
+  old_node_op_compat := by intro β' β h; cases h
+  piece_node_op_compat := by intro β' a _; rw [hop]
+  same_input_domain := by rw [hU]; rfl
+  entry_projection := fun _ =&gt; rfl
+  choice_projection := by
+    rintro ⟨⟩ z ⟨y, hy, rfl⟩
+    have h1 := actual_input_eq_one hU hp hy
+    subst h1
+    rw [show (M.node_op ()).func 1 = 1 by rw [hop]; rfl, hc1]
+    rfl
+
+noncomputable def baseRef : NodeDomainRefinement baseNet baseNet :=
+  trivialRefinement baseNet rfl rfl (fun _ =&gt; rfl) rfl
+noncomputable def loopRef : NodeDomainRefinement baseNet loopNet :=
+  trivialRefinement loopNet rfl rfl (fun _ =&gt; rfl) (by simp [loopNet])
+
+theorem relation_admits_extra_edge :
+    baseRef.part_count = loopRef.part_count ∧ (∀ a, baseRef.piece a = loopRef.piece a) ∧
+    baseNet.edge_domain () () = ∅ ∧ loopNet.edge_domain () () = {2} ∧
+    baseNet.presentation_data ≠ loopNet.presentation_data := by
+  have hb : baseNet.edge_domain () () = ∅ := by
+    ext z; simp [FiniteOperatorNetwork.edge_domain, FiniteOperatorNetwork.to_transition_graph, baseNet]
+  have hl : loopNet.edge_domain () () = {2} := by
+    ext z
+    simp only [FiniteOperatorNetwork.edge_domain, FiniteOperatorNetwork.to_transition_graph,
+      loopNet, Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨_, h⟩; by_contra hz; simp [hz] at h
+    · rintro rfl; exact ⟨⟨2, by simp [dom, id_operator], rfl⟩, by simp⟩
+  refine ⟨rfl, fun _ =&gt; rfl, hb, hl, ?_⟩
+  intro h
+  have := congrFun (congrFun (presentation_data_eq_edge_domain h) ()) ()
+  rw [hb, hl] at this
+  have h2 : (2 : Fin 3) ∈ (∅ : Set (Fin 3)) := by rw [this]; rfl
+  exact h2
+end formal_oet.vol_01.ch_05_operator_networks
+</code></pre>
+</div>

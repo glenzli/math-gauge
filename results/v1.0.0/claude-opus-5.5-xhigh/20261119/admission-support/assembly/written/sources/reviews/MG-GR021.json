@@ -1,0 +1,1148 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-GR021",
+  "task_id": "MG-GR021:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/task.md",
+      "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+      "bytes": 3052
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/reference.md",
+      "sha256": "b5de32d25059d2cbdfcbe90ffc7f3af86e366f5e90f5bc3435fd555b83291a1c",
+      "bytes": 12214
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/rubric.json",
+      "sha256": "a7175cd036b1e6c972d733e4a689dbb874f6db947b093dd9e11255ff4baba979",
+      "bytes": 1018
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+      "bytes": 21057,
+      "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/request.json",
+      "bytes": 5075,
+      "sha256": "3878b238221223ca369bd5798271b79a95c17e4cf608642222be5352edc2ddc4"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/case.json",
+      "sha256": "414791adab6def22cb8de7db1ef995adc4b64ba83446d2e01607f673f1fc929b"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/diagnostic-rubric.json",
+      "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+      "bytes": 4476
+    },
+    "solver_files": [],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/contract.json",
+      "sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2",
+      "bytes": 4056
+    }
+  },
+  "criteria": [
+    {
+      "id": "original_input_and_feasibility",
+      "parent_dimension": "feasibility_counts_liftability",
+      "source_definition": {
+        "id": "original_input_and_feasibility",
+        "points": 10,
+        "required": "Explicit finite mod4 input invariant and correct necessary/sufficient feasibility in all three fields, derived for the original possibly non-idempotent matrices."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "整数多项式迭代从非幂等A得到正交谱幂等；mod4交叉块确定τ，Gram判据与模π像超平面给三域同一可行性。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 10336,
+          "end_utf8": 10375,
+          "quote": "**定理 3.1。** 下列各条等价：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "closed_total_counts",
+      "parent_dimension": "feasibility_counts_liftability",
+      "source_definition": {
+        "id": "closed_total_counts",
+        "points": 10,
+        "required": "All exact finite and actual counts, including M=2, empty cases and all positive block ranks; distinguish O/2O from a residue field."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "光滑多元Hensel计数从模π零集开始；区分mod2环与剩余域，M=2的有限解恒有而真解受τ限制。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 11836,
+          "end_utf8": 11853,
+          "quote": "**定理 4.1。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "actual_image_test",
+      "parent_dimension": "feasibility_counts_liftability",
+      "source_definition": {
+        "id": "actual_image_test",
+        "points": 10,
+        "required": "Computable necessary/sufficient membership of a finite class in the image of genuine solutions, with an actual integral lifting argument."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "列范数在多一精度为1为充要；Jacobian模π满秩给真实整提升而非只计有限同余解。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 10577,
+          "end_utf8": 10665,
+          "quote": "- (iv) 存在 $\\bar U\\in\\mathscr C_{L,2}(A)$，使所有 $\\nu_k(\\bar U)=1$（模 8）；",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "exact_fixed_class_description",
+      "parent_dimension": "fixed_classes_and_orbits",
+      "source_definition": {
+        "id": "exact_fixed_class_description",
+        "points": 15,
+        "required": "Explicit fixed C and R classes and relation to base classes for both fields at every precision; include the Q2(i),M=2 coupling without wrongly requiring its constant coefficient part to be an actual base truncation."
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "固定系数a+2^(M−1)θz与对称/交替块分别参数化C/R；μ=−1,M=2有理部分范数与行度数耦合正确。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 13951,
+          "end_utf8": 14141,
+          "quote": "  - 当 $\\mu=-1,M=2$ 时，它等于 $\\{V+2iZ:\\ Z\\in\\mathrm{Alt}_{bd},\\ V\\in\\mathscr C_{F,2}(A),\\ \\nu_k(V)\\equiv1+4\\deg_Z(k)\\ (8)\\}$；有理部分 $V$ 可以不在 $\\mathscr R_{F,2}$ 中。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "closed_fixed_and_orbit_counts",
+      "parent_dimension": "fixed_classes_and_orbits",
+      "source_definition": {
+        "id": "closed_fixed_and_orbit_counts",
+        "points": 10,
+        "required": "Correct closed fixed-point and orbit counts for both sets, including all M=2, D=0 and infeasible cases."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "固定数与Burnside二阶群轨道数对全部M、β=0及不可行情形闭合。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 15582,
+          "end_utf8": 15645,
+          "quote": "**定理 5.2（固定点数与轨道数）。** 在可行时：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "all_images_and_fibers",
+      "parent_dimension": "reduction_maps_and_fixed_lifts",
+      "source_definition": {
+        "id": "all_images_and_fibers",
+        "points": 10,
+        "required": "All four reductions (C,R and their fixed subsets), with precise images and every nonempty fiber size, including source M+1=3 and target M=2."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "四类一步约化像和核主齐性纤维均给出，特别固定像只有基域真实截断。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 16223,
+          "end_utf8": 16279,
+          "quote": "**定理 5.3（从精度 $M+1$ 到 $M$ 的约化）。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "fixed_lifts_and_towers",
+      "parent_dimension": "reduction_maps_and_fixed_lifts",
+      "source_definition": {
+        "id": "fixed_lifts_and_towers",
+        "points": 5,
+        "required": "Which fixed classes lift to fixed genuine solutions and which appear in a compatible infinite fixed tower; do not assume finite fixedness produces a fixed actual lift."
+      },
+      "points": 5,
+      "score": 5,
+      "strict_pass": true,
+      "reason": "固定真解及相容固定塔分量恰为基域R，区分有限固定与可继续固定提升。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 17531,
+          "end_utf8": 17843,
+          "quote": "可核验的判别：在 $\\mathscr R^\\sigma$ 中只需 $\\partial=0$；在 $\\mathscr C^\\sigma$ 中需 $\\partial=0$ 且所有 $\\nu_k\\equiv1\\ (2^{M+1})$。$\\partial\\ne0$ 的 $\\mathscr R^\\sigma$ 中的类能提升为（非固定的）真解，但在精度 $M+1$ 已没有任何固定提升，障碍一步即显现。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "best_universal_and_pointwise_precision",
+      "parent_dimension": "optimal_quantitative_descent",
+      "source_definition": {
+        "id": "best_universal_and_pointwise_precision",
+        "points": 10,
+        "required": "Sharp largest N in the stated range for all block structures, plus necessary/sufficient condition for preserving M for the given actual U."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "有rank≥2块最佳M−1，全rank1精确下降；实际U保全M当且仅当θ系数再多一位零。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 18109,
+          "end_utf8": 18157,
+          "quote": "**定理 6.1。** 对任意 $\\mu$ 和 $M\\ge2$：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "actual_sharpness_examples_and_exact_boundary",
+      "parent_dimension": "optimal_quantitative_descent",
+      "source_definition": {
+        "id": "actual_sharpness_examples_and_exact_boundary",
+        "points": 10,
+        "required": "Actual solutions giving uniform-in-M optimality counterexamples in each field, with valid M=2 behavior; characterize precisely the block structures with exact descent."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "Hensel构造a²+b²=1实际二维旋转，b=2^(M−1)ω在每个M包括2证明不能保M；无非整Cayley伪例。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 19319,
+          "end_utf8": 19423,
+          "quote": "- **最优性（统一构造）。** 取 $A_i=E_i$，$p\\ne q$ 属于同一个块 $I_j$（$n_j\\ge2$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "assertion_reliability",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "assertion_reliability",
+        "points": 10,
+        "credit": {
+          "10": "No independent false supplementary assertion found.",
+          "5": "Localized false supplementary assertion while mandatory proofs remain independently valid.",
+          "0": "Independent unsupported global existence, scope, counting or descent claim beyond faults charged to mandatory targets."
+        },
+        "non_double_counting": "Charge mandatory defects to their mathematical targets only. This item measures independent supplementary claims; record inherited effects without a duplicate penalty."
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "未发现独立附加错误；τ总和、rank1真解、不可行例及计数补充都由前述代数正确推出。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 20322,
+          "end_utf8": 20353,
+          "quote": "# 7 否定结论的具体例子",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 90,
+    "positive_mathematical_denominator": 90,
+    "removed_reliability_points": 10,
+    "removed_reliability_denominator": 10,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/task.md",
+        "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "not_supplied_as_separate_self_assessment",
+    "verbatim_evidence": [],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "original_input_and_feasibility",
+      "label": "Explicit finite mod4 input invariant and correct necessary/sufficient feasibility in all three fields, derived for the original possibly non-idempotent matrices.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "original_input_and_feasibility",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Explicit finite mod4 input invariant and correct necessary/sufficient feasibility in all three fields, derived for the original possibly non-idempotent matrices.",
+      "reason": "整数多项式迭代从非幂等A得到正交谱幂等；mod4交叉块确定τ，Gram判据与模π像超平面给三域同一可行性。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 10336,
+          "end_utf8": 10375,
+          "quote": "**定理 3.1。** 下列各条等价：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "closed_total_counts",
+      "label": "All exact finite and actual counts, including M=2, empty cases and all positive block ranks; distinguish O/2O from a residue field.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "closed_total_counts",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "All exact finite and actual counts, including M=2, empty cases and all positive block ranks; distinguish O/2O from a residue field.",
+      "reason": "光滑多元Hensel计数从模π零集开始；区分mod2环与剩余域，M=2的有限解恒有而真解受τ限制。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 11836,
+          "end_utf8": 11853,
+          "quote": "**定理 4.1。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "actual_image_test",
+      "label": "Computable necessary/sufficient membership of a finite class in the image of genuine solutions, with an actual integral lifting argument.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "actual_image_test",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Computable necessary/sufficient membership of a finite class in the image of genuine solutions, with an actual integral lifting argument.",
+      "reason": "列范数在多一精度为1为充要；Jacobian模π满秩给真实整提升而非只计有限同余解。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 10577,
+          "end_utf8": 10665,
+          "quote": "- (iv) 存在 $\\bar U\\in\\mathscr C_{L,2}(A)$，使所有 $\\nu_k(\\bar U)=1$（模 8）；",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "exact_fixed_class_description",
+      "label": "Explicit fixed C and R classes and relation to base classes for both fields at every precision; include the Q2(i),M=2 coupling without wrongly requiring its constant coefficient part to be an actual base truncation.",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "exact_fixed_class_description",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Explicit fixed C and R classes and relation to base classes for both fields at every precision; include the Q2(i),M=2 coupling without wrongly requiring its constant coefficient part to be an actual base truncation.",
+      "reason": "固定系数a+2^(M−1)θz与对称/交替块分别参数化C/R；μ=−1,M=2有理部分范数与行度数耦合正确。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 13951,
+          "end_utf8": 14141,
+          "quote": "  - 当 $\\mu=-1,M=2$ 时，它等于 $\\{V+2iZ:\\ Z\\in\\mathrm{Alt}_{bd},\\ V\\in\\mathscr C_{F,2}(A),\\ \\nu_k(V)\\equiv1+4\\deg_Z(k)\\ (8)\\}$；有理部分 $V$ 可以不在 $\\mathscr R_{F,2}$ 中。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "closed_fixed_and_orbit_counts",
+      "label": "Correct closed fixed-point and orbit counts for both sets, including all M=2, D=0 and infeasible cases.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "closed_fixed_and_orbit_counts",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Correct closed fixed-point and orbit counts for both sets, including all M=2, D=0 and infeasible cases.",
+      "reason": "固定数与Burnside二阶群轨道数对全部M、β=0及不可行情形闭合。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 15582,
+          "end_utf8": 15645,
+          "quote": "**定理 5.2（固定点数与轨道数）。** 在可行时：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "all_images_and_fibers",
+      "label": "All four reductions (C,R and their fixed subsets), with precise images and every nonempty fiber size, including source M+1=3 and target M=2.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "all_images_and_fibers",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "All four reductions (C,R and their fixed subsets), with precise images and every nonempty fiber size, including source M+1=3 and target M=2.",
+      "reason": "四类一步约化像和核主齐性纤维均给出，特别固定像只有基域真实截断。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 16223,
+          "end_utf8": 16279,
+          "quote": "**定理 5.3（从精度 $M+1$ 到 $M$ 的约化）。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "fixed_lifts_and_towers",
+      "label": "Which fixed classes lift to fixed genuine solutions and which appear in a compatible infinite fixed tower; do not assume finite fixedness produces a fixed actual lift.",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "fixed_lifts_and_towers",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Which fixed classes lift to fixed genuine solutions and which appear in a compatible infinite fixed tower; do not assume finite fixedness produces a fixed actual lift.",
+      "reason": "固定真解及相容固定塔分量恰为基域R，区分有限固定与可继续固定提升。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 17531,
+          "end_utf8": 17843,
+          "quote": "可核验的判别：在 $\\mathscr R^\\sigma$ 中只需 $\\partial=0$；在 $\\mathscr C^\\sigma$ 中需 $\\partial=0$ 且所有 $\\nu_k\\equiv1\\ (2^{M+1})$。$\\partial\\ne0$ 的 $\\mathscr R^\\sigma$ 中的类能提升为（非固定的）真解，但在精度 $M+1$ 已没有任何固定提升，障碍一步即显现。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "best_universal_and_pointwise_precision",
+      "label": "Sharp largest N in the stated range for all block structures, plus necessary/sufficient condition for preserving M for the given actual U.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "best_universal_and_pointwise_precision",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Sharp largest N in the stated range for all block structures, plus necessary/sufficient condition for preserving M for the given actual U.",
+      "reason": "有rank≥2块最佳M−1，全rank1精确下降；实际U保全M当且仅当θ系数再多一位零。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 18109,
+          "end_utf8": 18157,
+          "quote": "**定理 6.1。** 对任意 $\\mu$ 和 $M\\ge2$：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "actual_sharpness_examples_and_exact_boundary",
+      "label": "Actual solutions giving uniform-in-M optimality counterexamples in each field, with valid M=2 behavior; characterize precisely the block structures with exact descent.",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "actual_sharpness_examples_and_exact_boundary",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "Actual solutions giving uniform-in-M optimality counterexamples in each field, with valid M=2 behavior; characterize precisely the block structures with exact descent.",
+      "reason": "Hensel构造a²+b²=1实际二维旋转，b=2^(M−1)ω在每个M包括2证明不能保M；无非整Cayley伪例。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 19319,
+          "end_utf8": 19423,
+          "quote": "- **最优性（统一构造）。** 取 $A_i=E_i$，$p\\ne q$ 属于同一个块 $I_j$（$n_j\\ge2$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "independent-extra-assertions",
+      "label": "核心必需目标以外、尚未挂靠必做单元的独立数学断言",
+      "delivery_weight": 0,
+      "claim_weight": 10,
+      "source_unit_id": "independent-extra-assertions",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "核心必需目标以外、尚未挂靠必做单元的独立数学断言",
+      "reason": "未发现独立附加错误；τ总和、rank1真解、不可行例及计数补充都由前述代数正确推出。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 20322,
+          "end_utf8": 20353,
+          "quote": "# 7 否定结论的具体例子",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "G1",
+      "label": "全部输入的可行性、有限/实际计数与真实提升判据",
+      "statement": "对全部原始可能非幂等A_i、三域、全部正块秩与M>=2，完整建立可有限计算的mod4可行性、R/C闭式基数与空集、有限类属于真实像的可核验充要条件。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 30,
+      "weight_origin": "{\"kind\": \"original_leaf_weights_coarsened_by_numbered_complete_target\", \"original_total_math_weight\": 90, \"original_unit_weights\": {\"actual_image_test\": 10, \"closed_total_counts\": 10, \"original_input_and_feasibility\": 10}, \"rule\": \"排除独立R10；只归并不按模型表现拆分。GR022共享B2按题面首次出现的全部hatq纤维归G1，G2仅复用依赖；A4的candidate_target=3归G3。\"}",
+      "acceptance_conditions": [
+        "Explicit finite mod4 input invariant and correct necessary/sufficient feasibility in all three fields, derived for the original possibly non-idempotent matrices.",
+        "All exact finite and actual counts, including M=2, empty cases and all positive block ranks; distinguish O/2O from a residue field.",
+        "Computable necessary/sufficient membership of a finite class in the image of genuine solutions, with an actual integral lifting argument.",
+        "全部分支与必要方向有实际完整证明；细check的局部覆盖不能代替整个成果。"
+      ],
+      "dependency_scope": [
+        "必要的代数/拓扑/极限构造与真正对象存在性均需闭合；未证关键依赖不能因结论正确而跳过。",
+        "标准定理与有效替代路线均可；题面三个整体成果相互的失败不机械传播，只看实际使用依赖。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "original_input_and_feasibility",
+        "closed_total_counts",
+        "actual_image_test"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/task.md",
+          "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+          "pointer": "numbered-target:1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/0/checks/0"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/0/checks/1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/0/checks/2"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR021:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "G1",
+      "passed": true,
+      "reason": "整数多项式迭代从非幂等A得到正交谱幂等；mod4交叉块确定τ，Gram判据与模π像超平面给三域同一可行性。 光滑多元Hensel计数从模π零集开始；区分mod2环与剩余域，M=2的有限解恒有而真解受τ限制。 列范数在多一精度为1为充要；Jacobian模π满秩给真实整提升而非只计有限同余解。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 10336,
+          "end_utf8": 10375,
+          "quote": "**定理 3.1。** 下列各条等价：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 11836,
+          "end_utf8": 11853,
+          "quote": "**定理 4.1。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 10577,
+          "end_utf8": 10665,
+          "quote": "- (iv) 存在 $\\bar U\\in\\mathscr C_{L,2}(A)$，使所有 $\\nu_k(\\bar U)=1$（模 8）；",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 30,
+      "denominator": 30
+    },
+    {
+      "id": "G2",
+      "label": "固定类、轨道、约化与固定真正提升的完整理论",
+      "statement": "同时确定两扩域各精度的R/C固定具体类、基域关系、固定数/轨道数、四种约化像及每非空纤维，并完整刻画固定真正解与无限相容固定塔。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 40,
+      "weight_origin": "{\"kind\": \"original_leaf_weights_coarsened_by_numbered_complete_target\", \"original_total_math_weight\": 90, \"original_unit_weights\": {\"all_images_and_fibers\": 10, \"closed_fixed_and_orbit_counts\": 10, \"exact_fixed_class_description\": 15, \"fixed_lifts_and_towers\": 5}, \"rule\": \"排除独立R10；只归并不按模型表现拆分。GR022共享B2按题面首次出现的全部hatq纤维归G1，G2仅复用依赖；A4的candidate_target=3归G3。\"}",
+      "acceptance_conditions": [
+        "Explicit fixed C and R classes and relation to base classes for both fields at every precision; include the Q2(i),M=2 coupling without wrongly requiring its constant coefficient part to be an actual base truncation.",
+        "Correct closed fixed-point and orbit counts for both sets, including all M=2, D=0 and infeasible cases.",
+        "All four reductions (C,R and their fixed subsets), with precise images and every nonempty fiber size, including source M+1=3 and target M=2.",
+        "Which fixed classes lift to fixed genuine solutions and which appear in a compatible infinite fixed tower; do not assume finite fixedness produces a fixed actual lift.",
+        "全部分支与必要方向有实际完整证明；细check的局部覆盖不能代替整个成果。"
+      ],
+      "dependency_scope": [
+        "必要的代数/拓扑/极限构造与真正对象存在性均需闭合；未证关键依赖不能因结论正确而跳过。",
+        "标准定理与有效替代路线均可；题面三个整体成果相互的失败不机械传播，只看实际使用依赖。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "exact_fixed_class_description",
+        "closed_fixed_and_orbit_counts",
+        "all_images_and_fibers",
+        "fixed_lifts_and_towers"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/task.md",
+          "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+          "pointer": "numbered-target:2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/1/checks/0"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/1/checks/1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/2/checks/0"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/2/checks/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR021:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "G2",
+      "passed": true,
+      "reason": "固定系数a+2^(M−1)θz与对称/交替块分别参数化C/R；μ=−1,M=2有理部分范数与行度数耦合正确。 固定数与Burnside二阶群轨道数对全部M、β=0及不可行情形闭合。 四类一步约化像和核主齐性纤维均给出，特别固定像只有基域真实截断。 固定真解及相容固定塔分量恰为基域R，区分有限固定与可继续固定提升。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 13951,
+          "end_utf8": 14141,
+          "quote": "  - 当 $\\mu=-1,M=2$ 时，它等于 $\\{V+2iZ:\\ Z\\in\\mathrm{Alt}_{bd},\\ V\\in\\mathscr C_{F,2}(A),\\ \\nu_k(V)\\equiv1+4\\deg_Z(k)\\ (8)\\}$；有理部分 $V$ 可以不在 $\\mathscr R_{F,2}$ 中。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 15582,
+          "end_utf8": 15645,
+          "quote": "**定理 5.2（固定点数与轨道数）。** 在可行时：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 16223,
+          "end_utf8": 16279,
+          "quote": "**定理 5.3（从精度 $M+1$ 到 $M$ 的约化）。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 17531,
+          "end_utf8": 17843,
+          "quote": "可核验的判别：在 $\\mathscr R^\\sigma$ 中只需 $\\partial=0$；在 $\\mathscr C^\\sigma$ 中需 $\\partial=0$ 且所有 $\\nu_k\\equiv1\\ (2^{M+1})$。$\\partial\\ne0$ 的 $\\mathscr R^\\sigma$ 中的类能提升为（非固定的）真解，但在精度 $M+1$ 已没有任何固定提升，障碍一步即显现。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 40,
+      "denominator": 40
+    },
+    {
+      "id": "G3",
+      "label": "最优下降精度与全部锐性边界",
+      "statement": "对全部块秩、两扩域及每个M>=2，证明最大N、给定U保持M的充要条件、精确下降边界，并给统一于M且确实定义的实际整解锐性例。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 20,
+      "weight_origin": "{\"kind\": \"original_leaf_weights_coarsened_by_numbered_complete_target\", \"original_total_math_weight\": 90, \"original_unit_weights\": {\"actual_sharpness_examples_and_exact_boundary\": 10, \"best_universal_and_pointwise_precision\": 10}, \"rule\": \"排除独立R10；只归并不按模型表现拆分。GR022共享B2按题面首次出现的全部hatq纤维归G1，G2仅复用依赖；A4的candidate_target=3归G3。\"}",
+      "acceptance_conditions": [
+        "Sharp largest N in the stated range for all block structures, plus necessary/sufficient condition for preserving M for the given actual U.",
+        "Actual solutions giving uniform-in-M optimality counterexamples in each field, with valid M=2 behavior; characterize precisely the block structures with exact descent.",
+        "全部分支与必要方向有实际完整证明；细check的局部覆盖不能代替整个成果。"
+      ],
+      "dependency_scope": [
+        "必要的代数/拓扑/极限构造与真正对象存在性均需闭合；未证关键依赖不能因结论正确而跳过。",
+        "标准定理与有效替代路线均可；题面三个整体成果相互的失败不机械传播，只看实际使用依赖。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "best_universal_and_pointwise_precision",
+        "actual_sharpness_examples_and_exact_boundary"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/task.md",
+          "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+          "pointer": "numbered-target:3"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/3/checks/0"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR021/diagnostic-rubric.json",
+          "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+          "pointer": "/criteria/3/checks/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR021:A1/goals/2"
+        }
+      ],
+      "source_goal_id": "G3",
+      "passed": true,
+      "reason": "有rank≥2块最佳M−1，全rank1精确下降；实际U保全M当且仅当θ系数再多一位零。 Hensel构造a²+b²=1实际二维旋转，b=2^(M−1)ω在每个M包括2证明不能保M；无非整Cayley伪例。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 18109,
+          "end_utf8": 18157,
+          "quote": "**定理 6.1。** 对任意 $\\mu$ 和 $M\\ge2$：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+          "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+          "start_utf8": 19319,
+          "end_utf8": 19423,
+          "quote": "- **最优性（统一构造）。** 取 $A_i=E_i$，$p\\ne q$ 属于同一个块 $I_j$（$n_j\\ge2$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 20,
+      "denominator": 20
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-GR021:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/20",
+        "reason": "全部核心数学要求及其必要桥梁、边界已独立核查成立。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 10336,
+            "end_utf8": 10375,
+            "quote": "**定理 3.1。** 下列各条等价：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 11836,
+            "end_utf8": 11853,
+            "quote": "**定理 4.1。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 10577,
+            "end_utf8": 10665,
+            "quote": "- (iv) 存在 $\\bar U\\in\\mathscr C_{L,2}(A)$，使所有 $\\nu_k(\\bar U)=1$（模 8）；",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 13951,
+            "end_utf8": 14141,
+            "quote": "  - 当 $\\mu=-1,M=2$ 时，它等于 $\\{V+2iZ:\\ Z\\in\\mathrm{Alt}_{bd},\\ V\\in\\mathscr C_{F,2}(A),\\ \\nu_k(V)\\equiv1+4\\deg_Z(k)\\ (8)\\}$；有理部分 $V$ 可以不在 $\\mathscr R_{F,2}$ 中。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 15582,
+            "end_utf8": 15645,
+            "quote": "**定理 5.2（固定点数与轨道数）。** 在可行时：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 16223,
+            "end_utf8": 16279,
+            "quote": "**定理 5.3（从精度 $M+1$ 到 $M$ 的约化）。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 17531,
+            "end_utf8": 17843,
+            "quote": "可核验的判别：在 $\\mathscr R^\\sigma$ 中只需 $\\partial=0$；在 $\\mathscr C^\\sigma$ 中需 $\\partial=0$ 且所有 $\\nu_k\\equiv1\\ (2^{M+1})$。$\\partial\\ne0$ 的 $\\mathscr R^\\sigma$ 中的类能提升为（非固定的）真解，但在精度 $M+1$ 已没有任何固定提升，障碍一步即显现。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 18109,
+            "end_utf8": 18157,
+            "quote": "**定理 6.1。** 对任意 $\\mu$ 和 $M\\ge2$：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 19319,
+            "end_utf8": 19423,
+            "quote": "- **最优性（统一构造）。** 取 $A_i=E_i$，$p\\ne q$ 属于同一个块 $I_j$（$n_j\\ge2$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 20322,
+            "end_utf8": 20353,
+            "quote": "# 7 否定结论的具体例子",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 10336,
+            "end_utf8": 10375,
+            "quote": "**定理 3.1。** 下列各条等价：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 11836,
+            "end_utf8": 11853,
+            "quote": "**定理 4.1。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 10577,
+            "end_utf8": 10665,
+            "quote": "- (iv) 存在 $\\bar U\\in\\mathscr C_{L,2}(A)$，使所有 $\\nu_k(\\bar U)=1$（模 8）；",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 13951,
+            "end_utf8": 14141,
+            "quote": "  - 当 $\\mu=-1,M=2$ 时，它等于 $\\{V+2iZ:\\ Z\\in\\mathrm{Alt}_{bd},\\ V\\in\\mathscr C_{F,2}(A),\\ \\nu_k(V)\\equiv1+4\\deg_Z(k)\\ (8)\\}$；有理部分 $V$ 可以不在 $\\mathscr R_{F,2}$ 中。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 15582,
+            "end_utf8": 15645,
+            "quote": "**定理 5.2（固定点数与轨道数）。** 在可行时：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 16223,
+            "end_utf8": 16279,
+            "quote": "**定理 5.3（从精度 $M+1$ 到 $M$ 的约化）。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 17531,
+            "end_utf8": 17843,
+            "quote": "可核验的判别：在 $\\mathscr R^\\sigma$ 中只需 $\\partial=0$；在 $\\mathscr C^\\sigma$ 中需 $\\partial=0$ 且所有 $\\nu_k\\equiv1\\ (2^{M+1})$。$\\partial\\ne0$ 的 $\\mathscr R^\\sigma$ 中的类能提升为（非固定的）真解，但在精度 $M+1$ 已没有任何固定提升，障碍一步即显现。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 18109,
+            "end_utf8": 18157,
+            "quote": "**定理 6.1。** 对任意 $\\mu$ 和 $M\\ge2$：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 19319,
+            "end_utf8": 19423,
+            "quote": "- **最优性（统一构造）。** 取 $A_i=E_i$，$p\\ne q$ 属于同一个块 $I_j$（$n_j\\ge2$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 20322,
+            "end_utf8": 20353,
+            "quote": "# 7 否定结论的具体例子",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为90/90；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 10336,
+            "end_utf8": 10375,
+            "quote": "**定理 3.1。** 下列各条等价：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 11836,
+            "end_utf8": 11853,
+            "quote": "**定理 4.1。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 10577,
+            "end_utf8": 10665,
+            "quote": "- (iv) 存在 $\\bar U\\in\\mathscr C_{L,2}(A)$，使所有 $\\nu_k(\\bar U)=1$（模 8）；",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 13951,
+            "end_utf8": 14141,
+            "quote": "  - 当 $\\mu=-1,M=2$ 时，它等于 $\\{V+2iZ:\\ Z\\in\\mathrm{Alt}_{bd},\\ V\\in\\mathscr C_{F,2}(A),\\ \\nu_k(V)\\equiv1+4\\deg_Z(k)\\ (8)\\}$；有理部分 $V$ 可以不在 $\\mathscr R_{F,2}$ 中。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 15582,
+            "end_utf8": 15645,
+            "quote": "**定理 5.2（固定点数与轨道数）。** 在可行时：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 16223,
+            "end_utf8": 16279,
+            "quote": "**定理 5.3（从精度 $M+1$ 到 $M$ 的约化）。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 17531,
+            "end_utf8": 17843,
+            "quote": "可核验的判别：在 $\\mathscr R^\\sigma$ 中只需 $\\partial=0$；在 $\\mathscr C^\\sigma$ 中需 $\\partial=0$ 且所有 $\\nu_k\\equiv1\\ (2^{M+1})$。$\\partial\\ne0$ 的 $\\mathscr R^\\sigma$ 中的类能提升为（非固定的）真解，但在精度 $M+1$ 已没有任何固定提升，障碍一步即显现。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 18109,
+            "end_utf8": 18157,
+            "quote": "**定理 6.1。** 对任意 $\\mu$ 和 $M\\ge2$：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR021-A1/attempt-1/response.md",
+            "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+            "start_utf8": 19319,
+            "end_utf8": 19423,
+            "quote": "- **最优性（统一构造）。** 取 $A_i=E_i$，$p\\ne q$ 属于同一个块 $I_j$（$n_j\\ge2$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "3807109ed36ef3bf43452133bdb1c9fa8bc8be8da332a0d06b2d667ce0efd350",
+    "mathematical_judgments_changed": false
+  }
+}

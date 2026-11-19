@@ -1,0 +1,112 @@
+{
+  "schema": "math-gauge.independent-lean-case-review/v1",
+  "reviewer_kind": "ai",
+  "review_model": "gpt-6.1-sol",
+  "review_reasoning_effort": "max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "new_candidate_calls": 0,
+  "candidate_source_repaired": false,
+  "canonical_repositories_modified": false,
+  "case_id": "AHR02",
+  "slot_id": "AHR02",
+  "source_bindings": {
+    "identity": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR02/source-identity.json",
+      "bytes": 17083,
+      "sha256": "22072228af868408461f6360bd20adfd34979442fee58e31fce792dd0af72a6b"
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/AHR02-A1/attempt-1/response.md",
+      "bytes": 7655,
+      "sha256": "533ea7bb06dc31dd62ffd323be0d5e14da4e5f1927c8587d46d32675aa399eab"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/AHR02-A1/attempt-1/request.json",
+      "bytes": 824008,
+      "sha256": "86bed7a3b5035e18c07a16bc7b9aa5a9a25f439911457bd773e0292b41ca227a"
+    }
+  },
+  "self_assessment": {
+    "original_prose": "**结论：** Lean 实现的结论部分正确，与正文一致，但不算完全覆盖正文命题。原因在前提：Lean 要求代理网络的**每一条**可达路径都带一个 Lip 证书 `hLq : ∀ q : N.ReachablePath, IsLipMatrix …`。正文只要求出现在并集指标集里的路径（$j\\in I_{\\rm res}(q)$ 或 $J\\subseteq I_{\\rm res}(q)$）带证书。当度量族非分离时，可以构造出正文适用、Lean 定理无法调用的例子。补齐只需把这个前提改成条件形式，证明几乎不用改。\n\n## 1. 对应关系\n\n| 正文 | Lean |\n|---|---|\n| 有限网络 $\\mathcal N$，输入域 $U$ | `N : FiniteOperatorNetwork X bot V`，`N.U` |\n| $\\phi_{\\mathcal N}\\equiv_U\\phi$ | `hrep : N.represents proxy` |\n| $\\phi^\\natural$，$(V^*,\\mathbf L^*)$ | `target`、`Vstar`、`Lstar`、`hLstar : TargetLipEnvelopeCertificate …` |\n| $U\\subseteq V^*$ | `hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar`（因路径域覆盖 `N.U`，两者等价，我已在 Lean 中验证） |\n| $\\mathcal P$，$U_q$，$c_q$ | `N.ReachablePath`、`N.path_domain q.nodes`、`N.path_chain q.nodes` |\n| $S_{q,j}$，$I_{\\rm res}(q)$，$I_{\\rm res}$ | `path_component_sample`、`path_evaluable_components`、`evaluable_components sample` |\n| $\\hat\\varepsilon_{q,j}$ | `path_empirical_residual_upper d target N sample delta_o q j`（上确界加 $\\delta_{o,j}$，参数顺序一致） |\n| $\\mathbf L_q$，$\\mathbf A_q=\\mathbf L_q+\\mathbf L^*$ | `Lq q`，`fun i j => Lq q i j + Lstar i j`（约定 `L i j` $=L_{i\\to j}$） |\n| $D_{\\mathbf A,j}(x;E)$ | `weighted_anchor_distance d A j x E` |\n| $U_{q,j}(\\tau_j)$ | `path_component_empirical_guarantee_domain …` $=\\{x\\in U_q: D+\\hat\\varepsilon\\le\\tau\\}$ |\n| $U_{q,J}(\\boldsymbol\\tau)=\\bigcap_{j\\in J}U_{q,j}$ | `path_joint_empirical_guarantee_domain …`：显式含 $x\\in U_q$，$J$ 非空时与交集相同 |\n| 两条包含式 | `path_component_guarantee_union_subset_proxy_error`、`path_joint_guarantee_union_subset_proxy_error`；`_text` 版合并两者 |\n\n- **并集指标：** 正文的 $I_{\\rm res}(q)$ 要求 $j\\in I_{\\rm res}$ 且 $S_{q,j}\\ne\\emptyset$。因 $S_{q,j}\\subseteq S_j$，后者已蕴含前者，所以与 Lean 的 `∃ q, j ∈ path_evaluable_components N sample q ∧ …` 一致。\n- **右侧集合：** `{x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau}` 与 $\\{x\\in U: d_j(\\phi(x),\\phi^\\natural(x))\\le\\tau_j\\}$ 一致。\n\n## 2. 源码已证明的内容\n\n- **证明链：** 取并集中的元素，得到 $q$、`hj` 与 `hxq`。由 `path_domain_subset_source` 得 $x\\in U$。再用 `proxy_path_component_guarantee_error_bound` 得到分量误差上界；它依次依赖：\n  - `path_component_guarantee_error_bound`\n  - `empirical_component_guarantee_error_bound` 与 `path_local_empirical_upper`\n  - `empirical_target_perturbation_upper_point_from_residual_certificate`\n  - 以及 `path_chain_eq_represented_proxy_on_path`（把路径链换成代理）。\n  \n  联合形式走相同路线，改用 `path_joint_guarantee_error_bound`。\n- **编译与公理检查：** 我在本地运行 `lake build`，结果是 `formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains` 构建成功。三个推论的 `#print axioms` 只显示 `propext, Classical.choice, Quot.sound`，源码中没有 `sorry`。\n- **`_text` 版的附加前提：** $j\\in I_{\\rm res}$、$J\\subseteq I_{\\rm res}$、$J$ 非空、阈值有限，这些都写成了前提但在证明中未被使用。这不影响正确性：去掉它们结论仍然成立，Lean 版只是更一般。\n- **其它省略的正文条件：** Lean 没有要求 $S_j\\subseteq S\\cap U\\cap\\mathrm{dom}\\,\\phi^\\natural$、采样集有限、$U\\subseteq\\mathrm{dom}\\,\\phi$。前两条证明用不到；最后一条可由表示关系推出。这些也都是推广，不是缺口。\n\n## 3. 不足：全路径 Lip 证书前提（可复核反例）\n\n**结论：** 正文中 $\\mathbf L_q$ 是在\"设 $q\\in\\mathcal P$、$j\\in I_{\\rm res}(q)$\"之后才选取的，推论的并集也只经过这些 $q$。Lean 却要求对所有可达路径给出 `IsLipMatrix`。\n\n**为什么这不是平凡条件：** 即使矩阵允许取 $\\top$，在 $U_q$ 上存在 Lip 矩阵也等价于路径链 $c_q$ 保持全分量零距关系：若对所有 $i$ 都有 $d_i(x,y)=0$，则对所有 $j$ 必须有 $d_j(c_qx,c_qy)=0$。我已在本地用 Lean 证明这个等价，充分性方向取全 $\\top$ 矩阵即可。\n- 在**分离**的度量族下这个条件自动成立。此时可以给不在指标集里的路径填上全 $\\top$ 矩阵，Lean 版与正文等价。\n- 在**非分离**的度量族下（`gauge_space` 中明确允许这种情形，见 `IsNonSeparating`）就可能失败。\n\n**反例：**\n- **空间：** $X=\\{\\bot,a,b,c\\}$，$I=\\{*\\}$；$d(a,b)=0$，$d(a,c)=d(b,c)=1$，$d(x,\\bot)=+\\infty$（$x\\ne\\bot$）。这是一个扩展伪度量。\n- **网络：** 两个节点。\n  - $\\psi_1$：$c\\mapsto c$，其余点映到 $\\bot$。\n  - $\\psi_2$：$a\\mapsto a$，$b\\mapsto c$，其余点映到 $\\bot$。\n  - 入口：$c\\to\\beta_1$，$a,b\\to\\beta_2$；输出一律终止。\n  - 于是 $U=\\{a,b,c\\}$，两条路径为 $q_1=(\\beta_1)$，$U_{q_1}=\\{c\\}$；$q_2=(\\beta_2)$，$U_{q_2}=\\{a,b\\}$。\n- **其余数据：** 代理 $\\phi=\\phi_{\\mathcal N}$；目标 $\\phi^\\natural=\\mathrm{id}$；$V^*=U$，$\\mathbf L^*=1$；采样 $S_*=\\{c\\}$；$\\delta_o=0$。\n- **正文一侧：** $I_{\\rm res}(q_1)=\\{*\\}$，$I_{\\rm res}(q_2)=\\emptyset$，所以正文只需要 $\\mathbf L_{q_1}$，取 $0$ 就合法。推论成立且不空洞：$c\\in U_{q_1,*}(0)$，并且 $d(\\phi c,c)=0$。\n- **Lean 一侧：** `hLq` 还要求 $q_2$ 的 Lip 矩阵，需要 $1=d(\\psi_2a,\\psi_2b)\\le \\sum_i L_{i\\to *}\\,d_i(a,b)=L\\cdot 0=0$（在 ENNReal 中 $\\top\\cdot0=0$），这不可能成立。因此 Lean 推论在这个例子中无法调用。\n\n我在本地 Lean 中验证了这个反例的各个部分（`original_hLq_unsatisfiable`、`text_hLq_satisfiable`、`text_conclusion_nonvacuous`），公理同样只有三条标准公理。这些是我补充的验证，未提交到源码中。\n\n## 4. 补齐方式\n\n把前提改成条件形式，证明只需改成调用 `hLq q hj`。以下版本我已在本地编译通过：\n\n\n\n联合形式相同，只把条件换成 `J ⊆ path_evaluable_components N sample q → …`，并调用 `proxy_path_joint_guarantee_error_bound`。新的弱前提版本可推出原版本，所以原版本是它的特例。另一种做法是保留原陈述，但说明它只对应\"每条路径都已固定 Lip 证书族\"这种更强的读法。\n\n**总结：**\n- 推论的结论（两条包含式）、所有对象的定义和证明链都已在源码中正确证明。\n- 缺口只在 Lip 证书前提的作用范围；只有在度量族非分离、且某条不在指标集中的路径链不保持零距关系时才会出现。\n- 按第 4 节改写后即可完整覆盖正文。",
+    "claims_complete": null,
+    "claims_implementation_complete": false,
+    "interpretation": "The conclusion concerns completeness of the supplied implementation, not a claim to have supplied candidate Lean engineering; none is required by these audit tasks."
+  },
+  "claim_findings": [],
+  "extra_assertion_review": {
+    "scope": "Entire original delivered prose, code comments, mathematical side claims and self-assessment, separately from kernel success.",
+    "findings": [],
+    "checks": [
+      "Prose self-assessment and explicit completion/verification statements reviewed with the mathematical source, not keyword confidence.",
+      "Original numeric exercise claims independently checked against the actual defined maps and gauges.",
+      "Generalized definitions are read only in the original admissible mathematical context; no new source obligation is imposed for optional wrappers."
+    ]
+  },
+  "kind": "semantic_audit",
+  "candidate_lean_required": false,
+  "expected_source_disposition": "misaligned",
+  "judgment": "complete_correct_audit",
+  "strict_pass": true,
+  "dimensions": [
+    {
+      "id": "judgment",
+      "points_awarded": 35,
+      "points_possible": 35,
+      "complete": true,
+      "reason": "Correctly identifies the unconditional ∀ reachable q Lip premise as strictly stronger than the original evaluability-conditioned premise, while retaining truth under the stronger assumption.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR02/group-contract.json",
+        "bytes": 2282,
+        "sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+        "pointer": "/dimensions/0"
+      }
+    },
+    {
+      "id": "valid_parts",
+      "points_awarded": 20,
+      "points_possible": 20,
+      "complete": true,
+      "reason": "Accurately traces the actual local empirical upper bound, actual residual, common anchor and path-chain-to-proxy bridge, and both global inclusions. Removing unused restrictions is valid generalization.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR02/group-contract.json",
+        "bytes": 2282,
+        "sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+        "pointer": "/dimensions/1"
+      }
+    },
+    {
+      "id": "evidence",
+      "points_awarded": 30,
+      "points_possible": 30,
+      "complete": true,
+      "reason": "The four-point nonseparating pseudometric example has a sampled singleton path with coefficient 0 and an unsampled two-input path sending zero input distance to output distance 1. No ENNReal coefficient exists on the latter path, since even top*0=0. All original network/sample/target-domain premises are met.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR02/group-contract.json",
+        "bytes": 2282,
+        "sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+        "pointer": "/dimensions/2"
+      }
+    },
+    {
+      "id": "repair_scope",
+      "points_awarded": 15,
+      "points_possible": 15,
+      "complete": true,
+      "reason": "Conditions hLq on the relevant evaluable path set; the proposed call hLq q hj uses the existing local theorem and preserves the joint same-q structure. No repair of the mathematical source or extra submitted engineering is required.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR02/group-contract.json",
+        "bytes": 2282,
+        "sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+        "pointer": "/dimensions/3"
+      }
+    }
+  ],
+  "compilation": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR02/compilation.json",
+    "bytes": 39417,
+    "sha256": "5a7ea73aac675c2f4aaf891a566ac8187ed0ced7c01b4bb22b6c1adffb4837ba"
+  },
+  "obligations": []
+}

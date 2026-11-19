@@ -1,0 +1,148 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>审阅结论</h2>
+<p><strong>实现准确且完整，我没有发现需要补证的实质缺口。</strong> 推论 #h-93b9c20ea18b4e59（<code>source.md</code> 第 242–259 行）的两个包含式及其证明，在 Lean 中都有对应定理，并已在源码中完整证明。</p>
+<p>核对环境：Lean 4.29.1 加指定 mathlib。<code>lake build</code> 通过。<code>formal_oet</code> 内没有 <code>sorry</code>、<code>admit</code> 或自定义 <code>axiom</code>。对三条核心定理和局部上界做 <code>#print axioms</code>，只出现 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</p>
+<h2>1. 对应关系</h2>
+<p>Lean 文件为 <code>vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean</code>（以下简称 PGD），以及同目录的 <code>path_sampling.lean</code>（以下简称 PS）。</p>
+<table>
+<thead>
+<tr>
+<th>正文</th>
+<th>Lean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一式（分量式）</td>
+<td><code>path_component_guarantee_union_subset_proxy_error</code>（PGD:520）</td>
+</tr>
+<tr>
+<td>“更一般地”（联合式）</td>
+<td><code>path_joint_guarantee_union_subset_proxy_error</code>（PGD:553）</td>
+</tr>
+<tr>
+<td>两式合并并保留正文前提</td>
+<td><code>path_guarantee_union_subset_proxy_error_text</code>（PGD:590）</td>
+</tr>
+<tr>
+<td>证明所引的局部上界 #h-4b5219aa3a3bbdad</td>
+<td><code>path_local_empirical_upper</code>（PGD:54），经 <code>proxy_path_component_guarantee_error_bound</code>（:152）和 <code>proxy_path_joint_guarantee_error_bound</code>（:244）换到代理 φ 上</td>
+</tr>
+<tr>
+<td>证明中隐含的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub><mo>=</mo><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">c_q=\phi</annotation></semantics></math></span>（在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">U_q</annotation></semantics></math></span> 上）</td>
+<td><code>path_chain_eq_represented_proxy_on_path</code>（PS:220）</td>
+</tr>
+</tbody>
+</table>
+<p>对象逐项对应：</p>
+<ul>
+<li><strong>U、网络 𝒩</strong>：<code>N : FiniteOperatorNetwork X bot V</code>，<code>U = N.U</code>。</li>
+<li><strong>φ_𝒩 ≡_U φ</strong>：<code>hrep : N.represents proxy</code>。</li>
+<li><strong>U ⊆ dom φ</strong>：由 <code>hrep</code> 加 <code>dom_extensional_operator_eq</code> 推出。</li>
+<li><strong>U ⊆ V*</strong>：<code>hpathV</code>（逐路径写法）与 <code>N.U ⊆ Vstar</code> 等价，依据是 <code>reachable_path_domains_cover</code>。</li>
+<li><strong>(V*, L*)</strong>：<code>TargetLipEnvelopeCertificate d target Vstar Lstar</code>，即 <code>IsLipMatrix d target Vstar Lstar</code> 的包装。</li>
+<li><strong>𝒫、U_q、c_q</strong>：<code>N.ReachablePath</code>、<code>N.path_domain q.nodes</code>、<code>N.path_chain q.nodes</code>。</li>
+<li><strong>S_{q,j}</strong>：<code>sample j ∩ N.path_domain q.nodes</code>。</li>
+<li><strong>I_res(q)</strong>：<code>path_evaluable_components N sample q</code>。因 S_{q,j}≠∅ 蕴含 S_j≠∅，与正文“j∈I_res 且 S_{q,j}≠∅”一致。</li>
+<li><strong>ε̂_{q,j}</strong>：<code>path_empirical_residual_upper ...</code>，等于对 <code>d j (c_q x) (target x)</code> 在 <code>S_{q,j}</code> 上取上确界再加 <code>delta_o j</code>。</li>
+<li><strong>L_q ∈ 𝓛(c_q)|_{U_q}，A_q = L_q + L*</strong>：<code>hLq</code> 和 <code>fun i j =&gt; Lq q i j + Lstar i j</code>。</li>
+<li><strong>D_{A,j}(x;E)</strong>：<code>weighted_anchor_distance</code>，即 <code>⨅ y∈E, ∑ i, A i j * d i x y</code>。</li>
+<li><strong>U_{q,j}(τ_j)、U_{q,J}(τ)</strong>：<code>path_component_empirical_guarantee_domain</code>、<code>path_joint_empirical_guarantee_domain</code>。</li>
+<li><strong>右端</strong>：<code>{x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau}</code>，联合式为 <code>∀ i ∈ J, …</code>。</li>
+</ul>
+<h2>2. 核对要点</h2>
+<ul>
+<li><strong>并集下标</strong>：Lean 写作 <code>{x | ∃ q, j ∈ I_res(q) ∧ x ∈ U_{q,j}}</code>（联合式为 <code>J ⊆ I_res(q)</code>），与正文的 ⋃ 一致。</li>
+<li><strong>右端针对 φ 本身</strong>：右端是代理 φ 的真实误差，不是路径链 c_q 的误差。从 c_q 换到 φ 靠的是 <code>hrep</code> 加 <code>path_chain_eq_represented_proxy_on_path</code>。Lean 在 <code>proxy_path_*</code> 里完成了这一步，正文证明里只是一句话带过。</li>
+<li><strong>量词</strong>：证书选择被显式化为全称量化的函数 <code>Lq</code>。所以结论是“对任意合法证书选择成立”，与正文“取 L_q”相符。</li>
+<li><strong>证明结构</strong>：Lean 与正文的“取某路径、套局部上界、对所有 j 同时应用”一致。</li>
+</ul>
+<h2>3. 与正文字面不同的地方（均不构成缺口）</h2>
+<ol>
+<li><strong><code>_text</code> 版的五个前提未被使用。</strong>
+<ul>
+<li>这五个是 <code>hj_evaluable</code>、<code>hJ_evaluable</code>、<code>htau_j_finite</code>、<code>hJ_nonempty</code>、<code>htau_finite</code>，证明中只作 <code>have _ :=</code> 丢弃。</li>
+<li>前两个已被并集下标蕴含（<code>path_evaluable_subset_evaluable_components</code>）。后三个对包含式无作用。</li>
+<li>保留它们是为了与正文前提逐字对齐。真正的内容在不含这些前提的两条核心定理里。</li>
+</ul>
+</li>
+<li><strong><code>SamplingStructure</code> 没有作为前提。</strong>
+<ul>
+<li>对路径样本，它的域条件 <code>x ∈ U ∧ x ∈ dom φ ∧ x ∈ dom φ♮</code> 可由 <code>hrep</code>、<code>hpathV</code>、<code>hLstar</code> 推出（见下文 S6）。所以 Lean 更一般，没有丢内容。</li>
+</ul>
+</li>
+<li><strong>联合域用 <code>∀ j∈J</code> 定义，不是字面上的 ⋂。</strong> 对非空 J 二者相等（见下文 S3）。</li>
+<li><strong><code>_text</code> 版的 <code>hLq</code> 条件是“<code>j∈I_res(q)</code> 或 <code>J⊆I_res(q)</code>”。</strong>
+<ul>
+<li>分量式与联合式因此共用一族 <code>Lq</code>。</li>
+<li>若要两族不同的证书，用两条核心定理即可。</li>
+<li>若把 L_q 读作可随 j 变化，联合域的 ⋂ 形式也成立（见下文 S5）。</li>
+</ul>
+</li>
+<li><strong>推论只是单向包含，不是等式，也不给出覆盖性。</strong> Lean 与正文一致。例如 target=proxy 时右端恒为 U，而左端受锚点距离限制。这一点我是推理得出，没有逐例在 Lean 里验证。</li>
+</ol>
+<h2>4. 已证明的内容与需自行补充的内容</h2>
+<p><strong>源码已证明：</strong></p>
+<ul>
+<li>三条推论定理。</li>
+<li>局部上界及其代理版。</li>
+<li>路径链等于被表示的代理。</li>
+<li>网络域的覆盖与包含事实。</li>
+</ul>
+<p><strong>需自行补充的有两类。</strong></p>
+<p>第一类是正文中引用但所附 <code>source.md</code> 未给出的定义：#h-9655cbb9401e5c90（目标 Lip 包络）、#h-6f9e054ce01ccfef（采样结构、δ_o、D_{A,j}）、#h-67ea98399b9a982d（保证域）。我按题面约定可使用这些定义，仅凭 Lean 文档串和本章用法核对其含义。若原定义带有额外条件（例如矩阵有限值），只会增加前提，不会破坏该包含关系。</p>
+<p>第二类是桥接事实。源码里没有，但都很短，我在临时文件里用 <code>lake env lean</code> 验证通过，没有改动附件：</p>
+<ul>
+<li><strong>S1</strong>：<code>hpathV ↔ N.U ⊆ Vstar</code>。</li>
+<li><strong>S2</strong>：<code>represents → N.U ⊆ dom proxy</code>。</li>
+<li><strong>S3</strong>：非空 J 时，联合域等于分量域的交集。</li>
+<li><strong>S4</strong>：第一式是联合式取 <code>J={j}</code> 的特例。</li>
+<li><strong>S5</strong>：证书随 j 变化时的 ⋂ 形式，要求 <code>J.Nonempty</code>。</li>
+<li><strong>S6</strong>：路径样本满足 <code>SamplingStructure</code> 的域条件。</li>
+</ul>
+<p>S1 和 S3 的代码如下（需要 <code>open formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_02.ch_07_fitting_foundations formal_oet.vol_03.ch_12_residuals_and_substitution formal_oet.vol_03.ch_14_empirical_network_fitting</code>）：</p>
+<pre><code class="language-lean">theorem pathV_iff (N : FiniteOperatorNetwork X bot V) (Vstar : Set X) :
+    (∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar) ↔ N.U ⊆ Vstar := by
+  constructor
+  · intro h x hx
+    have hx' : x ∈ ⋃ p : N.ReachablePath, N.path_domain p.nodes := by
+      rw [N.reachable_path_domains_cover]; exact hx
+    rcases Set.mem_iUnion.mp hx' with ⟨q, hq⟩
+    exact h q hq
+  · intro h q x hx
+    exact h (N.path_domain_subset_source hx)
+
+theorem path_joint_eq_iInter (d : I → X → X → ENNReal) (A : I → I → ENNReal)
+    (N : FiniteOperatorNetwork X bot V) (sample : I → Set X)
+    (q : N.ReachablePath) (J : Set I) (eps tau : I → ENNReal) (hJ : J.Nonempty) :
+    path_joint_empirical_guarantee_domain d A N sample q J eps tau =
+      ⋂ j ∈ J, path_component_empirical_guarantee_domain d A N sample q j (eps j) (tau j) := by
+  ext x
+  simp only [path_joint_empirical_guarantee_domain, path_component_empirical_guarantee_domain,
+    empirical_joint_guarantee_domain, empirical_component_guarantee_domain, anchor_gap_sublevel,
+    Set.mem_iInter, Set.mem_setOf_eq, path_sample_family]
+  constructor
+  · rintro ⟨hx, h⟩ j hj
+    exact ⟨hx, h j hj⟩
+  · intro h
+    rcases hJ with ⟨j0, hj0⟩
+    exact ⟨(h j0 hj0).1, fun j hj =&gt; (h j hj).2⟩
+</code></pre>
+<p><strong>非空洞性检查。</strong> 我另做了一个具体实例，<code>_text</code> 定理的全部前提可逐一给出，且分量式左端非空：</p>
+<ul>
+<li>空间与度量：<code>X = Option Bool</code>，<code>bot = none</code>，<code>I = Unit</code>，<code>d</code> 为离散扩展度量（对角线为 0，其余为 ⊤）。</li>
+<li>算子与网络：<code>φ = restrict_operator id {some true}</code>，<code>N = single_node_network φ</code>，<code>target = proxy = φ</code>。</li>
+<li>证书：<code>Lq = L* =</code> 全 1 矩阵，<code>V* = N.U</code>。</li>
+<li>采样与阈值：<code>sample = {some true}</code>，<code>δ_o = 0</code>，<code>τ = 0</code>。</li>
+</ul>
+<h2>5. 可选加固（非必需）</h2>
+<ul>
+<li>补一条 <code>path_joint_empirical_guarantee_domain = ⋂</code> 的引理（即 S3），让联合域与正文定义字面一致。</li>
+<li>补一条“由联合式推分量式”的引理（即 S4），体现“更一般地”。</li>
+<li>若要处理只有部分路径有证书的情形，可把 <code>hLq</code> 改为对路径子集 <code>Q</code> 要求，结论改为对 <code>q∈Q</code> 的并集。</li>
+</ul>
+<h2>6. 复核方法</h2>
+<ul>
+<li><code>lake build</code>。</li>
+<li>在临时文件中 <code>import formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains</code>，执行 <code>#print axioms path_guarantee_union_subset_proxy_error_text</code>，再用 <code>lake env lean</code> 运行。</li>
+</ul>
+</div>

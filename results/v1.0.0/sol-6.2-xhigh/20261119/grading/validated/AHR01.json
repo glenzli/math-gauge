@@ -1,0 +1,132 @@
+{
+  "schema": "math-gauge.report/v1",
+  "run": {
+    "schema": "math-gauge.run/v1",
+    "run_id": "1819d8f9586b4fe7980f40efbfba03ee",
+    "created_at": "2026-11-19T09:02:23.802262+00:00",
+    "runner_version": "0.1.0",
+    "runner_sha256": "4d2b50a03b4a0486bc3a990e70a3d648afa3fa78d71bf38dec917a0a7ed566c6",
+    "suite_id": "math-gauge-combined",
+    "suite_version": "1.0.0",
+    "suite_sha256": "4bcf7e34c2ffae8e3f109ea1a62b8d36516ec33b86581ce903190054572795ce",
+    "visibility": "private",
+    "origin": "command",
+    "model_label": "gpt-6.2-sol/xhigh",
+    "model_identity_verified": false,
+    "timeout_seconds": 5490,
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-B",
+      "/private/tmp/math-gauge-sol62-xhigh-20261119/controller.py",
+      "adapter",
+      "AHR01",
+      "1"
+    ],
+    "cases": [
+      {
+        "id": "AHR01",
+        "version": "0.1.0",
+        "track": "alignment",
+        "task_kind": "audit",
+        "family_id": "oet-node-domain-refinement",
+        "candidate_message_sha256": "2491a0969a5279c483a9687eecbd67aec2b8f61e95d296211f885b2186a985b2",
+        "case_approved": false,
+        "group_contract": {
+          "path": "AHR01/review-contract.json",
+          "sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+        }
+      }
+    ],
+    "completed_at": "2026-11-19T09:08:04.915032+00:00",
+    "execution_failures": 0
+  },
+  "tracks": {
+    "determinate": {
+      "attempted": 0,
+      "execution_ok": 0,
+      "reviewed": 0,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 0,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": 0,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": null
+    },
+    "alignment": {
+      "attempted": 1,
+      "execution_ok": 1,
+      "reviewed": 1,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 1,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": 0,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": null
+    },
+    "exploration": {
+      "attempted": 0,
+      "execution_ok": 0,
+      "reviewed": 0,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 0,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": null,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": 0
+    }
+  },
+  "group_diagnostics": {
+    "AHR01": {
+      "assessment_unit": "review_dimension",
+      "dimension_count": 4,
+      "completed_weight": 100,
+      "upper_weight": 100,
+      "total_weight": 100,
+      "completion": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "exact": 1.0
+      },
+      "strict_pass": true,
+      "dimensions": [
+        {
+          "dimension_id": "judgment",
+          "score": 35,
+          "notes": "Identifies actual reachable output versus full local output scope in choice_projection; correctly concludes relation overbreadth rather than a false extensional theorem."
+        },
+        {
+          "dimension_id": "valid_parts",
+          "score": 20,
+          "notes": "Checks partition restrictions and entry domains, all four edge types, pruning, current-input recoloring on revisits, length bound and the actual construction/global extensional proof, as well as the relation/path proof."
+        },
+        {
+          "dimension_id": "evidence",
+          "score": 30,
+          "notes": "X={bottom,a,b,c,d},U={a}; old map fixes a,b,c and sends d→c, self-edge{b,c}; split A={a,b,d},B={c}. Canonical pruning retains A with self-edge{b}, removes B, stops at c. All-stop A satisfies operational relation on sole actual output a but loses the retained self-edge. All domain, reachability and global finite-termination requirements hold; retained local domain fixes the relevant split, so alternate witness cannot remove the discrepancy."
+        },
+        {
+          "dimension_id": "repair_scope",
+          "score": 15,
+          "notes": "Requires exact full edge-domain intersections only between retained labels. Correctly shows full-output choice projection is too strong at c after legitimate removal of B. Construction/NodePieceReached and reverse data-characterization bridges are proposed precisely, without treating missing wrappers as invalidating existing construction."
+        }
+      ],
+      "kind": "semantic_audit"
+    }
+  },
+  "input_identity": {
+    "AHR01": {
+      "status": "verified",
+      "verified": true,
+      "request_sha256": "1f4237277cd4002f5ec872b58db5fd60e2843cacc0d72b3a3262d85532a41589",
+      "candidate_message_sha256": "2491a0969a5279c483a9687eecbd67aec2b8f61e95d296211f885b2186a985b2"
+    }
+  },
+  "automatically_establishes_mathematical_correctness": false,
+  "notice": "Replay、AI/fixture 审核与未人工审定的题目不计为模型比较成绩；开放构造单独记录发现，不生成统一总分。"
+}

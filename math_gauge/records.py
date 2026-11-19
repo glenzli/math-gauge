@@ -23,7 +23,8 @@ def _selected_result_records(root):
     Native observations keep their separate record contract and loader.
     """
     root = Path(root).resolve()
-    edition = json.loads((root / "benchmark.json").read_bytes())
+    from .editions import source_edition
+    edition = source_edition(root)
     selected = edition["selected_result_models"]
     record_ids = edition.get("selected_result_record_ids", {})
     if len(selected) != len(set(selected)):
@@ -213,9 +214,13 @@ def project_assessment_score(score):
               "primary_metric", "model_label", "capacity", "group_capacity", "coverage", "whole_task_counts", "profile",
               "alignment_selfcheck", "strict_alignment_selfcheck", "lean_formalization_breakdown",
               "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings", "c003_continuation",
-              "source_math_policy_version", "engineering_review_sha256",
+              "source_math_policy_version", "engineering_review_sha256", "tx_calibration", "source_benchmark_version",
               "retry_policy_sha256", "retry_admission_sha256")
     result = {key: copy.deepcopy(score[key]) for key in fields if key in score}
+    if score.get('record_kind') in {'paper_observation', 'native_harness'}:
+        for key in ('record_kind','transport_import_validated','runtime_evidence_verified','harness_name','backend_sku'):
+            if key in score:
+                result[key] = copy.deepcopy(score[key])
     result.update(schema="math-gauge.assessment-score-aggregate/v1", scope="combined-aggregate-only",
                   private_case_count=score.get("coverage", {}).get("private_tasks", 3), metrics=project_metrics(score["metrics"]),
                   contributions=project_metrics(score["contributions"]), human_review="pending",

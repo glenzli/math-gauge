@@ -1,0 +1,264 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "gemini-4-carbon-medium",
+  "record_id": "20261114",
+  "source_record": {
+    "path": "results/v0.6.0/gemini-4-carbon-medium/20261114/record.json",
+    "bytes": 93306,
+    "sha256": "e6a923bc5ad26d86a2dcc2636b434247d68f11fcf59ae6ad44326307859d0487"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "218d0f66f105618f9a848ccc4242a3abfaead4621c846e1766521fda451f4a77",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 7,
+    "total_groups": 7,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 4,
+    "not_run": 0,
+    "delivery_failed": 1,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "完整审读首个正常 A1 30900 字节/274 行。基本三矩阵定义、非分离存在性、无限值、非唯一及不取极值边界和二值“对等”接口是 M1–M6 的正常交付。只在3.3中独立的有向闭包/Zorn条件极值存在部分、3.5(3)(4)的纯阈值与混合复合演算确认超出基本要求；并未将全部3.3都算额外，也未将3.5的普通上下界复合分别计组。3.4正交性和3.6链结论是直接推论，实例用于说明定义。原 AI 无错误项；2 组。",
+      "candidates": [
+        {
+          "id": "C003-matrix-baseline",
+          "group_id": "C003-matrix-baseline",
+          "title": "三矩阵定义及可行性边界",
+          "statement": "联合加和上/下界、逆向控制区别、闭盒阈值、保全零距等价于扩展上界/阈值存在。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "limited",
+          "independent_of_errors": true,
+          "scope_delta": "共同基线 M1–M6 的正常交付。",
+          "proof_review": "与原六维 AI 正向判断核对，域 E、0·∞、不分离及端点均实际处理。",
+          "nontrivial_step": "该项是基线交付或直接推导，不另立额外组。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "共同基线 M1–M6 的正常交付。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 6122,
+              "end_byte": 11899,
+              "quote": "### 2.1 扩展上界 Lipschitz 矩阵\n\n**定义 2.1（扩展上界 Lipschitz 矩阵）**：称矩阵 $L = (L_{ij})_{i,j \\in I} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $E$ 上的一个**扩展上界 Lipschitz 矩阵**，若对任意 $x, y \\in E$ 及 $i \\in I$，有\n\n$$d_i(\\phi(x), \\phi(y)) \\leq \\sum_{j \\in I} L_{ij}\\, d_j(x, y), \\qquad \\text{即}\\quad \\mathbf{d}(\\phi(x), \\phi(y)) \\preceq L\\, \\mathbf{d}(x, y).$$\n\n记所有满足上式的矩阵集合为 $\\mathcal{L}^+_E(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{I \\times I}$。\n\n**各取值的数学含义**：\n- $L_{ij} = 0$：输出分量 $i$ 的上界完全不依赖输入分量 $j$（得益于 $0 \\cdot (+\\infty) = 0$，即便 $d_j(x,y) = +\\infty$ 亦不产生贡献）；\n- $0 < L_{ij} < +\\infty$：输入分量 $j$ 对输出分量 $i$ 的有限线性放大率上限；\n- $L_{ij} = +\\infty$：允许非 Lipschitz 连续增长（如 $x \\mapsto x^2$、间断跳变），或将有限输入距离映射为无限输出距离（$0 < d_j(x,y) < +\\infty$ 而 $d_i(\\phi(x),\\phi(y)) = +\\infty$）。\n\n---\n\n### 2.2 扩展下界 Lipschitz 矩阵（兼论逆向余 Lipschitz 矩阵）\n\n**定义 2.2（扩展下界 Lipschitz 矩阵）**：称矩阵 $M = (M_{ij})_{i,j \\in I} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $E$ 上的一个**扩展下界 Lipschitz 矩阵**，若对任意 $x, y \\in E$ 及 $i \\in I$，有\n\n$$\\sum_{j \\in I} M_{ij}\\, d_j(x, y) \\leq d_i(\\phi(x), \\phi(y)), \\qquad \\text{即}\\quad M\\, \\mathbf{d}(x, y) \\preceq \\mathbf{d}(\\phi(x), \\phi(y)).$$\n\n记所有满足上式的矩阵集合为 $\\mathcal{L}^-_E(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{I \\times I}$。当 $M \\in \\mathcal{L}^-_E(\\phi)$ 且 $L \\in \\mathcal{L}^+_E(\\phi)$ 时，算子满足统一的**双侧矩阵夹逼估计**：\n\n$$M\\, \\mathbf{d}(x, y) \\preceq \\mathbf{d}(\\phi(x), \\phi(y)) \\preceq L\\, \\mathbf{d}(x, y) \\quad (\\forall\\, x, y \\in E).$$\n\n**各取值的数学含义**：\n- $M_{ij} = 0$：不对输入分量 $j$ 在输出分量 $i$ 中的保持率作正下界要求；\n- $0 < M_{ij} < +\\infty$：输入分量 $j$ 的距离至少以倍率 $M_{ij}$ 保真传递至输出分量 $i$（特别地，$d_j(x,y) = +\\infty \\implies d_i(\\phi(x),\\phi(y)) = +\\infty$）；\n- $M_{ij} = +\\infty$：极端离散扩张——凡满足 $d_j(x,y) > 0$ 的输入对，其输出在分量 $i$ 上必有 $d_i(\\phi(x), \\phi(y)) = +\\infty$。\n\n> **定义 2.3（补充：逆向控制 / 联合余 Lipschitz 矩阵）**：在多分量情形（$|I| \\geq 2$），还可定义**逆向控制矩阵** $K \\in \\bar{\\mathbb{R}}_+^{I \\times I}$，记其集合为 $\\mathcal{K}_E(\\phi)$：\n> $$\\mathbf{d}(x, y) \\preceq K\\, \\mathbf{d}(\\phi(x), \\phi(y)) \\quad (\\forall\\, x, y \\in E).$$\n> **两者的本质区别**：当 $|I|=1$ 且 $0 < m < +\\infty$ 时，$m\\,d(x,y) \\leq d(\\phi(x),\\phi(y))$ 与 $d(x,y) \\leq m^{-1} d(\\phi(x),\\phi(y))$ 完全等价；但当 $|I| \\geq 2$ 时，$M \\in \\mathcal{L}^-_E(\\phi)$ 要求**单一输出分量** $d_i(\\phi(x),\\phi(y))$ 独立地从下方控制 $\\sum_j M_{ij} d_j(x,y)$，而 $K \\in \\mathcal{K}_E(\\phi)$ 允许**联合多个输出分量**反推输入距离。\n> - **反例**：设 $\\mathcal{X} = \\mathbb{R}^2 \\cup \\{\\bot\\}$，$d_1(x,y)=|x_1-y_1|$，$d_2(x,y)=|x_2-y_2|$，线性双射 $\\phi(x_1,x_2) = (x_1+x_2, x_1-x_2)$。取 $x=(0,0), y=(1,-1)$ 有 $\\mathbf{d}(x,y)=(1,1)$ 而 $d_1(\\phi(x),\\phi(y))=0$，迫使 $M_{11}=M_{12}=0$；取 $x=(0,0), y=(1,1)$ 有 $d_2(\\phi(x),\\phi(y))=0$，迫使 $M_{21}=M_{22}=0$。故 $\\mathcal{L}^-(\\phi) = \\{\\mathbf{0}\\}$，但逆向矩阵 $K = \\frac{1}{2}\\begin{pmatrix}1 & 1\\\\ 1 & 1\\end{pmatrix} \\in \\mathcal{K}(\\phi)$ 非平凡成立。反之，对非单射算子（如常值算子或投影算子），$\\mathcal{K}(\\phi)$ 可为空集，而 $\\mathcal{L}^-(\\phi)$ 恒非空（$\\mathbf{0} \\in \\mathcal{L}^-(\\phi)$）。\n\n---\n\n### 2.3 不可区分阈值矩阵（坍缩矩阵）\n\n现在严格化“当输入落入一定范畴，输出就不再可区分”的矩阵刻画。在规范空间中，“输出在分量 $i$ 上不可区分”即 $d_i(\\phi(x), \\phi(y)) = 0$；“输入在各分量上落入给定范畴”即各输入距离 $d_j(x,y)$ 不超过对应阈值 $\\Theta_{ij}$。\n\n**定义 2.4（不可区分阈值矩阵 / 坍缩矩阵）**：称矩阵 $\\Theta = (\\Theta_{ij})_{i,j \\in I} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $E$ 上的一个**不可区分阈值矩阵**（简称**坍缩矩阵**），若对任意 $x, y \\in E$ 及 $i \\in I$，有\n\n$$\\bigl(\\forall\\, j \\in I,\\; d_j(x, y) \\leq \\Theta_{ij}\\bigr) \\implies d_i(\\phi(x), \\phi(y)) = 0.$$\n\n记所有满足上式的矩阵集合为 $\\mathcal{T}_E(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{I \\times I}$。\n\n**各取值的数学含义与逆否命题解释**：\n- $\\Theta_{ij} = 0$：要求 $d_j(x,y) \\leq 0$（即 $d_j(x,y) = 0$），在输入分量 $j$ 上无正宽度死区（注：此处必须采用非严格不等号 $\\leq$ 而非 $<$，否则当 $\\Theta_{ij}=0$ 时 $d_j(x,y) < 0$ 恒假，无法刻画零距保持与部分分量无关性，且在 $d_j(x,y)=+\\infty$ 时无法命中 $\\Theta_{ij}=+\\infty$）；\n- $0 < \\Theta_{ij} < +\\infty$：输入分量 $j$ 上的**有限分辨率死区半径**——只要各分量偏差均在对应阈值 $\\Theta_{ij}$ 以内，输出分量 $i$ 即坍缩为不可区分；\n- $\\Theta_{ij} = +\\infty$：条件 $d_j(x,y) \\leq +\\infty$ 恒成立，表示当其余分量满足各自阈值时，**输出分量 $i$ 对输入分量 $j$ 完全脱敏/无关**（即便 $d_j(x,y) = +\\infty$ 亦不破坏输出不可区分性）。\n- **逆否形式（可区分性激发阈值）**：$d_i(\\phi(x), \\phi(y)) > 0 \\implies \\exists\\, j \\in I,\\; d_j(x, y) > \\Theta_{ij}$，即欲使输出分量 $i$ 产生可观测区分，至少有一个输入分量 $j$ 的差异必须严格突破阈值 $\\Theta_{ij}$。\n\n---\n"
+            },
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 11938,
+              "end_byte": 14827,
+              "quote": "### 定理 3.1（存在性统一定理与规范相容判据）\n设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，$E \\subseteq \\mathrm{dom}(\\phi)$。则：\n1. **下界矩阵恒存在**：$\\mathbf{0} \\in \\mathcal{L}^-_E(\\phi)$ 对任意算子 $\\phi$ 无条件成立。\n2. **上界矩阵与坍缩矩阵的存在性等价判据**：下列五项互相等价：\n   - **(a)** $\\mathcal{L}^+_E(\\phi) \\neq \\emptyset$；\n   - **(b)** $\\mathbf{\\infty} \\in \\mathcal{L}^+_E(\\phi)$；\n   - **(c)** $\\mathcal{T}_E(\\phi) \\neq \\emptyset$；\n   - **(d)** $\\mathbf{0} \\in \\mathcal{T}_E(\\phi)$；\n   - **(e)** $\\phi$ 在 $E$ 上是规范相容的（即 $x \\sim_{\\mathcal{G}} y \\implies \\phi(x) \\sim_{\\mathcal{G}} \\phi(y)$）。\n\n特别地，若 $(\\mathcal{X}, \\mathcal{G}, \\bot)$ 满足族分离性（$x \\sim_{\\mathcal{G}} y \\implies x = y$），则**任意算子** $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$ 均满足 $\\mathbf{\\infty} \\in \\mathcal{L}^+(\\phi)$ 与 $\\mathbf{0} \\in \\mathcal{T}(\\phi)$。\n\n**证明**：\n1. 由 $0 \\cdot d_j(x,y) = 0 \\leq d_i(\\phi(x),\\phi(y))$（含 $d_j(x,y)=+\\infty$ 情形），$\\mathbf{0} \\in \\mathcal{L}^-_E(\\phi)$ 显然成立。\n2. **(b) $\\Rightarrow$ (a)** 与 **(d) $\\Rightarrow$ (c)** 显然。\n   - **(a) $\\Rightarrow$ (e)**：设 $L \\in \\mathcal{L}^+_E(\\phi)$。若 $x, y \\in E$ 满足 $x \\sim_{\\mathcal{G}} y$，则 $\\forall\\, j \\in I,\\; d_j(x,y) = 0$。由 $L_{ij} \\cdot 0 = 0$（即便 $L_{ij} = +\\infty$）得\n     $$d_i(\\phi(x), \\phi(y)) \\leq \\sum_{j \\in I} L_{ij} \\cdot 0 = 0 \\implies d_i(\\phi(x), \\phi(y)) = 0 \\quad (\\forall\\, i \\in I),$$\n     故 $\\phi(x) \\sim_{\\mathcal{G}} \\phi(y)$。\n   - **(e) $\\Rightarrow$ (b)**：设 $\\phi$ 在 $E$ 上保 $\\sim_{\\mathcal{G}}$。对任意 $x, y \\in E$ 与 $i \\in I$：若 $\\forall\\, j \\in I,\\; d_j(x,y)=0$，则由 (e) 知 $d_i(\\phi(x),\\phi(y)) = 0 \\leq \\sum_j (+\\infty)\\cdot 0$；若存在 $j_0 \\in I$ 使 $d_{j_0}(x,y) > 0$，则 $(+\\infty) \\cdot d_{j_0}(x,y) = +\\infty$，从而 $\\sum_{j \\in I} (+\\infty) \\cdot d_j(x,y) = +\\infty \\geq d_i(\\phi(x),\\phi(y))$。故 $\\mathbf{\\infty} \\in \\mathcal{L}^+_E(\\phi)$。\n   - **(c) $\\Rightarrow$ (e)**：设 $\\Theta \\in \\mathcal{T}_E(\\phi)$。若 $x \\sim_{\\mathcal{G}} y$，则 $\\forall\\, j,\\; d_j(x,y) = 0 \\leq \\Theta_{ij}$，故 $\\forall\\, i,\\; d_i(\\phi(x),\\phi(y)) = 0$。\n   - **(e) $\\Rightarrow$ (d)**：因 $d_j(x,y) \\leq 0 \\iff d_j(x,y) = 0$，条件 $\\forall\\, j,\\; d_j(x,y) \\leq 0$ 恰为 $x \\sim_{\\mathcal{G}} y$，由 (e) 即得 $\\mathbf{0} \\in \\mathcal{T}_E(\\phi)$。$\\square$\n\n> **注记**：定理 3.1 揭示了 CH1 两项基本约定的深刻关联——在 $0 \\cdot (+\\infty) = 0$ 且不预设族分离性时，扩展实数 $+\\infty$ 能统一表达一切**规范良定（可在商集 $E/{\\sim_{\\mathcal{G}}}$ 上诱导映射）**的算子；唯一没有扩展 Lipschitz 矩阵的算子，恰是将规范不可区分点拆分为可区分点的“破缺相容性”算子。\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "C003-qualitative-duality",
+          "group_id": "C003-qualitative-duality",
+          "title": "二值骨架的等价表达",
+          "statement": "二值0/∞上界与逐位互换的阈值描述等价。",
+          "scope": "equivalent_rewrite",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "limited",
+          "independent_of_errors": true,
+          "scope_delta": "这是原想法“对等矩阵”的基本接口和二值重写，保守不另计。",
+          "proof_review": "正文双向证明按各系数0/∞分类，将同一个输出为零前件作等价编码。",
+          "nontrivial_step": "该项是基线交付或直接推导，不另立额外组。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "这是原想法“对等矩阵”的基本接口和二值重写，保守不另计。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 14833,
+              "end_byte": 17948,
+              "quote": "### 定理 3.2（上界矩阵 $\\mathcal{L}^+$ 与坍缩矩阵 $\\mathcal{T}$ 的定性骨架对偶定理）\n在二值定性矩阵集 $\\{0, +\\infty\\}^{I \\times I}$ 上定义逐元对合映射 $(\\cdot)^\\sharp$：\n\n$$(A^\\sharp)_{ij} := \\begin{cases} +\\infty, & A_{ij} = 0, \\\\ 0, & A_{ij} = +\\infty. \\end{cases}$$\n\n则对任意 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$、$E \\subseteq \\mathrm{dom}(\\phi)$ 及任意 $A \\in \\{0, +\\infty\\}^{I \\times I}$，恒有\n\n$$A \\in \\mathcal{L}^+_E(\\phi) \\iff A^\\sharp \\in \\mathcal{T}_E(\\phi).$$\n\n由此立得以下推论：\n1. **常值对偶**：$\\mathbf{0} \\in \\mathcal{L}^+_E(\\phi) \\iff \\mathbf{\\infty} \\in \\mathcal{T}_E(\\phi) \\iff \\phi$ 在 $E$ 上规范常值。\n2. **恒等算子特征**：对恒等算子 $\\mathrm{id}_{\\mathcal{X}}$，有 $I_{\\mathcal{G}} \\in \\mathcal{L}^+(\\mathrm{id}_{\\mathcal{X}}) \\cap \\mathcal{L}^-(\\mathrm{id}_{\\mathcal{X}})$，且其对偶矩阵 $(I_{\\mathcal{G}})^\\sharp$（对角元为 $0$、非对角元为 $+\\infty$）满足 $(I_{\\mathcal{G}})^\\sharp \\in \\mathcal{T}(\\mathrm{id}_{\\mathcal{X}})$。\n3. **由上界诱导坍缩支撑**：对任意一般的 $L \\in \\mathcal{L}^+_E(\\phi)$，令 $\\Theta^{\\mathrm{supp}}(L)_{ij} := +\\infty$（若 $L_{ij}=0$）及 $0$（若 $L_{ij}>0$），则必有 $\\Theta^{\\mathrm{supp}}(L) \\in \\mathcal{T}_E(\\phi)$。\n\n**证明**：设 $A \\in \\{0, +\\infty\\}^{I \\times I}$。\n- **($\\Rightarrow$)** 设 $A \\in \\mathcal{L}^+_E(\\phi)$。任取 $x, y \\in E$ 及 $i \\in I$，假设 $\\forall\\, j \\in I,\\; d_j(x,y) \\leq (A^\\sharp)_{ij}$。对每个 $j \\in I$：\n  - 若 $A_{ij} = 0$，则 $A_{ij}\\,d_j(x,y) = 0 \\cdot d_j(x,y) = 0$（含 $d_j(x,y)=+\\infty$ 情形）；\n  - 若 $A_{ij} = +\\infty$，则 $(A^\\sharp)_{ij} = 0$，由假设 $d_j(x,y) \\leq 0$ 得 $d_j(x,y) = 0$，故仍有 $A_{ij}\\,d_j(x,y) = (+\\infty) \\cdot 0 = 0$。\n  于是 $d_i(\\phi(x),\\phi(y)) \\leq \\sum_{j \\in I} A_{ij}\\,d_j(x,y) = 0$，即 $d_i(\\phi(x),\\phi(y)) = 0$，故 $A^\\sharp \\in \\mathcal{T}_E(\\phi)$。\n- **($\\Leftarrow$)** 设 $A^\\sharp \\in \\mathcal{T}_E(\\phi)$。任取 $x, y \\in E$ 及 $i \\in I$：\n  - 若对所有满足 $A_{ij} = +\\infty$ 的 $j$ 均有 $d_j(x,y) = 0$，则对所有 $j \\in I$ 皆有 $d_j(x,y) \\leq (A^\\sharp)_{ij}$（因 $A_{ij}=0$ 处 $(A^\\sharp)_{ij}=+\\infty$）。由 $A^\\sharp \\in \\mathcal{T}_E(\\phi)$ 得 $d_i(\\phi(x),\\phi(y)) = 0 \\leq \\sum_j A_{ij}\\,d_j(x,y)$；\n  - 否则存在 $j_0 \\in I$ 使 $A_{ij_0} = +\\infty$ 且 $d_{j_0}(x,y) > 0$，此时右端和式至少含一项 $(+\\infty) \\cdot d_{j_0}(x,y) = +\\infty$，不等式自动成立。\n  故 $A \\in \\mathcal{L}^+_E(\\phi)$。推论 1—3 由定义及 $L \\preceq \\bigl(\\Theta^{\\mathrm{supp}}(L)\\bigr)^\\sharp$ 直接推出。$\\square$\n\n> **几何诠释**：二值骨架 $\\{0,+\\infty\\}^{I\\times I}$ 编码了算子各分量间的**定性依赖图**。在此共同骨架之上，$\\mathcal{L}^+$ 将 $+\\infty$ **向下细化**为有限增长率 $L_{ij} \\in (0,+\\infty)$，刻画敏感强度；而 $\\mathcal{T}$ 将 $0$ **向上细化**为有限死区半径 $\\Theta_{ij} \\in (0,+\\infty)$，刻画不敏感范围。这正是两类矩阵“对等性”的精确代数根源。\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "C003-Pareto-existence",
+          "group_id": "C003-conditional-Pareto-extrema",
+          "title": "条件 Pareto 极值存在理论",
+          "statement": "下界可行集对有向逐元上确界封闭且存在极大元；输入比较距离有限且上界可行时，递减链下确界可行且存在极小元。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "M4 要求不虚报最优性并处理边界，允许仅说明不存在；既未强制任何极值取得，也未要求序完备/Pareto存在理论。这里只接受正向条件存在定理；单调性、凸性、非唯一反例本身仍属基本义务/辅助。",
+          "proof_review": "有限分量数使有向上确界与有限非负和交换；乘以固定扩展非负距离保持上确界，包括0·∞。由零下界非空和链上界，Zorn 得极大下界；有限输入距离使各乘法及有限和对递减链下确界可交换，已假定上界可行，反序 Zorn 得极小上界。正文无限输入1/n反例明确必要边界，不被误计为存在定理。原 M3/M4 审核同样确认两个闭包论证。",
+          "nontrivial_step": "需在扩展值乘法中证明有向/链连续性并应用链极值原理；不是从“没有唯一最优矩阵”或定义直接得到。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "M4 要求不虚报最优性并处理边界，允许仅说明不存在；既未强制任何极值取得，也未要求序完备/Pareto存在理论。这里只接受正向条件存在定理；单调性、凸性、非唯一反例本身仍属基本义务/辅助。",
+          "decision": "accepted",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 17954,
+              "end_byte": 20699,
+              "quote": "### 定理 3.3（序结构、帕累托前沿与多分量非唯一极值性）\n在偏序集 $(\\bar{\\mathbb{R}}_+^{I \\times I}, \\preceq)$ 中：\n1. **上下集单调性与凸性**：\n   - $\\mathcal{L}^+_E(\\phi)$ 是**上集**（$L \\in \\mathcal{L}^+_E(\\phi),\\, L \\preceq L' \\implies L' \\in \\mathcal{L}^+_E(\\phi)$）且为凸集；\n   - $\\mathcal{L}^-_E(\\phi)$ 是**下集**（$M \\in \\mathcal{L}^-_E(\\phi),\\, M' \\preceq M \\implies M' \\in \\mathcal{L}^-_E(\\phi)$）且为凸集；\n   - $\\mathcal{T}_E(\\phi)$ 是**下集**（$\\Theta \\in \\mathcal{T}_E(\\phi),\\, \\Theta' \\preceq \\Theta \\implies \\Theta' \\in \\mathcal{T}_E(\\phi)$）。\n2. **链极限与极值元存在性**：\n   - $\\mathcal{L}^-_E(\\phi)$ 对任意有向族的逐元上确界封闭，故由 Zorn 引理，$\\mathcal{L}^-_E(\\phi)$ **恒存在极大元**（帕累托最优下界矩阵）；\n   - 当 $E$ 上各分量距离有限（$\\forall\\, x,y \\in E,\\, d_j(x,y) < +\\infty$）且 $\\mathcal{L}^+_E(\\phi) \\neq \\emptyset$ 时，$\\mathcal{L}^+_E(\\phi)$ 对递减链的逐元下确界封闭，故存在**极小元**（帕累托最优上界矩阵）。若允许 $E$ 内出现 $d_j(x,y) = +\\infty$，递减链下确界未必封闭（例如 $d(x,y)=+\\infty$ 且 $d(\\phi(x),\\phi(y))=1$ 时，$L^{(n)} = 1/n \\in \\mathcal{L}^+_E(\\phi)$，但 $\\inf_n L^{(n)} = 0 \\notin \\mathcal{L}^+_E(\\phi)$）。\n3. **单分量与多分量极值结构对比**：\n   - 当 $|I| = 1$（单一伪度量 $d$）时，下界集恒为闭区间 $[0, M^*(\\phi)]$；若 $\\phi$ 保零距且 $E$ 上距离有限，上界集为闭射线 $[L^*(\\phi), +\\infty]$，坍缩集为以 $\\Theta^*(\\phi) := \\inf\\{d(x,y) \\mid x,y\\in E,\\, d(\\phi(x),\\phi(y)) > 0\\}$ 为上确界的区间。\n   - 当 $|I| \\geq 2$ 时，**三类集合一般均不存在唯一的逐元最小/最大矩阵**（即 $\\mathcal{L}^+$ 对逐元 $\\min$ 不封闭，$\\mathcal{L}^-$ 与 $\\mathcal{T}$ 对逐元 $\\max$ 不封闭）。\n\n**证明**：(1) 由 $\\bar{\\mathbb{R}}_+$ 加法与乘法的单调性及实凸组合分配律立得。(2) 中对有向族 $\\{M^{(\\alpha)}\\} \\subseteq \\mathcal{L}^-_E(\\phi)$，由于对任意 $d \\in \\bar{\\mathbb{R}}_+$（含 $d = +\\infty$）乘法映射 $a \\mapsto a \\cdot d$ 保持任意上确界，且 $I$ 有限，故\n$$\\sum_{j \\in I} \\Bigl(\\sup_\\alpha M^{(\\alpha)}_{ij}\\Bigr) d_j(x,y) = \\sup_\\alpha \\sum_{j \\in I} M^{(\\alpha)}_{ij}\\, d_j(x,y) \\leq d_i(\\phi(x),\\phi(y)),$$\n从而 $\\sup_\\alpha M^{(\\alpha)} \\in \\mathcal{L}^-_E(\\phi)$；当 $d_j(x,y) < +\\infty$ 时，有限和与递减链下确界可交换，故 $\\mathcal{L}^+_E(\\phi)$ 对递减链封闭。\n对 (3) 的多分量反例：取两点空间 $\\mathcal{X} = \\{a, b, \\bot\\}$，$I = \\{1, 2\\}$，$d_1(a,b) = d_2(a,b) = 1$，算子 $\\phi = \\mathrm{id}_{\\mathcal{X}}$。易验证\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        },
+        {
+          "id": "C003-orthogonality",
+          "group_id": "C003-orthogonality",
+          "title": "下界与阈值正交性",
+          "statement": "有真实可达的小正扰动时，正阈值强制对应下界为0。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "limited",
+          "independent_of_errors": true,
+          "scope_delta": "两个定义与非负和的直接推论，不再计组。",
+          "proof_review": "把阈值输出零代入下界和即可；独立小扰动条件确有写出。",
+          "nontrivial_step": "该项是基线交付或直接推导，不另立额外组。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "两个定义与非负和的直接推论，不再计组。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 21648,
+              "end_byte": 22944,
+              "quote": "### 定理 3.4（下界矩阵 $M$ 与坍缩矩阵 $\\Theta$ 的正交互补律）\n设 $M \\in \\mathcal{L}^-_E(\\phi)$，$\\Theta \\in \\mathcal{T}_E(\\phi)$。对于给定的指标对 $(i, j) \\in I \\times I$，若 $E$ 中存在一对输入点 $x, y \\in E$ 使得\n\n$$\\bigl(\\forall\\, k \\in I,\\; d_k(x, y) \\leq \\Theta_{ik}\\bigr) \\quad \\text{且} \\quad d_j(x, y) > 0,$$\n\n则必有 $M_{ij} = 0$。特别地，若分量 $j$ 在 $E$ 上可独立作任意小正扰动（即 $\\forall\\, \\varepsilon > 0$，存在 $x, y \\in E$ 使 $0 < d_j(x,y) \\leq \\varepsilon$ 且 $\\forall\\, k \\neq j,\\; d_k(x,y) = 0$），则恒有正交关系：\n\n$$M_{ij} \\cdot \\Theta_{ij} = 0 \\qquad (\\text{即 } \\Theta_{ij} > 0 \\implies M_{ij} = 0,\\; M_{ij} > 0 \\implies \\Theta_{ij} = 0).$$\n\n**证明**：设 $x, y \\in E$ 满足定理条件。由 $\\Theta \\in \\mathcal{T}_E(\\phi)$ 知 $d_i(\\phi(x), \\phi(y)) = 0$；再由 $M \\in \\mathcal{L}^-_E(\\phi)$ 得\n$$0 \\leq M_{ij}\\, d_j(x, y) \\leq \\sum_{k \\in I} M_{ik}\\, d_k(x, y) \\leq d_i(\\phi(x), \\phi(y)) = 0,$$\n故 $M_{ij}\\, d_j(x, y) = 0$。在 $\\bar{\\mathbb{R}}_+$ 中，因 $d_j(x,y) > 0$，必有 $M_{ij} = 0$。若分量 $j$ 可独立作任意小正扰动，当 $\\Theta_{ij} > 0$ 时取 $\\varepsilon = \\min(1, \\Theta_{ij}) > 0$ 即得满足条件的 $(x, y)$，故 $M_{ij} = 0$。$\\square$\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "C003-threshold-composition",
+          "group_id": "C003-threshold-composition-calculus",
+          "title": "纯阈值与 Lipschitz–阈值混合复合演算",
+          "statement": "复合的纯阈值矩阵由中间有限阈值行的交取得；满足 Δ(Lφ)^T<=Θψ 的 Δ 是 ψ∘φ 的阈值。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "任务只要求三类定义与基本论证，baseline 明确不强求完整复合/迭代理论。这是对新算子 ψ 的独立复合闭包机制，并非用恒等元或常值代入的直接边界。",
+          "proof_review": "实际复合域保证中间值有效。纯阈值运算对外层有限门槛的每个中间分量用内层一行阈值使其零化，外层∞项无条件；混合式则逐行保证 Lφ d <= Θψ。有限 I 与0·∞约定使空min=∞和扩展乘法闭合。证明中普通上下界矩阵相乘是工具/直接复合，不另计两组。原 M5 已核实纯阈值及混合传播。",
+          "nontrivial_step": "要构造一个对任意 ψ,φ 有效的纯阈值合成运算及交叉矩阵约束，并验证每个中间分量；普通上下界复合不能直接推出阈值复合式。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "任务只要求三类定义与基本论证，baseline 明确不强求完整复合/迭代理论。这是对新算子 ψ 的独立复合闭包机制，并非用恒等元或常值代入的直接边界。",
+          "decision": "accepted",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 22950,
+              "end_byte": 26374,
+              "quote": "### 定理 3.5（算子复合定律与跨矩阵耦合传播）\n设 $\\phi, \\psi \\in \\mathcal{X}_{\\mathrm{op}}$，复合算子为 $\\psi \\circ \\phi \\in \\mathcal{X}_{\\mathrm{op}}$。则在其有效定义域上成立以下四条复合律：\n1. **上界半环乘法**：若 $L^{(\\psi)} \\in \\mathcal{L}^+(\\psi)$ 且 $L^{(\\phi)} \\in \\mathcal{L}^+(\\phi)$，则\n   $$L^{(\\psi)} L^{(\\phi)} \\in \\mathcal{L}^+(\\psi \\circ \\phi).$$\n2. **下界半环乘法**：若 $M^{(\\psi)} \\in \\mathcal{L}^-(\\psi)$ 且 $M^{(\\phi)} \\in \\mathcal{L}^-(\\phi)$，则\n   $$M^{(\\psi)} M^{(\\phi)} \\in \\mathcal{L}^-(\\psi \\circ \\phi).$$\n3. **纯坍缩复合律**：若 $\\Theta^{(\\psi)} \\in \\mathcal{T}(\\psi)$ 且 $\\Theta^{(\\phi)} \\in \\mathcal{T}(\\phi)$，定义矩阵 $\\Theta^{(\\psi)} \\triangleleft \\Theta^{(\\phi)} \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为\n   $$\\bigl(\\Theta^{(\\psi)} \\triangleleft \\Theta^{(\\phi)}\\bigr)_{ij} := \\min_{\\substack{k \\in I \\\\ \\Theta^{(\\psi)}_{ik} < +\\infty}} \\Theta^{(\\phi)}_{kj} \\qquad (\\text{约定 } \\min \\emptyset := +\\infty),$$\n   则 $\\Theta^{(\\psi)} \\triangleleft \\Theta^{(\\phi)} \\in \\mathcal{T}(\\psi \\circ \\phi)$。\n4. **Lipschitz–坍缩混合传播律**：若 $\\Theta^{(\\psi)} \\in \\mathcal{T}(\\psi)$ 且 $L^{(\\phi)} \\in \\mathcal{L}^+(\\phi)$，则对任意满足矩阵不等式\n   $$\\Delta \\bigl(L^{(\\phi)}\\bigr)^\\top \\preceq \\Theta^{(\\psi)} \\qquad \\Bigl(\\text{即 } \\forall\\, i, k \\in I,\\; \\sum_{j \\in I} \\Delta_{ij}\\, L^{(\\phi)}_{kj} \\leq \\Theta^{(\\psi)}_{ik}\\Bigr)$$\n   的矩阵 $\\Delta \\in \\bar{\\mathbb{R}}_+^{I \\times I}$，必有 $\\Delta \\in \\mathcal{T}(\\psi \\circ \\phi)$。\n\n**证明**：任取 $x, y \\in \\mathrm{dom}(\\psi \\circ \\phi)$。由 $\\psi(\\bot) = \\bot$ 知 $x, y \\in \\mathrm{dom}(\\phi)$ 且 $\\phi(x), \\phi(y) \\in \\mathrm{dom}(\\psi)$。\n1. 对上界，由引理 1.1 的半环单调性与结合律：\n   $$\\mathbf{d}\\bigl(\\psi(\\phi(x)), \\psi(\\phi(y))\\bigr) \\preceq L^{(\\psi)} \\mathbf{d}(\\phi(x), \\phi(y)) \\preceq L^{(\\psi)}\\bigl(L^{(\\phi)} \\mathbf{d}(x, y)\\bigr) = \\bigl(L^{(\\psi)} L^{(\\phi)}\\bigr) \\mathbf{d}(x, y).$$\n2. 对下界同理：\n   $$\\bigl(M^{(\\psi)} M^{(\\phi)}\\bigr) \\mathbf{d}(x, y) = M^{(\\psi)}\\bigl(M^{(\\phi)} \\mathbf{d}(x, y)\\bigr) \\preceq M^{(\\psi)} \\mathbf{d}(\\phi(x), \\phi(y)) \\preceq \\mathbf{d}\\bigl(\\psi(\\phi(x)), \\psi(\\phi(y))\\bigr).$$\n3. 对纯坍缩复合：设 $\\forall\\, j \\in I,\\; d_j(x,y) \\leq (\\Theta^{(\\psi)} \\triangleleft \\Theta^{(\\phi)})_{ij}$。欲证 $d_i(\\psi(\\phi(x)), \\psi(\\phi(y))) = 0$，只需验证对每个中间分量 $k \\in I$ 皆有 $d_k(\\phi(x), \\phi(y)) \\leq \\Theta^{(\\psi)}_{ik}$：\n   - 若 $\\Theta^{(\\psi)}_{ik} = +\\infty$，不等式自动成立；\n   - 若 $\\Theta^{(\\psi)}_{ik} < +\\infty$，则由最小值定义知 $\\forall\\, j \\in I,\\; d_j(x,y) \\leq \\Theta^{(\\phi)}_{kj}$，结合 $\\Theta^{(\\phi)} \\in \\mathcal{T}(\\phi)$ 得 $d_k(\\phi(x),\\phi(y)) = 0 \\leq \\Theta^{(\\psi)}_{ik}$。\n   再由 $\\Theta^{(\\psi)} \\in \\mathcal{T}(\\psi)$ 即得 $d_i(\\psi(\\phi(x)), \\psi(\\phi(y))) = 0$。\n4. 对混合传播律：设 $\\forall\\, j \\in I,\\; d_j(x,y) \\leq \\Delta_{ij}$。则对每个 $k \\in I$，由 $L^{(\\phi)} \\in \\mathcal{L}^+(\\phi)$ 及交换律有\n   $$d_k(\\phi(x), \\phi(y)) \\leq \\sum_{j \\in I} L^{(\\phi)}_{kj}\\, d_j(x, y) \\leq \\sum_{j \\in I} L^{(\\phi)}_{kj}\\, \\Delta_{ij} = \\sum_{j \\in I} \\Delta_{ij}\\, L^{(\\phi)}_{kj} \\leq \\Theta^{(\\psi)}_{ik}.$$\n   由 $\\Theta^{(\\psi)} \\in \\mathcal{T}(\\psi)$ 立得 $d_i(\\psi(\\phi(x)), \\psi(\\phi(y))) = 0$。$\\square$\n\n---\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        },
+        {
+          "id": "C003-chain-collapse",
+          "group_id": "C003-chain-collapse",
+          "title": "阈值点链的零距传递",
+          "statement": "阈值内有限链首尾输出零距，进而得到连通/超度量例的基本分野。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "limited",
+          "independent_of_errors": true,
+          "scope_delta": "直接推论和结构例解，不另计。",
+          "proof_review": "链上每步输出零再应用有限次三角不等式。沿用原审核按任意正步长理解链连通，不补新条件或制造不同解释。",
+          "nontrivial_step": "该项是基线交付或直接推导，不另立额外组。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "直接推论和结构例解，不另计。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 26375,
+              "end_byte": 27852,
+              "quote": "### 定理 3.6（链式坍缩效应：连通度量空间与超度量空间的二分现象）\n设 $\\Theta \\in \\mathcal{T}_E(\\phi)$。若 $x_0, x_1, \\dots, x_m \\in E$ 构成一条有限步满足阈值条件 $\\forall\\, r \\in \\{1,\\dots,m\\},\\, \\forall\\, j \\in I,\\; d_j(x_{r-1}, x_r) \\leq \\Theta_{ij}$ 的点链，则必有\n\n$$d_i\\bigl(\\phi(x_0), \\phi(x_m)\\bigr) = 0.$$\n\n**证明与空间结构推论**：由 $\\Theta \\in \\mathcal{T}_E(\\phi)$ 知每步均有 $d_i(\\phi(x_{r-1}), \\phi(x_r)) = 0$，再由伪度量三角不等式归纳得\n$$d_i\\bigl(\\phi(x_0), \\phi(x_m)\\bigr) \\leq \\sum_{r=1}^m d_i\\bigl(\\phi(x_{r-1}), \\phi(x_r)\\bigr) = 0.$$\n这一性质清晰地刻画了有限正阈值 $\\Theta_{ij} \\in (0, +\\infty)$ 在哪类规范空间上非平凡：\n- **链连通空间（如赋范线性空间的凸子集）**：若任意两点均可通过步长不超过 $\\delta > 0$ 的点链相连，则只要某行满足 $\\forall\\, j,\\; \\Theta_{ij} > 0$，输出分量 $i$ 在整个 $E$ 上必然坍缩为常值（自动升级为 $\\Theta_{ij} = +\\infty$）。\n- **超度量空间、离散簇空间或含间隙子集**：当伪度量满足超度量不等式 $d_j(x, z) \\leq \\max\\{d_j(x, y), d_j(y, z)\\}$（如符号序列空间、语法树空间、分层离散空间）时，闭球关系 $\\{d_j(x,y) \\leq \\Theta_{ij}\\}$ 本身是等价关系，不存在跨越球界的短步点链，此时有限正阈值 $\\Theta_{ij} \\in (0, +\\infty)$ 非平凡且精确刻画算子的截断分辨率。\n\n---\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "C003-worked-example",
+          "group_id": "C003-worked-example",
+          "title": "连续乘序列空间实例",
+          "statement": "受限混合算子的三类矩阵及 E0 收紧。",
+          "scope": "necessary_auxiliary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "limited",
+          "independent_of_errors": true,
+          "scope_delta": "示例与定义解释不单独算额外成果。",
+          "proof_review": "对应每条坐标定义逐式验证，支持三矩阵的含义；不是新的定理族。",
+          "nontrivial_step": "该项是基线交付或直接推导，不另立额外组。",
+          "value_rationale": "其用途取决于研究情境；此标签只兼容旧审稿 schema，不作为中立观察计数组门槛。",
+          "reason": "示例与定义解释不单独算额外成果。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "9889d4c6065b9ed7f2cf1e785f0eaf9235888d6cb8f3762c9b515f1353652741",
+              "start_byte": 27853,
+              "end_byte": 30900,
+              "quote": "## 四、综合实例：多分量耦合算子的三矩阵刻画\n\n设 $\\mathcal{X} = \\bigl(\\mathbb{R} \\times \\{0,1\\}^{\\mathbb{N}}\\bigr) \\cup \\{\\bot\\}$，指标集 $I = \\{1, 2\\}$。对非吸收元 $x = (r, \\sigma),\\, y = (s, \\tau) \\in \\mathbb{R} \\times \\{0,1\\}^{\\mathbb{N}}$，定义规范族：\n- $d_1(x, y) = |r - s|$（连续实分量伪度量）；\n- $d_2(x, y) = 2^{-\\min\\{n \\geq 0 \\mid \\sigma_n \\neq \\tau_n\\}}$（序列超度量，约定 $\\sigma = \\tau$ 时为 $0$）；\n- 补充 $d_i(x, \\bot) = +\\infty$（$x \\neq \\bot$），$d_i(\\bot, \\bot) = 0$。\n\n考察算子 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$：当 $|r| \\leq 10$ 时，定义\n\n$$\\phi(r, \\sigma) := \\bigl(\\, 2r + \\sigma_0,\\; \\mathrm{trunc}_N(\\sigma) \\,\\bigr),$$\n\n其中 $N \\geq 1$ 为给定截断深度，$\\mathrm{trunc}_N(\\sigma)$ 将序列第 $N$ 位及以后全部置零；当 $|r| > 10$ 时置 $\\phi(r, \\sigma) = \\bot$（即 $\\mathrm{dom}(\\phi) = [-10, 10] \\times \\{0,1\\}^{\\mathbb{N}}$）。\n\n对任意 $x = (r,\\sigma),\\, y = (s,\\tau) \\in \\mathrm{dom}(\\phi)$：\n1. **输出第 1 分量**：$d_1(\\phi(x), \\phi(y)) = |2(r-s) + (\\sigma_0 - \\tau_0)|$。注意若 $\\sigma_0 \\neq \\tau_0$，则 $d_2(x,y) = 2^0 = 1$ 且 $|\\sigma_0 - \\tau_0| = 1 = d_2(x,y)$；若 $\\sigma_0 = \\tau_0$，则 $|\\sigma_0 - \\tau_0| = 0 \\leq d_2(x,y)$。故恒有 $d_1(\\phi(x),\\phi(y)) \\leq 2\\,d_1(x,y) + 1\\cdot d_2(x,y)$。同时，当 $(r,\\sigma)=(0, 100\\dots)$ 与 $(s,\\tau)=(\\frac{1}{2}, 000\\dots)$ 时 $2(r-s)+(\\sigma_0-\\tau_0)=0$，故第 1 行下界元必为 $0$；而当 $d_1(x,y) \\leq 0$ 且 $d_2(x,y) \\leq 2^{-1}$（保证 $\\sigma_0 = \\tau_0$）时，$d_1(\\phi(x),\\phi(y)) = 0$。\n2. **输出第 2 分量**：$d_2(\\phi(x), \\phi(y)) = d_2(\\mathrm{trunc}_N(\\sigma), \\mathrm{trunc}_N(\\tau))$ 完全独立于第 1 分量 $r,s$：始终有 $d_2(\\phi(x),\\phi(y)) \\leq 1 \\cdot d_2(x,y)$；因深层差异被抹除，正向分量下界为 $0$；而只要 $d_1(x,y) \\leq +\\infty$ 且 $d_2(x,y) \\leq 2^{-N}$（即前 $N$ 位相同），必有 $d_2(\\phi(x),\\phi(y)) = 0$。\n\n综上，该算子在 $\\mathrm{dom}(\\phi)$ 上的三类特征矩阵可精确给出为：\n\n$$L = \\begin{pmatrix} 2 & 1 \\\\ 0 & 1 \\end{pmatrix} \\in \\mathcal{L}^+(\\phi), \\qquad M = \\begin{pmatrix} 0 & 0 \\\\ 0 & 0 \\end{pmatrix} \\in \\mathcal{L}^-(\\phi), \\qquad \\Theta = \\begin{pmatrix} 0 & 2^{-1} \\\\ +\\infty & 2^{-N} \\end{pmatrix} \\in \\mathcal{T}(\\phi).$$\n\n若进一步限制在子集 $E_0 = [-10,10] \\times \\{\\sigma \\mid \\sigma_0 = 0\\} \\subseteq \\mathrm{dom}(\\phi)$ 上，第 1 分量的交叉干扰消失，三类矩阵立即可同步收紧为\n\n$$L|_{E_0} = \\begin{pmatrix} 2 & 0 \\\\ 0 & 1 \\end{pmatrix}, \\qquad M|_{E_0} = \\begin{pmatrix} 2 & 0 \\\\ 0 & 0 \\end{pmatrix}, \\qquad \\Theta|_{E_0} = \\begin{pmatrix} 0 & +\\infty \\\\ +\\infty & 2^{-N} \\end{pmatrix},$$\n\n直观印证了 $(L, M, \\Theta)$ 在分量耦合、正交互补（$M_{11}=2>0 \\implies \\Theta_{11}=0$，$\\Theta_{22}=2^{-N}>0 \\implies M_{22}=0$）与定性对偶（$L_{12}=0 \\leftrightarrow \\Theta_{12}=+\\infty$，$L_{21}=0 \\leftrightarrow \\Theta_{21}=+\\infty$）上的完整统一。\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

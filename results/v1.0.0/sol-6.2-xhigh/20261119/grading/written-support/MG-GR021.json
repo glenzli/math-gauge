@@ -1,0 +1,277 @@
+{
+  "complete_goals": [
+    {
+      "id": "G1",
+      "attained": true,
+      "reason": "原输入、三个域的可行性和两类精确基数、有限类实际可提升判据全部给出并证明。",
+      "evidence": [
+        {
+          "line_start": 10,
+          "line_end": 44,
+          "utf8_start": 131,
+          "utf8_end": 1244,
+          "quote": "对每块定义\n\\[\n\\kappa_i=\\sum_{\\substack{a\\in I_i\\\\ b\\notin I_i}}\n\\frac{(A_i)_{ba}}2\\pmod2,\\qquad\n\\chi=\n\\begin{cases}\n1&\\text{所有 }\\kappa_i=0,\\\\\n0&\\text{至少一个 }\\kappa_i\\ne0.\n\\end{cases}\n\\]\n分子都是偶数，所以 \\(\\chi\\) 可由 \\(A_i\\bmod4\\) 计算。三个域上的 \\(\\mathscr S_L(A)\\) 都恰在 \\(\\chi=1\\) 时非空。\n\n## 1. 同时分块、计数与提升判据\n\n有限集合的基数为\n\\[\n\\boxed{\n\\begin{aligned}\n|\\mathscr R_{L,M}(A)|&=\\chi\\,2^r q_L^{(M-1)e},\\\\\n|\\mathscr C_{L,2}(A)|&=q_L^{d+e},\\\\\n|\\mathscr C_{L,M}(A)|&=\\chi\\,2^r q_L^{(M-1)e+d}\\qquad(M\\ge3).\n\\end{aligned}}\n\\]\n因此 \\(\\mathscr C_{L,2}(A)\\) 总是非空。其余两类的空集条件都是 \\(\\chi=0\\)。\n\n给定 \\(\\bar U\\in\\mathscr C_{L,M}(A)\\)，任选整数矩阵代表元 \\(\\widetilde U\\)。可提升判据是\n\\[\n\\boxed{\\quad\n\\bar U\\in\\mathscr R_{L,M}(A)\n\\iff\n(\\widetilde U^{\\mathsf T}\\widetilde U-I_d)_{aa}\n\\equiv0\\pmod{2^{M+1}\\mathcal O_L}\\quad\\text{对所有 }a.\n\\quad} \\tag{1}\n\\]\n一个列向量改变 \\(2^M z\\) 时，其平方长度的改变量属于 \\(2^{M+1}\\mathcal O_L\\)，所以此检验与代表元无关。\n"
+        },
+        {
+          "line_start": 48,
+          "line_end": 95,
+          "utf8_start": 1269,
+          "utf8_end": 5939,
+          "quote": "取 \\(f(t)=3t^2-2t^3\\)。多项式 \\(f(t)-t\\) 被 \\(t(t-1)\\) 整除，而 \\(f(t)^2-f(t)\\) 被 \\(t^2(t-1)^2\\) 整除。因 \\(A_i^2-A_i\\equiv0\\pmod2\\)，迭代 \\(f\\) 时幂等误差的 \\(2\\)-进精度至少逐次翻倍，相邻两项之差也趋于零。于是迭代收敛到对称幂等矩阵 \\(P_i\\)，满足\n\\[\nP_i\\equiv E_i\\pmod2,\\qquad P_i\\equiv f(A_i)\\pmod4.\n\\]\n这些 \\(P_i\\) 两两交换，并与所有 \\(A_j\\) 交换。对于 \\(i\\ne j\\)，\\(P_iP_j\\) 是模 \\(2\\) 为零的幂等矩阵。这样的矩阵等于自身的任意正整数次幂，故为零。于是 \\(\\sum_i P_i\\) 幂等，且其补幂等矩阵模 \\(2\\) 为零，故 \\(\\sum_iP_i=I_d\\)。\n\n把各 \\(P_i\\) 的 \\(I_i\\) 列依次拼接，得到一个模 \\(2\\) 为 \\(I_d\\) 的可逆矩阵。这些列给出各 \\(\\operatorname{im}P_i\\) 的基。再将每组列乘以其 \\(I_i\\) 行子矩阵的逆，得到基矩阵 \\(T_i\\)，其 \\(I_i\\) 行为 \\(I_{n_i}\\)，其余行为 \\(2B_i\\)。令 \\(T=[T_1\\ \\cdots\\ T_r]\\)。由 \\(P_i\\) 的对称性及 \\(P_iP_j=0\\)，\n\\[\nT\\equiv I_d\\pmod2,\\qquad\nT^{\\mathsf T}T=\\operatorname{diag}(H_1,\\ldots,H_r),\\qquad\nH_i=I_{n_i}+4D_i,\\quad D_i=B_i^{\\mathsf T}B_i. \\tag{2}\n\\]\n写 \\(A_i=E_i+2J_i\\)，则 \\(f(A_i)\\equiv E_i+2(E_iJ_i+J_iE_i)\\pmod4\\)。因此 \\(B_i\\bmod2\\) 的 \\((b,a)\\) 项就是 \\((A_i)_{ba}/2\\bmod2\\)，其中 \\(a\\in I_i,\\ b\\notin I_i\\)。特别地，\n\\[\n\\sum_{a=1}^{n_i}(D_i)_{aa}\\equiv\\kappa_i\\pmod2. \\tag{3}\n\\]\n\n在整数环上以及模 \\(2^M\\) 的商环上，满足正交和同时分块条件的 \\(U\\) 都有唯一形式\n\\[\nU=T\\operatorname{diag}(X_1,\\ldots,X_r),\\qquad\nX_i\\equiv I_{n_i}\\pmod2,\\qquad X_i^{\\mathsf T}H_iX_i=I_{n_i}, \\tag{4}\n\\]\n其中等式在所讨论的环中成立。事实上，正交性给出 \\(U^{\\mathsf T}=U^{-1}\\)。若各 \\(U^{-1}A_jU\\) 分块，则各 \\(U^{-1}P_iU\\) 也分块，因为 \\(P_i\\) 是多项式迭代的极限，在每个有限精度上迭代最终稳定。其各块是模 \\(2\\) 为零或单位阵的幂等矩阵，故 \\(U^{-1}P_iU=E_i\\)。这里的幂等论证在有限商环上同样成立，因为 \\(2\\) 的幂最终为零。于是 \\(T^{-1}U\\) 分块。反过来，形式 (4) 给出 \\(U^{-1}P_iU=E_i\\)，而 \\(A_j\\) 与 \\(P_i\\) 交换，故 \\(U^{-1}A_jU\\) 分块。\n\n### 单块方程与逐层提升\n\n暂取一块，写 \\(n=n_i\\)、\\(H=I_n+4D\\)、\\(X=I_n+2Y\\)。令 \\(G=X^{\\mathsf T}HX-I_n\\)，并定义\n\\[\n\\begin{aligned}\n\\Phi_{ab}(Y)&=G_{ab}/2\n =Y_{ab}+Y_{ba}+2(Y^{\\mathsf T}Y+X^{\\mathsf T}DX)_{ab} &&(a<b),\\\\\n\\Phi_{aa}(Y)&=G_{aa}/4\n =Y_{aa}+(Y^{\\mathsf T}Y+X^{\\mathsf T}DX)_{aa}.\n\\end{aligned} \\tag{5}\n\\]\n当 \\(k\\ge1\\) 时，将 \\(Y\\) 改为 \\(Y+2^k Z\\)，在模 \\(2^{k+1}\\) 下，\\(\\Phi_{ab}\\) 的改变量为 \\(2^k(Z_{ab}+Z_{ba})\\)，\\(\\Phi_{aa}\\) 的改变量为 \\(2^kZ_{aa}\\)。因此，只要 \\(\\Phi(Y)\\equiv0\\pmod{2^k}\\)，就有恰好 \\(q_L^{\\binom n2}\\) 个模 \\(2^{k+1}\\) 的提升使所有 \\(\\Phi\\) 继续为零。连续提升得到整数环中的真解，因为 \\(\\mathcal O_L\\) 是有限自由 \\(\\mathbb Z_2\\)-模，关于 \\(2\\)-进拓扑完备。\n\n模 \\(2^M\\) 的 \\(X\\) 对应模 \\(2^{M-1}\\) 的 \\(Y\\)。有限正交方程要求非对角 \\(\\Phi_{ab}\\) 模 \\(2^{M-1}\\) 为零，而对角 \\(\\Phi_{aa}\\) 模 \\(2^{M-2}\\) 为零。由上面的提升论证，此类来自真解的充要条件是所有 \\(\\Phi\\) 模 \\(2^{M-1}\\) 为零。这也证明了 (1)。\n\n现在计算 \\(\\Phi\\equiv0\\pmod2\\) 的解数。记 \\(s_a=D_{aa}\\bmod2\\)。在基域上，\\(Y\\bmod2\\) 须对称，对角项任意，非对角项满足\n\\[\n\\sum_{b\\ne a}Y_{ba}=s_a\\quad\\text{于 }\\mathbb F_2.\n\\]\n每个无序对 \\(\\{a,b\\}\\) 的变量向第 \\(a,b\\) 个坐标各贡献一次。这一线性映射的像为坐标和为零的向量空间，秩为 \\(n-1\\)。例如，连接某一固定坐标和其余坐标的 \\(n-1\\) 个无序对给出一组像的基，\\(n=1\\) 时秩为零。\n\n在扩域上，\\(\\mathcal O_L/2\\mathcal O_L=\\mathbb F_2[\\epsilon]/(\\epsilon^2)\\)，其中 \\(\\epsilon=\\theta_2\\bmod2\\) 或 \\(\\epsilon=1+\\theta_{-1}\\bmod2\\)。写 \\(Y=Y_0+\\epsilon Y_1\\)。两部分均须对称，\\(Y_0\\) 满足上述基域方程，而 \\(Y_1\\) 的对角线须为零，非对角项任意。这由 \\((x+\\epsilon y)^2=x\\) 直接得到。\n\n所以单块有解恰在 \\(\\sum_a s_a=0\\) 时，且此时模 \\(2\\) 的解数为 \\(2q_L^{\\binom n2}\\)。结合 (3) 和逐层提升，得到可行性判准及 \\(\\mathscr R_{L,M}\\) 的基数。对 \\(\\mathscr C_{L,2}\\)，只要求 \\(Y\\bmod2\\) 对称，每块有 \\(q_L^{n+\\binom n2}\\) 种。对 \\(\\mathscr C_{L,M+1}\\)，约化到精度 \\(M\\) 时，所有 \\(\\Phi\\) 都须模 \\(2^{M-1}\\) 为零。在这样的类上，下一层只新增非对角方程，每块有 \\(q_L^{n+\\binom n2}\\) 种提升。这给出其余的计数。\n"
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "attained": true,
+      "reason": "固定类的全精度公式和基域关系、固定与轨道计数、四个约化与实际固定提升全部闭合。",
+      "evidence": [
+        {
+          "line_start": 99,
+          "line_end": 144,
+          "utf8_start": 5981,
+          "utf8_end": 9239,
+          "quote": "记 \\(\\mathcal H\\) 为 \\(\\mathbb F_2\\) 上按 \\(I_i\\) 分块的对称矩阵空间，记 \\(\\mathcal H_0\\) 为其中对角线为零的子空间。两者的维数分别为 \\(d+e\\) 和 \\(e\\)。令\n\\[\n\\delta_{\\mu,M}=\n\\begin{cases}\n1&(\\mu,M)=(-1,2),\\\\\n0&\\text{其余情形}.\n\\end{cases}\n\\]\n固定点集的具体矩阵类如下，式中 \\(Z\\) 可用任意整数代表元计算，且每个参数对给出不同的类。\n\\[\n\\boxed{\n\\begin{aligned}\n\\mathscr C_{K_\\mu,M}(A)^{\\sigma_\\mu}\n &=\\left\\{\\bar V+2^{M-1}\\theta_\\mu Z:\n     \\bar V\\in\\mathscr C_{F,M}(A),\\ Z\\in\\mathcal H\\right\\},\\\\\n\\mathscr R_{K_\\mu,M}(A)^{\\sigma_\\mu}\n &=\\left\\{\\bar V+2^{M-1}(\\theta_\\mu+\\delta_{\\mu,M})Z:\n     \\bar V\\in\\mathscr R_{F,M}(A),\\ Z\\in\\mathcal H_0\\right\\}.\n\\end{aligned}} \\tag{6}\n\\]\n两式中基域集合都恰对应 \\(Z=0\\)。对 \\(\\mathscr C\\)，只要集合非空，这一包含便是严格的。对 \\(\\mathscr R\\)，严格包含恰发生在 \\(\\chi=1\\) 且 \\(e>0\\) 时。\n\n为证明 (6)，固定类的每个条目都可唯一写成 \\(a+2^{M-1}\\theta_\\mu b\\)，其中 \\(a\\bmod2^M\\) 是基域系数，\\(b\\bmod2\\) 是二元系数。这是因为 \\(\\sigma_\\mu(a+c\\theta_\\mu)-(a+c\\theta_\\mu)=-2c\\theta_\\mu\\)，而 \\(1,\\theta_\\mu\\) 是整数环的 \\(\\mathbb Z_2\\)-基。由于 \\(T\\) 在基域上，在 (4) 中可逐块写成 \\(X=X_0+2^{M-1}\\theta_\\mu Z\\)。模 \\(2^M\\) 的 Gram 方程要求 \\(X_0^{\\mathsf T}HX_0=I\\) 及 \\(Z+Z^{\\mathsf T}=0\\bmod 2\\)，因为 \\(X_0,H\\equiv I\\pmod2\\)，且二次修正项含因子 \\(2^{2M-2}\\)。这给出固定 \\(\\mathscr C\\) 的公式。\n\n对固定 \\(\\mathscr R\\)，还要检验对角项模 \\(2^{M+1}\\)。第 \\(a\\) 个对角项相对 \\(X_0^{\\mathsf T}HX_0-I\\) 的改变量是\n\\[\n2^M\\theta_\\mu (X_0^{\\mathsf T}HZ)_{aa}\n  +2^{2M-2}\\mu (Z^{\\mathsf T}HZ)_{aa}.\n\\]\n比较 \\(\\theta_\\mu\\) 系数可得 \\(Z_{aa}=0\\bmod2\\)。比较基域系数时，第二项只在 \\((\\mu,M)=(-1,2)\\) 有贡献。在该情形，它模 \\(8\\) 等于 \\(4\\sum_b Z_{ba}^2\\)，恰等于将 \\(X_0\\) 换成 \\(X_0+2Z\\) 后的对角改变量。故此时 \\(X_0+2Z\\) 须是基域可提升类，其余情形则要求 \\(X_0\\) 是基域可提升类。拼回整矩阵时，由 \\(T\\equiv I\\pmod2\\)，乘 \\(T\\) 不改变形如 \\(2^{M-1}Z\\) 的修正项。这证明了 (6)。\n\n若考虑取基域系数的投影，固定 \\(\\mathscr C\\) 投到整个 \\(\\mathscr C_{F,M}\\)，每个纤维大小为 \\(2^{d+e}\\)。固定 \\(\\mathscr R\\) 在 \\(\\delta_{\\mu,M}=0\\) 时投到 \\(\\mathscr R_{F,M}\\)，每个纤维大小为 \\(2^e\\)。在 \\((\\mu,M)=(-1,2)\\) 且 \\(\\chi=1\\) 时，它投到整个 \\(\\mathscr C_{F,2}\\)，每个纤维大小为 \\(2^{e-d+r}\\)。最后一个结论来自逐块选择 \\(Z\\) 来修正基域系数的对角缺差。缺差向量的坐标和为零，修正映射正是上文秩为 \\(n_i-1\\) 的无序对映射。\n\n固定点数和 \\(\\langle\\sigma_\\mu\\rangle\\) 轨道数为\n\\[\n\\begin{array}{c|c|c}\n\\text{集合}&\\text{固定点数}&\\text{轨道数}\\\\ \\hline\n\\mathscr R_{K_\\mu,M}\n &\\chi\\,2^{r+Me}&\\chi\\,2^{r+Me-1}(1+2^{(M-2)e})\\\\\n\\mathscr C_{K_\\mu,2}\n &4^{d+e}&4^{d+e}\\\\\n\\mathscr C_{K_\\mu,M}\\ (M\\ge3)\n &\\chi\\,2^{r+Me+2d}&\\chi\\,2^{r+Me+2d-1}(1+2^{(M-2)e})\n\\end{array}\n\\]\n固定点数由 (6) 得到。每个非固定轨道恰有两个元素，故轨道数等于总数与固定点数之和的一半。\n"
+        },
+        {
+          "line_start": 146,
+          "line_end": 166,
+          "utf8_start": 9240,
+          "utf8_end": 10484,
+          "quote": "### 约化像、纤维与相容序列\n\n下表各行均指从精度 \\(M+1\\) 到精度 \\(M\\) 的约化。像为空时没有非空纤维。\n\\[\n\\begin{array}{c|c|c}\n\\text{源}&\\text{像}&\\text{每个非空纤维的大小}\\\\ \\hline\n\\mathscr R_{L,M+1}&\\mathscr R_{L,M}&q_L^e\\\\\n\\mathscr C_{L,M+1}&\\mathscr R_{L,M}&q_L^{d+e}\\\\\n\\mathscr R_{K_\\mu,M+1}^{\\sigma_\\mu}&\\mathscr R_{F,M}&2^{2e}\\\\\n\\mathscr C_{K_\\mu,M+1}^{\\sigma_\\mu}&\\mathscr R_{F,M}&2^{2(d+e)}\n\\end{array} \\tag{7}\n\\]\n前两行来自 (5) 的逐层提升。后两行中，(6) 里精度 \\(M+1\\) 的修正项在精度 \\(M\\) 消失。基域部分按前两行约化，而源层的 \\(Z\\) 分别有 \\(2^e\\) 或 \\(2^{d+e}\\) 种选择，故得所列纤维大小。\n\n对固定 \\(\\mathscr R\\) 或固定 \\(\\mathscr C\\) 中任一精度 \\(M\\) 的类，下列三个条件等价。\n\n- 该类属于 \\(\\mathscr R_{F,M}(A)\\)。\n- 该类能提升为一个 \\(\\sigma_\\mu\\)-固定的真解。\n- 该类能作为相应固定点集的一条逐层相容序列在精度 \\(M\\) 的分量。\n\n第一项给出一个基域真解，其逐层约化给出后两项。固定的真解逐条目属于 \\(\\mathbb Z_2\\)，所以第二项推出第一项。第三项给出一个固定的上一精度类，故由 (7) 也推出第一项。\n"
+        }
+      ]
+    },
+    {
+      "id": "G3",
+      "attained": true,
+      "reason": "统一下降界、点态保精度、精确下降的块秩界及实际尖锐反例均成立。",
+      "evidence": [
+        {
+          "line_start": 170,
+          "line_end": 205,
+          "utf8_start": 10511,
+          "utf8_end": 14006,
+          "quote": "所求最大整数为\n\\[\n\\boxed{\nN=\n\\begin{cases}\nM&\\text{每个 }n_i=1,\\\\\nM-1&\\text{至少一个 }n_i\\ge2.\n\\end{cases}}\n\\]\n事实上，给定题设中的 \\(U\\)，令 \\(\\bar U=U\\bmod2^M\\)。由 (6)，它与某个 \\(\\bar V\\in\\mathscr R_{F,M}(A)\\) 模 \\(2^{M-1}\\) 相同，取 \\(\\bar V\\) 的基域真提升 \\(W\\) 即可。对于这个给定的 \\(U\\)，能取 \\(N=M\\) 的充要条件是 (6) 中的 \\(Z=0\\)。等价地，将 \\(U\\) 逐项写为 \\(a+b\\theta_\\mu\\)，所有 \\(b\\) 都须属于 \\(2^M\\mathbb Z_2\\)，或者写成\n\\[\n\\sigma_\\mu(U)\\equiv U\\pmod{2^{M+1}\\mathcal O_\\mu}.\n\\]\n当所有块秩都为一时，\\(\\mathcal H_0=0\\)。在这种块秩下，真解本身也全部下降。若有扩域真解 \\(U\\)，由可行性判准可取基域真解 \\(W_0\\)。于是 \\(W_0^{-1}U\\) 是分块正交矩阵，每块为平方等于 \\(1\\) 的标量，故每块为 \\(1\\) 或 \\(-1\\)。\n\n### 最优性及各类失败的实例\n\n**任意精度的下降反例。** 若某块秩至少为二，取 \\(A_i=E_i\\)，在该块选两个坐标。给定任意 \\(M\\ge2\\)，置\n\\[\nt=\n\\begin{cases}\n2^{M-1}(1+\\theta_{-1})&\\mu=-1,\\\\\n2^{M-1}\\theta_2&\\mu=2.\n\\end{cases}\n\\]\n两种情形都有 \\(t^2\\in 2^{2M-1}\\mathcal O_\\mu\\)。取 \\(a=1+4z\\) 使 \\(a^2+t^2=1\\)，即令 \\(z+2z^2=-t^2/8\\)。这个方程模 \\(2\\) 唯一确定 \\(z\\)，每次把 \\(z\\) 改动 \\(2^k w\\) 时，左侧模 \\(2^{k+1}\\) 的改变量为 \\(2^k w\\)，故能逐层解出。又因 \\(1+2z\\) 可逆，\\(z(1+2z)=-t^2/8\\) 给出 \\(a-1\\in2^{2M-2}\\mathcal O_\\mu\\)。\n\n在所选平面上令 \\(U\\) 为\n\\[\n\\begin{pmatrix}a&-t\\\\t&a\\end{pmatrix}\n\\]\n并在其余坐标上取恒等。它是真解，且模 \\(2^M\\) 固定，因为 \\(a\\equiv1\\pmod{2^M}\\)，而 \\(\\sigma_\\mu(t)-t=-2^M\\theta_\\mu\\)。但 \\(t\\) 的 \\(\\theta_\\mu\\) 系数为 \\(2^{M-1}\\)，故它在精度 \\(M\\) 没有基域真提升，也无法进入逐层相容的固定序列。这证明界的最优性。在 \\((\\mu,M)=(-1,2)\\) 时，此例基域系数在所选平面上为 \\(\\begin{psmallmatrix}1&-2\\\\2&1\\end{psmallmatrix}\\bmod4\\)，其 Gram 矩阵为 \\(5I_2\\)，说明该系数类属于 \\(\\mathscr C_{F,2}\\) 却无法提升。把同一构造的 \\(t,a\\) 取自 \\(M=2\\)，再观察任意精度 \\(M\\ge3\\)，则 \\(\\sigma_\\mu(t)-t=-4\\theta_\\mu\\) 在该精度非零，给出两元素轨道。\n\n**可行性失败。** 当 \\(r\\ge2\\) 时，从两个不同块各选一个坐标 \\(a,b\\)。令 \\(Q\\) 在该平面上为 \\(\\begin{psmallmatrix}1&-2\\\\2&1\\end{psmallmatrix}\\)，其余坐标上为恒等，取 \\(A_i=QE_iQ^{-1}\\)。因 \\(Q^{\\mathsf T}Q\\) 为对角矩阵，这些 \\(A_i\\) 对称，且两两交换、模 \\(2\\) 为 \\(E_i\\)。涉及的两块列跨块项分别含 \\(2/5\\) 和 \\(-2/5\\)，因此两块的 \\(\\kappa_i\\) 都为 \\(1\\)。三个域上均无真解，也无精度 \\(M\\ge3\\) 的有限解，但 \\(Q\\bmod4\\) 是精度 \\(2\\) 的有限解。当 \\(r=1\\) 时，\\(\\kappa_1=0\\) 恒成立。\n\n**有限正交条件成立但无法提升。** 取 \\(A_i=E_i\\)。在任意扩域和任意精度 \\(M\\ge2\\)，将恒等矩阵的一个对角元换成 \\(1+2^{M-1}\\theta_\\mu\\)。所得类固定且属于 \\(\\mathscr C_{K_\\mu,M}\\)，但其平方长度误差的 \\(\\theta_\\mu\\) 系数恰为 \\(2^M\\)，由 (1) 无法提升。在基域上，\\(M\\ge3\\) 时可用对角元 \\(1+2^{M-1}\\)，其平方长度误差模 \\(2^{M+1}\\) 为 \\(2^M\\)。在基域的 \\(M=2\\) 层，若有块秩至少为二，可在该块使用上述 Gram 矩阵为 \\(5I_2\\) 的平面矩阵。若各块秩均为一且 \\(\\chi=1\\)，这层的基域有限类全部可提升。"
+        }
+      ]
+    }
+  ],
+  "content_claims": [
+    {
+      "label": "原对称交换族的实际分块",
+      "verdict": "correct",
+      "reason": "三次迭代误差平方，极限在有限层稳定。两两正交投影与原 A_i 交换，分块等价精确。",
+      "evidence": [
+        {
+          "line_start": 48,
+          "line_end": 70,
+          "utf8_start": 1269,
+          "utf8_end": 3483,
+          "quote": "取 \\(f(t)=3t^2-2t^3\\)。多项式 \\(f(t)-t\\) 被 \\(t(t-1)\\) 整除，而 \\(f(t)^2-f(t)\\) 被 \\(t^2(t-1)^2\\) 整除。因 \\(A_i^2-A_i\\equiv0\\pmod2\\)，迭代 \\(f\\) 时幂等误差的 \\(2\\)-进精度至少逐次翻倍，相邻两项之差也趋于零。于是迭代收敛到对称幂等矩阵 \\(P_i\\)，满足\n\\[\nP_i\\equiv E_i\\pmod2,\\qquad P_i\\equiv f(A_i)\\pmod4.\n\\]\n这些 \\(P_i\\) 两两交换，并与所有 \\(A_j\\) 交换。对于 \\(i\\ne j\\)，\\(P_iP_j\\) 是模 \\(2\\) 为零的幂等矩阵。这样的矩阵等于自身的任意正整数次幂，故为零。于是 \\(\\sum_i P_i\\) 幂等，且其补幂等矩阵模 \\(2\\) 为零，故 \\(\\sum_iP_i=I_d\\)。\n\n把各 \\(P_i\\) 的 \\(I_i\\) 列依次拼接，得到一个模 \\(2\\) 为 \\(I_d\\) 的可逆矩阵。这些列给出各 \\(\\operatorname{im}P_i\\) 的基。再将每组列乘以其 \\(I_i\\) 行子矩阵的逆，得到基矩阵 \\(T_i\\)，其 \\(I_i\\) 行为 \\(I_{n_i}\\)，其余行为 \\(2B_i\\)。令 \\(T=[T_1\\ \\cdots\\ T_r]\\)。由 \\(P_i\\) 的对称性及 \\(P_iP_j=0\\)，\n\\[\nT\\equiv I_d\\pmod2,\\qquad\nT^{\\mathsf T}T=\\operatorname{diag}(H_1,\\ldots,H_r),\\qquad\nH_i=I_{n_i}+4D_i,\\quad D_i=B_i^{\\mathsf T}B_i. \\tag{2}\n\\]\n写 \\(A_i=E_i+2J_i\\)，则 \\(f(A_i)\\equiv E_i+2(E_iJ_i+J_iE_i)\\pmod4\\)。因此 \\(B_i\\bmod2\\) 的 \\((b,a)\\) 项就是 \\((A_i)_{ba}/2\\bmod2\\)，其中 \\(a\\in I_i,\\ b\\notin I_i\\)。特别地，\n\\[\n\\sum_{a=1}^{n_i}(D_i)_{aa}\\equiv\\kappa_i\\pmod2. \\tag{3}\n\\]\n\n在整数环上以及模 \\(2^M\\) 的商环上，满足正交和同时分块条件的 \\(U\\) 都有唯一形式\n\\[\nU=T\\operatorname{diag}(X_1,\\ldots,X_r),\\qquad\nX_i\\equiv I_{n_i}\\pmod2,\\qquad X_i^{\\mathsf T}H_iX_i=I_{n_i}, \\tag{4}\n\\]\n其中等式在所讨论的环中成立。事实上，正交性给出 \\(U^{\\mathsf T}=U^{-1}\\)。若各 \\(U^{-1}A_jU\\) 分块，则各 \\(U^{-1}P_iU\\) 也分块，因为 \\(P_i\\) 是多项式迭代的极限，在每个有限精度上迭代最终稳定。其各块是模 \\(2\\) 为零或单位阵的幂等矩阵，故 \\(U^{-1}P_iU=E_i\\)。这里的幂等论证在有限商环上同样成立，因为 \\(2\\) 的幂最终为零。于是 \\(T^{-1}U\\) 分块。反过来，形式 (4) 给出 \\(U^{-1}P_iU=E_i\\)，而 \\(A_j\\) 与 \\(P_i\\) 交换，故 \\(U^{-1}A_jU\\) 分块。\n"
+        }
+      ]
+    },
+    {
+      "label": "真提升与有限计数的不同精度",
+      "verdict": "correct",
+      "reason": "对角和非对角归一化分别除4和2，逐位指定对角和互易和，导出精确 lift 判据与纤维。",
+      "evidence": [
+        {
+          "line_start": 35,
+          "line_end": 44,
+          "utf8_start": 827,
+          "utf8_end": 1244,
+          "quote": "给定 \\(\\bar U\\in\\mathscr C_{L,M}(A)\\)，任选整数矩阵代表元 \\(\\widetilde U\\)。可提升判据是\n\\[\n\\boxed{\\quad\n\\bar U\\in\\mathscr R_{L,M}(A)\n\\iff\n(\\widetilde U^{\\mathsf T}\\widetilde U-I_d)_{aa}\n\\equiv0\\pmod{2^{M+1}\\mathcal O_L}\\quad\\text{对所有 }a.\n\\quad} \\tag{1}\n\\]\n一个列向量改变 \\(2^M z\\) 时，其平方长度的改变量属于 \\(2^{M+1}\\mathcal O_L\\)，所以此检验与代表元无关。\n"
+        },
+        {
+          "line_start": 74,
+          "line_end": 95,
+          "utf8_start": 3517,
+          "utf8_end": 5939,
+          "quote": "暂取一块，写 \\(n=n_i\\)、\\(H=I_n+4D\\)、\\(X=I_n+2Y\\)。令 \\(G=X^{\\mathsf T}HX-I_n\\)，并定义\n\\[\n\\begin{aligned}\n\\Phi_{ab}(Y)&=G_{ab}/2\n =Y_{ab}+Y_{ba}+2(Y^{\\mathsf T}Y+X^{\\mathsf T}DX)_{ab} &&(a<b),\\\\\n\\Phi_{aa}(Y)&=G_{aa}/4\n =Y_{aa}+(Y^{\\mathsf T}Y+X^{\\mathsf T}DX)_{aa}.\n\\end{aligned} \\tag{5}\n\\]\n当 \\(k\\ge1\\) 时，将 \\(Y\\) 改为 \\(Y+2^k Z\\)，在模 \\(2^{k+1}\\) 下，\\(\\Phi_{ab}\\) 的改变量为 \\(2^k(Z_{ab}+Z_{ba})\\)，\\(\\Phi_{aa}\\) 的改变量为 \\(2^kZ_{aa}\\)。因此，只要 \\(\\Phi(Y)\\equiv0\\pmod{2^k}\\)，就有恰好 \\(q_L^{\\binom n2}\\) 个模 \\(2^{k+1}\\) 的提升使所有 \\(\\Phi\\) 继续为零。连续提升得到整数环中的真解，因为 \\(\\mathcal O_L\\) 是有限自由 \\(\\mathbb Z_2\\)-模，关于 \\(2\\)-进拓扑完备。\n\n模 \\(2^M\\) 的 \\(X\\) 对应模 \\(2^{M-1}\\) 的 \\(Y\\)。有限正交方程要求非对角 \\(\\Phi_{ab}\\) 模 \\(2^{M-1}\\) 为零，而对角 \\(\\Phi_{aa}\\) 模 \\(2^{M-2}\\) 为零。由上面的提升论证，此类来自真解的充要条件是所有 \\(\\Phi\\) 模 \\(2^{M-1}\\) 为零。这也证明了 (1)。\n\n现在计算 \\(\\Phi\\equiv0\\pmod2\\) 的解数。记 \\(s_a=D_{aa}\\bmod2\\)。在基域上，\\(Y\\bmod2\\) 须对称，对角项任意，非对角项满足\n\\[\n\\sum_{b\\ne a}Y_{ba}=s_a\\quad\\text{于 }\\mathbb F_2.\n\\]\n每个无序对 \\(\\{a,b\\}\\) 的变量向第 \\(a,b\\) 个坐标各贡献一次。这一线性映射的像为坐标和为零的向量空间，秩为 \\(n-1\\)。例如，连接某一固定坐标和其余坐标的 \\(n-1\\) 个无序对给出一组像的基，\\(n=1\\) 时秩为零。\n\n在扩域上，\\(\\mathcal O_L/2\\mathcal O_L=\\mathbb F_2[\\epsilon]/(\\epsilon^2)\\)，其中 \\(\\epsilon=\\theta_2\\bmod2\\) 或 \\(\\epsilon=1+\\theta_{-1}\\bmod2\\)。写 \\(Y=Y_0+\\epsilon Y_1\\)。两部分均须对称，\\(Y_0\\) 满足上述基域方程，而 \\(Y_1\\) 的对角线须为零，非对角项任意。这由 \\((x+\\epsilon y)^2=x\\) 直接得到。\n\n所以单块有解恰在 \\(\\sum_a s_a=0\\) 时，且此时模 \\(2\\) 的解数为 \\(2q_L^{\\binom n2}\\)。结合 (3) 和逐层提升，得到可行性判准及 \\(\\mathscr R_{L,M}\\) 的基数。对 \\(\\mathscr C_{L,2}\\)，只要求 \\(Y\\bmod2\\) 对称，每块有 \\(q_L^{n+\\binom n2}\\) 种。对 \\(\\mathscr C_{L,M+1}\\)，约化到精度 \\(M\\) 时，所有 \\(\\Phi\\) 都须模 \\(2^{M-1}\\) 为零。在这样的类上，下一层只新增非对角方程，每块有 \\(q_L^{n+\\binom n2}\\) 种提升。这给出其余的计数。\n"
+        }
+      ]
+    },
+    {
+      "label": "跨块模4可行性与全部基数",
+      "verdict": "correct",
+      "reason": "块平方长度和还原为模4有限输入。模2非约化分量为平方零，基域图度数的偶和判准及扩域参数计数正确。",
+      "evidence": [
+        {
+          "line_start": 10,
+          "line_end": 33,
+          "utf8_start": 131,
+          "utf8_end": 826,
+          "quote": "对每块定义\n\\[\n\\kappa_i=\\sum_{\\substack{a\\in I_i\\\\ b\\notin I_i}}\n\\frac{(A_i)_{ba}}2\\pmod2,\\qquad\n\\chi=\n\\begin{cases}\n1&\\text{所有 }\\kappa_i=0,\\\\\n0&\\text{至少一个 }\\kappa_i\\ne0.\n\\end{cases}\n\\]\n分子都是偶数，所以 \\(\\chi\\) 可由 \\(A_i\\bmod4\\) 计算。三个域上的 \\(\\mathscr S_L(A)\\) 都恰在 \\(\\chi=1\\) 时非空。\n\n## 1. 同时分块、计数与提升判据\n\n有限集合的基数为\n\\[\n\\boxed{\n\\begin{aligned}\n|\\mathscr R_{L,M}(A)|&=\\chi\\,2^r q_L^{(M-1)e},\\\\\n|\\mathscr C_{L,2}(A)|&=q_L^{d+e},\\\\\n|\\mathscr C_{L,M}(A)|&=\\chi\\,2^r q_L^{(M-1)e+d}\\qquad(M\\ge3).\n\\end{aligned}}\n\\]\n因此 \\(\\mathscr C_{L,2}(A)\\) 总是非空。其余两类的空集条件都是 \\(\\chi=0\\)。\n"
+        },
+        {
+          "line_start": 54,
+          "line_end": 63,
+          "utf8_start": 1926,
+          "utf8_end": 2686,
+          "quote": "把各 \\(P_i\\) 的 \\(I_i\\) 列依次拼接，得到一个模 \\(2\\) 为 \\(I_d\\) 的可逆矩阵。这些列给出各 \\(\\operatorname{im}P_i\\) 的基。再将每组列乘以其 \\(I_i\\) 行子矩阵的逆，得到基矩阵 \\(T_i\\)，其 \\(I_i\\) 行为 \\(I_{n_i}\\)，其余行为 \\(2B_i\\)。令 \\(T=[T_1\\ \\cdots\\ T_r]\\)。由 \\(P_i\\) 的对称性及 \\(P_iP_j=0\\)，\n\\[\nT\\equiv I_d\\pmod2,\\qquad\nT^{\\mathsf T}T=\\operatorname{diag}(H_1,\\ldots,H_r),\\qquad\nH_i=I_{n_i}+4D_i,\\quad D_i=B_i^{\\mathsf T}B_i. \\tag{2}\n\\]\n写 \\(A_i=E_i+2J_i\\)，则 \\(f(A_i)\\equiv E_i+2(E_iJ_i+J_iE_i)\\pmod4\\)。因此 \\(B_i\\bmod2\\) 的 \\((b,a)\\) 项就是 \\((A_i)_{ba}/2\\bmod2\\)，其中 \\(a\\in I_i,\\ b\\notin I_i\\)。特别地，\n\\[\n\\sum_{a=1}^{n_i}(D_i)_{aa}\\equiv\\kappa_i\\pmod2. \\tag{3}\n\\]\n"
+        },
+        {
+          "line_start": 87,
+          "line_end": 95,
+          "utf8_start": 4586,
+          "utf8_end": 5939,
+          "quote": "现在计算 \\(\\Phi\\equiv0\\pmod2\\) 的解数。记 \\(s_a=D_{aa}\\bmod2\\)。在基域上，\\(Y\\bmod2\\) 须对称，对角项任意，非对角项满足\n\\[\n\\sum_{b\\ne a}Y_{ba}=s_a\\quad\\text{于 }\\mathbb F_2.\n\\]\n每个无序对 \\(\\{a,b\\}\\) 的变量向第 \\(a,b\\) 个坐标各贡献一次。这一线性映射的像为坐标和为零的向量空间，秩为 \\(n-1\\)。例如，连接某一固定坐标和其余坐标的 \\(n-1\\) 个无序对给出一组像的基，\\(n=1\\) 时秩为零。\n\n在扩域上，\\(\\mathcal O_L/2\\mathcal O_L=\\mathbb F_2[\\epsilon]/(\\epsilon^2)\\)，其中 \\(\\epsilon=\\theta_2\\bmod2\\) 或 \\(\\epsilon=1+\\theta_{-1}\\bmod2\\)。写 \\(Y=Y_0+\\epsilon Y_1\\)。两部分均须对称，\\(Y_0\\) 满足上述基域方程，而 \\(Y_1\\) 的对角线须为零，非对角项任意。这由 \\((x+\\epsilon y)^2=x\\) 直接得到。\n\n所以单块有解恰在 \\(\\sum_a s_a=0\\) 时，且此时模 \\(2\\) 的解数为 \\(2q_L^{\\binom n2}\\)。结合 (3) 和逐层提升，得到可行性判准及 \\(\\mathscr R_{L,M}\\) 的基数。对 \\(\\mathscr C_{L,2}\\)，只要求 \\(Y\\bmod2\\) 对称，每块有 \\(q_L^{n+\\binom n2}\\) 种。对 \\(\\mathscr C_{L,M+1}\\)，约化到精度 \\(M\\) 时，所有 \\(\\Phi\\) 都须模 \\(2^{M-1}\\) 为零。在这样的类上，下一层只新增非对角方程，每块有 \\(q_L^{n+\\binom n2}\\) 种提升。这给出其余的计数。\n"
+        }
+      ]
+    },
+    {
+      "label": "固定有限类的基域与扩域系数",
+      "verdict": "correct",
+      "reason": "单独比较真提升检查的下一位，特殊的 θ²=-1 项在 M=2 由 X_0+2Z 纠正。",
+      "evidence": [
+        {
+          "line_start": 99,
+          "line_end": 128,
+          "utf8_start": 5981,
+          "utf8_end": 8214,
+          "quote": "记 \\(\\mathcal H\\) 为 \\(\\mathbb F_2\\) 上按 \\(I_i\\) 分块的对称矩阵空间，记 \\(\\mathcal H_0\\) 为其中对角线为零的子空间。两者的维数分别为 \\(d+e\\) 和 \\(e\\)。令\n\\[\n\\delta_{\\mu,M}=\n\\begin{cases}\n1&(\\mu,M)=(-1,2),\\\\\n0&\\text{其余情形}.\n\\end{cases}\n\\]\n固定点集的具体矩阵类如下，式中 \\(Z\\) 可用任意整数代表元计算，且每个参数对给出不同的类。\n\\[\n\\boxed{\n\\begin{aligned}\n\\mathscr C_{K_\\mu,M}(A)^{\\sigma_\\mu}\n &=\\left\\{\\bar V+2^{M-1}\\theta_\\mu Z:\n     \\bar V\\in\\mathscr C_{F,M}(A),\\ Z\\in\\mathcal H\\right\\},\\\\\n\\mathscr R_{K_\\mu,M}(A)^{\\sigma_\\mu}\n &=\\left\\{\\bar V+2^{M-1}(\\theta_\\mu+\\delta_{\\mu,M})Z:\n     \\bar V\\in\\mathscr R_{F,M}(A),\\ Z\\in\\mathcal H_0\\right\\}.\n\\end{aligned}} \\tag{6}\n\\]\n两式中基域集合都恰对应 \\(Z=0\\)。对 \\(\\mathscr C\\)，只要集合非空，这一包含便是严格的。对 \\(\\mathscr R\\)，严格包含恰发生在 \\(\\chi=1\\) 且 \\(e>0\\) 时。\n\n为证明 (6)，固定类的每个条目都可唯一写成 \\(a+2^{M-1}\\theta_\\mu b\\)，其中 \\(a\\bmod2^M\\) 是基域系数，\\(b\\bmod2\\) 是二元系数。这是因为 \\(\\sigma_\\mu(a+c\\theta_\\mu)-(a+c\\theta_\\mu)=-2c\\theta_\\mu\\)，而 \\(1,\\theta_\\mu\\) 是整数环的 \\(\\mathbb Z_2\\)-基。由于 \\(T\\) 在基域上，在 (4) 中可逐块写成 \\(X=X_0+2^{M-1}\\theta_\\mu Z\\)。模 \\(2^M\\) 的 Gram 方程要求 \\(X_0^{\\mathsf T}HX_0=I\\) 及 \\(Z+Z^{\\mathsf T}=0\\bmod 2\\)，因为 \\(X_0,H\\equiv I\\pmod2\\)，且二次修正项含因子 \\(2^{2M-2}\\)。这给出固定 \\(\\mathscr C\\) 的公式。\n\n对固定 \\(\\mathscr R\\)，还要检验对角项模 \\(2^{M+1}\\)。第 \\(a\\) 个对角项相对 \\(X_0^{\\mathsf T}HX_0-I\\) 的改变量是\n\\[\n2^M\\theta_\\mu (X_0^{\\mathsf T}HZ)_{aa}\n  +2^{2M-2}\\mu (Z^{\\mathsf T}HZ)_{aa}.\n\\]\n比较 \\(\\theta_\\mu\\) 系数可得 \\(Z_{aa}=0\\bmod2\\)。比较基域系数时，第二项只在 \\((\\mu,M)=(-1,2)\\) 有贡献。在该情形，它模 \\(8\\) 等于 \\(4\\sum_b Z_{ba}^2\\)，恰等于将 \\(X_0\\) 换成 \\(X_0+2Z\\) 后的对角改变量。故此时 \\(X_0+2Z\\) 须是基域可提升类，其余情形则要求 \\(X_0\\) 是基域可提升类。拼回整矩阵时，由 \\(T\\equiv I\\pmod2\\)，乘 \\(T\\) 不改变形如 \\(2^{M-1}Z\\) 的修正项。这证明了 (6)。\n"
+        }
+      ]
+    },
+    {
+      "label": "特殊层常数投影与固定轨道数",
+      "verdict": "correct",
+      "reason": "奇偶可行时对角缺差坐标和为零，图度数映射的核给出 2^{e-d+r}。轨道由固定和二元配对组成。",
+      "evidence": [
+        {
+          "line_start": 130,
+          "line_end": 144,
+          "utf8_start": 8215,
+          "utf8_end": 9239,
+          "quote": "若考虑取基域系数的投影，固定 \\(\\mathscr C\\) 投到整个 \\(\\mathscr C_{F,M}\\)，每个纤维大小为 \\(2^{d+e}\\)。固定 \\(\\mathscr R\\) 在 \\(\\delta_{\\mu,M}=0\\) 时投到 \\(\\mathscr R_{F,M}\\)，每个纤维大小为 \\(2^e\\)。在 \\((\\mu,M)=(-1,2)\\) 且 \\(\\chi=1\\) 时，它投到整个 \\(\\mathscr C_{F,2}\\)，每个纤维大小为 \\(2^{e-d+r}\\)。最后一个结论来自逐块选择 \\(Z\\) 来修正基域系数的对角缺差。缺差向量的坐标和为零，修正映射正是上文秩为 \\(n_i-1\\) 的无序对映射。\n\n固定点数和 \\(\\langle\\sigma_\\mu\\rangle\\) 轨道数为\n\\[\n\\begin{array}{c|c|c}\n\\text{集合}&\\text{固定点数}&\\text{轨道数}\\\\ \\hline\n\\mathscr R_{K_\\mu,M}\n &\\chi\\,2^{r+Me}&\\chi\\,2^{r+Me-1}(1+2^{(M-2)e})\\\\\n\\mathscr C_{K_\\mu,2}\n &4^{d+e}&4^{d+e}\\\\\n\\mathscr C_{K_\\mu,M}\\ (M\\ge3)\n &\\chi\\,2^{r+Me+2d}&\\chi\\,2^{r+Me+2d-1}(1+2^{(M-2)e})\n\\end{array}\n\\]\n固定点数由 (6) 得到。每个非固定轨道恰有两个元素，故轨道数等于总数与固定点数之和的一半。\n"
+        }
+      ]
+    },
+    {
+      "label": "四个约化纤维与固定真提升等价",
+      "verdict": "correct",
+      "reason": "源固定修正项下一位消失，留下对应基域约化。实际固定解逐条目属于 F，固定塔第一相邻层就给必要条件。",
+      "evidence": [
+        {
+          "line_start": 148,
+          "line_end": 166,
+          "utf8_start": 9279,
+          "utf8_end": 10484,
+          "quote": "下表各行均指从精度 \\(M+1\\) 到精度 \\(M\\) 的约化。像为空时没有非空纤维。\n\\[\n\\begin{array}{c|c|c}\n\\text{源}&\\text{像}&\\text{每个非空纤维的大小}\\\\ \\hline\n\\mathscr R_{L,M+1}&\\mathscr R_{L,M}&q_L^e\\\\\n\\mathscr C_{L,M+1}&\\mathscr R_{L,M}&q_L^{d+e}\\\\\n\\mathscr R_{K_\\mu,M+1}^{\\sigma_\\mu}&\\mathscr R_{F,M}&2^{2e}\\\\\n\\mathscr C_{K_\\mu,M+1}^{\\sigma_\\mu}&\\mathscr R_{F,M}&2^{2(d+e)}\n\\end{array} \\tag{7}\n\\]\n前两行来自 (5) 的逐层提升。后两行中，(6) 里精度 \\(M+1\\) 的修正项在精度 \\(M\\) 消失。基域部分按前两行约化，而源层的 \\(Z\\) 分别有 \\(2^e\\) 或 \\(2^{d+e}\\) 种选择，故得所列纤维大小。\n\n对固定 \\(\\mathscr R\\) 或固定 \\(\\mathscr C\\) 中任一精度 \\(M\\) 的类，下列三个条件等价。\n\n- 该类属于 \\(\\mathscr R_{F,M}(A)\\)。\n- 该类能提升为一个 \\(\\sigma_\\mu\\)-固定的真解。\n- 该类能作为相应固定点集的一条逐层相容序列在精度 \\(M\\) 的分量。\n\n第一项给出一个基域真解，其逐层约化给出后两项。固定的真解逐条目属于 \\(\\mathbb Z_2\\)，所以第二项推出第一项。第三项给出一个固定的上一精度类，故由 (7) 也推出第一项。\n"
+        }
+      ]
+    },
+    {
+      "label": "下降界和实际尖锐例",
+      "verdict": "correct",
+      "reason": "保一位等价于二次系数为零到当前精度。选 t 使平方右侧可整除8，逐位确立 a 真平方根，构成两域统一旋转。",
+      "evidence": [
+        {
+          "line_start": 170,
+          "line_end": 201,
+          "utf8_start": 10511,
+          "utf8_end": 12783,
+          "quote": "所求最大整数为\n\\[\n\\boxed{\nN=\n\\begin{cases}\nM&\\text{每个 }n_i=1,\\\\\nM-1&\\text{至少一个 }n_i\\ge2.\n\\end{cases}}\n\\]\n事实上，给定题设中的 \\(U\\)，令 \\(\\bar U=U\\bmod2^M\\)。由 (6)，它与某个 \\(\\bar V\\in\\mathscr R_{F,M}(A)\\) 模 \\(2^{M-1}\\) 相同，取 \\(\\bar V\\) 的基域真提升 \\(W\\) 即可。对于这个给定的 \\(U\\)，能取 \\(N=M\\) 的充要条件是 (6) 中的 \\(Z=0\\)。等价地，将 \\(U\\) 逐项写为 \\(a+b\\theta_\\mu\\)，所有 \\(b\\) 都须属于 \\(2^M\\mathbb Z_2\\)，或者写成\n\\[\n\\sigma_\\mu(U)\\equiv U\\pmod{2^{M+1}\\mathcal O_\\mu}.\n\\]\n当所有块秩都为一时，\\(\\mathcal H_0=0\\)。在这种块秩下，真解本身也全部下降。若有扩域真解 \\(U\\)，由可行性判准可取基域真解 \\(W_0\\)。于是 \\(W_0^{-1}U\\) 是分块正交矩阵，每块为平方等于 \\(1\\) 的标量，故每块为 \\(1\\) 或 \\(-1\\)。\n\n### 最优性及各类失败的实例\n\n**任意精度的下降反例。** 若某块秩至少为二，取 \\(A_i=E_i\\)，在该块选两个坐标。给定任意 \\(M\\ge2\\)，置\n\\[\nt=\n\\begin{cases}\n2^{M-1}(1+\\theta_{-1})&\\mu=-1,\\\\\n2^{M-1}\\theta_2&\\mu=2.\n\\end{cases}\n\\]\n两种情形都有 \\(t^2\\in 2^{2M-1}\\mathcal O_\\mu\\)。取 \\(a=1+4z\\) 使 \\(a^2+t^2=1\\)，即令 \\(z+2z^2=-t^2/8\\)。这个方程模 \\(2\\) 唯一确定 \\(z\\)，每次把 \\(z\\) 改动 \\(2^k w\\) 时，左侧模 \\(2^{k+1}\\) 的改变量为 \\(2^k w\\)，故能逐层解出。又因 \\(1+2z\\) 可逆，\\(z(1+2z)=-t^2/8\\) 给出 \\(a-1\\in2^{2M-2}\\mathcal O_\\mu\\)。\n\n在所选平面上令 \\(U\\) 为\n\\[\n\\begin{pmatrix}a&-t\\\\t&a\\end{pmatrix}\n\\]\n并在其余坐标上取恒等。它是真解，且模 \\(2^M\\) 固定，因为 \\(a\\equiv1\\pmod{2^M}\\)，而 \\(\\sigma_\\mu(t)-t=-2^M\\theta_\\mu\\)。但 \\(t\\) 的 \\(\\theta_\\mu\\) 系数为 \\(2^{M-1}\\)，故它在精度 \\(M\\) 没有基域真提升，也无法进入逐层相容的固定序列。这证明界的最优性。在 \\((\\mu,M)=(-1,2)\\) 时，此例基域系数在所选平面上为 \\(\\begin{psmallmatrix}1&-2\\\\2&1\\end{psmallmatrix}\\bmod4\\)，其 Gram 矩阵为 \\(5I_2\\)，说明该系数类属于 \\(\\mathscr C_{F,2}\\) 却无法提升。把同一构造的 \\(t,a\\) 取自 \\(M=2\\)，再观察任意精度 \\(M\\ge3\\)，则 \\(\\sigma_\\mu(t)-t=-4\\theta_\\mu\\) 在该精度非零，给出两元素轨道。\n"
+        }
+      ]
+    },
+    {
+      "label": "额外不可行与有限假解实例",
+      "verdict": "correct",
+      "reason": "5 为单位，跨块共轭保对称却制造奇偶障碍，扩域对角扰动及基域模8异常分别给实际有限不可提升样本。",
+      "evidence": [
+        {
+          "line_start": 203,
+          "line_end": 205,
+          "utf8_start": 12784,
+          "utf8_end": 14006,
+          "quote": "**可行性失败。** 当 \\(r\\ge2\\) 时，从两个不同块各选一个坐标 \\(a,b\\)。令 \\(Q\\) 在该平面上为 \\(\\begin{psmallmatrix}1&-2\\\\2&1\\end{psmallmatrix}\\)，其余坐标上为恒等，取 \\(A_i=QE_iQ^{-1}\\)。因 \\(Q^{\\mathsf T}Q\\) 为对角矩阵，这些 \\(A_i\\) 对称，且两两交换、模 \\(2\\) 为 \\(E_i\\)。涉及的两块列跨块项分别含 \\(2/5\\) 和 \\(-2/5\\)，因此两块的 \\(\\kappa_i\\) 都为 \\(1\\)。三个域上均无真解，也无精度 \\(M\\ge3\\) 的有限解，但 \\(Q\\bmod4\\) 是精度 \\(2\\) 的有限解。当 \\(r=1\\) 时，\\(\\kappa_1=0\\) 恒成立。\n\n**有限正交条件成立但无法提升。** 取 \\(A_i=E_i\\)。在任意扩域和任意精度 \\(M\\ge2\\)，将恒等矩阵的一个对角元换成 \\(1+2^{M-1}\\theta_\\mu\\)。所得类固定且属于 \\(\\mathscr C_{K_\\mu,M}\\)，但其平方长度误差的 \\(\\theta_\\mu\\) 系数恰为 \\(2^M\\)，由 (1) 无法提升。在基域上，\\(M\\ge3\\) 时可用对角元 \\(1+2^{M-1}\\)，其平方长度误差模 \\(2^{M+1}\\) 为 \\(2^M\\)。在基域的 \\(M=2\\) 层，若有块秩至少为二，可在该块使用上述 Gram 矩阵为 \\(5I_2\\) 的平面矩阵。若各块秩均为一且 \\(\\chi=1\\)，这层的基域有限类全部可提升。"
+        }
+      ]
+    }
+  ],
+  "claim_findings": [],
+  "extra_findings": [],
+  "profile_observations": {
+    "proof": "通过投影构造、归一化 Gram 逐位方程和模2图度数映射统一可行性与计数，再单独核实下一位的固定类耦合和真解下界。",
+    "fidelity": "在原非幂等 A_i 和题设的 2^M 商上推导，保持两域、所有块秩、M=2 与一般精度。轨道、有限固定、基域真截断和固定真解各有独立界定。"
+  },
+  "schema": "math-gauge.written-response-support/v1",
+  "case_id": "MG-GR021",
+  "response_sha256": "c69ccd27352eb311884c54ec69a74913551deac7d5e4bca8f8c110761684e478",
+  "reviewer": "GPT-6.2 Sol Max; independent Math Gauge AI reviewer",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "original_contract_kind": "written_proof",
+  "receipt_binding": {
+    "model_id": "gpt-6.2-sol/xhigh",
+    "native_prompt": {
+      "path": "sessions/MG-GR021/physical-1/input/task.md",
+      "bytes": 3052,
+      "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af"
+    },
+    "physical_attempt": 1,
+    "selection": "first_qualified_normal_native_final_by_physical_attempt",
+    "native_final": {
+      "path": "sessions/MG-GR021/physical-1/output/response.md",
+      "bytes": 14006,
+      "sha256": "c69ccd27352eb311884c54ec69a74913551deac7d5e4bca8f8c110761684e478"
+    },
+    "runner_response": {
+      "path": "runner-runs/MG-GR021/physical-1/MG-GR021/response.md",
+      "bytes": 14006,
+      "sha256": "c69ccd27352eb311884c54ec69a74913551deac7d5e4bca8f8c110761684e478"
+    },
+    "source_seal": {
+      "path": "sessions/MG-GR021/physical-1/runtime/seal.json",
+      "bytes": 850,
+      "sha256": "0449850d922fef93ef5e57e44f8f5dc262e139e230df820067ff2705cc98ebe5"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-GR021/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 924,
+      "sha256": "58efc63ec9e404b3f9e18289b5d5c0c50e518d5f1eaa05384e9ce1a1d7daeef8"
+    },
+    "native_command_probe": {
+      "path": "sessions/MG-GR021/physical-1/runtime/native-command-probe.json",
+      "bytes": 2541,
+      "sha256": "48b5ef7117caacf39ee2ff3a9d522f96f9cb9acb89fa4b29da3e9d3a90b241d5"
+    },
+    "execution": {
+      "path": "sessions/MG-GR021/physical-1/runtime/execution.json",
+      "bytes": 6812,
+      "sha256": "fe242aa5ca5eb4cacc27e8d65f9b85a3cbb079e39230e7e0a760cae78a59dca9"
+    },
+    "native_events": {
+      "path": "sessions/MG-GR021/physical-1/output/events.ndjson",
+      "bytes": 16621,
+      "sha256": "ae81870b4f1284e9bb268dbb0ff9777850defca865dfc991075b4b7954425c75"
+    },
+    "collection": {
+      "path": "sessions/MG-GR021/physical-1/runtime/collection.json",
+      "bytes": 9144,
+      "sha256": "b3f1e560191ee43f8c415c162a4ec286215768ac555f904c90ec8b99f055121d"
+    },
+    "first_terminal_index_one_based": 8,
+    "terminal_prefix_bytes": 16621,
+    "terminal_prefix_sha256": "ae81870b4f1284e9bb268dbb0ff9777850defca865dfc991075b4b7954425c75",
+    "native_final_item": "item_4",
+    "observed_backend_model": null,
+    "observed_backend_effort": null,
+    "normal_delivery_and_seal_verified": true
+  },
+  "source_bindings": {
+    "acquisition_plan_sha256": "abf20cd5dc37b9c605451371af65b6f15ac08c6e3ee2c199af62e8a88f213c23",
+    "native_final_sha256": "c69ccd27352eb311884c54ec69a74913551deac7d5e4bca8f8c110761684e478",
+    "collection_sha256": "b3f1e560191ee43f8c415c162a4ec286215768ac555f904c90ec8b99f055121d",
+    "physical_attempt": 1,
+    "task_sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+    "rubric_sha256": "a7175cd036b1e6c972d733e4a689dbb874f6db947b093dd9e11255ff4baba979",
+    "reference_sha256": "b5de32d25059d2cbdfcbe90ffc7f3af86e366f5e90f5bc3435fd555b83291a1c",
+    "terminal_source_observation_sha256": "58efc63ec9e404b3f9e18289b5d5c0c50e518d5f1eaa05384e9ce1a1d7daeef8",
+    "source_seal_sha256": "0449850d922fef93ef5e57e44f8f5dc262e139e230df820067ff2705cc98ebe5"
+  }
+}

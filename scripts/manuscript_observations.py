@@ -10,7 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.manuscript_surplus import (
     ROOT_PATH, REVIEW_ROOT_PATH, check_pair, descriptor, public_projection, read_source,
-    observation_result, source_context, validate_observation_policy, validate_reuse_binding, validate_sources,
+    observation_result, observation_relative_path, source_context, validate_observation_policy,
+    validate_reuse_binding, validate_sources,
 )
 from math_gauge.scoring import summarize_manuscript_observations
 
@@ -98,19 +99,43 @@ def run(public_root, private_root, *, write=False, reuse_bindings=()):
     policy_raw = policy_path.read_bytes()
     private_policy = {'path': private_policy_path.as_posix(), 'bytes': len(policy_raw),
                       'sha256': hashlib.sha256(policy_raw).hexdigest()}
+    amendments = {}
+    index_path = private_root / ROOT_PATH / 'observations.json'
+    if index_path.is_file():
+        for row in json.loads(index_path.read_bytes())['models']:
+            source = row.get('source_review', {})
+            base = REVIEW_ROOT_PATH / row['model_id'] / row['record_id']
+            path = Path(source.get('path', ''))
+            if not path.is_relative_to(base / 'amendments'):
+                continue
+            tail = path.relative_to(base).parts
+            if len(tail) != 3 or tail[-1] != 'review.json':
+                raise ValueError('Invalid named manuscript review amendment')
+            relative = observation_relative_path(row['observation'], row['model_id'], row['record_id'])
+            if relative.parent.relative_to(ROOT_PATH) != path.parent.relative_to(REVIEW_ROOT_PATH):
+                raise ValueError('Observation amendment differs from its selected review')
+            read_source(private_root, source)
+            key = row['model_id'], row['record_id']
+            if key in amendments:
+                raise ValueError('Duplicate selected manuscript review amendment')
+            amendments[key] = private_root / path
     rebound = list((private_root / REVIEW_ROOT_PATH).glob('*/*/current-review.json'))
     if rebound:
-        edition = json.loads((public_root/'benchmark.json').read_bytes())
-        selected = dict(edition['selected_result_record_ids'])
-        native = public_root/'results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json'
-        if native.is_file():
-            selected['dot-underlying-model-20261108'] = '20261108'
+        from math_gauge.current_results import selected_current_record_paths
+        current = selected_current_record_paths(public_root)
+        from math_gauge.editions import source_edition
+        legacy_order = source_edition(public_root)['selected_result_record_ids']
+        order = [model for model in legacy_order if model in current]
+        order += [model for model in current if model not in legacy_order]
+        selected = {model:Path(current[model]).parent.name for model in order}
         reviews = []
         for model,record_id in selected.items():
             folder = private_root/REVIEW_ROOT_PATH/model/record_id
-            reviews.append(folder/('current-review.json' if (folder/'current-review.json').is_file() else 'review.json'))
+            reviews.append(amendments.get((model, record_id),
+                folder/('current-review.json' if (folder/'current-review.json').is_file() else 'review.json')))
     else:
         reviews = sorted((private_root / REVIEW_ROOT_PATH).glob('*/*/review.json'))
+        reviews = [amendments.get((path.parent.parent.name, path.parent.name), path) for path in reviews]
     if not reviews:
         raise ValueError('No retained manuscript result reviews')
     outputs = [(private_root / private_policy_path, policy_raw)]
@@ -127,7 +152,8 @@ def run(public_root, private_root, *, write=False, reuse_bindings=()):
         review = json.loads(path.read_bytes())
         model_id, record_id = review['model_id'], review['record_id']
         expected_name = 'current-review.json' if review.get('metadata_rebind') else 'review.json'
-        if path != private_root / REVIEW_ROOT_PATH / model_id / record_id / expected_name:
+        amended = amendments.get((model_id, record_id)) == path
+        if not amended and path != private_root / REVIEW_ROOT_PATH / model_id / record_id / expected_name:
             raise ValueError('Review identity differs from source path')
         source_identity = model_id, record_id
         binding, binding_source = reuses.get(source_identity, (None, None))
@@ -146,6 +172,10 @@ def run(public_root, private_root, *, write=False, reuse_bindings=()):
             policy_source=policy_source, private_review_sha256=source_review['sha256'],
             private_baseline_sha256=review['baseline']['sha256'])
         relative = ROOT_PATH / model_id / record_id
+        if amended:
+            if binding:
+                raise ValueError('Review amendments cannot silently reuse another snapshot')
+            relative = ROOT_PATH / path.parent.relative_to(private_root / REVIEW_ROOT_PATH)
         for root, value in ((private_root, private), (public_root, public)):
             target, raw = root / relative / 'observation.json', serialized(value).encode()
             outputs.append((target, raw))

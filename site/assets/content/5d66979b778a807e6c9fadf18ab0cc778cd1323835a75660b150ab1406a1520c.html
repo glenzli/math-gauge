@@ -1,0 +1,61 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip真实编码U⊆domf与全部点对/输出量词，lipFamily及globalLip给受限/全域证书族；使用通常输出行输入列存储，不隐藏目标。</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> coLip保留U.Nonempty、U⊆domf和全部点对下界；coLipFamily直接定义所有合法矩阵。</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Mat j i明确对应原文i→j，matMul A B j i=Σk A j k*B k i；matrix_sum实际证明乘积对有限加权和的展开，乘法/求和次序正确且允许∞。</p>
+<h3>CH02-D04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matOne是指标相等的1/0矩阵，matProduct空列取单位，时间列表头最先作用，递归matMul(product tail)M产生Mn⋯M1；单项积另证等于原条目。</p>
+<h3>CH02-D05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> inputDomain逐步以f.func的完整实际像递归；lipSteps/colipSteps使用同一像域递归。chain_eq_operatorChain真实证明时间序列表等于冻结OperatorChain的反转表示；compose_domains从复合合法域给首步合法性及完整像域⊆后步域，并在链归纳中向全部后继步传递，不以独立任意域替换实际像。</p>
+<h3>CH02-D06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 端点索引Path的nil/cons实际枚举给定长度的全部中间指标；nil只连接同端点，cons记录第一步输出k并递归余路径。allPositive/hasZero逐层定义，positive_iff_not_zero保留有限层级全正与含零互补。</p>
+<h3>CH02-P01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 原答显式把唯一指标对应为Unit的唯一点()，singleton_lip对任意d、f、U、唯一系数和域中点直接以有限和化简给标量上界；此处是一点指标的规范表示而非任意多分量的弱特例。无需补造其他数学结构；全域在原答中明确取U=domf。</p>
+<h3>CH02-P02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_mono通过U⊆V把所有U中点对送入V，并传递合法域包含，得到逐矩阵蕴含即证书族反包含。</p>
+<h3>CH02-P04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> compose_domains从U⊆dom(g*f)证明U⊆domf与f(U)⊆domg；lip_compose在精确f(U)应用后步A，再用前步B代入有限和展开，得A·B而非反序，无有限系数限制。</p>
+<h3>CH02-P05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_mono显式接收小域非空与U⊆V，保留dom包含及全部点对下界，未错误允许空coLip域。</p>
+<h3>CH02-P07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 从合法全域coLip和非负性抽出Kji*di项，输出距0迫使该积0；输入距正排除其为0，乘法无零因子推出Kji=0，未添分离、有限距或系数假设。</p>
+<h3>CH02-P08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_compose在精确f(U)使用后步下界，并以非负乘法保序代入前步下界，经真实matrix_sum展开得到A·B；结论非空由首步证书给出。</p>
+<h3>CH02-P11</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> one_sum真实证明单位矩阵的加权和等于指定分量；identity_lip对任意合法U给恒等算子的单位上界，允许空U是合法加强。</p>
+<h3>CH02-P12</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> identity_colip使用同一one_sum，同时保留U.Nonempty与合法恒等域，确立零步单位下界。</p>
+<h3>CH02-P14</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matProduct_pos_iff对真实有序矩阵乘积列表归纳；有限非负和正当且仅当某项正，ENNReal乘法正当且仅当两因子正，cons路径完整连接中间指标。证明覆盖任意长度且另证单项边界，非独立路径和替身。</p>
+<h3>CH02-P03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> global_lip_restrict以真实domf全域族和hU调用单调性，任意全域L均限制至U。</p>
+<h3>CH02-P06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> global_colip_restrict保持小域非空与合法域，任意全域K限制至U，没有凭空添加全域coLip存在性。</p>
+<h3>CH02-P09</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> chain_lip对任意有限时间序列表归纳，从逐步真实Lip证书推出全链证书；hU经compose_domains传递精确像域的链合法性，递归变量U随当前f(U)改变，矩阵乘积时间次序正确，覆盖所有正长度且给出零步基例。</p>
+<h3>CH02-P10</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> chain_colip以相同实际像域归纳，非空由hne.image传递，逐步coLip证书产生完整全链下界，不把全链界当作输入字段。</p>
+<h3>CH02-P13</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matProduct_zero_iff从已证真实乘积正值判据与逐有限路径的positive_iff_not_zero，严格推出所有路径含零因子；singleton_paths和单项积处理n=1，没有只证明一向或独立组合权重。</p>
+</div>

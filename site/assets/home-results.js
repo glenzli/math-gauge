@@ -5,6 +5,35 @@
  const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
  const expanded=new Set(),renderedViews=new Map();
  const displayKey=(key,score=state.score)=>JSON.stringify([key,state.condition,score]);
+ function editionCharts(){
+  Object.entries(d.chart_scenes||{}).forEach(([id,scene])=>{
+   const groups=el(id);if(!groups)return;
+   const chart=groups.parentElement,axis=id==='gap-groups'?scene.axis:scene;
+   chart.style.setProperty('--score-zero',axis.zero+'%');
+   chart.style.setProperty('--score-grid-step',(axis.ticks[1].position-axis.ticks[0].position)+'%');
+   const labels=chart.querySelector('.score-x-axis');labels.replaceChildren(...axis.ticks.map(t=>{const n=node('span',t.label);n.style.left=t.position+'%';return n}));
+   if(id==='gap-groups'){
+    scene.tables.forEach(t=>t.rows.forEach(row=>{
+     const group=[...groups.children].find(n=>n.dataset.model===row.model_id);if(!group)return;
+     const metric=group.querySelector('[data-display-mode="'+t.id+'"]'),track=metric.querySelector('.gap-track');
+     let bar=track.querySelector('.gap-bar');
+     if(row.plot){if(!bar){bar=node('span',null,'gap-bar gap-'+t.id.toLowerCase());track.append(bar)}bar.dataset.model=row.model_id;bar.dataset.gapMetric=t.id;bar.dataset.gapValue=row.value;bar.style.left=row.plot.left+'%';bar.style.width=row.plot.width+'%'}else if(bar)bar.remove();
+     const value=metric.querySelector('.gap-value');value.textContent=row.display;value.setAttribute('aria-label',t.id+' '+row.display);
+    }));return;
+   }
+   Object.entries(scene.bars).forEach(([mid,modes])=>{
+    const group=[...groups.children].find(n=>n.dataset.model===mid);if(!group)return;
+    const spoken=[];
+    Object.entries(modes).forEach(([mode,value])=>{
+     const row=group.querySelector('.metric-bar-row[data-score-mode="'+mode+'"]'),bar=row.querySelector('.score-bar'),readout=row.querySelector('.chart-value');
+     bar.dataset.score=value.value??'';bar.style.left=value.left+'%';bar.style.width=value.width+'%';readout.textContent=value.text;readout.title=value.interval;
+     spoken.push(modes[mode].text);
+    });
+    const model=d.models.find(m=>m.id===mid);group.setAttribute('aria-label',model.label+' · '+['MC','RMC','SMC'].map((name,i)=>name+' '+Object.values(modes)[i].text).join('，'));
+   });
+  });
+ }
+ editionCharts();
  function renderView(key,render){const value=displayKey('overall');if(renderedViews.get(key)!==value){render();renderedViews.set(key,value)}}
  const sortDefaults={...Object.fromEntries(d.policy.groups.map(g=>[g.id,'partial'])),gap:'RG',rates:'reliability'};
  const sortChoices={...Object.fromEntries(d.policy.groups.map(g=>[g.id,d.score_modes])),gap:['RG','DG'],rates:['reliability','attainment']};
@@ -16,7 +45,7 @@
   Object.keys(sortDefaults).forEach(key=>{const value=q.get('sort-'+key);chartSort[key]=sortChoices[key].includes(value)?value:sortDefaults[key];document.querySelectorAll('[data-chart-sort="'+key+'"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sortValue===chartSort[key])))});
  }
  function orderedModels(value,ascending=false,key='overall'){
-  return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?compareScores(a,b,'partial'):1):-1;return (ascending?x-y:y-x)||compareScores(a,b,'partial')});
+  return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);const tie=()=>a.id.localeCompare(b.id);if(x==null||y==null)return x==null?(y==null?tie():1):-1;return (ascending?x-y:y-x)||tie()});
  }
  function orderChart(id,models){
   const chart=el(id);if(!chart)return;

@@ -1,0 +1,104 @@
+{
+  "schema": "math-gauge.rubric/v1",
+  "expected": "mixed",
+  "human_review": "pending",
+  "aggregation": "Average variants within each parent family, then average families; review dimensions are not independent samples.",
+  "grading_policy": {
+    "total_points": 100,
+    "method": "Core mathematical judgment 60 + evidence and impact scope 30 + supplementary completeness 10; shared continuous benchmark scoring.",
+    "per_criterion": "Each weighted check receives full, half or zero credit for substantively complete, correct but incomplete, or absent/false work. Sum checks within dimensions. No keyword scoring or additional blanket deductions.",
+    "strict_pass": "All listed checks substantively complete with no material unsupported rejection or false extra assertion; strict pass is auxiliary, not the main score.",
+    "accepted_variation": "Accept any correct equivalent proof, counterexample or scope explanation. New substantiated findings are admissible; a reference is not an exhaustive list of possible comments. Harmless notation or typography observations are not mandatory unless listed.",
+    "task_boundary": "The visible task is review, not a fresh solution or a requirement to reproduce reference proofs. A justified finding that a proof does not establish its target is distinct from proving the target false.",
+    "source_results": "Original response evidence stays immutable. The first v0.4.0 aggregation is explicit post-observation rescoring of existing answers, not a fresh examination.",
+    "brevity": "Concise sufficient mathematical verification earns full credit. Repeating the entire original proof, reference computation or Leibniz expansion is not required."
+  },
+  "required_evidence": [
+    "识别S2原连续映射的像应为C(X,Y)，而非一般的C(X,kY)，并给合法反例。",
+    "区分S3指数律引用条件错位与后文独立CGHaus路线；不把缺少大小说明说成已证越界。",
+    "指出S5“恰有一个”的过强用语及其有限影响，保留真正有效的连续性和同胚边界。"
+  ],
+  "critical_errors": [
+    "漏掉固定目标C(X,kY)识别错误而整体称无误。",
+    "由错误中间识别否定原题关于所有Y的紧生成充要条件。",
+    "把未核验U小直接说成Stone–Čech构造事实上不在U。",
+    "只因S3早先引用有问题就忽略后文适用的CGHaus定理并否定全部表示及复合。",
+    "将超滤子措辞错误传播为非紧生成反例整体不成立。"
+  ],
+  "criteria": [
+    {
+      "id": "core_judgment",
+      "points": 60,
+      "mandatory": true,
+      "title": "核心数学判断",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "mapping_identification",
+          "points": 30,
+          "full_credit": "识别固定目标的像应为C(X,Y)，不能一般写成C(X,kY)。"
+        },
+        {
+          "id": "exponential_law",
+          "points": 15,
+          "full_credit": "识别普通指数律的输入变量条件错位，并保留后文独立CGHaus路线。"
+        },
+        {
+          "id": "ultrafilter",
+          "points": 5,
+          "full_credit": "识别恰有一个的过强断言，而至少一个足够。"
+        },
+        {
+          "id": "retained_results",
+          "points": 10,
+          "full_credit": "保留原题全Y充要结论、S1/S4/S6与有效非k反例；不把中间错误传播为所有结论假。"
+        }
+      ]
+    },
+    {
+      "id": "evidence_scope",
+      "points": 30,
+      "mandatory": true,
+      "title": "依据与影响范围",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "mapping_evidence",
+          "points": 15,
+          "full_credit": "以非k空间Z的恒等映射或等价合法反例支持映射集纠正，并区分固定Y与所有Y。"
+        },
+        {
+          "id": "exponential_scope",
+          "points": 10,
+          "full_credit": "说明局部紧条件在kX，不能由S局部紧替代；准确解释独立有效路线的作用。"
+        },
+        {
+          "id": "ultrafilter_scope",
+          "points": 5,
+          "full_credit": "给出两部分都不在超滤子的可能性或等价理由，并保留修正后的开覆盖。"
+        }
+      ]
+    },
+    {
+      "id": "completeness",
+      "points": 10,
+      "mandatory": true,
+      "title": "补充核查完整度",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "beta_size",
+          "points": 5,
+          "full_credit": "指出或补足beta D的U小验证；不把遗漏说成已证越界。"
+        },
+        {
+          "id": "mapping_space_size",
+          "points": 5,
+          "full_credit": "指出或补足M的底集与拓扑U小验证；无需替原答重写全部大小证明。"
+        }
+      ]
+    }
+  ],
+  "scoring_version": "0.4.0",
+  "major_error_policy": "明确称S2固定目标假识别正确/严密属于核心数学假断言的接受，记重大误判；漏U小检查不自动重大。识别错误却否定正确的全Y结论或独立CGHaus路线也属重大误判。"
+}

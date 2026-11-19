@@ -1,0 +1,99 @@
+{
+  "schema": "math-gauge.rubric/v1",
+  "expected": "mixed",
+  "human_review": "pending",
+  "aggregation": "Average variants within each parent family, then average families; review dimensions are not independent samples.",
+  "grading_policy": {
+    "total_points": 100,
+    "method": "Core mathematical judgment 60 + evidence and impact scope 30 + supplementary completeness 10; shared continuous benchmark scoring.",
+    "per_criterion": "Each weighted check receives full, half or zero credit for substantively complete, correct but incomplete, or absent/false work. Sum checks within dimensions. No keyword scoring or additional blanket deductions.",
+    "strict_pass": "All listed checks substantively complete with no material unsupported rejection or false extra assertion; strict pass is auxiliary, not the main score.",
+    "accepted_variation": "Accept any correct equivalent proof, counterexample or scope explanation. New substantiated findings are admissible; a reference is not an exhaustive list of possible comments. Harmless notation or typography observations are not mandatory unless listed.",
+    "task_boundary": "The visible task is review, not a fresh solution or a requirement to reproduce reference proofs. A justified finding that a proof does not establish its target is distinct from proving the target false.",
+    "source_results": "Original response evidence stays immutable. The first v0.4.0 aggregation is explicit post-observation rescoring of existing answers, not a fresh examination.",
+    "brevity": "Concise sufficient mathematical verification earns full credit. Repeating the entire original proof, reference computation or Leibniz expansion is not required."
+  },
+  "required_evidence": [
+    "识别S5把半局部稠密开单射性推广至任意光滑积分Y并据此断言F分离的错误；给真正满足F条件的反例。",
+    "说明该错误被用于比较图中的交上单射，不只是无依赖的旁述，同时不把原半局部定理判假。",
+    "核验S1普遍非有限型断言及任意Σ归纳边界，保留其余独立有效论证。"
+  ],
+  "critical_errors": [
+    "因最终结论是已知真定理而接受答卷当前的全局单射/分离性证明。",
+    "以任意不带转移或不同伦不变的预层冒充合法反例而不核验条件。",
+    "将Pic(P1)→Pic(A1)反例说成原题半局部单位同构的反例。",
+    "把任意Σ直接当成S的闭点集，或默默增加原点在X中闭的假设。",
+    "把S5失败反向传播到已经给足假设的S2图追或S3/S4/S6。"
+  ],
+  "criteria": [
+    {
+      "id": "core_judgment",
+      "points": 60,
+      "mandatory": true,
+      "title": "核心数学判断",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "global_injectivity",
+          "points": 25,
+          "full_credit": "识别任意光滑积分Y上的全局稠密开单射/分离断言为假。"
+        },
+        {
+          "id": "localization_claim",
+          "points": 10,
+          "full_credit": "识别正维即非有限生成/非开的普遍断言错误，同时保留不必开的原目标。"
+        },
+        {
+          "id": "actual_closed_points",
+          "points": 15,
+          "full_credit": "识别任意Sigma可能含可比较点，不等于半局部概形实际闭点集；归纳前须化简。"
+        },
+        {
+          "id": "target_and_retention",
+          "points": 10,
+          "full_credit": "区分当前S5证明失效与原半局部目标为假，并保留S2/S3/S4/S6独立有效内容。"
+        }
+      ]
+    },
+    {
+      "id": "evidence_scope",
+      "points": 30,
+      "mandatory": true,
+      "title": "依据与影响范围",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "legal_counterexample_dependency",
+          "points": 15,
+          "full_credit": "Pic等反例满足HI带转移条件，确实反驳全局单射；指出错误被用于比较图交上的单射。"
+        },
+        {
+          "id": "localization_scope",
+          "points": 10,
+          "full_credit": "局部化反例合法且准确引用原断言条件；不把光滑一维一概说成积分PID，不声称维数是非开性的充要判据。"
+        },
+        {
+          "id": "source_hypotheses",
+          "points": 5,
+          "full_credit": "若评论标准定理条件，区分任意域上的度零层化/半局部比较与经典高次上同调比较的完美域条件；不评论引文也可凭合法独立论证得分。"
+        }
+      ]
+    },
+    {
+      "id": "completeness",
+      "points": 10,
+      "mandatory": true,
+      "title": "补充核查完整度",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "other_stages",
+          "points": 10,
+          "full_credit": "对等化子、余终性、稠密开反例及极限正合给出有内容的核查，不要求重做整个转移几何。"
+        }
+      ]
+    }
+  ],
+  "scoring_version": "0.4.0",
+  "major_error_policy": "认可错误全局单射并据此接受主证、将Pic反例当半局部目标反例，或由当前证明缺口断定目标假，为重大误判。遗漏实际闭点边界或局部引文范围不精确分别扣分；除非明确据此接受关键不成立步骤或否定有效结论，不自动升为重大。"
+}

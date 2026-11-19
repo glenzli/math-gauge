@@ -6,7 +6,7 @@ const {test}=require('node:test');
 const {setImmediate:nextTurn}=require('node:timers/promises');
 const templates=path.resolve(__dirname,'../scripts/templates');
 
-test('language and metric visibility reuse views; history restores dependent filters and sorts',()=>{
+test('language and metric visibility reuse views; history restores independent sorts and ignores retired filters',()=>{
  const events=new Map();let renders=0;
  const url='https://example.test/nested/gauge/?lang=zh';
  const link={href:'https://example.test/nested/gauge/models/fixture/index.html?score=strict&lang=zh'};
@@ -27,17 +27,21 @@ test('language and metric visibility reuse views; history restores dependent fil
  context.location.searchParams.set('show-written','smc');events.get('mg:board-settings')();
  assert.equal(renders,1);
  context.location.searchParams.set('complete-written','1');events.get('popstate')();
- assert.equal(renders,2);
+ assert.equal(renders,1,'retired completion filters cannot change the settled-model view');
+ assert.equal(new URL(display.href('models/fixture/index.html')).searchParams.has('complete-written'),false);
+ context.location.searchParams.set('profile-models','fixture,another-model');
+ assert.equal(new URL(display.href('models/fixture/index.html')).searchParams.get('profile-models'),'fixture,another-model');
+ assert.equal(new URL(display.href('method.html')).searchParams.get('profile-models'),'fixture,another-model');
  context.location.searchParams.set('sort-written','capability');events.get('popstate')();
- assert.equal(renders,3);
+ assert.equal(renders,2);
  context.location.searchParams.set('category','research');events.get('popstate')();
- assert.equal(renders,4);
+ assert.equal(renders,3);
  context.location.searchParams.delete('category');context.location.searchParams.delete('sort-written');events.get('popstate')();
- assert.equal(renders,5);
+ assert.equal(renders,4);
  // A page-owned category update is already rendered before its notification.
  context.location.searchParams.set('category','lean');events.get('mg:updated')();
  display.state.lang='zh';events.get('mg:board-settings')();
- assert.equal(renders,5);
+ assert.equal(renders,4);
 });
 
 function lazyFixture(records,fetch){

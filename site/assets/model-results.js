@@ -1,6 +1,7 @@
 (() => {
  const {d,state,modes,el,f,node,result,headline,table,points,href,download,taskValue,start}=MG,m=d.model;
  const metric=(title,value)=>{const n=node('div',null,'metric');n.append(node('div',title,'metric-label'),node('div',value,'metric-value'));return n};
+ document.querySelectorAll('[data-first-attempt-scores]').forEach(n=>n.textContent=['capability','partial','strict'].map(mode=>f(headline(result(m,'single_attempt',mode)))).join(' / '));
  start(()=>{
   const r=result(m),v=r.metrics.overall,p=m.evaluation_progress[state.condition];
   const overview=[metric(modes[state.score].abbreviation+' 已获分 /100',f(headline(r)))];

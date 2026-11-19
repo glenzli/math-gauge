@@ -1,0 +1,250 @@
+{
+  "complete_goals": [
+    {
+      "id": "G1",
+      "attained": true,
+      "reason": "完整分类能否下降、最优 Lipschitz、连续、单射与满射；稀疏指标块同时处理 D_f 无穷的真反例和有限情形的普适锐性。",
+      "evidence": [
+        {
+          "line_start": 14,
+          "line_end": 25,
+          "utf8_start": 428,
+          "utf8_end": 868,
+          "quote": "记 \\(p(x)=d(x,0)\\)。由于 \\(d(x,y)=p(x-y)\\) 且 \\(P_f\\) 线性，\\(P_f\\) 能诱导商空间上的映射，当且仅当 \\(p(x)=0\\) 蕴含 \\(p(P_fx)=0\\)。\n\n由 \\(f\\) 严格递增，\n\\[\n\\frac1n\\sum_{j=1}^n|x_{f(j)}|\n\\le \\frac{f(n)}n\\cdot\\frac1{f(n)}\\sum_{m=1}^{f(n)}|x_m|.\n\\]\n当 \\(D_f<\\infty\\) 时，取上极限可得\n\\[\np(P_fx)\\le D_f\\,p(x). \\tag{1}\n\\]\n因此 \\(T_f\\) 良定义且连续，其最小 Lipschitz 常数至多为 \\(D_f\\)。\n"
+        },
+        {
+          "line_start": 27,
+          "line_end": 52,
+          "utf8_start": 869,
+          "utf8_end": 2009,
+          "quote": "固定 \\(0<\\delta\\le1\\)。由上极限的定义，可选取正整数 \\(n_i\\)，使得\n\\[\n\\frac{f(n_i)}{n_i}\\longrightarrow D_f,\\qquad n_{i+1}\\ge(i+2)n_i.\n\\]\n这个选取对 \\(D_f=\\infty\\) 也成立，并且 \\(\\sum_{h<i}n_h\\le 2n_{i-1}=o(n_i)\\)。取\n\\[\nS=\\bigcup_{i\\ge1}\\{f(j):n_i<j\\le n_i+\\lfloor\\delta n_i\\rfloor\\},\n\\qquad x=\\mathbf 1_S.\n\\]\n若 \\(f(n_i)\\le M<f(n_{i+1})\\)，则\n\\[\n\\frac{\\#(S\\cap[1,M])}{M}\n\\le \\frac{\\sum_{h\\le i}\\lfloor\\delta n_h\\rfloor}{f(n_i)}\n\\le \\frac{\\delta\\bigl(n_i+o(n_i)\\bigr)}{f(n_i)}.\n\\]\n故 \\(p(x)\\le\\delta/D_f\\)，这里取 \\(1/\\infty=0\\)。另一方面，\\(P_fx\\) 在下标 \\(n_i+1,\\ldots,n_i+\\lfloor\\delta n_i\\rfloor\\) 上均为 \\(1\\)，故\n\\[\np(P_fx)\\ge\n\\lim_{i\\to\\infty}\\frac{\\lfloor\\delta n_i\\rfloor}{n_i+\\lfloor\\delta n_i\\rfloor}\n=\\frac{\\delta}{1+\\delta}.\n\\]\n若 \\(D_f=\\infty\\)，便有 \\(p(x)=0\\) 而 \\(p(P_fx)>0\\)，所以 \\(P_f\\) 无法诱导商空间上的映射。若 \\(D_f<\\infty\\)，则 \\(T_f\\) 的任一 Lipschitz 常数 \\(C\\) 都满足\n\\[\n\\frac{\\delta}{1+\\delta}\\le C\\frac{\\delta}{D_f}.\n\\]\n令 \\(\\delta\\downarrow0\\)，得到 \\(C\\ge D_f\\)。结合 (1)，最小 Lipschitz 常数恰为 \\(D_f\\)。\n"
+        },
+        {
+          "line_start": 54,
+          "line_end": 67,
+          "utf8_start": 2010,
+          "utf8_end": 2781,
+          "quote": "对满射性，给定任意 \\(y\\in E\\)，令 \\(x_{f(j)}=y_j\\)，其余位置取零，即得 \\(x\\in E\\) 且 \\(P_fx=y\\)。\n\n对单射性，若 \\(D_f>1\\)，取 \\(x=\\mathbf 1_{\\mathbb N\\setminus f(\\mathbb N)}\\)。此时 \\(P_fx=0\\)，而前 \\(f(n)\\) 个位置中恰有 \\(f(n)-n\\) 个位置上 \\(x\\) 为 \\(1\\)，故\n\\[\np(x)\\ge\\limsup_{n\\to\\infty}\\left(1-\\frac n{f(n)}\\right)\n=1-\\frac1{D_f}>0.\n\\]\n于是 \\(T_f\\) 有非零核。若 \\(D_f=1\\)，由 \\(f(n)\\ge n\\) 得 \\(f(n)-n=o(n)\\)。前 \\(n\\) 个位置中至多有 \\(f(n)-n\\) 个不属于 \\(\\{f(1),\\ldots,f(n)\\}\\)，所以\n\\[\n\\frac1n\\sum_{m=1}^n|x_m|\n\\le \\frac1n\\sum_{j=1}^n|x_{f(j)}|\n   +\\frac{f(n)-n}{n}\\|x\\|_\\infty.\n\\]\n取上极限并结合 (1)，得到 \\(p(P_fx)=p(x)\\)，故 \\(T_f\\) 是等距映射，特别地是单射。\n"
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "attained": true,
+      "reason": "实际迭代常数的根极限由次乘性给出，每个允许对都有阶乘切换构造及有效的两段乘积估计，连 r=1 和 λ=r 也覆盖。",
+      "evidence": [
+        {
+          "line_start": 71,
+          "line_end": 86,
+          "utf8_start": 2833,
+          "utf8_end": 3490,
+          "quote": "记 \\(f^{\\circ k}\\) 为 \\(f\\) 的 \\(k\\) 次迭代。若 \\(f(n)=O(n)\\)，则对每个固定的 \\(k\\)，也有 \\(f^{\\circ k}(n)=O(n)\\)。由 \\(P_f^k=P_{f^{\\circ k}}\\) 及第 1 问，\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^{\\circ k}(n)}n\\ge1. \\tag{2}\n\\]\n复合映射的 Lipschitz 常数满足 \\(L_{k+\\ell}\\le L_kL_\\ell\\)。令 \\(L_0=1\\)，固定 \\(m\\ge1\\)，写 \\(k=qm+s\\)，其中 \\(0\\le s<m\\)。于是\n\\[\nL_k\\le L_m^q\\max_{0\\le j<m}L_j,\n\\qquad\n\\limsup_{k\\to\\infty}L_k^{1/k}\\le L_m^{1/m}.\n\\]\n对 \\(m\\) 取下确界，又因每个 \\(L_k^{1/k}\\) 均不小于该下确界，得到\n\\[\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}\n=\\inf_{m\\ge1}L_m^{1/m},\n\\qquad 1\\le R_f\\le L_1.\n\\]\n"
+        },
+        {
+          "line_start": 88,
+          "line_end": 103,
+          "utf8_start": 3491,
+          "utf8_end": 4351,
+          "quote": "现给定任意 \\(1\\le r\\le\\lambda<\\infty\\)。令 \\(a_m=m!\\)（\\(m\\ge1\\)），并定义\n\\[\n\\boxed{\\quad f(n)=\\left\\lceil rn+(\\lambda-r)a_m\\right\\rceil\n\\quad\\text{当 }a_m\\le n<a_{m+1}.\\quad} \\tag{3}\n\\]\n当 \\(n\\) 增加 \\(1\\) 时，取整前的表达式至少增加 \\(r\\ge1\\)，所以 \\(f\\) 严格递增。由\n\\[\nrn\\le f(n)\\le\\lambda n+1,\\qquad f(a_m)=\\lceil\\lambda a_m\\rceil\n\\]\n可知 \\(L_1=\\lambda\\)。同时 \\(f^{\\circ k}(n)\\ge r^k n\\)，故 \\(L_k\\ge r^k\\)。\n\n为求上界，固定 \\(k\\)，取 \\(a_m\\le n<a_{m+1}\\)。由于 \\(f(t)\\le(\\lambda+1)t\\)，且 \\(a_{m+2}/a_{m+1}=m+2\\to\\infty\\)，当 \\(m\\) 充分大时，\n\\[\nf^{\\circ k}(n)\\le(\\lambda+1)^k n<a_{m+2}.\n\\]\n又因 \\(f(t)\\ge t\\)，从 \\(n\\) 出发的前 \\(k\\) 次迭代，其自变量至多经过 \\([a_m,a_{m+1})\\) 和 \\([a_{m+1},a_{m+2})\\) 两个区间，且在每个区间内的步数是连续的。\n"
+        },
+        {
+          "line_start": 105,
+          "line_end": 123,
+          "utf8_start": 4352,
+          "utf8_end": 5038,
+          "quote": "设其中一段从 \\(u\\) 开始，有 \\(h\\) 步的自变量属于同一区间 \\([a_j,a_{j+1})\\)。令 \\(C=\\lambda-r+1\\)。因 \\(a_j\\le u\\)，对这一段的每个自变量 \\(t\\)，由 (3) 有\n\\[\nf(t)\\le rt+(\\lambda-r)a_j+1\\le rt+Cu.\n\\]\n迭代此式，并利用 \\(r\\ge1\\)，可得\n\\[\nf^{\\circ h}(u)\n\\le r^h u+Cu\\sum_{v=0}^{h-1}r^v\n\\le r^h(1+Ch)u.\n\\]\n对至多两段分别应用这一估计，两段的总步数为 \\(k\\)，故对所有充分大的 \\(n\\) 都有\n\\[\nf^{\\circ k}(n)\\le r^k(1+Ck)^2 n.\n\\]\n由 (2)，\n\\[\nr^k\\le L_k\\le r^k(1+Ck)^2.\n\\]\n取 \\(k\\) 次方根并令 \\(k\\to\\infty\\)，即得 \\(R_f=r\\)。因此 (3) 对每个指定的有序对 \\((\\lambda,r)\\) 都给出了所需构造。"
+        }
+      ]
+    }
+  ],
+  "content_claims": [
+    {
+      "label": "K1 零距商下降条件",
+      "verdict": "correct",
+      "reason": "按题定零距商利用 d(x,y)=p(x−y) 与 P_f 线性，正确归约到保持零半范数。量规允许这类完整正确的直接运用，无需重列半范数公理。",
+      "evidence": [
+        {
+          "line_start": 14,
+          "line_end": 14,
+          "utf8_start": 428,
+          "utf8_end": 585,
+          "quote": "记 \\(p(x)=d(x,0)\\)。由于 \\(d(x,y)=p(x-y)\\) 且 \\(P_f\\) 线性，\\(P_f\\) 能诱导商空间上的映射，当且仅当 \\(p(x)=0\\) 蕴含 \\(p(P_fx)=0\\)。\n"
+        }
+      ]
+    },
+    {
+      "label": "K2 必要充分条件",
+      "verdict": "correct",
+      "reason": "D_f 有限时直接比较长度 f(n) 的原均值。无界时对任意这样的 f 取充分稀疏的后续取样块，其原密度为零而取样上密度至少 δ/(1+δ)。双向覆盖。",
+      "evidence": [
+        {
+          "line_start": 16,
+          "line_end": 25,
+          "utf8_start": 586,
+          "utf8_end": 868,
+          "quote": "由 \\(f\\) 严格递增，\n\\[\n\\frac1n\\sum_{j=1}^n|x_{f(j)}|\n\\le \\frac{f(n)}n\\cdot\\frac1{f(n)}\\sum_{m=1}^{f(n)}|x_m|.\n\\]\n当 \\(D_f<\\infty\\) 时，取上极限可得\n\\[\np(P_fx)\\le D_f\\,p(x). \\tag{1}\n\\]\n因此 \\(T_f\\) 良定义且连续，其最小 Lipschitz 常数至多为 \\(D_f\\)。\n"
+        },
+        {
+          "line_start": 27,
+          "line_end": 48,
+          "utf8_start": 869,
+          "utf8_end": 1851,
+          "quote": "固定 \\(0<\\delta\\le1\\)。由上极限的定义，可选取正整数 \\(n_i\\)，使得\n\\[\n\\frac{f(n_i)}{n_i}\\longrightarrow D_f,\\qquad n_{i+1}\\ge(i+2)n_i.\n\\]\n这个选取对 \\(D_f=\\infty\\) 也成立，并且 \\(\\sum_{h<i}n_h\\le 2n_{i-1}=o(n_i)\\)。取\n\\[\nS=\\bigcup_{i\\ge1}\\{f(j):n_i<j\\le n_i+\\lfloor\\delta n_i\\rfloor\\},\n\\qquad x=\\mathbf 1_S.\n\\]\n若 \\(f(n_i)\\le M<f(n_{i+1})\\)，则\n\\[\n\\frac{\\#(S\\cap[1,M])}{M}\n\\le \\frac{\\sum_{h\\le i}\\lfloor\\delta n_h\\rfloor}{f(n_i)}\n\\le \\frac{\\delta\\bigl(n_i+o(n_i)\\bigr)}{f(n_i)}.\n\\]\n故 \\(p(x)\\le\\delta/D_f\\)，这里取 \\(1/\\infty=0\\)。另一方面，\\(P_fx\\) 在下标 \\(n_i+1,\\ldots,n_i+\\lfloor\\delta n_i\\rfloor\\) 上均为 \\(1\\)，故\n\\[\np(P_fx)\\ge\n\\lim_{i\\to\\infty}\\frac{\\lfloor\\delta n_i\\rfloor}{n_i+\\lfloor\\delta n_i\\rfloor}\n=\\frac{\\delta}{1+\\delta}.\n\\]\n若 \\(D_f=\\infty\\)，便有 \\(p(x)=0\\) 而 \\(p(P_fx)>0\\)，所以 \\(P_f\\) 无法诱导商空间上的映射。若 \\(D_f<\\infty\\)，则 \\(T_f\\) 的任一 Lipschitz 常数 \\(C\\) 都满足\n"
+        }
+      ]
+    },
+    {
+      "label": "K3 最优 Lipschitz 常数",
+      "verdict": "correct",
+      "reason": "共用稀疏块在 D_f 有限时给统一下界 C≥D_f/(1+δ)，δ 任意趋零。结合实际上界得到精确最优常数，未假设 f(n)/n 收敛。",
+      "evidence": [
+        {
+          "line_start": 21,
+          "line_end": 25,
+          "utf8_start": 705,
+          "utf8_end": 868,
+          "quote": "当 \\(D_f<\\infty\\) 时，取上极限可得\n\\[\np(P_fx)\\le D_f\\,p(x). \\tag{1}\n\\]\n因此 \\(T_f\\) 良定义且连续，其最小 Lipschitz 常数至多为 \\(D_f\\)。\n"
+        },
+        {
+          "line_start": 36,
+          "line_end": 52,
+          "utf8_start": 1212,
+          "utf8_end": 2009,
+          "quote": "若 \\(f(n_i)\\le M<f(n_{i+1})\\)，则\n\\[\n\\frac{\\#(S\\cap[1,M])}{M}\n\\le \\frac{\\sum_{h\\le i}\\lfloor\\delta n_h\\rfloor}{f(n_i)}\n\\le \\frac{\\delta\\bigl(n_i+o(n_i)\\bigr)}{f(n_i)}.\n\\]\n故 \\(p(x)\\le\\delta/D_f\\)，这里取 \\(1/\\infty=0\\)。另一方面，\\(P_fx\\) 在下标 \\(n_i+1,\\ldots,n_i+\\lfloor\\delta n_i\\rfloor\\) 上均为 \\(1\\)，故\n\\[\np(P_fx)\\ge\n\\lim_{i\\to\\infty}\\frac{\\lfloor\\delta n_i\\rfloor}{n_i+\\lfloor\\delta n_i\\rfloor}\n=\\frac{\\delta}{1+\\delta}.\n\\]\n若 \\(D_f=\\infty\\)，便有 \\(p(x)=0\\) 而 \\(p(P_fx)>0\\)，所以 \\(P_f\\) 无法诱导商空间上的映射。若 \\(D_f<\\infty\\)，则 \\(T_f\\) 的任一 Lipschitz 常数 \\(C\\) 都满足\n\\[\n\\frac{\\delta}{1+\\delta}\\le C\\frac{\\delta}{D_f}.\n\\]\n令 \\(\\delta\\downarrow0\\)，得到 \\(C\\ge D_f\\)。结合 (1)，最小 Lipschitz 常数恰为 \\(D_f\\)。\n"
+        }
+      ]
+    },
+    {
+      "label": "K4 连续、满射、单射和等距",
+      "verdict": "correct",
+      "reason": "在 f 像上赋值作满射见证；D_f>1 时像补集非零而被杀，D_f=1 时从前 n 项至多漏 f(n)−n 个位置直接证等距。有限 Lipschitz 界给连续。",
+      "evidence": [
+        {
+          "line_start": 25,
+          "line_end": 25,
+          "utf8_start": 785,
+          "utf8_end": 868,
+          "quote": "因此 \\(T_f\\) 良定义且连续，其最小 Lipschitz 常数至多为 \\(D_f\\)。\n"
+        },
+        {
+          "line_start": 54,
+          "line_end": 67,
+          "utf8_start": 2010,
+          "utf8_end": 2781,
+          "quote": "对满射性，给定任意 \\(y\\in E\\)，令 \\(x_{f(j)}=y_j\\)，其余位置取零，即得 \\(x\\in E\\) 且 \\(P_fx=y\\)。\n\n对单射性，若 \\(D_f>1\\)，取 \\(x=\\mathbf 1_{\\mathbb N\\setminus f(\\mathbb N)}\\)。此时 \\(P_fx=0\\)，而前 \\(f(n)\\) 个位置中恰有 \\(f(n)-n\\) 个位置上 \\(x\\) 为 \\(1\\)，故\n\\[\np(x)\\ge\\limsup_{n\\to\\infty}\\left(1-\\frac n{f(n)}\\right)\n=1-\\frac1{D_f}>0.\n\\]\n于是 \\(T_f\\) 有非零核。若 \\(D_f=1\\)，由 \\(f(n)\\ge n\\) 得 \\(f(n)-n=o(n)\\)。前 \\(n\\) 个位置中至多有 \\(f(n)-n\\) 个不属于 \\(\\{f(1),\\ldots,f(n)\\}\\)，所以\n\\[\n\\frac1n\\sum_{m=1}^n|x_m|\n\\le \\frac1n\\sum_{j=1}^n|x_{f(j)}|\n   +\\frac{f(n)-n}{n}\\|x\\|_\\infty.\n\\]\n取上极限并结合 (1)，得到 \\(p(P_fx)=p(x)\\)，故 \\(T_f\\) 是等距映射，特别地是单射。\n"
+        }
+      ]
+    },
+    {
+      "label": "K5 迭代常数、次乘性和根极限",
+      "verdict": "correct",
+      "reason": "复合取样给实际 L_k 公式并核验其仍良定义。次乘性以除法带余数具体推出根极限等于下确界及 1≤R_f≤L_1。",
+      "evidence": [
+        {
+          "line_start": 71,
+          "line_end": 86,
+          "utf8_start": 2833,
+          "utf8_end": 3490,
+          "quote": "记 \\(f^{\\circ k}\\) 为 \\(f\\) 的 \\(k\\) 次迭代。若 \\(f(n)=O(n)\\)，则对每个固定的 \\(k\\)，也有 \\(f^{\\circ k}(n)=O(n)\\)。由 \\(P_f^k=P_{f^{\\circ k}}\\) 及第 1 问，\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^{\\circ k}(n)}n\\ge1. \\tag{2}\n\\]\n复合映射的 Lipschitz 常数满足 \\(L_{k+\\ell}\\le L_kL_\\ell\\)。令 \\(L_0=1\\)，固定 \\(m\\ge1\\)，写 \\(k=qm+s\\)，其中 \\(0\\le s<m\\)。于是\n\\[\nL_k\\le L_m^q\\max_{0\\le j<m}L_j,\n\\qquad\n\\limsup_{k\\to\\infty}L_k^{1/k}\\le L_m^{1/m}.\n\\]\n对 \\(m\\) 取下确界，又因每个 \\(L_k^{1/k}\\) 均不小于该下确界，得到\n\\[\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}\n=\\inf_{m\\ge1}L_m^{1/m},\n\\qquad 1\\le R_f\\le L_1.\n\\]\n"
+        }
+      ]
+    },
+    {
+      "label": "K6 全部有序对的合法构造",
+      "verdict": "correct",
+      "reason": "对每个允许实数对用阶乘分段的取顶函数。证明严格递增和 L_1=λ，对每个固定 k 的充分远尾部最多越一处分界；两段仿射界得 r^k≤L_k≤r^k(1+Ck)^2，以此给全部边界下的根极限。",
+      "evidence": [
+        {
+          "line_start": 88,
+          "line_end": 103,
+          "utf8_start": 3491,
+          "utf8_end": 4351,
+          "quote": "现给定任意 \\(1\\le r\\le\\lambda<\\infty\\)。令 \\(a_m=m!\\)（\\(m\\ge1\\)），并定义\n\\[\n\\boxed{\\quad f(n)=\\left\\lceil rn+(\\lambda-r)a_m\\right\\rceil\n\\quad\\text{当 }a_m\\le n<a_{m+1}.\\quad} \\tag{3}\n\\]\n当 \\(n\\) 增加 \\(1\\) 时，取整前的表达式至少增加 \\(r\\ge1\\)，所以 \\(f\\) 严格递增。由\n\\[\nrn\\le f(n)\\le\\lambda n+1,\\qquad f(a_m)=\\lceil\\lambda a_m\\rceil\n\\]\n可知 \\(L_1=\\lambda\\)。同时 \\(f^{\\circ k}(n)\\ge r^k n\\)，故 \\(L_k\\ge r^k\\)。\n\n为求上界，固定 \\(k\\)，取 \\(a_m\\le n<a_{m+1}\\)。由于 \\(f(t)\\le(\\lambda+1)t\\)，且 \\(a_{m+2}/a_{m+1}=m+2\\to\\infty\\)，当 \\(m\\) 充分大时，\n\\[\nf^{\\circ k}(n)\\le(\\lambda+1)^k n<a_{m+2}.\n\\]\n又因 \\(f(t)\\ge t\\)，从 \\(n\\) 出发的前 \\(k\\) 次迭代，其自变量至多经过 \\([a_m,a_{m+1})\\) 和 \\([a_{m+1},a_{m+2})\\) 两个区间，且在每个区间内的步数是连续的。\n"
+        },
+        {
+          "line_start": 105,
+          "line_end": 123,
+          "utf8_start": 4352,
+          "utf8_end": 5038,
+          "quote": "设其中一段从 \\(u\\) 开始，有 \\(h\\) 步的自变量属于同一区间 \\([a_j,a_{j+1})\\)。令 \\(C=\\lambda-r+1\\)。因 \\(a_j\\le u\\)，对这一段的每个自变量 \\(t\\)，由 (3) 有\n\\[\nf(t)\\le rt+(\\lambda-r)a_j+1\\le rt+Cu.\n\\]\n迭代此式，并利用 \\(r\\ge1\\)，可得\n\\[\nf^{\\circ h}(u)\n\\le r^h u+Cu\\sum_{v=0}^{h-1}r^v\n\\le r^h(1+Ch)u.\n\\]\n对至多两段分别应用这一估计，两段的总步数为 \\(k\\)，故对所有充分大的 \\(n\\) 都有\n\\[\nf^{\\circ k}(n)\\le r^k(1+Ck)^2 n.\n\\]\n由 (2)，\n\\[\nr^k\\le L_k\\le r^k(1+Ck)^2.\n\\]\n取 \\(k\\) 次方根并令 \\(k\\to\\infty\\)，即得 \\(R_f=r\\)。因此 (3) 对每个指定的有序对 \\((\\lambda,r)\\) 都给出了所需构造。"
+        }
+      ]
+    }
+  ],
+  "claim_findings": [],
+  "extra_findings": [],
+  "profile_observations": {
+    "proof": "用一类定量稀疏见证分别处理有限与无穷 D_f，阶乘段迭代取 n 与 k 的极限顺序正确。没有依赖商完备性。",
+    "fidelity": "保留有界实数列、零上密度意义的商及稀疏增长可振荡的原参数，构造实际严格递增整数函数及全部实数对。"
+  },
+  "schema": "math-gauge.written-response-support/v1",
+  "case_id": "MG-PS001",
+  "response_sha256": "923b2780ffc97bab5574374b88be2160c5026419dcdb3f5150d773ff55645861",
+  "reviewer": "GPT-6.2 Sol Max; independent Math Gauge AI reviewer",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "original_contract_kind": "written_proof",
+  "receipt_binding": {
+    "physical_attempt": 1,
+    "selection": "first_qualified_normal_native_final_by_physical_attempt",
+    "native_final": {
+      "path": "sessions/MG-PS001/physical-1/output/response.md",
+      "bytes": 5038,
+      "sha256": "923b2780ffc97bab5574374b88be2160c5026419dcdb3f5150d773ff55645861"
+    },
+    "runner_response": {
+      "path": "runner-runs/MG-PS001/physical-1/MG-PS001/response.md",
+      "bytes": 5038,
+      "sha256": "923b2780ffc97bab5574374b88be2160c5026419dcdb3f5150d773ff55645861"
+    },
+    "source_seal": {
+      "path": "sessions/MG-PS001/physical-1/runtime/seal.json",
+      "bytes": 845,
+      "sha256": "fe7d26466391133b8b17e054f62fd9eebc4879cb7842721087881e66e25e51e1"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-PS001/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 826,
+      "sha256": "7044e52e4cb8ee10f4ed7bce1ec01107752fc67f6d71811342674b23ea8d11f3"
+    },
+    "native_command_probe": {
+      "path": "sessions/MG-PS001/physical-1/runtime/native-command-probe.json",
+      "bytes": 2541,
+      "sha256": "1ff085362cbaa5cdda4a6819870628f50b21c08c6654b031ae835f6d0e400caf"
+    },
+    "execution": {
+      "path": "sessions/MG-PS001/physical-1/runtime/execution.json",
+      "bytes": 6894,
+      "sha256": "21ea6f01096900c845db44d5b8599b25e2565ae34954e5b954db13945118465e"
+    },
+    "native_events": {
+      "path": "sessions/MG-PS001/physical-1/output/events.ndjson",
+      "bytes": 6858,
+      "sha256": "795e3aa1bb26399abed3e81af7ee9e8e7d2bd165018da6ae45ab5bce849e90e8"
+    },
+    "collection": {
+      "path": "sessions/MG-PS001/physical-1/runtime/collection.json",
+      "bytes": 9142,
+      "sha256": "5902e0cc81921d6117426aed46f5b77551fdea5b11e7ea58d7e7180594260954"
+    },
+    "first_terminal_index_one_based": 7,
+    "terminal_prefix_bytes": 6858,
+    "terminal_prefix_sha256": "795e3aa1bb26399abed3e81af7ee9e8e7d2bd165018da6ae45ab5bce849e90e8",
+    "native_final_item": "item_3",
+    "observed_backend_model": null,
+    "observed_backend_effort": null,
+    "normal_delivery_and_seal_verified": true
+  },
+  "source_bindings": {
+    "acquisition_plan_sha256": "407f693583a2806fd80aaf98dc0135f7f90b9c961332f4c1b5274a54ba54f35b",
+    "native_final_sha256": "923b2780ffc97bab5574374b88be2160c5026419dcdb3f5150d773ff55645861",
+    "collection_sha256": "5902e0cc81921d6117426aed46f5b77551fdea5b11e7ea58d7e7180594260954",
+    "physical_attempt": 1,
+    "task_sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+    "rubric_sha256": "390aa44a16523d40435f5e3b51f982a3268e2ead23a9ad6b939623c9adaa6186",
+    "reference_sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+    "terminal_source_observation_sha256": "7044e52e4cb8ee10f4ed7bce1ec01107752fc67f6d71811342674b23ea8d11f3",
+    "source_seal_sha256": "fe7d26466391133b8b17e054f62fd9eebc4879cb7842721087881e66e25e51e1"
+  }
+}

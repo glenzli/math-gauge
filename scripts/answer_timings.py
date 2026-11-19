@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.timings import check_pair
-from math_gauge.editions import result_archive
+from math_gauge.editions import result_archive, source_edition
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--public-root", type=Path, default=ROOT)
     args = parser.parse_args()
-    edition = json.loads((args.public_root / "benchmark.json").read_bytes())
+    edition = source_edition(args.public_root)
     records = dict(edition["selected_result_record_ids"])
     records["dot-underlying-model-20261108"] = "20261108"
     checked = []

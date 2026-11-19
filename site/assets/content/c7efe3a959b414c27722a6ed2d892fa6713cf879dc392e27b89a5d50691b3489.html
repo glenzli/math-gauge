@@ -1,0 +1,152 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h1>答卷审阅报告</h1>
+<h2>总体结论</h2>
+<p>答卷在各阶段的最终判断都正确：</p>
+<ul>
+<li>S4：求值映射不必连续；第一可数性足以保证 kX = X。</li>
+<li>S5：f 不必是同胚。</li>
+<li>S6：给出的充要条件是 k(f): kX → kY 为同胚；第一可数时可以升级为普通同胚。</li>
+</ul>
+<p>S1、S2(1)(2)、S4、S5 以及 S6 的主要论证基本严格。</p>
+<p>但答卷不能算完全严格。主要问题有三处：</p>
+<ol>
+<li><strong>S3 第 4 步引用 S1 时条件不成立。</strong> 这是唯一实质性的论证错误。结论本身为真，可以修补，修补方法见下文。</li>
+<li><strong>S2(3) 有一个错误的集合等同。</strong> 不影响该小节的结论。</li>
+<li><strong>若干要求的验证被省略。</strong> 包括 S3 关于 S 的自然性，以及 α ↦ ev∘(α×I) 与 CGHaus 伴随一致这一点。</li>
+</ol>
+<p>S5 中另有一处措辞错误，无害。</p>
+<h2>一、实质性问题</h2>
+<h3>1. S3 第 4 步：S1 的指数律被用在不满足条件的位置</h3>
+<p>答卷写道：&quot;由 S1 的指数律（由于 S 局部紧 Hausdorff，置于紧开拓扑第一变量）：C(S×kX, kY) ≅ C(S, C_co(kX, kY))&quot;。</p>
+<ul>
+<li>S1 证明的是 C(Z, C_co(X,Y)) ≅ C(Z×X, Y)，要求局部紧的是映射空间的<strong>定义域</strong> X，参数空间 Z 可以任意。</li>
+<li>要得到答卷所写的同构，需取 Z = S、X = kX，于是要求 <strong>kX 局部紧</strong>。原题没有给出这一条件，一般也不成立，例如 X = ℚ。</li>
+<li>若按 S 局部紧来套用 S1，只能得到 C(kX, C_co(S, kY)) ≅ C(kX×S, kY)。这是另一个方向的柯里化，不是答卷需要的式子。</li>
+<li>原题明确要求&quot;援引此前结果时说明其条件为何适用&quot;，所以这是一个引用错误。</li>
+</ul>
+<p><strong>结论本身为真，可以这样修补：</strong></p>
+<ul>
+<li><strong>柯里化方向 F ↦ Ψ(F)。</strong> S1 中证明 Ψ(F) 连续只用了管道引理，没有用到局部紧性，所以对 S×kX 同样成立。</li>
+<li><strong>反向 g ↦ G，其中 G(s,x) = g(s)(x)。</strong>
+<ul>
+<li>由第 3 步，S×kX 是 k 空间。因此只需检验 G 在每个探针 p: K → S×kX 上连续。</li>
+<li>记 B = pr₂(p(K))，它是 kX 的紧子集。</li>
+<li>在 S×B 上有 G = ev_B ∘ ((r_B∘g) × id_B)。</li>
+<li>限制映射 r_B: C_co(kX,kY) → C_co(B,kY) 连续，因为对紧集 K' ⊂ B 有 r_B⁻¹[K',O] = [K',O]。</li>
+<li>ev_B 连续：这是 S1 的情形，B 紧 Hausdorff，因而局部紧。</li>
+<li>所以 G∘p 连续，从而 G 连续。</li>
+</ul>
+</li>
+<li><strong>另一种修补方式。</strong> 直接引用 CGHaus 的指数律 C(S, kC_co(kX,kY)) ≅ C(S×_k kX, kY)，再用第 3 步得到 S×_k kX = S×kX。答卷在 S3 第二部分自己也用到了这条指数律。</li>
+</ul>
+<p><strong>影响：</strong> S3 中 C(S,M) ≅ H_{X,Y}(S) 的论证在这一步不成立，需要按上述方式替换。修补后整个构造成立，S6 也不受影响。</p>
+<h3>2. S2(3)：把&quot;由原拓扑连续映射诱导&quot;的集合写成了 C(X, kY)</h3>
+<p>答卷写&quot;连续映射 f: X→Y 诱导的自然变换对应于集合 C(X, kY) ⊂ C(kX, kY)&quot;。这是错的。</p>
+<ul>
+<li>在 S2 的双射下，h_f 对应的就是函数 f 本身。所以这个集合应为 <strong>C(X, Y)</strong>。</li>
+<li>包含关系 C(X,Y) ⊂ C(kX,kY) 成立，因为 k 是函子。</li>
+<li>C(X,kY) ⊊ C(X,Y) 可以真包含。反例：取 S5 中的超滤空间 Z，令 X = Y = Z。id_Z ∈ C(Z,Z)，但 id_Z ∉ C(Z,kZ)，因为 kZ 是离散空间。</li>
+</ul>
+<p><strong>影响：</strong></p>
+<ul>
+<li>答卷证明的是&quot;(∀Y: C(X,kY) = C(kX,kY)) ⇔ kX = X&quot;，它在字面上与题目要求的&quot;(∀Y: C(X,Y) = C(kX,kY)) ⇔ kX = X&quot;不同。</li>
+<li>不过实际推理不受影响：
+<ul>
+<li>充分性：C(X,kY) ⊂ C(X,Y) 已经足够。</li>
+<li>必要性：取 Y = kX 时，C(X,Y) 恰好就是 C(X,kX)。答卷的那句&quot;恒等映射 id_X: X → kX 必须连续&quot;在正确的表述下照样成立。</li>
+</ul>
+</li>
+<li>因此结论正确，只需改正这一处集合等同。</li>
+</ul>
+<h2>二、省略的验证与较小的瑕疵</h2>
+<p><strong>S1</strong></p>
+<ul>
+<li>关于 Y、X 的自然性只做了逐点等式验证。没有检验后复合 C_co(X,Y) → C_co(X,Y') 和预复合 C_co(X,Y) → C_co(X',Y) 是连续的，因而没有说明 C(X,k)∘g、C(j,Y)∘g 仍是连续映射。</li>
+<li>补充很容易：k₊⁻¹[K,O'] = [K, k⁻¹O']，j*⁻¹[K',O] = [j(K'), O]。</li>
+</ul>
+<p><strong>S2(1)</strong></p>
+<ul>
+<li>没有说明 βD ∈ U。补充：βD ⊂ P(P(D))，而 P(P(D)) ∈ U。</li>
+<li>其余部分正确：βD 是紧零维 Hausdorff 空间；π: βD → K 是闭满射，因而是商映射。</li>
+</ul>
+<p><strong>S2(2)</strong></p>
+<ul>
+<li>正确。点求值确定 α_S(f) = g∘f。</li>
+<li>C(S,Y) = C(S,kY)，再加上 kX 是关于 profinite 探针的终拓扑，两者给出所需的双射。</li>
+</ul>
+<p><strong>S3</strong></p>
+<ul>
+<li>第 2、3 步正确：k(S×X) = k(S×kX) 是因为两边的探针相同；第 3 步引用的是&quot;局部紧 Hausdorff 空间与 k 空间之积为 k 空间&quot;。答卷没有说明题目用&quot;探针&quot;定义的 k 与经典的&quot;紧子集&quot;定义在 Hausdorff 空间上一致，这是小缺口。</li>
+<li>&quot;在所有 S 上自然&quot;只是断言，没有验证。实际验证只需一行：对 θ: S' → S，有 G_{φθ}∘(σ',ψ) = G_φ∘(θσ', ψ)。</li>
+<li>&quot;恰由 α ↦ ev∘(α×I) 实现&quot;也没有验证。验证如下：若 α_T(σ) = g∘σ，则 ev_T(gσ, ψ) = G∘(σ,ψ)，其中 G 是 g 的反柯里化。这正好对应 CGHaus 伴随下的 g ↦ G。验证成立，但答卷没写出来。</li>
+<li>M(u,Y)、M(X,v) 的连续性是断言的。可以由 CGHaus 中求值复合后再柯里化得到。</li>
+<li>关于 X、Y 的自然性，答卷只给出了 ev 的双自然性等式。它推出 Nat 同构的自然性只需一行，答卷没有写出。</li>
+</ul>
+<p><strong>S4(1)</strong></p>
+<ul>
+<li>结论正确，反例 ℚ、ℝ 有效。</li>
+<li>答卷直接说 0 的邻域可以取成 [K,(−ε,ε)] 形式，这需要一句理由：基本开集 ∩[K_i,O_i] 若含 0，就包含 [∪K_i, (−ε,ε)]，其中 ε = min ε_i。</li>
+<li>K = ∅ 时 δ = ∞，公式需要另行解释。</li>
+<li>&quot;K 在 ℝ 中疏朗 ⇒ 在 ℚ 中无内点&quot;这一步成立：K 在 ℝ 中闭，若 K ⊃ (a,b)∩ℚ，则 K ⊃ [a,b]，与 K ⊂ ℚ 矛盾。</li>
+</ul>
+<p><strong>S4(2)</strong></p>
+<ul>
+<li>正确。这是&quot;第一可数 ⇒ 序列空间 ⇒ k 空间&quot;的标准论证。</li>
+<li>收敛序列连同极限构成的紧子集给出一个探针，方向用得对。</li>
+</ul>
+<p><strong>S5</strong></p>
+<ul>
+<li>结论与反例 id: kZ → Z 都正确。</li>
+<li>超滤空间 Z 的构造正确：它是 Hausdorff 空间，紧子集都有限，{p} 不是开集。</li>
+<li>&quot;由超滤子性质，<strong>恰有一个</strong>集合不属于 𝒰&quot;是错的。当 A₁ ⊔ A₂ ∉ 𝒰 时，两个集合都不属于 𝒰。正确说法是&quot;至少一个不属于&quot;，而后文&quot;不妨设 A₁ ∉ 𝒰&quot;只需要这一点，所以无害。</li>
+<li>由&quot;紧子集都有限&quot;推出 kZ 离散时，用的是紧子集的说法而不是探针的说法。补充：对探针 f: K → Z，f(K) 是有限集，所以 f⁻¹(A) 是有限个闭纤维的并，因而闭。</li>
+</ul>
+<p><strong>S6</strong></p>
+<ul>
+<li>复合映射由 CGHaus 中&quot;结合同构 → id×_k ev → ev → 柯里化&quot;得到；结合律和单位律通过&quot;连续映射由底层函数决定&quot;得到。都正确。</li>
+<li>充要条件 k(f) 为同胚正确。依据是 S2 的双射保持复合，即 α_S(φ) = g∘φ。</li>
+<li>第一可数时由 S4(2) 得 kX = X、kY = Y，可以升级为普通同胚。正确。</li>
+</ul>
+<h2>三、结论</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>结论</th>
+<th>论证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>正确</td>
+<td>基本严格；自然性中映射空间之间映射的连续性未验证</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>正确</td>
+<td>(1)(2) 严格；(3) 有错误的集合等同 C(X,kY)，结论不受影响</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>构造正确</td>
+<td><strong>第 4 步误用 S1</strong>（要求 kX 局部紧）；关于 S 的自然性、与 ev 公式的对应未验证</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>正确（不必连续 / 足以保证）</td>
+<td>严格，有小处省略</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>正确（不必为同胚）</td>
+<td>严格；&quot;恰有一个&quot;应为&quot;至少一个&quot;</td>
+</tr>
+<tr>
+<td>S6</td>
+<td>正确</td>
+<td>严格，依赖 S3 和 CGHaus 的标准事实</td>
+</tr>
+</tbody>
+</table>
+<p>总评：所有判断题结论正确，构造可以成立。但 S3 的核心同构依赖一次条件不满足的引用，需要按第一节第 1 点补上论证；另需改正 S2(3) 中的集合等同，并补全 S3 中省略的自然性验证。</p>
+</div>

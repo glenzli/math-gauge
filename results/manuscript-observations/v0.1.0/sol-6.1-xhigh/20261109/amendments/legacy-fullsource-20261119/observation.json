@@ -1,0 +1,129 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "sol-6.1-xhigh",
+  "record_id": "20261109",
+  "source_record": {
+    "path": "results/v0.6.0/sol-6.1-xhigh/20261109/record.json",
+    "bytes": 366604,
+    "sha256": "2bd4ac2e494f7df9b4ad7453b6a0d14a0af413c806450fbac8db26c3acd23386"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "e3187d156b6137c5260a0999783ef0f71d99195e26c3c650256a8933eb2bc249",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 10,
+    "total_groups": 10,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "837255e9568c52fcc3ec1f2740a6e4a8cbeef71b2af0e3127a8f3a022b636848",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "已完整覆盖所有源绑定交付：response 8634 bytes / SHA256 837255e9568c52fcc3ec1f2740a6e4a8cbeef71b2af0e3127a8f3a022b636848。已确认每文件结尾；重复 final/附稿仅算同一数学结果。独立枚举后核对旧审全部候选；原题completion/strict与原response SHA不变。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "非线性上下包络与矩阵等价",
+          "statement": "输入阈值上的sup/inf输出距离总有定义，等价表达上下矩阵和零化条件。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "这些等价由sup/inf定义、矩阵保序和代入实际距离直接得到，不单独认定独立机制。",
+          "proof_review": "这些等价由sup/inf定义、矩阵保序和代入实际距离直接得到，不单独认定独立机制。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "这些等价由sup/inf定义、矩阵保序和代入实际距离直接得到，不单独认定独立机制。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "837255e9568c52fcc3ec1f2740a6e4a8cbeef71b2af0e3127a8f3a022b636848",
+              "start_byte": 7535,
+              "end_byte": 8634,
+              "quote": "若希望统一描述**所有**算子，包括不保持零距离关系的算子，可以进一步采用距离模函数。对 \\(t\\in\\bar{\\mathbb R}_+^I\\)，定义\n\\[\n\\overline\\omega_i^\\phi(t)\n:=\n\\sup_{\\substack{x,y\\in S\\\\D(x,y)\\le t}}\nd_i(\\phi x,\\phi y),\n\\]\n\\[\n\\underline\\omega_i^\\phi(t)\n:=\n\\inf_{\\substack{x,y\\in S\\\\D(x,y)\\ge t}}\nd_i(\\phi x,\\phi y),\n\\]\n约定 \\(\\sup\\varnothing=0\\)、\\(\\inf\\varnothing=\\infty\\)。它们总是存在，并满足\n\\[\n\\underline\\omega^\\phi(D(x,y))\n\\le D(\\phi x,\\phi y)\n\\le\\overline\\omega^\\phi(D(x,y)).\n\\]\n\n上述三类矩阵与它们有精确对应：\n\\[\n\\begin{aligned}\nA\\text{ 是上控制矩阵}\n&\\iff\n\\overline\\omega^\\phi(t)\\le At\n&&(\\forall t),\\\\\nB\\text{ 是下控制矩阵}\n&\\iff\nBt\\le\\underline\\omega^\\phi(t)\n&&(\\forall t),\\\\\nR\\text{ 是塌缩阈值矩阵}\n&\\iff\n\\overline\\omega_i^\\phi(R_{i\\bullet})=0\n&&(\\forall i).\n\\end{aligned}\n\\]\n前两条由矩阵作用的单调性及取 \\(t=D(x,y)\\) 得到；第三条直接来自上确界的定义。若 \\(\\overline\\omega^\\phi(0)\\ne0\\)，它就明确记录了纯乘法上控制矩阵无法表达的零距离分裂现象。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "矩阵与阈值直接复合",
+          "statement": "上下矩阵乘法和阈值T经Aφ送入Rψ。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "链式代入/蕴涵串接；M2–M6所需存在性和端点、非分离性边界仍归正常交付。",
+          "proof_review": "链式代入/蕴涵串接；M2–M6所需存在性和端点、非分离性边界仍归正常交付。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "链式代入/蕴涵串接；M2–M6所需存在性和端点、非分离性边界仍归正常交付。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "837255e9568c52fcc3ec1f2740a6e4a8cbeef71b2af0e3127a8f3a022b636848",
+              "start_byte": 1825,
+              "end_byte": 2661,
+              "quote": "这些定义直接给出以下性质：\n\n- 若 \\(A\\) 是上控制矩阵且 \\(A'\\ge A\\)，则 \\(A'\\) 也是；\n- 若 \\(B\\) 是下控制矩阵且 \\(0\\le B'\\le B\\)，则 \\(B'\\) 也是；\n- 恒等算子的上、下控制矩阵都可以取单位矩阵；\n- 若 \\(\\phi,\\psi\\) 分别有控制矩阵 \\(A_\\phi,B_\\phi\\) 和 \\(A_\\psi,B_\\psi\\)，则\n  \\[\n  A_{\\psi\\circ\\phi}=A_\\psi A_\\phi,\n  \\qquad\n  B_{\\psi\\circ\\phi}=B_\\psi B_\\phi\n  \\]\n  分别是复合算子的上、下控制矩阵。\n\n最后一条在全局版本中直接成立；在有效域版本中，比较点取自\n\\[\n\\operatorname{dom}(\\psi\\circ\\phi)\n=\\{x\\in\\operatorname{dom}(\\phi):\\phi(x)\\in\\operatorname{dom}(\\psi)\\}.\n\\]\n例如上界的证明就是\n\\[\nD(\\psi\\phi x,\\psi\\phi y)\n\\le A_\\psi D(\\phi x,\\phi y)\n\\le A_\\psi A_\\phi D(x,y),\n\\]\n下界同理由矩阵乘法的单调性得到。\n\n"
+            },
+            {
+              "source_sha256": "837255e9568c52fcc3ec1f2740a6e4a8cbeef71b2af0e3127a8f3a022b636848",
+              "start_byte": 6664,
+              "end_byte": 7101,
+              "quote": "塌缩阈值也能沿复合传递。设 \\(A_\\phi\\) 是 \\(\\phi\\) 的上控制矩阵，\\(R_\\psi\\) 是 \\(\\psi\\) 的塌缩阈值矩阵。若矩阵 \\(T\\) 满足\n\\[\n\\sum_j(A_\\phi)_{kj}T_{ij}\\le(R_\\psi)_{ik}\n\\qquad(i,k\\in I),\n\\]\n则 \\(T\\) 是 \\(\\psi\\circ\\phi\\) 的塌缩阈值矩阵。事实上，输入满足第 \\(i\\) 行的 \\(T\\) 阈值后，中间距离满足 \\(R_\\psi\\) 的第 \\(i\\) 行阈值，故最终第 \\(i\\) 个输出距离为零。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

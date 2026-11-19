@@ -1,0 +1,121 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h3>HC02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Lip 是矩阵的实际 Set 族，包含U⊆domφ及全部点对、全部输出的 ENNReal 求和上界；GlobalLip取domφ，mem_globalLip_iff证明与原全域公式等价。纯代数声明对任意d成立，故包含原有限非空规范族而不增加条件。</p>
+<h3>HC02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> CoLip 集合定义同时保留U.Nonempty、U⊆domφ及全部点对的完整有限和下界；0/top系数不被排除，原全域情况由同一族取U=domφ。</p>
+<h3>HC02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Mat按输入i/输出j存储；display转为标准第j行第i列，并证明单射。display_mmul把真实Σk B(k→j)A(i→k)转换为标准矩阵乘积，act_mmul证明作用组合，未调换方向。</p>
+<h3>HC02-D04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> eye 为Kroneckerδ，display_eye证明标准单位对应；product按原施行顺序列表递归以尾乘积乘首矩阵，零/单项/后继规则均证明，display_product连接到反序标准列表prod，空乘积保留单位。</p>
+<h3>HC02-D05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Step只存原算子和单步矩阵，run逐步真实复合，stage_succ和stage_eq_image_take/final_image证明每步及全复合实际像；stage_domain由全复合域条件推出每一步合法域。AllSteps只存各步局部条件，allSteps_iff证明等价于原索引数据，未以最终界作字段。</p>
+<h3>HC02-D06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 对非空矩阵列A::As，Path=Fin(As.length)→I是全部无约束中间指标；端点另作参数。weight/AllPositive/HasZero逐边递归，weight_zero/positive证明相应谓词对应；emptyPath_unique和weight_singleton保留n=1唯一空序列而非无路径。</p>
+<h3>HC02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Channel=I×I；Row L i j仅清零固定输出行的其他输入，Col仅清零固定输入列的其他输出，交叉唯一位置任意。RowDecoupled/ColDecoupled忠实存在量化合法证书和支撑位置；Diagonal清零全部非对角项，没有误称为算子实际依赖的完整刻画。</p>
+<h3>HC02-D08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> ScalarSet是原全部U内点对的单通道可行常数集，channelInf为其ENNReal sInf，空集=top；作用域按原U⊆dom语境使用。它与entryInf的矩阵条目像集下确界分开定义，没有相互偷换。</p>
+<h3>HC02-P01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_one_component以∀k,k=i表达单指标集，实际有限和单项化简后给原U内所有点对的标量Lip界，未限制系数有限。</p>
+<h3>HC02-P02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> global_restrict将GlobalLip在完整dom上的点对界限制到原合法U，给全体证书族包含而非只给某个选定矩阵。</p>
+<h3>HC02-P03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_restrict/lip_family_antitone对任意U⊆V逐点转移上界并传递域包含，证明缩小评估域扩大合法矩阵族；Lip空域情形仍合法。</p>
+<h3>HC02-P04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> entryInf使用所有合法Lip矩阵经M↦M i j的像集取sInf；entryInf_mono由证书族反向包含及像单调给小域下确界不增，未假定各条目极值同时由一个矩阵取得。</p>
+<h3>HC02-P05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_comp读取第一矩阵在U、第二矩阵在精确像φ(U)的上界，在原U⊆dom(ψ∘φ)下展开act_mmul并逐中间分量放缩，得到正确次序mmul B A。</p>
+<h3>HC02-P06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_zero在真实全域co-Lip证书及原点对前提下取非负单项≤输出0，再由正输入距离排除乘积的距离因子为0，从而K i j=0，含top距离/系数。</p>
+<h3>HC02-P07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_comp在同一实际像域上使用两步真实下界，以非负有限和单调性证明mmul B A下界，且从第一步证书保留U非空；没有以Lip上界代替co-Lip。</p>
+<h3>HC02-P08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_forward在原逐点δ前提下沿ψx→φx→φy→ψy两次三角并用对称性，得到加两个δ的点对界；更一般任意U上的正确陈述包含原公共定义域特例。</p>
+<h3>HC02-P09</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_reverse以伪度量对称性把同一逐点扰动前提交换φ/ψ，再应用前向定理得反向点对界，没有进行扩展实数减法。</p>
+<h3>HC02-P10</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_lip把真实φ的Lip有限和上界代入前向扰动式，再用two_mul和加法结合把两个δ改写为2δ，保留全部原点对与分量。</p>
+<h3>HC02-P11</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_colip把真实φ的co-Lip有限和下界与反向扰动式传递，得到ΣK d≤ψ像距+2δ；δ、系数和距离允许top。</p>
+<h3>HC02-P12</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> chain_lip按任意列表长度从空链单位证书归纳，每一步仅在实际上游像域读取局部上界；chain_lip_from_local通过allSteps_iff直接接原逐步索引数据，输出指定矩阵列表积而非假设全链界。</p>
+<h3>HC02-P13</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> chain_colip对任意非空列表由第一步co-Lip推出U非空，递推保留真实像及下界；chain_colip_from_local接原逐步数据，未增加最终复合界或矩阵最优性前提。</p>
+<h3>HC02-P14</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_ident以真正id算子及act_eye恒等证明单位矩阵是原合法域上的Lip证书；结论连空域也成立，覆盖题目非空零步域。run/product空列表分别是ident/eye。</p>
+<h3>HC02-P15</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_ident明确要求原U非空及U⊆dom id，并以同一act_eye给完整点对下界，正确保持零步co-Lip合法性。</p>
+<h3>HC02-P16</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> product_expansion归纳证明真实有序乘积等于所有Fin中间序列权重的有限和；product_zero_iff结合非负和零判据与逐路径weight_zero。lip_chain_zero_iff保留同一真实算子链及局部Lip证书，singleton_criteria给一步边界。</p>
+<h3>HC02-P17</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> product_positive_iff在同一真实全路径展开上用有限和正iff某项正和weight_positive得存在全正路径；colip_chain_positive_iff把它与同一实际co-Lip链合法性共同给出，n=1由singleton_criteria而非错误空存在处理。</p>
+<h3>HC02-P18</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalar_empty_of_zero_input把原零输入/正输出点对代入任意ENNReal系数的完整可行界，使用包括top在内的a*0=0得矛盾；确证ScalarSet为空和其sInf=top。</p>
+<h3>HC02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> positive_finite_inf_attained按输入距0、top、非零有限三分支证明全点对界：0分支由有限inf取得可行常数迫使输出0，top分支用正inf乘top，有限非零分支用具有正确侧条件的iInf乘法交换。未从inf定义直接假定取到。</p>
+<h3>HC02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalar_upward对同一全部点对界用ENNReal乘法关于非负常数的单调性，把a可行和a≤b传到b可行，域/算子/通道不变。</p>
+<h3>HC02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> above_inf_feasible由sInf&lt;b实际提取某个小于b的可行a，再用向上封闭性得b可行；它涵盖原正有限下确界语境及b=top，不需连续性或有限距离额外假设。</p>
+<h3>HC02-P22</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_inf_positive将channelInf=0代入严格高于inf即可行的定理，给任意正ENNReal常数，特别覆盖所有有限正常数；未错误断言0本身可行。</p>
+<h3>HC02-P23</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_inf_counterexample完整构造Fin3、bot0、Bool双分量规范：非吸收异点输入false距top，输出true距1，吸收元隔离。counterMetric核验所有公理，id与U={1,2}合法非空；所有正系数可行而0不行，实际证明inf=0。</p>
+<h3>HC02-P24</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> finite_inf_iff双向使用实际sInf性质：inf&lt;top提取小于top的可行常数，反向由inf≤该常数&lt;top。没有偷用取到，因此零inf未取到例也涵盖。</p>
+<h3>HC02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_term用ENNReal零乘法规避0*top陷阱，erase_zero_term实际证明输出有限和等于删除该输入指标的和；没有由一项0错误推出整个输出距0。</p>
+<h3>HC02-P26</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> row_sum对任意输入i、输出j和全ENNReal向量证明有限和仅余该项，row_bound再将真Lip上界化成L(i→j)d_i；唯一输入不强制i=j，系数可top。</p>
+<h3>HC02-P27</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> col_contribution对任意固定输入i与指定输出j，利用Col条件给每个k≠j的对应证书项为0。结论只限制该证书求和项的贡献，未声称实际算子只能改变一个分量。</p>
+<h3>HC02-P28</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> diagonal_bound对每个j从全对角条件提取Row L j j，再应用已证任意单行化简，得到全部U内点对的同分量标量上界。</p>
+<h3>HC02-P29</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalar_sandwich只要求L的所选输出行对角支撑；coLip_term从K完整非负和取单项给下界，与row_bound给上界合取。未增加K稀疏/正/有限条件。</p>
+<h3>HC02-P30</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> diagonal_sandwich对每个j实例化原双侧式；finite_diagonal_sandwich在额外Ljj/Kjj&lt;top下显式保留有限系数与所有点对双侧界。没有由系数有限推出所有距离有限。</p>
+<h3>HC02-P31</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> positive_channel由真实CoLip求和中的任意单项和两个正ENNReal因子的正乘积得到输出分量正距，包含正系数top和输入距top，不依赖有限逆。</p>
+<h3>HC02-P32</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> reflects_zero从每个对角co-Lip条目正，以正通道定理反证任一输入分量距离非零，输出族零距推出输入同一GaugeZeroRelated。未加分离性或升级为点值单射。</p>
+</div>

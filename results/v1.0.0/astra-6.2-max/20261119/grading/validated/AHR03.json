@@ -1,0 +1,132 @@
+{
+  "schema": "math-gauge.report/v1",
+  "run": {
+    "schema": "math-gauge.run/v1",
+    "run_id": "10cab72226a0415db94a34c5f24d17ee",
+    "created_at": "2026-11-19T09:52:51.297587+00:00",
+    "runner_version": "0.1.0",
+    "runner_sha256": "4d2b50a03b4a0486bc3a990e70a3d648afa3fa78d71bf38dec917a0a7ed566c6",
+    "suite_id": "math-gauge-combined",
+    "suite_version": "1.0.0",
+    "suite_sha256": "4bcf7e34c2ffae8e3f109ea1a62b8d36516ec33b86581ce903190054572795ce",
+    "visibility": "private",
+    "origin": "command",
+    "model_label": "gpt-6.2-astra/max",
+    "model_identity_verified": false,
+    "timeout_seconds": 5490,
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-B",
+      "/private/tmp/math-gauge-astra62-max-20261119/controller.py",
+      "adapter",
+      "AHR03",
+      "1"
+    ],
+    "cases": [
+      {
+        "id": "AHR03",
+        "version": "0.1.0",
+        "track": "alignment",
+        "task_kind": "audit",
+        "family_id": "oet-node-domain-refinement",
+        "candidate_message_sha256": "1c863099817332f5df34703ca781b412ca2cf1201e54fb81a10c4b43ce816295",
+        "case_approved": false,
+        "group_contract": {
+          "path": "AHR03/review-contract.json",
+          "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac"
+        }
+      }
+    ],
+    "completed_at": "2026-11-19T10:00:58.441452+00:00",
+    "execution_failures": 0
+  },
+  "tracks": {
+    "determinate": {
+      "attempted": 0,
+      "execution_ok": 0,
+      "reviewed": 0,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 0,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": 0,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": null
+    },
+    "alignment": {
+      "attempted": 1,
+      "execution_ok": 1,
+      "reviewed": 1,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 1,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": 0,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": null
+    },
+    "exploration": {
+      "attempted": 0,
+      "execution_ok": 0,
+      "reviewed": 0,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 0,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": null,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": 0
+    }
+  },
+  "group_diagnostics": {
+    "AHR03": {
+      "assessment_unit": "review_dimension",
+      "dimension_count": 4,
+      "completed_weight": 100,
+      "upper_weight": 100,
+      "total_weight": 100,
+      "completion": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "exact": 1.0
+      },
+      "strict_pass": true,
+      "dimensions": [
+        {
+          "dimension_id": "judgment",
+          "score": 35,
+          "notes": "Accurate aligned judgment for the specified one-step domain refinement; distinguishes exact NodeDomainRefinement from operational routing compatibility and does not demand unrelated algebraic refinement."
+        },
+        {
+          "dimension_id": "valid_parts",
+          "score": 20,
+          "notes": "Correct nonempty disjoint full-domain partition, exact restriction operators including outside-bottom values, entry intersection, old-node retention and reached-piece iff criterion using each visit’s current input. The construction proves the exact relation used by the generic theorem."
+        },
+        {
+          "dimension_id": "evidence",
+          "score": 30,
+          "notes": "The full retained edge equation and all four endpoint cases are correct, including self-loops and unvisited edge points. Colouring and projected paths prove termination, length and output equality. In the concrete example f(b)=c, other ordinary points fixed, input{a}, loop{c,d}, pieces{a,b,d}/{c}: deleting the unreachable second piece enlarges terminal{a} to{a,c} while loop{d} must remain."
+        },
+        {
+          "dimension_id": "repair_scope",
+          "score": 15,
+          "notes": "No core repair needed. The pre-pruning terminal intersection follows directly from choice and could be named as a convenience; it is correctly not imposed after pruning. No unsupported stronger terminal equality or pointwise-output change is alleged."
+        }
+      ],
+      "kind": "semantic_audit"
+    }
+  },
+  "input_identity": {
+    "AHR03": {
+      "status": "verified",
+      "verified": true,
+      "request_sha256": "50bf334fc2ddae69d9f070cb2fce4e227517b85eba22e9ee5f8219e190dcd66d",
+      "candidate_message_sha256": "1c863099817332f5df34703ca781b412ca2cf1201e54fb81a10c4b43ce816295"
+    }
+  },
+  "automatically_establishes_mathematical_correctness": false,
+  "notice": "Replay、AI/fixture 审核与未人工审定的题目不计为模型比较成绩；开放构造单独记录发现，不生成统一总分。"
+}

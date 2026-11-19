@@ -1,0 +1,117 @@
+{
+  "schema": "math-gauge.independent-lean-case-review/v1",
+  "reviewer_kind": "ai",
+  "review_model": "gpt-6.1-sol",
+  "review_reasoning_effort": "max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "new_candidate_calls": 0,
+  "candidate_source_repaired": false,
+  "canonical_repositories_modified": false,
+  "case_id": "AHR01",
+  "slot_id": "AHR01",
+  "source_bindings": {
+    "identity": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR01/source-identity.json",
+      "bytes": 11358,
+      "sha256": "0d2908e9057141e702d4b9c71f754959864d49ffdd17d279f59998521686d52b"
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/AHR01-A1/attempt-1/response.md",
+      "bytes": 25937,
+      "sha256": "117e5b70f7d9ab3a3a5afd46b8cbaea8e6fc16e846b599b3b26955d096efbc89"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/AHR01-A1/attempt-1/request.json",
+      "bytes": 552191,
+      "sha256": "682c438d6323e574e64b31d45d167a0360d121b10df7d2658bee80905299efd2"
+    }
+  },
+  "self_assessment": {
+    "original_prose": "**结论：部分覆盖。** 对“节点域加细保持外延等价”这一结论，源码的证明是正确的，构造版本完整覆盖了这一情形。但抽象关系 `NodeDomainRefinement` 的定义比正文宽。另外有两类关联缺口：源码没有把这个关系和正文的构造连起来，也没有把构造与正文的入口片、边域公式之间的对应写成定理。对这三点我都在 Lean 里做了检查，代码见附录。\n\n## 一、核对方式\n\n- 用 `lake build` 编译 `network_refinement` 和 `domain_refinement_construction`，编译通过，源码中没有 `sorry`。\n- 对 `refinement_preserves_local_equivalence`、`NodePartitionData.network_extensional_eq`、`network_path_projection`、`self_loop_choice_iff`、`local_op_eq_restrict` 执行 `#print axioms`，结果只依赖 `propext`、`Classical.choice`、`Quot.sound`。\n- 下文提到的补充定理和反例写在临时文件里，用 `lake env lean` 编译通过，同样只依赖这三条公理，没有 `sorryAx`。\n\n## 二、定义的逐项对应\n\n源码对正文定义给了两种形式化：**构造**（`NodePartitionData` → `presentation` → `prune`）和**关系**（`NodeDomainRefinement N N'`）。\n\n| 正文条款 | 构造 `NodePartitionData` | 关系 `NodeDomainRefinement` |\n|---|---|---|\n| 有限非空分划 $U_\\beta=\\bigsqcup_a U_{\\beta,a}$，各块非空 | `count_pos`、`nonempty`、`disjoint`、`cover`（等于 `N.node_dom target`） | 同名字段 |\n| $\\operatorname{dom}f_{\\beta,a}=U_{\\beta,a}$ 且 $f_{\\beta,a}\\equiv_{U_{\\beta,a}}f_\\beta$ | `local_domain`、`local_eq`；已证 `local_op_eq_restrict`，即 $f_{\\beta,a}=f_\\beta\\vert_{U_{\\beta,a}}$ | `local_domain`、`local_equiv` |\n| 用子节点 $\\beta_a$ 替换 $\\beta$ | 标签类型 `{v // v ≠ target} ⊕ Fin count` | 字段 `source`（单射）、`old_node_present`、`piece_node_present_iff_reached` |\n| 入口片取 $U_\\beta^{in}\\cap U_{\\beta,a}$ | `entry := lift_label (N.entry x) x`；**源码未把公式写成定理** | 由 `entry_projection` 加 `entry_mem` 迫使成立 |\n| 入边 $D_{\\gamma\\to\\beta}\\cap U_{\\beta,a}$、出边 $D_{\\beta\\to\\gamma}\\cap f_{\\beta,a}(U_{\\beta,a})$、自环双交公式 | `choice` 经 `lift_label` 定义；**只有自环一条有定理**（`self_loop_choice_iff`），而且是剪枝前的 | **只在实际产生的输出上约束**（`choice_projection`） |\n| 删除未经过的子节点（按 @h-ced8c7236326e104） | `presentation.prune`，即 `prune_choice` 把指向被删节点的转移改为 stop | `piece_node_present_iff_reached` |\n| 结论 $\\phi_{\\mathcal N'}\\equiv_U\\phi_{\\mathcal N}$ | `network_extensional_eq`：外延算子全域相等，强于 $\\equiv_U$ | `refinement_preserves_local_equivalence`：在 `N.U` 上局部等价 |\n\n**正文证明中的中间结论：**\n- 加细结果是有限网络：构造版本把所有义务都做成了一个完整的 `FiniteOperatorNetwork`，所以这一点已被证明；关系版本则把它当作前提。\n- 路径按实际输入重新着色，投影回去恰好是原路径：`network_path_labels` 和 `network_path_projection` 已证，因此路径长度不变。\n- 自环在不同次经过时可以选不同子块：`colour_path` 用当前输入选块，这一点被正确实现了。\n\n**关系版本证明的实际结构。** 它是一个投影模拟论证：\n1. `node_eval_eq`：新节点在自身定义域上的取值等于原节点。\n2. `terminal_projection`：沿实际输入的路由投影回原网络。\n3. 由 `terminal_path_unique` 得 `path_projection`。\n4. `eval_projected` 给出求值相等。\n\n这个证明完全没有用到 `piece_disjoint`、`piece_cover` 等分划性质，所以结论适用于比正文更大的一类网络。\n\n## 三、不足 1：抽象关系比正文定义宽\n\n`choice_projection` 只约束 `N'.node_actual_input_domain v` 的像上的路由。节点输出像中实际没有产生的点，路由完全不受约束。正文则在整个输出像上规定了边域公式。\n\n**反例（已在 Lean 中验证，`relation_admits_extra_edge`）：**\n- 取 $\\mathcal X=\\{\\bot=0,1,2\\}$。\n- 原网络 $\\mathcal N$：单节点 $\\beta$，$f_\\beta=\\mathrm{id}$（定义域 $\\{1,2\\}$），$U=\\{1\\}$，没有边。\n- 正文对 $\\mathcal N$ 的节点域加细只有两种：\n  - $q=1$ 时，结果与 $\\mathcal N$ 同构，没有边；\n  - 分划为 $\\{1\\},\\{2\\}$ 时，子节点 $\\beta_2$ 不会被经过，删除后剩下的节点算子定义域为 $\\{1\\}$。\n- `loopNet`：与 $\\mathcal N$ 相同，只是在从不实际产生的输出 $2$ 上加一条自环，自环边域为 $\\{2\\}$。它仍是合法的有限网络：输入 $1$ 一步终止。\n- 用 $q=1$ 的数据可以构造出 `NodeDomainRefinement baseNet loopNet` 的实例，因此 `NetworkRefinement baseNet loopNet` 成立。\n- 但 `loopNet` 不是 $\\mathcal N$ 任何一次正文加细的结果：\n  - 节点域加细的结果都没有边；\n  - 代数加细得到两个都被经过的节点，而 `loopNet` 只有一个节点。\n- Lean 中验证的具体差别：\n  - 两者的边域分别为 `∅` 与 `{2}`，`presentation_data` 不相等；\n  - 终止域分别是 $\\{1,2\\}$ 与 $\\{1\\}$。\n\n**数学影响：**\n- 作为“定义”，这个关系并没有刻画正文的节点域加细。它只确定节点集、局域算子、入口，以及实际输出上的路由，未产生输出上的边与终止域是任意的。\n- 正文的加细保持节点标签图的无环性：新边投影后都是原边，自环只来自原自环。这个关系却会把无环网络“加细”成有环网络，所以凡依赖完整边数据的结论都不能经由它传递，例如属于 $\\mathcal X^{dag}_{net}$、对象等同、表示层读出、多步加细可达集。\n- 对本题的命题没有危害：前提更宽，定理反而更强，外延等价仍然成立。\n- 是否存在加细后继，两种定义等价：关系的分划数据总能生成正文的加细，反方向见下一节的桥接。\n\n**修复方向：**\n- 要么把它改名、改文档，说明它是“投影模拟”这一充分条件，不再作为正文的定义；\n- 要么增加一个精确字段：对所有 $z\\in$ `N'.node_image v` 和所有 `w'`，\n  `N'.choice v z = .next w'` ⟺ `N.choice (π v) z = .next (π w')` ∧ ∀ b, `source w' = .inr b → z ∈ piece b`。\n  这条字段对 `w'` 只遍历仍然存在的节点，因而已经包含了剪枝。现有证明不需要改，补充的 `network_edge_domain` 正好提供这条字段的满足性。\n\n## 四、不足 2：关系与构造没有桥接\n\n源码在文档里说明两者各自证明，但没有任何定理说明 `P.network` 是 `NodeDomainRefinement` 的实例。后果是：\n- 关系版本的定理在源码中没有任何被验证的实例，原则上可能是空真的；\n- 正文的构造也从未进入 `NetworkRefinement`。\n\n**补充（已编译通过）：**\n- `NodePartitionData.to_refinement : NodeDomainRefinement N P.network`；\n- 由它得到推论 `refinement_preserves_local_equivalence (.node_domain P.to_refinement)`。\n\n证明的关键步骤是：在实际输出处，提升后的目标标签一定在终止路径的后继中出现，因此被剪枝保留。这一步用到 `terminal_path_suffix_of_next_at_prefix`。`old_node_present` 这一字段同时证明了正文的断言“只有子节点可能被删”。\n\n## 五、不足 3：构造与正文公式的对应只证了一部分\n\n源码只有剪枝前的自环路由定理。我补充了剪枝后网络的统一公式：\n\n- `network_edge_domain`：对存在的标签 $v,w$，\n  $z\\in D'_{v\\to w}$ ⟺ $z\\in\\operatorname{img} f'_v$ ∧ `N.choice (π v) z = next (π w)` ∧ （若 $w=\\beta_b$，则 $z\\in U_{\\beta,b}$）。\n  它依次给出入边公式、出边公式、自环双交公式，以及无关边不变。终止域即像减去边域之并，因此 $T'_{\\beta_a}=f_{\\beta,a}(U_{\\beta,a})\\cap T_\\beta$，在剪枝处再扩大。\n- `network_entry_domain`：入口片为 $U^{in}_{\\pi v}\\cap U_{\\beta,a}$。\n\n## 六、次要缺口\n\n- 正文给出的长度界是 $\\ell(\\mathcal N)$，构造里用的是存储的 `N.depth_bound`。由路径投影可以推出 `evaluation_depth` 相等，但源码没有写出来。\n- 源码没有把结论封装成 `ExtensionalEquivalent N' N`（即 $U$ 相同且局部等价），也没有给出 `NetworkObject` 编号层面的版本，以及关系沿重编号的传递。这几项都只是简单推论。\n- `RefinementRule` 和 `Irreducible` 是抽象的，没有用节点域加细来实例化。\n\n## 七、对正文定义本身的说明\n\n- 正文所说的“选取 $f_{\\beta,a}$”其实没有选择余地，它唯一等于 $f_\\beta|_{U_{\\beta,a}}$。\n- $q=1$ 的平凡分划，正文和 Lean 都允许，它产生的是重标号副本。讨论不可约性时，规则族 $R$ 需要排除这种情形。这一点属于定义层面的观察，不是形式化错误。\n- 我逐条核对了正文证明的统一边域等式与终止域公式，没有发现问题。\n\n## 八、已证与需补充\n\n- **源码已证：**\n  - 构造得到有限网络，且外延算子全域相等；\n  - 路径重新着色后投影回去恰好是原路径；\n  - $f_{\\beta,a}$ 等于限制算子；\n  - 自环路由（剪枝前）；\n  - 关系版本的外延局部等价。\n- **需补充：**\n  - 精确化关系，或把它重新定位为充分条件；\n  - 桥接 `to_refinement`；\n  - 边域与入口片公式；\n  - $\\ell(\\mathcal N)$ 长度界；\n  - `ExtensionalEquivalent` 和对象层的封装。\n\n前三项附录里已给出可编译的证明或修复所需的证明，后两项只是简单推论。\n\n## 附录：验证代码（导入原模块，不修改原文件）\n\n**A. 桥接**\n\n\n**B. 构造的边域与入口片公式**\n\n\n**C. 反例（关系比正文定义宽）**",
+    "claims_complete": null,
+    "claims_implementation_complete": false,
+    "interpretation": "The conclusion concerns completeness of the supplied implementation, not a claim to have supplied candidate Lean engineering; none is required by these audit tasks."
+  },
+  "claim_findings": [],
+  "extra_assertion_review": {
+    "scope": "Entire original delivered prose, code comments, mathematical side claims and self-assessment, separately from kernel success.",
+    "findings": [],
+    "checks": [
+      "Prose self-assessment and explicit completion/verification statements reviewed with the mathematical source, not keyword confidence.",
+      "Original numeric exercise claims independently checked against the actual defined maps and gauges.",
+      "Generalized definitions are read only in the original admissible mathematical context; no new source obligation is imposed for optional wrappers."
+    ]
+  },
+  "kind": "semantic_audit",
+  "candidate_lean_required": false,
+  "expected_source_disposition": "misaligned",
+  "judgment": "complete_correct_audit",
+  "strict_pass": true,
+  "dimensions": [
+    {
+      "id": "judgment",
+      "points_awarded": 35,
+      "points_possible": 35,
+      "complete": true,
+      "reason": "Correctly distinguishes the too-wide actual-output relation from the valid extensional-equivalence theorem and the existing actual construction. The scope mismatch is full retained edge data, not a false Lean theorem.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR01/group-contract.json",
+        "bytes": 2282,
+        "sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+        "pointer": "/dimensions/0"
+      }
+    },
+    {
+      "id": "valid_parts",
+      "points_awarded": 20,
+      "points_possible": 20,
+      "complete": true,
+      "reason": "Recognizes network_extensional_eq, path recoloring/projection, local restriction, pruning and the relation-level equivalence as valid. Optional packaging observations are explicitly simple consequences/outside scope, not an engineering requirement.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR01/group-contract.json",
+        "bytes": 2282,
+        "sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+        "pointer": "/dimensions/1"
+      }
+    },
+    {
+      "id": "evidence",
+      "points_awarded": 30,
+      "points_possible": 30,
+      "complete": true,
+      "reason": "The three-point one-node example is legal with U={1}; adding the unused self-loop at output 2 preserves all actual routes and the old relation but changes the full edge set from empty to {2}. The complete supplied Lean appendix states this distinction and a bridge/edge formula.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR01/group-contract.json",
+        "bytes": 2282,
+        "sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+        "pointer": "/dimensions/2"
+      }
+    },
+    {
+      "id": "repair_scope",
+      "points_awarded": 15,
+      "points_possible": 15,
+      "complete": true,
+      "reason": "An exact full-image retained-edge condition or relabeling the weak relation as operational is sufficient. The proposed construction bridge is valid. Extra optional wrappers do not negate the already proved extensional result.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR01/group-contract.json",
+        "bytes": 2282,
+        "sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+        "pointer": "/dimensions/3"
+      }
+    }
+  ],
+  "compilation": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR01/compilation.json",
+    "bytes": 24957,
+    "sha256": "a40baee798dcd9fd90add76e5b48dd68500c2edae76a4972ba56944e56d0c080"
+  },
+  "obligations": [],
+  "voluntary_appendix_check": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR01/voluntary-appendix-compilation.json",
+    "bytes": 2085,
+    "sha256": "7002bb2c764c37f55a7da8bddc608def1b70075ff5205e95cd7bfcdfa3de2bbf"
+  }
+}

@@ -534,6 +534,10 @@ def validate_first_assessment_source(folder, record, current):
     """Verify a fresh run's first policy without inventing migrated score views."""
     from .benchmarks import validate_assessment_policy
     item = record.get('first_assessment_source')
+    if item is not None:
+        from .portable_assessment_sources import SCHEMA, PUBLIC_SCHEMA, validate as validate_portable
+        if json.loads(_read(folder, item)).get('schema') in {SCHEMA, PUBLIC_SCHEMA}:
+            return validate_portable(folder, record, current)
     require(item is not None and record.get('score_history') is None
             and record.get('benchmark_version') == '1.0.0'
             and current.get('version') == '0.9.0',

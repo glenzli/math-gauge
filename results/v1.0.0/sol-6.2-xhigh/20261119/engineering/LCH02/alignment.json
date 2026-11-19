@@ -1,0 +1,218 @@
+{
+  "case_id": "LCH02",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.Gauge"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.matrixBound"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.matrixBound_apply"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.LipOn"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.Lip"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.lipMatricesOn"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.lipMatrices"}
+      ],
+      "representation": "I 由 Fintype 穷举。Gauge 打包指标非空性及冻结的分量扩展伪度量公理。LipOn 要求 U ⊆ dom φ，并对 U 中任意点对及每个输出指标 j 要求原上界。matrixBound_apply 给出全部输入分量之和。Lip 取 U = dom φ，两种矩阵族分别由对应谓词作集合分离。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.CoLipOn"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.coLipMatricesOn"}
+      ],
+      "representation": "CoLipOn 同时要求 U ⊆ dom φ、U.Nonempty，以及对 U 中任意点对与每个输出指标 j，原矩阵和小于等于像点距离。coLipMatricesOn 取满足该谓词的矩阵集合。全域用法取 U = dom φ，仍要求非空。",
+      "dependencies": ["CH02-D01", "CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.Coefficients"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.entry"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.entry_mul"}
+      ],
+      "representation": "扩展非负系数用 ENNReal。entry A i j 等于 A j i，输入 i 为列，输出 j 为行。entry_mul 展开任意 B * A 的 i→j 条目，对每个中间指标 k 累加 B 的 k→j 条目和 A 的 i→k 条目的乘积。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D04",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixUnit"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.entry_unit"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixProduct"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixProduct_nil"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixProduct_cons"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixProduct_single"}
+      ],
+      "representation": "matrixUnit 为对角 1、非对角 0。列表按应用顺序给定，倒序后取幺半群乘积，即末步矩阵在最左侧、首步矩阵在最右侧。空列表的乘积为单位矩阵，单元素列表的乘积为其唯一矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D05",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.mem_dom_mul"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.image_subset_dom_of_mul"},
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.image_mul"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain_nil"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain_single"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain_append"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain_cons"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.stageDomain"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.stageDomain_zero"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.stageDomain_length"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.stageDomain_cons"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.stageDomain_next"},
+        {"file": "LCH02/Chains.lean", "name": "LCH02.stageDomain_subset_step_dom"}
+      ],
+      "representation": "steps = [φ₁,…,φₖ]，chain 用冻结的 OperatorChain 复合逆序列表。stageDomain steps U m 是前 m 步作用在 U 上的精确像集，对应 Uₘ₊₁。初始域是 U，递推等式对每个有效步骤成立，末域是全复合的像。从 U ⊆ dom cₖ 推出每一步的实际输入域包含于该步算子的定义域。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D06",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.IndexPath"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.pathFactors"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.pathFactors_length"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.PositivePath"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.HasZeroFactor"},
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.singleStepPath_unique"}
+      ],
+      "representation": "对 n = rest.length + 1 步，IndexPath I rest.length 是 Fin (n−1) → I，按从零起算的顺序取 k₁ 至 kₙ₋₁。端点单独给为 i、j。pathFactors 按步列出 n 个相邻条目。PositivePath 量化其每个因子，HasZeroFactor 表示其中至少有一个零。n = 1 时有唯一空中间序列。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.lip_scalar_iff"}
+      ],
+      "representation": "Subsingleton I 和给定的 i : I 表示 I = {i}。全域 Lip 条件等价于 dom φ 中每个点对在 i 分量上满足系数 entry A i i 的标量上界。",
+      "dependencies": ["CH02-D01", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.lipMatricesOn_antitone"}
+      ],
+      "representation": "任意 U ⊆ V ⊆ dom φ，证明 V 上合法 Lip 矩阵集合包含于 U 上的集合。U 可以为空。",
+      "dependencies": ["CH02-D01", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.lipMatrices_restrict"}
+      ],
+      "representation": "对任意 U ⊆ dom φ，将反单调性的较大域取为 dom φ，得到全域 Lip 证书族包含于 U 上的证书族。",
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-P02"]
+    },
+    {
+      "id": "CH02-P04",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.lip_comp"}
+      ],
+      "representation": "φ、ψ 分别是首步和次步，ψ * φ 是 ψ ∘ φ。U ⊆ dom (ψ * φ)，首步证书 A 在 U 上，次步证书 B 在精确像集 operator_image φ U 上。结论为 B * A 在复合算子的同一个 U 上合法。",
+      "dependencies": ["CH02-D01", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P05",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.coLipMatricesOn_antitone"}
+      ],
+      "representation": "在 U.Nonempty 且 U ⊆ V ⊆ dom φ 的前提下，V 上的 co-Lip 证书族包含于 U 上的证书族。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P06",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.coLipMatrices_restrict"}
+      ],
+      "representation": "对任意非空 U ⊆ dom φ，将较大域取为 dom φ，得到全域 co-Lip 证书族包含于受限证书族。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-P05"]
+    },
+    {
+      "id": "CH02-P07",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.coLip_entry_zero"}
+      ],
+      "representation": "任取全域 co-Lip 矩阵 A 及定义域内的点对 x、y。若像点的输出分量 j 距离为零且输入分量 i 距离为正，则该求和项为零，进而得到 entry A i j = 0。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P08",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.coLip_comp"}
+      ],
+      "representation": "对 U ⊆ dom (ψ * φ)，给定 A 在 U 上及 B 在精确像集 operator_image φ U 上的 co-Lip 证书。每个证书谓词保留相应域的非空性，结论为 B * A 在复合算子的 U 上合法。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P09",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain_lip"}
+      ],
+      "representation": "first :: rest 是任意正长度的算子与矩阵对序列。Fin 下标 m 对应原文第 m+1 步，证书在 stageDomain 给出的实际 Uₘ₊₁ 上。由 U ⊆ dom cₖ 及每一步的 Lip 证书，归纳得到有序矩阵连乘在 cₖ 的 U 上合法。",
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D04", "CH02-D05", "CH02-P04"]
+    },
+    {
+      "id": "CH02-P10",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Chains.lean", "name": "LCH02.chain_coLip"}
+      ],
+      "representation": "算子与矩阵对序列及 Fin 下标与 P09 相同。假设每个实际输入域上有对应 co-Lip 证书，非空性随该谓词给出。对任意正长度链，由起始域合法性和逐步证书得到全复合在同一起始域上的有序连乘证书。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D04", "CH02-D05", "CH02-P08"]
+    },
+    {
+      "id": "CH02-P11",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.unit_lip"}
+      ],
+      "representation": "冻结算子幺半群的 1 是恒等算子，也是空链的值。对任意非空 U ⊆ dom 1，空矩阵乘积 matrixUnit 在 U 上满足 Lip 上界。",
+      "dependencies": ["CH02-D01", "CH02-D04"]
+    },
+    {
+      "id": "CH02-P12",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Bounds.lean", "name": "LCH02.unit_coLip"}
+      ],
+      "representation": "对任意非空 U ⊆ dom 1，空矩阵乘积 matrixUnit 在恒等算子的 U 上满足 co-Lip 下界。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D04"]
+    },
+    {
+      "id": "CH02-P13",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixProduct_zero_iff"}
+      ],
+      "representation": "任意非空矩阵序列 A :: rest 与任意端点 i、j，乘积的 i→j 条目为零当且仅当每个中间指标序列都至少含一个零因子。rest 为空时，唯一空中间序列的路径只有 entry A i j 这一个因子。",
+      "dependencies": ["CH02-D03", "CH02-D04", "CH02-D06", "CH02-P14"]
+    },
+    {
+      "id": "CH02-P14",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/Matrix.lean", "name": "LCH02.matrixProduct_pos_iff"}
+      ],
+      "representation": "任意非空矩阵序列 A :: rest 与任意端点 i、j，乘积的 i→j 条目严格正当且仅当存在一个中间指标序列，其每一步条目均严格正。单步分支使用唯一空中间序列，检验单一条目 entry A i j。",
+      "dependencies": ["CH02-D03", "CH02-D04", "CH02-D06"]
+    }
+  ]
+}

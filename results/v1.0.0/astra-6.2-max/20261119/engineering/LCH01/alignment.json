@@ -1,0 +1,131 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.IsLip"},
+        {"file": "LCH01.lean", "name": "LCH01.IsLipOn"},
+        {"file": "LCH01.lean", "name": "LCH01.lipMatrices"},
+        {"file": "LCH01.lean", "name": "LCH01.lipMatricesOn"}
+      ],
+      "representation": {
+        "objects": "Gauge 的 G.dist i 是第 i 个扩展伪度量。φ、dom φ 分别采用冻结模块的 Operator、dom。",
+        "parameters": "I 有限非空，L 的条目属于 ENNReal。IsLipOn G φ U L 包含 U ⊆ dom φ，允许 U 为空。",
+        "quantifiers": "对每个 x ∈ U、y ∈ U 和输出 j，比较像点距离与第 j 行的加权和。",
+        "conclusion": "受限谓词要求像距 ≤ rowSum G L j x y。全域谓词取 U = dom φ，两种证书族分别收集满足对应谓词的全部矩阵。"
+      },
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.IsCoLipOn"},
+        {"file": "LCH01.lean", "name": "LCH01.coLipMatricesOn"},
+        {"file": "LCH01.lean", "name": "LCH01.coLip_term_le"}
+      ],
+      "representation": {
+        "objects": "IsCoLipOn 是受限下界谓词，coLipMatricesOn 是满足它的矩阵集合。",
+        "parameters": "给定规范族 G、算子 φ、集合 U 和 ENNReal 矩阵 K，成员资格同时要求 U.Nonempty 和 U ⊆ dom φ。",
+        "quantifiers": "对每个 x ∈ U、y ∈ U 和输出 j，沿全部输入 i 取有限和。",
+        "conclusion": "第 j 行的加权和 ≤ 第 j 分量的像距。辅助定理 coLip_term_le 证明每个单项也给出该像距的下界。"
+      },
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.BoundMatrix"},
+        {"file": "LCH01.lean", "name": "LCH01.entry"},
+        {"file": "LCH01.lean", "name": "LCH01.entry_mul"},
+        {"file": "LCH01.lean", "name": "LCH01.rowSum"}
+      ],
+      "representation": {
+        "objects": "BoundMatrix I 是 Matrix I I ENNReal，乘法取 mathlib 的矩阵乘法。",
+        "parameters": "entry M i j = M j i，输入 i 为列，输出 j 为行。A 为第一步，B 为第二步。",
+        "quantifiers": "任取 i、j，对所有中间指标 k 求和。rowSum 对给定行 j 和点对 x、y 沿全部输入求和。",
+        "conclusion": "entry (B * A) i j = ∑ k, entry B k j * entry A i k。rowSum 的第 i 项是 entry M i j * G.dist i x y。"
+      },
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.Channel"},
+        {"file": "LCH01.lean", "name": "LCH01.OnlyInput"},
+        {"file": "LCH01.lean", "name": "LCH01.channel_term_zero"},
+        {"file": "LCH01.lean", "name": "LCH01.isDiag_iff_onlyInput"}
+      ],
+      "representation": {
+        "objects": "Channel I 是有序对 I × I，(i,j) 表示从 d_i 到 d_j 的通道。",
+        "parameters": "OnlyInput M (i,j) 指定输出行 j，允许保留输入列 i。",
+        "quantifiers": "该行对每个 k ≠ i 满足 entry M k j = 0。零条目乘以任意 r : ENNReal 都为零。",
+        "conclusion": "矩阵的标准对角谓词 M.IsDiag 等价于对每个 j 都有 OnlyInput M (j,j)。保留项本身可以为零。"
+      },
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.rowSum_single"},
+        {"file": "LCH01.lean", "name": "LCH01.lip_single_input"},
+        {"file": "LCH01.lean", "name": "LCH01.lip_diagonal"}
+      ],
+      "representation": {
+        "objects": "rowSum_single 化简行和，lip_single_input 将等式用于受限 Lip 证书。",
+        "parameters": "对选定的 i、j 假设 OnlyInput L (i,j)。对角特例取 L.IsDiag。",
+        "quantifiers": "行和等式对任意点对成立。像距上界对所有 x、y ∈ U 成立，对角结论遍历每个 j。",
+        "conclusion": "第 j 行和等于 L_{i→j} d_i(x,y)，故第 j 分量像距至多为该项。对角时得到 L_{j→j} d_j(x,y) 上界。"
+      },
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.positive_channel"}
+      ],
+      "representation": {
+        "objects": "命题 2.8(i) 使用 U 上的 co-Lip 证书 K 和通道条目 entry K i j。",
+        "parameters": "假设 0 < entry K i j 与 0 < G.dist i x y，系数和距离均取 ENNReal。",
+        "quantifiers": "任取输入 i、输出 j 及 x、y ∈ U。",
+        "conclusion": "正条目与正输入距离之积严格为正，且受第 j 分量像距控制，故该像距严格为正。"
+      },
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.reflects_gauge_zero"}
+      ],
+      "representation": {
+        "objects": "命题 2.8(ii) 在像点和输入点上均使用冻结定义 GaugeZeroRelated G.dist。",
+        "parameters": "K 是 U 上的 co-Lip 证书，每个对角条目 entry K j j 严格为正。",
+        "quantifiers": "任取 x、y ∈ U。若像点在每个分量上距离为零，则逐个分量 j 应用正通道结论。",
+        "conclusion": "得到 GaugeZeroRelated G.dist x y，即对每个 j 有 G.dist j x y = 0。"
+      },
+      "dependencies": ["CH02-D02", "CH02-D03", "CH02-P20"]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01.lean", "name": "LCH01.scalar_two_sided"}
+      ],
+      "representation": {
+        "objects": "习题 2.2 在同一算子 φ、同一受限域 U 上选取上界证书 L 和下界证书 K。",
+        "parameters": "固定输出 j，稀疏条件 OnlyInput L (j,j) 只施于 L 的第 j 行。",
+        "quantifiers": "对任意 x ∈ U、y ∈ U，两侧使用同一个分量 j 和同一对点。",
+        "conclusion": "以合取同时给出 K_{j→j} d_j(x,y) ≤ d_j(φx,φy) 和 d_j(φx,φy) ≤ L_{j→j} d_j(x,y)。"
+      },
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D07", "CH02-P19"]
+    }
+  ]
+}

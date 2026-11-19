@@ -1,0 +1,129 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "terra-6.1-max",
+  "record_id": "20261105",
+  "source_record": {
+    "path": "results/v0.6.0/terra-6.1-max/20261105/record.json",
+    "bytes": 238775,
+    "sha256": "87ea6e7e20db51f1e6fe8b4e0b9f907e2943719fd1f275cc6e866db39c9e4522"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "de04336c48b48b715cf7c27bc35c04ebc90a27d5a05877b10d5b86f89605b88d",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 6,
+    "total_groups": 6,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "aef71d1eb6ff1c231ac777ede509694a29544264dc567deba245c5a7ca4f61cf",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "已完整覆盖所有源绑定交付：response 9441 bytes / SHA256 aef71d1eb6ff1c231ac777ede509694a29544264dc567deba245c5a7ca4f61cf。已确认每文件结尾；重复 final/附稿仅算同一数学结果。独立枚举后核对旧审全部候选；原题completion/strict与原response SHA不变。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "零距离缺陷的最小仿射偏移",
+          "statement": "用零距输入对上的输出距离sup定义 e，得到 Dφ≤e+J∞D；e是任何仿射偏移的逐分量下界。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "已核对原证明：全零输入时是sup定义，非零输入时J∞D全为∞；最小性是代回全零输入。正确且有用，但独立于定义的数学机制不足，不因high门槛排除。",
+          "proof_review": "已核对原证明：全零输入时是sup定义，非零输入时J∞D全为∞；最小性是代回全零输入。正确且有用，但独立于定义的数学机制不足，不因high门槛排除。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "已核对原证明：全零输入时是sup定义，非零输入时J∞D全为∞；最小性是代回全零输入。正确且有用，但独立于定义的数学机制不足，不因high门槛排除。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "aef71d1eb6ff1c231ac777ede509694a29544264dc567deba245c5a7ca4f61cf",
+              "start_byte": 4430,
+              "end_byte": 5101,
+              "quote": "若希望**每个算子**都有统一的估计，可以加入一个偏移项。定义零距离缺陷\n\n\\[\ne_i(\\phi):=\n\\sup\\{d_i(\\phi x,\\phi y):(x,y)\\in P_\\phi,\\ x\\sim y\\},\n\\qquad \\sup\\varnothing:=0.\n\\]\n\n令 \\(J_\\infty\\) 为全 \\(\\infty\\) 矩阵，则总有\n\n\\[\n\\boxed{\\quad D_\\phi(x,y)\\leq e(\\phi)+J_\\infty D(x,y),\n\\qquad (x,y)\\in P_\\phi.\\quad} \\tag{3}\n\\]\n\n输入距离向量为零时，式 (3) 由 \\(e(\\phi)\\) 的定义成立；否则右侧为 \\(\\infty\\)。而且，在任何形如 \\(D_\\phi\\leq b+LD\\) 的估计中，比较全零输入距离的点对可知 \\(b_i\\geq e_i(\\phi)\\)。所以 \\(e(\\phi)\\) 精确记录了零距离处不可由齐次矩阵项吸收的缺陷。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "矩阵及布尔阈值复合",
+          "statement": "上下界相乘与Cψφ(r)≥Cψ(s)⊙Cφ(r)。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "普通矩阵链式代入与两次零距蕴涵串接，均为所给定义的直接应用；阈值端点、存在性和最优性反例属于M2–M6必要边界。",
+          "proof_review": "普通矩阵链式代入与两次零距蕴涵串接，均为所给定义的直接应用；阈值端点、存在性和最优性反例属于M2–M6必要边界。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "普通矩阵链式代入与两次零距蕴涵串接，均为所给定义的直接应用；阈值端点、存在性和最优性反例属于M2–M6必要边界。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "aef71d1eb6ff1c231ac777ede509694a29544264dc567deba245c5a7ca4f61cf",
+              "start_byte": 2075,
+              "end_byte": 2962,
+              "quote": "对于式 (1) 的加和形式，若 \\(\\phi\\) 分别有上、下界 \\(L,A\\)，而 \\(\\psi\\) 分别有上、下界 \\(M,B\\)，则\n\n\\[\n\\boxed{\\quad ML\\text{ 是 }\\psi\\circ\\phi\\text{ 的上界},\\qquad\nBA\\text{ 是其下界}.\\quad} \\tag{2}\n\\]\n\n例如，上界由\n\n\\[\nD_{\\psi\\circ\\phi}\\leq M D_\\phi\\leq ML D\n\\]\n\n得到，下界同理。有效域口径下，这里使用了\n\n\\[\n\\operatorname{dom}(\\psi\\circ\\phi)\n=\\{x\\in\\operatorname{dom}(\\phi):\\phi(x)\\in\\operatorname{dom}(\\psi)\\}.\n\\]\n\n恒等算子以上下界矩阵 \\(I\\) 取到等号。\n\n两种比较口径对下界的影响尤其大：如果存在 \\(x\\neq\\bot\\) 使 \\(\\phi(x)=\\bot\\)，那么全局口径下任何矩阵下界都只能是零矩阵。事实上，比较 \\(x\\) 与 \\(\\bot\\) 时，所有输入分量距离均为 \\(\\infty\\)，而输出距离均为零。这也是有效域口径对研究部分算子的定量下界有用的原因。\n\n"
+            },
+            {
+              "source_sha256": "aef71d1eb6ff1c231ac777ede509694a29544264dc567deba245c5a7ca4f61cf",
+              "start_byte": 8180,
+              "end_byte": 9441,
+              "quote": "**复合与上下界的联系。** 布尔矩阵采用通常的“或—且”乘法 \\(\\odot\\)。对任意 \\(r,s\\in\\bar{\\mathbb R}_+\\)，有\n\n\\[\n\\boxed{\\quad C_{\\psi\\circ\\phi}(r)\n\\ \\geq\\ C_\\psi(s)\\odot C_\\phi(r).\\quad} \\tag{7}\n\\]\n\n确实，若输入的第 \\(j\\) 分量距离不超过 \\(r\\)，且 \\(C_\\phi(r)_{kj}=1\\)，则中间输出的第 \\(k\\) 分量距离为零；零不超过 \\(s\\)，于是 \\(C_\\psi(s)_{ik}=1\\) 又给出最终输出第 \\(i\\) 分量距离为零。复合可能产生更多折叠，所以式 (7) 一般只是包含关系。\n\n最后，上、下界分别给出两种相反方向的零距离蕴含。若 \\(L\\) 是上界，记 \\(S_i=\\{j:L_{ij}>0\\}\\)，则\n\n\\[\n\\bigl[d_j(x,y)=0\\ \\text{对所有 }j\\in S_i\\bigr]\n\\quad\\Longrightarrow\\quad\nd_i(\\phi x,\\phi y)=0. \\tag{8}\n\\]\n\n这里通常需要 \\(S_i\\) 中的条件**同时**成立。若 \\(A\\) 是下界且 \\(A_{ij}>0\\)，则\n\n\\[\nd_i(\\phi x,\\phi y)=0\n\\quad\\Longrightarrow\\quad d_j(x,y)=0. \\tag{9}\n\\]\n\n因此，若存在上界，且下界 \\(A\\) 的每一列至少有一个正元素，那么在所选比较口径内，输入全分量零距离当且仅当输出全分量零距离。该结论描述的是零距离等价类；除非另加族分离性，不能把它直接解释成普通意义下的单射。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

@@ -1,0 +1,1423 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>完整文件已读出。最终答卷如下。</p>
+<h1>第 2 章（算子界）Lean 形式化答卷</h1>
+<p>整章（40 项义务）都已形式化，放在一个文件 <code>Main.lean</code>（1101 行）里。用 <code>lake env lean Main.lean</code> 编译，<strong>没有错误，也没有警告</strong>。文件中没有 <code>sorry</code>、<code>admit</code> 或新增公理。我对 <code>Main.lean</code> 的全部 130 个声明逐一运行了 <code>#print axioms</code>：127 个只依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code> 中的若干个，另外 3 个不依赖任何公理。两份冻结的前置模块只导入，没有改动；除这两份模块、Lean 标准库和固定版本的 mathlib 之外，没有使用其他材料。</p>
+<h2>三个需要事先说明的表示选择</h2>
+<ul>
+<li><strong>下标从 0 开始。</strong> 有限链用 <code>ℕ</code> 作下标。Lean 里的 <code>ϕ m</code>、<code>L m</code>、<code>imageSeq ϕ U m</code> 分别对应原文的 φ_{m+1}、L^{(m+1)}、U_{m+1}；长度为 k 的链只用到 <code>m &lt; k</code> 的数据。</li>
+<li><strong>路径判据。</strong> n 层链写成 <code>n = m+1</code>，中间指标序列取类型 <code>Fin m → I</code>。另外给了字面上的 <code>n ≥ 1</code> 版本，中间序列取 <code>Fin (n-1) → I</code>。</li>
+<li><strong>有些定理比原文更强。</strong> 凡是证明用不到度量公理的地方，定理对任意距离族 <code>d</code> 都成立，因此代入扩展规范空间就得到原文的结论。只有扰动界（P08–P11）真正需要 <code>hd : ∀ i, ExtendedPseudoMetric X bot (d i)</code>。P14 不需要 U 非空；P21 不需要 0&lt;a&lt;∞，但仍另给了一个带原文前提的版本。</li>
+</ul>
+<pre><code class="language-lean">import Mathlib
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+/-!
+# 第 2 章 算子界（Lipschitz / co-Lipschitz 矩阵界）
+
+本文件形式化 `source/02-operator-bounds.md` 的全部数学内容。
+
+表示约定（与原文的对应）：
+* 系数矩阵以“输入优先”方式存储：`M i j` 即原文的 `M_{i→j}`（输入 `i`，输出 `j`）。
+  `toDisplay M` 给出通常的行列矩阵（第 `j` 行第 `i` 列为 `M i j`）。
+* 有限算子链、矩阵序列与像域序列均以 `ℕ` 为下标、从 `0` 开始：
+  Lean 的 `ϕ m`、`L m`、`imageSeq ϕ U m` 分别对应原文的 `φ_{m+1}`、`L^{(m+1)}`、`U_{m+1}`；
+  长度为 `k` 的链只使用下标 `m &lt; k` 的数据。
+-/
+
+set_option linter.style.longLine false
+set_option linter.unusedVariables false
+
+noncomputable section
+
+namespace formal_oet.vol_01.ch_02_operator_bounds
+
+open formal_oet.vol_01.ch_01_foundations
+open Finset
+
+variable {X I : Type} {bot : X}
+
+/-! ## 0. 算子复合与有限链（第 1 章幺半群结构的显式化） -/
+
+/-- 恒等算子 `id_X ∈ X_op`。 -/
+def idOp : Operator X bot := ⟨id, rfl⟩
+
+/-- 两个算子的复合 `ψ ∘ ϕ ∈ X_op`。 -/
+def opComp (ψ ϕ : Operator X bot) : Operator X bot :=
+  ⟨ψ.func ∘ ϕ.func, by simp [ϕ.preserves_bot, ψ.preserves_bot]⟩
+
+@[simp] theorem idOp_func : (idOp : Operator X bot).func = id := rfl
+
+@[simp] theorem opComp_func (ψ ϕ : Operator X bot) :
+    (opComp ψ ϕ).func = ψ.func ∘ ϕ.func := rfl
+
+/-- 与第 1 章 `OperatorChain` 的对应：`ψ ∘ ϕ` 即长度 2 的链。 -/
+theorem opComp_eq_operatorChain (ψ ϕ : Operator X bot) :
+    opComp ψ ϕ = OperatorChain [ψ, ϕ] := by
+  ext x
+  rfl
+
+/-- `dom(ψ ∘ ϕ) = {x ∈ dom ϕ | ϕ x ∈ dom ψ}`。 -/
+theorem mem_dom_opComp_iff {ψ ϕ : Operator X bot} {x : X} :
+    x ∈ dom (opComp ψ ϕ) ↔ x ∈ dom ϕ ∧ ϕ.func x ∈ dom ψ := by
+  simp only [dom, Set.mem_setOf_eq, opComp_func, Function.comp_apply]
+  constructor
+  · intro h
+    refine ⟨?_, h⟩
+    intro hx
+    rw [hx, ψ.preserves_bot] at h
+    exact h rfl
+  · exact fun h =&gt; h.2
+
+/-- 复合定义直接保证：`U₁ ⊆ dom(ϕ₂ ∘ ϕ₁)` 蕴含 `U₁ ⊆ dom ϕ₁` 且 `U₂ = ϕ₁(U₁) ⊆ dom ϕ₂`。 -/
+theorem subset_dom_of_subset_dom_opComp {ϕ₂ ϕ₁ : Operator X bot} {U₁ : Set X}
+    (h : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) :
+    U₁ ⊆ dom ϕ₁ ∧ operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by
+  refine ⟨fun x hx =&gt; (mem_dom_opComp_iff.1 (h hx)).1, ?_⟩
+  rintro _ ⟨x, hx, rfl⟩
+  exact (mem_dom_opComp_iff.1 (h hx)).2
+
+/-- 有限复合 `c_k = φ_k ∘ ⋯ ∘ φ_1`（0 起下标：`chainComp ϕ k = ϕ (k-1) ∘ ⋯ ∘ ϕ 0`），
+`c_0 = id_X`。 -/
+def chainComp (ϕ : ℕ → Operator X bot) : ℕ → Operator X bot
+  | 0 =&gt; idOp
+  | k + 1 =&gt; opComp (ϕ k) (chainComp ϕ k)
+
+/-- 与第 1 章 `OperatorChain` 的对应：`c_k = OperatorChain [φ_k, …, φ_1]`。 -/
+theorem chainComp_eq_operatorChain (ϕ : ℕ → Operator X bot) (k : ℕ) :
+    chainComp ϕ k = OperatorChain (((List.range k).map ϕ).reverse) := by
+  induction k with
+  | zero =&gt; rfl
+  | succ k ih =&gt;
+    rw [List.range_succ, List.map_append, List.reverse_append]
+    ext x
+    simp only [chainComp, opComp_func, List.map_cons, List.map_nil, List.reverse_cons,
+      List.reverse_nil, List.nil_append, List.cons_append, OperatorChain, ih]
+
+/-- 递归像域 `U_1 = U`，`U_{m+1} = φ_m(U_m)`（0 起下标）。 -/
+def imageSeq (ϕ : ℕ → Operator X bot) (U : Set X) : ℕ → Set X
+  | 0 =&gt; U
+  | m + 1 =&gt; operator_image (ϕ m) (imageSeq ϕ U m)
+
+/-- 全复合的像等于逐次像：`c_m(U_1) = U_{m+1}`。 -/
+theorem chainComp_image (ϕ : ℕ → Operator X bot) (U : Set X) (m : ℕ) :
+    operator_image (chainComp ϕ m) U = imageSeq ϕ U m := by
+  induction m with
+  | zero =&gt; simp [operator_image, chainComp, imageSeq]
+  | succ m ih =&gt;
+    simp only [operator_image, chainComp, imageSeq, opComp_func] at ih ⊢
+    rw [Set.image_comp, ih]
+
+/-- `m ≤ k` 时 `dom c_k ⊆ dom c_m`。 -/
+theorem dom_chainComp_anti (ϕ : ℕ → Operator X bot) {m k : ℕ} (h : m ≤ k) :
+    dom (chainComp ϕ k) ⊆ dom (chainComp ϕ m) := by
+  induction k, h using Nat.le_induction with
+  | base =&gt; exact le_rfl
+  | succ k hmk ih =&gt;
+    intro x hx
+    exact ih (mem_dom_opComp_iff.1 hx).1
+
+/-- 由 `U_1 ⊆ dom c_k` 逐步递推：`U_m ⊆ dom φ_m`（`m = 1, …, k`；0 起下标为 `m &lt; k`）。 -/
+theorem imageSeq_subset_dom (ϕ : ℕ → Operator X bot) {U : Set X} {k : ℕ}
+    (hU : U ⊆ dom (chainComp ϕ k)) {m : ℕ} (hm : m &lt; k) :
+    imageSeq ϕ U m ⊆ dom (ϕ m) := by
+  rw [← chainComp_image]
+  rintro _ ⟨x, hx, rfl⟩
+  have hx' : x ∈ dom (chainComp ϕ (m + 1)) := dom_chainComp_anti ϕ hm (hU hx)
+  exact (mem_dom_opComp_iff.1 hx').2
+
+/-- 递推中间像域落在下一步复合的定义域内。 -/
+theorem subset_dom_chainComp_of_le (ϕ : ℕ → Operator X bot) {U : Set X} {k m : ℕ}
+    (hU : U ⊆ dom (chainComp ϕ k)) (hm : m ≤ k) : U ⊆ dom (chainComp ϕ m) :=
+  hU.trans (dom_chainComp_anti ϕ hm)
+
+/-! ## 1. 系数矩阵：输入优先存储、显示矩阵、乘法、单位与有序乘积 -/
+
+/-- 非负（`ℝ≥0∞` 值）系数矩阵，输入优先存储：`M i j = M_{i→j}`。 -/
+abbrev CoefMat (I : Type) := I → I → ENNReal
+
+/-- 通常行列矩阵显示：第 `j` 行第 `i` 列为 `M_{i→j}`。 -/
+def toDisplay (M : CoefMat I) : Matrix I I ENNReal := Matrix.of fun j i =&gt; M i j
+
+@[simp] theorem toDisplay_apply (M : CoefMat I) (j i : I) : toDisplay M j i = M i j := rfl
+
+theorem toDisplay_injective : Function.Injective (toDisplay : CoefMat I → Matrix I I ENNReal) := by
+  intro M N h
+  funext i j
+  have := congrFun (congrFun h j) i
+  simpa using this
+
+/-- 复合乘法 `(M₂ M₁)_{i→j} = Σ_k (M₂)_{k→j} (M₁)_{i→k}`。 -/
+def matComp [Fintype I] (M₂ M₁ : CoefMat I) : CoefMat I :=
+  fun i j =&gt; ∑ k, M₂ k j * M₁ i k
+
+/-- 输入优先的复合乘法与通常矩阵乘法在显示矩阵下一致。 -/
+theorem toDisplay_matComp [Fintype I] (M₂ M₁ : CoefMat I) :
+    toDisplay (matComp M₂ M₁) = toDisplay M₂ * toDisplay M₁ := by
+  ext j i
+  simp [matComp, Matrix.mul_apply]
+
+/-- 单位矩阵 `δ_{ij}`。 -/
+def idMat [DecidableEq I] : CoefMat I := fun i j =&gt; if i = j then 1 else 0
+
+theorem toDisplay_idMat [DecidableEq I] : toDisplay (idMat : CoefMat I) = 1 := by
+  ext j i
+  simp [idMat, Matrix.one_apply, eq_comm]
+
+theorem sum_idMat_mul [Fintype I] [DecidableEq I] (D : I → ENNReal) (j : I) :
+    ∑ i, (idMat : CoefMat I) i j * D i = D j := by
+  simp [idMat]
+
+theorem matComp_idMat_right [Fintype I] [DecidableEq I] (M : CoefMat I) :
+    matComp M idMat = M := by
+  funext i j
+  simp [matComp, idMat]
+
+theorem matComp_idMat_left [Fintype I] [DecidableEq I] (M : CoefMat I) :
+    matComp idMat M = M := by
+  funext i j
+  simp [matComp, idMat]
+
+/-- 有序乘积：`matProd M k = M_k ⋯ M_1`（0 起下标为 `M (k-1) ⋯ M 0`），空乘积为单位矩阵。
+施行顺序 `φ_1, …, φ_k` 对应左乘顺序 `L_k ⋯ L_1`。 -/
+def matProd [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) : ℕ → CoefMat I
+  | 0 =&gt; idMat
+  | k + 1 =&gt; matComp (M k) (matProd M k)
+
+@[simp] theorem matProd_zero [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) :
+    matProd M 0 = idMat := rfl
+
+theorem matProd_succ [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (k : ℕ) :
+    matProd M (k + 1) = matComp (M k) (matProd M k) := rfl
+
+/-- `k = 1` 时乘积就是唯一的矩阵。 -/
+theorem matProd_one [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) :
+    matProd M 1 = M 0 := by
+  rw [matProd_succ, matProd_zero, matComp_idMat_right]
+
+/-- 有序乘积的显示矩阵就是通常矩阵乘积 `M_k ⋯ M_1`（列表从左到右为 `M_k, …, M_1`）。 -/
+theorem toDisplay_matProd [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (k : ℕ) :
+    toDisplay (matProd M k) = (((List.range k).map fun m =&gt; toDisplay (M m)).reverse).prod := by
+  induction k with
+  | zero =&gt; simp [toDisplay_idMat]
+  | succ k ih =&gt;
+    rw [matProd_succ, toDisplay_matComp, ih, List.range_succ, List.map_append,
+      List.reverse_append]
+    simp
+
+/-- 复合求和的交换次序：`Σ_k M₂_{k→j} Σ_i M₁_{i→k} D_i = Σ_i (M₂ M₁)_{i→j} D_i`。 -/
+theorem sum_matComp_mul [Fintype I] (M₂ M₁ : CoefMat I) (D : I → ENNReal) (j : I) :
+    ∑ k, M₂ k j * ∑ i, M₁ i k * D i = ∑ i, matComp M₂ M₁ i j * D i := by
+  simp only [matComp, Finset.mul_sum, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  simp only [mul_assoc]
+
+/-! ## 2. Lipschitz 与 co-Lipschitz 证书族 -/
+
+/-- 受限 Lip 证书族 `𝓛(φ)|_U`：`U ⊆ dom φ`，且对所有 `x, y ∈ U`、`j ∈ I`，
+`d_j(φx, φy) ≤ Σ_i L_{i→j} d_i(x, y)`。 -/
+def LipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :
+    Set (CoefMat I) :=
+  {L | U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, L i j * d i x y}
+
+/-- 全域 Lip 证书族 `𝓛(φ) = 𝓛(φ)|_{dom φ}`。 -/
+def LipSet [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (CoefMat I) :=
+  LipSetOn d ϕ (dom ϕ)
+
+theorem mem_LipSet_iff [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : CoefMat I) :
+    L ∈ LipSet d ϕ ↔
+      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, L i j * d i x y := by
+  simp [LipSet, LipSetOn]
+
+/-- 受限 co-Lip 证书族 `𝓚(φ)|_U`：含非空性 `U ≠ ∅`、`U ⊆ dom φ`，
+且对所有 `x, y ∈ U`、`j ∈ I`，`Σ_i K_{i→j} d_i(x, y) ≤ d_j(φx, φy)`。 -/
+def CoLipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :
+    Set (CoefMat I) :=
+  {K | U.Nonempty ∧ U ⊆ dom ϕ ∧
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)}
+
+/-- 系数 `0` 合法：零矩阵是任意非空 `U ⊆ dom φ` 上的 co-Lip 证书。 -/
+theorem zero_mem_CoLipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom ϕ) : (0 : CoefMat I) ∈ CoLipSetOn d ϕ U :=
+  ⟨hne, hU, fun x _ y _ j =&gt; by simp⟩
+
+/-- 系数 `+∞` 合法：若某输入分量在 `U` 上处处为零距，则其 `+∞` 系数在 co-Lip 求和中贡献为零
+（`0 · ∞ = 0`），故把该列改为 `+∞` 仍是 co-Lip 证书。 -/
+theorem update_top_mem_CoLipSetOn [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) (i₀ : I)
+    (hzero : ∀ x ∈ U, ∀ y ∈ U, d i₀ x y = 0) :
+    Function.update K i₀ (fun _ =&gt; ⊤) ∈ CoLipSetOn d ϕ U := by
+  refine ⟨hK.1, hK.2.1, fun x hx y hy j =&gt; ?_⟩
+  refine le_trans (le_of_eq ?_) (hK.2.2 x hx y hy j)
+  refine Finset.sum_congr rfl fun i _ =&gt; ?_
+  by_cases h : i = i₀
+  · subst h
+    simp [hzero x hx y hy]
+  · simp [Function.update_of_ne h]
+
+/-! ### 单分量退化 -/
+
+/-- **注 #h-c4369c63c86cbacf**：`I = {i}` 时 Lip 矩阵条件退化为单个标量不等式。 -/
+theorem lipSetOn_single_iff [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    (U : Set X) (i : I) (hI : ∀ k : I, k = i) (L : CoefMat I) :
+    L ∈ LipSetOn d ϕ U ↔
+      U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) ≤ L i i * d i x y := by
+  have hsum : ∀ (j : I) (x y : X), ∑ k, L k j * d k x y = L i j * d i x y := by
+    intro j x y
+    exact Fintype.sum_eq_single i fun k hk =&gt; absurd (hI k) hk
+  constructor
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, fun x hx y hy =&gt; ?_⟩
+    simpa [hsum] using h x hx y hy i
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, fun x hx y hy j =&gt; ?_⟩
+    rw [hI j, hsum]
+    exact h x hx y hy
+
+/-- **注 #h-c4369c63c86cbacf（全域形式）**。 -/
+theorem lipSet_single_iff [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    (i : I) (hI : ∀ k : I, k = i) (L : CoefMat I) :
+    L ∈ LipSet d ϕ ↔
+      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i (ϕ.func x) (ϕ.func y) ≤ L i i * d i x y := by
+  rw [LipSet, lipSetOn_single_iff d ϕ _ i hI]
+  simp
+
+/-! ### 限制与证书族单调性 -/
+
+/-- `U ⊆ dom φ` 时 `𝓛(φ) ⊆ 𝓛(φ)|_U`。 -/
+theorem lipSet_subset_lipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    {U : Set X} (hU : U ⊆ dom ϕ) : LipSet d ϕ ⊆ LipSetOn d ϕ U := by
+  rintro L ⟨-, h⟩
+  exact ⟨hU, fun x hx y hy j =&gt; h x (hU hx) y (hU hy) j⟩
+
+/-- `U ⊆ V ⊆ dom φ` 时 `𝓛(φ)|_V ⊆ 𝓛(φ)|_U`：评估域缩小，证书族只会扩大。 -/
+theorem lipSetOn_anti [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    {U V : Set X} (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) : LipSetOn d ϕ V ⊆ LipSetOn d ϕ U := by
+  rintro L ⟨-, h⟩
+  exact ⟨hUV.trans hV, fun x hx y hy j =&gt; h x (hUV hx) y (hUV hy) j⟩
+
+/-- 逐条目下确界 `a_{ij}(U) = inf {M_{i→j} : M ∈ 𝓛(φ)|_U}`。 -/
+noncomputable def lipEntryInf [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    (U : Set X) (i j : I) : ENNReal :=
+  sInf ((fun M : CoefMat I =&gt; M i j) '' LipSetOn d ϕ U)
+
+/-- 评估域缩小时逐条目下确界不增：`U ⊆ V ⊆ dom φ` 时 `a_{ij}(U) ≤ a_{ij}(V)`。 -/
+theorem lipEntryInf_mono [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    {U V : Set X} (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) (i j : I) :
+    lipEntryInf d ϕ U i j ≤ lipEntryInf d ϕ V i j :=
+  sInf_le_sInf (Set.image_mono (lipSetOn_anti d ϕ hUV hV))
+
+/-! ### 两步复合律 -/
+
+/-- **命题 #h-193cebcc1a7f9259（Lip 矩阵复合律）**：`U₁ ⊆ dom(φ₂ ∘ φ₁)`，`U₂ = φ₁(U₁)`，
+`L₁ ∈ 𝓛(φ₁)|_{U₁}`、`L₂ ∈ 𝓛(φ₂)|_{U₂}` 蕴含 `L₂ L₁ ∈ 𝓛(φ₂ ∘ φ₁)|_{U₁}`。 -/
+theorem lip_comp [Fintype I] (d : I → X → X → ENNReal) {ϕ₁ ϕ₂ : Operator X bot}
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) {L₁ L₂ : CoefMat I}
+    (hL₁ : L₁ ∈ LipSetOn d ϕ₁ U₁) (hL₂ : L₂ ∈ LipSetOn d ϕ₂ (operator_image ϕ₁ U₁)) :
+    matComp L₂ L₁ ∈ LipSetOn d (opComp ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hU₁, fun x hx y hy j =&gt; ?_⟩
+  have hx' : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy' : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  calc d j ((opComp ϕ₂ ϕ₁).func x) ((opComp ϕ₂ ϕ₁).func y)
+      ≤ ∑ k, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := hL₂.2 _ hx' _ hy' j
+    _ ≤ ∑ k, L₂ k j * ∑ i, L₁ i k * d i x y := by
+        gcongr with k
+        exact hL₁.2 x hx y hy k
+    _ = ∑ i, matComp L₂ L₁ i j * d i x y := sum_matComp_mul L₂ L₁ _ j
+
+/-- **注 #h-88784dcbfff0ea66（co-Lip 通道退化的点对判据）**。 -/
+theorem coLip_entry_eq_zero_of_pair [Fintype I] (d : I → X → X → ENNReal) {ϕ : Operator X bot}
+    {i j : I} {x y : X} (hx : x ∈ dom ϕ) (hy : y ∈ dom ϕ)
+    (hout : d j (ϕ.func x) (ϕ.func y) = 0) (hin : 0 &lt; d i x y) :
+    ∀ K ∈ CoLipSetOn d ϕ (dom ϕ), K i j = 0 := by
+  intro K hK
+  have h1 : ∑ k, K k j * d k x y ≤ 0 := hout ▸ hK.2.2 x hx y hy j
+  have h2 : K i j * d i x y ≤ ∑ k, K k j * d k x y :=
+    Finset.single_le_sum (f := fun k =&gt; K k j * d k x y) (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+  have h3 : K i j * d i x y = 0 := le_antisymm (h2.trans h1) (zero_le _)
+  rcases mul_eq_zero.1 h3 with h | h
+  · exact h
+  · exact absurd h hin.ne'
+
+/-- **命题 #h-0f256e6f1d38a612（co-Lip 矩阵复合律）**：同一实际像域设定下，
+`K₁ ∈ 𝓚(φ₁)|_{U₁}`、`K₂ ∈ 𝓚(φ₂)|_{U₂}` 蕴含 `K₂ K₁ ∈ 𝓚(φ₂ ∘ φ₁)|_{U₁}`（含 `U₁ ≠ ∅`）。 -/
+theorem coLip_comp [Fintype I] (d : I → X → X → ENNReal) {ϕ₁ ϕ₂ : Operator X bot}
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) {K₁ K₂ : CoefMat I}
+    (hK₁ : K₁ ∈ CoLipSetOn d ϕ₁ U₁) (hK₂ : K₂ ∈ CoLipSetOn d ϕ₂ (operator_image ϕ₁ U₁)) :
+    matComp K₂ K₁ ∈ CoLipSetOn d (opComp ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hK₁.1, hU₁, fun x hx y hy j =&gt; ?_⟩
+  have hx' : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy' : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  calc ∑ i, matComp K₂ K₁ i j * d i x y
+      = ∑ k, K₂ k j * ∑ i, K₁ i k * d i x y := (sum_matComp_mul K₂ K₁ _ j).symm
+    _ ≤ ∑ k, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by
+        gcongr with k
+        exact hK₁.2.2 x hx y hy k
+    _ ≤ d j ((opComp ϕ₂ ϕ₁).func x) ((opComp ϕ₂ ϕ₁).func y) := hK₂.2.2 _ hx' _ hy' j
+
+
+/-! ### 两个算子的点对像距扰动界 -/
+
+/-- 扰动核心：`d_j(φ_a z, φ_b z) ≤ δ_j` 蕴含 `d_j(φ_b x, φ_b y) ≤ d_j(φ_a x, φ_a y) + 2 δ_j`。 -/
+theorem perturb_core {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕa ϕb : Operator X bot} {U : Set X} {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕa.func z) (ϕb.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (ϕb.func x) (ϕb.func y) ≤ d j (ϕa.func x) (ϕa.func y) + 2 * δ j := by
+  calc d j (ϕb.func x) (ϕb.func y)
+      ≤ d j (ϕb.func x) (ϕa.func x) + d j (ϕa.func x) (ϕb.func y) := (hd j).triangle _ _ _
+    _ ≤ d j (ϕb.func x) (ϕa.func x) +
+          (d j (ϕa.func x) (ϕa.func y) + d j (ϕa.func y) (ϕb.func y)) := by
+        gcongr
+        exact (hd j).triangle _ _ _
+    _ ≤ δ j + (d j (ϕa.func x) (ϕa.func y) + δ j) := by
+        gcongr
+        · rw [(hd j).symm]
+          exact hδ x hx j
+        · exact hδ y hy j
+    _ = d j (ϕa.func x) (ϕa.func y) + 2 * δ j := by ring
+
+/-- 扰动前提的对称形式 `d_j(φ₂ z, φ₁ z) ≤ δ_j`。 -/
+theorem perturb_symm {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j) :
+    ∀ z ∈ U, ∀ j, d j (ϕ₂.func z) (ϕ₁.func z) ≤ δ j := by
+  intro z hz j
+  rw [(hd j).symm]
+  exact hδ z hz j
+
+/-- 在 `ℝ≥0∞` 中 `2 δ = δ + δ`。 -/
+theorem two_mul_eq_add_self (δ : ENNReal) : 2 * δ = δ + δ := two_mul δ
+
+/-- **命题 #h-b959b42f25710105 (i)，第一式（正向点对像距扰动）**：
+`U ⊆ dom(φ₁, φ₂)`，`d_j(φ₁ z, φ₂ z) ≤ δ_j`（`z ∈ U`）蕴含
+`d_j(φ₂ x, φ₂ y) ≤ d_j(φ₁ x, φ₁ y) + 2 δ_j`（`= … + δ_j + δ_j`）。 -/
+theorem perturb_forward {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j) :
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + 2 * δ j ∧
+      d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + δ j + δ j := by
+  intro x hx y hy j
+  have h := perturb_core hd hδ hx hy j
+  refine ⟨h, ?_⟩
+  rwa [two_mul, ← add_assoc] at h
+
+/-- **命题 #h-b959b42f25710105 (i)，第二式（反向点对像距扰动）**：
+同一前提下 `d_j(φ₁ x, φ₁ y) ≤ d_j(φ₂ x, φ₂ y) + 2 δ_j`。 -/
+theorem perturb_backward {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j) :
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      d j (ϕ₁.func x) (ϕ₁.func y) ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j ∧
+      d j (ϕ₁.func x) (ϕ₁.func y) ≤ d j (ϕ₂.func x) (ϕ₂.func y) + δ j + δ j := by
+  intro x hx y hy j
+  have h := perturb_core hd (perturb_symm hd hδ) hx hy j
+  refine ⟨h, ?_⟩
+  rwa [two_mul, ← add_assoc] at h
+
+/-- **命题 #h-b959b42f25710105 (ii)（Lip 上界桥接）**。 -/
+theorem perturb_lip_bridge [Fintype I] {d : I → X → X → ENNReal}
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)
+    {L₁ : CoefMat I} (hL₁ : L₁ ∈ LipSetOn d ϕ₁ U) :
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      d j (ϕ₂.func x) (ϕ₂.func y) ≤ ∑ i, L₁ i j * d i x y + 2 * δ j := by
+  intro x hx y hy j
+  calc d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + 2 * δ j :=
+        (perturb_forward hd hU hδ x hx y hy j).1
+    _ ≤ ∑ i, L₁ i j * d i x y + 2 * δ j := by
+        gcongr
+        exact hL₁.2 x hx y hy j
+
+/-- **命题 #h-b959b42f25710105 (iii)（co-Lip 下界桥接）**。 -/
+theorem perturb_coLip_bridge [Fintype I] {d : I → X → X → ENNReal}
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)
+    {K₁ : CoefMat I} (hK₁ : K₁ ∈ CoLipSetOn d ϕ₁ U) :
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      ∑ i, K₁ i j * d i x y ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j := by
+  intro x hx y hy j
+  calc ∑ i, K₁ i j * d i x y ≤ d j (ϕ₁.func x) (ϕ₁.func y) := hK₁.2.2 x hx y hy j
+    _ ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j := (perturb_backward hd hU hδ x hx y hy j).1
+
+/-- **命题 #h-b959b42f25710105（交换 φ₁, φ₂ 的 Lip 桥接）**：`φ₂` 的 Lip 证书控制 `φ₁`。 -/
+theorem perturb_lip_bridge_swap [Fintype I] {d : I → X → X → ENNReal}
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)
+    {L₂ : CoefMat I} (hL₂ : L₂ ∈ LipSetOn d ϕ₂ U) :
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      d j (ϕ₁.func x) (ϕ₁.func y) ≤ ∑ i, L₂ i j * d i x y + 2 * δ j :=
+  perturb_lip_bridge hd (by rwa [Set.inter_comm]) (perturb_symm hd hδ) hL₂
+
+/-- **命题 #h-b959b42f25710105（交换 φ₁, φ₂ 的 co-Lip 桥接）**：`φ₂` 的 co-Lip 证书桥接到 `φ₁`。 -/
+theorem perturb_coLip_bridge_swap [Fintype I] {d : I → X → X → ENNReal}
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}
+    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)
+    {K₂ : CoefMat I} (hK₂ : K₂ ∈ CoLipSetOn d ϕ₂ U) :
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      ∑ i, K₂ i j * d i x y ≤ d j (ϕ₁.func x) (ϕ₁.func y) + 2 * δ j :=
+  perturb_coLip_bridge hd (by rwa [Set.inter_comm]) (perturb_symm hd hδ) hK₂
+
+/-! ## 3. 有限复合的局部矩阵界 -/
+
+/-- 单位矩阵满足等式 `Σ_i I_{i→j} d_i(x,y) = d_j(x,y)`。 -/
+theorem sum_idMat_dist [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal) (x y : X) (j : I) :
+    ∑ i, (idMat : CoefMat I) i j * d i x y = d j x y :=
+  sum_idMat_mul (fun i =&gt; d i x y) j
+
+/-- **注 #h-11006ddd8c43bfec（Lip 部分）**：`U ⊆ dom(id_X)` 上单位矩阵是合法 Lip 矩阵
+（原文要求 `U` 非空；此处不需要非空性）。 -/
+theorem idMat_mem_LipSetOn [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)
+    {U : Set X} (hU : U ⊆ dom (idOp : Operator X bot)) :
+    (idMat : CoefMat I) ∈ LipSetOn d (idOp : Operator X bot) U :=
+  ⟨hU, fun x _ y _ j =&gt; by simp only [idOp_func, id, sum_idMat_dist]; exact le_rfl⟩
+
+/-- **注 #h-11006ddd8c43bfec（co-Lip 部分）**：非空 `U ⊆ dom(id_X)` 上单位矩阵是合法 co-Lip 矩阵。 -/
+theorem idMat_mem_CoLipSetOn [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)
+    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom (idOp : Operator X bot)) :
+    (idMat : CoefMat I) ∈ CoLipSetOn d (idOp : Operator X bot) U :=
+  ⟨hne, hU, fun x _ y _ j =&gt; by simp only [idOp_func, id, sum_idMat_dist]; exact le_rfl⟩
+
+/-- **注 #h-11006ddd8c43bfec**：零步复合 `c_0 = id_X`、空乘积 `= I`，对非空 `U ⊆ dom(id_X)`，
+`I ∈ 𝓛(id_X)|_U ∩ 𝓚(id_X)|_U`。 -/
+theorem zero_step_certificate [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)
+    (ϕ : ℕ → Operator X bot) (L : ℕ → CoefMat I)
+    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom (chainComp ϕ 0)) :
+    chainComp ϕ 0 = idOp ∧ matProd L 0 = idMat ∧
+    matProd L 0 ∈ LipSetOn d (chainComp ϕ 0) U ∩ CoLipSetOn d (chainComp ϕ 0) U :=
+  ⟨rfl, rfl, idMat_mem_LipSetOn d hU, idMat_mem_CoLipSetOn d hne hU⟩
+
+/-- 复合链的 Lip 数据：逐步矩阵及其在各实际输入域 `U_m` 上的局部证书（不含最终复合界）。 -/
+structure LipChain {X : Type} (bot : X) {I : Type} [Fintype I] (d : I → X → X → ENNReal)
+    (k : ℕ) where
+  /-- 算子 `φ_1, …, φ_k`（0 起下标，只用 `m &lt; k`）。 -/
+  ops : ℕ → Operator X bot
+  /-- 逐步证书 `L^{(1)}, …, L^{(k)}`（0 起下标）。 -/
+  mats : ℕ → CoefMat I
+  /-- 起始子集 `U_1`。 -/
+  start : Set X
+  start_sub_dom : start ⊆ dom (chainComp ops k)
+  step_mem : ∀ m &lt; k, mats m ∈ LipSetOn d (ops m) (imageSeq ops start m)
+
+/-- 复合链的 co-Lip 数据：逐步 co-Lip 证书（每步含非空性义务）。 -/
+structure CoLipChain {X : Type} (bot : X) {I : Type} [Fintype I] (d : I → X → X → ENNReal)
+    (k : ℕ) where
+  ops : ℕ → Operator X bot
+  mats : ℕ → CoefMat I
+  start : Set X
+  start_sub_dom : start ⊆ dom (chainComp ops k)
+  step_mem : ∀ m &lt; k, mats m ∈ CoLipSetOn d (ops m) (imageSeq ops start m)
+
+/-- 有限复合的 Lip 乘积（对所有 `k`，含 `k = 0`）。 -/
+theorem lip_matProd_mem [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)
+    (ϕ : ℕ → Operator X bot) (L : ℕ → CoefMat I) (U : Set X) :
+    ∀ k : ℕ, U ⊆ dom (chainComp ϕ k) →
+      (∀ m &lt; k, L m ∈ LipSetOn d (ϕ m) (imageSeq ϕ U m)) →
+      matProd L k ∈ LipSetOn d (chainComp ϕ k) U := by
+  intro k
+  induction k with
+  | zero =&gt; intro hU _; exact idMat_mem_LipSetOn d hU
+  | succ k ih =&gt;
+    intro hU hL
+    have hU' : U ⊆ dom (chainComp ϕ k) := subset_dom_chainComp_of_le ϕ hU (Nat.le_succ k)
+    have hprev := ih hU' fun m hm =&gt; hL m (Nat.lt_succ_of_lt hm)
+    have hstep : L k ∈ LipSetOn d (ϕ k) (operator_image (chainComp ϕ k) U) := by
+      rw [chainComp_image]; exact hL k (Nat.lt_succ_self k)
+    exact lip_comp d hU hprev hstep
+
+/-- 有限复合的 co-Lip 乘积（非空起始域，对所有 `k`）。 -/
+theorem coLip_matProd_mem_of_nonempty [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)
+    (ϕ : ℕ → Operator X bot) (K : ℕ → CoefMat I) (U : Set X) (hne : U.Nonempty) :
+    ∀ k : ℕ, U ⊆ dom (chainComp ϕ k) →
+      (∀ m &lt; k, K m ∈ CoLipSetOn d (ϕ m) (imageSeq ϕ U m)) →
+      matProd K k ∈ CoLipSetOn d (chainComp ϕ k) U := by
+  intro k
+  induction k with
+  | zero =&gt; intro hU _; exact idMat_mem_CoLipSetOn d hne hU
+  | succ k ih =&gt;
+    intro hU hK
+    have hU' : U ⊆ dom (chainComp ϕ k) := subset_dom_chainComp_of_le ϕ hU (Nat.le_succ k)
+    have hprev := ih hU' fun m hm =&gt; hK m (Nat.lt_succ_of_lt hm)
+    have hstep : K k ∈ CoLipSetOn d (ϕ k) (operator_image (chainComp ϕ k) U) := by
+      rw [chainComp_image]; exact hK k (Nat.lt_succ_self k)
+    exact coLip_comp d hU hprev hstep
+
+/-- **推论 #h-c80171fa685dc795 (i)**：`k ≥ 1`，`U_{m+1} = φ_m(U_m)`，各步 `L^{(m)} ∈ 𝓛(φ_m)|_{U_m}`，
+则 `L^{(k)} ⋯ L^{(1)} ∈ 𝓛(c_k)|_{U_1}`。 -/
+theorem LipChain.prod_mem [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal} {k : ℕ}
+    (C : LipChain bot d k) (hk : 1 ≤ k) :
+    matProd C.mats k ∈ LipSetOn d (chainComp C.ops k) C.start :=
+  lip_matProd_mem d C.ops C.mats C.start k C.start_sub_dom C.step_mem
+
+/-- **推论 #h-c80171fa685dc795 (ii)**：`k ≥ 1`，各步 `K^{(m)} ∈ 𝓚(φ_m)|_{U_m}`（含非空性），
+则 `K^{(k)} ⋯ K^{(1)} ∈ 𝓚(c_k)|_{U_1}`。 -/
+theorem CoLipChain.prod_mem [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal} {k : ℕ}
+    (C : CoLipChain bot d k) (hk : 1 ≤ k) :
+    matProd C.mats k ∈ CoLipSetOn d (chainComp C.ops k) C.start := by
+  have hne : C.start.Nonempty := (C.step_mem 0 hk).1
+  exact coLip_matProd_mem_of_nonempty d C.ops C.mats C.start hne k C.start_sub_dom C.step_mem
+
+/-- 链的实际像域性质（推论证明的第一步）：`U_m ⊆ dom φ_m`（`m &lt; k`）且 `c_k(U_1) = U_{k+1}`。 -/
+theorem LipChain.imageSeq_props [Fintype I] {d : I → X → X → ENNReal} {k : ℕ}
+    (C : LipChain bot d k) :
+    (∀ m &lt; k, imageSeq C.ops C.start m ⊆ dom (C.ops m)) ∧
+    operator_image (chainComp C.ops k) C.start = imageSeq C.ops C.start k :=
+  ⟨fun _ hm =&gt; imageSeq_subset_dom C.ops C.start_sub_dom hm, chainComp_image C.ops C.start k⟩
+
+theorem CoLipChain.imageSeq_props [Fintype I] {d : I → X → X → ENNReal} {k : ℕ}
+    (C : CoLipChain bot d k) :
+    (∀ m &lt; k, imageSeq C.ops C.start m ⊆ dom (C.ops m)) ∧
+    operator_image (chainComp C.ops k) C.start = imageSeq C.ops C.start k :=
+  ⟨fun _ hm =&gt; imageSeq_subset_dom C.ops C.start_sub_dom hm, chainComp_image C.ops C.start k⟩
+
+/-! ## 4. 有限矩阵乘积条目的路径展开与零/正判据 -/
+
+/-- 完整指标路径（`n = m + 1` 层）：`k_0 = i`，`k_1, …, k_m = s`（中间指标序列，无约束），
+`k_{m+1} = j`。 -/
+def fullPath {m : ℕ} (i j : I) (s : Fin m → I) : Fin (m + 2) → I :=
+  Fin.cons (α := fun _ =&gt; I) i (Fin.snoc (α := fun _ =&gt; I) s j)
+
+@[simp] theorem fullPath_zero {m : ℕ} (i j : I) (s : Fin m → I) : fullPath i j s 0 = i := by
+  simp [fullPath]
+
+@[simp] theorem fullPath_last {m : ℕ} (i j : I) (s : Fin m → I) :
+    fullPath i j s (Fin.last (m + 1)) = j := by
+  rw [← Fin.succ_last]
+  simp [fullPath]
+
+theorem fullPath_succ_castSucc {m : ℕ} (i j : I) (s : Fin m → I) (t : Fin m) :
+    fullPath i j s t.castSucc.succ = s t := by
+  simp [fullPath]
+
+/-- `n = 1`（`m = 0`）：唯一的空中间序列给出路径 `k_0 = i, k_1 = j`。 -/
+theorem fullPath_length_one (i j : I) (s : Fin 0 → I) : fullPath i j s = ![i, j] := by
+  funext t
+  fin_cases t
+  · simp
+  · exact fullPath_last i j s
+
+theorem fullPath_snoc_castSucc {m : ℕ} (i j k : I) (s : Fin m → I) (u : Fin (m + 2)) :
+    fullPath i j (Fin.snoc (α := fun _ =&gt; I) s k) u.castSucc = fullPath i k s u := by
+  refine Fin.cases ?_ (fun v =&gt; ?_) u
+  · simp [fullPath]
+  · rw [← Fin.succ_castSucc]
+    simp [fullPath]
+
+/-- 第 `t` 层（原文第 `t+1` 层）的边条目 `[M^{(t+1)}]_{k_t → k_{t+1}}`。 -/
+def pathEdge (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) (t : Fin (m + 1)) : ENNReal :=
+  M t (fullPath i j s t.castSucc) (fullPath i j s t.succ)
+
+/-- 路径权重：各层条目的乘积。 -/
+def pathWeight (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) : ENNReal :=
+  ∏ t : Fin (m + 1), pathEdge M i j s t
+
+/-- 路径全正：所有边 `&gt; 0`。 -/
+def PathAllPos (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) : Prop :=
+  ∀ t : Fin (m + 1), 0 &lt; pathEdge M i j s t
+
+/-- 路径含零：某条边 `= 0`。 -/
+def PathHasZero (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) : Prop :=
+  ∃ t : Fin (m + 1), pathEdge M i j s t = 0
+
+theorem pathWeight_snoc (M : ℕ → CoefMat I) {m : ℕ} (i j k : I) (s : Fin m → I) :
+    pathWeight M i j (Fin.snoc (α := fun _ =&gt; I) s k) = pathWeight M i k s * M (m + 1) k j := by
+  unfold pathWeight pathEdge
+  rw [Fin.prod_univ_castSucc]
+  congr 1
+  · refine Finset.prod_congr rfl fun t _ =&gt; ?_
+    rw [fullPath_snoc_castSucc, Fin.succ_castSucc, fullPath_snoc_castSucc]
+    simp
+  · rw [fullPath_snoc_castSucc, fullPath_last, Fin.succ_last, fullPath_last]
+    simp
+
+/-- 乘积条目的路径展开：`(M_{m+1} ⋯ M_1)_{i→j} = Σ_{中间序列 s} Π_t [M^{(t)}]_{k_{t-1}→k_t}`。 -/
+theorem matProd_apply_eq_sum_paths [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (m : ℕ)
+    (i j : I) : matProd M (m + 1) i j = ∑ s : Fin m → I, pathWeight M i j s := by
+  induction m generalizing j with
+  | zero =&gt;
+    rw [matProd_one]
+    simp [pathWeight, pathEdge, fullPath_length_one]
+  | succ m ih =&gt;
+    rw [matProd_succ]
+    simp only [matComp, ih, Finset.mul_sum]
+    rw [← (Fin.snocEquiv fun _ =&gt; I).sum_comp, Fintype.sum_prod_type]
+    refine Finset.sum_congr rfl fun k _ =&gt; Finset.sum_congr rfl fun s _ =&gt; ?_
+    have : (Fin.snocEquiv fun _ =&gt; I) (k, s) = Fin.snoc (α := fun _ =&gt; I) s k := rfl
+    rw [this, pathWeight_snoc, mul_comm]
+
+/-- **命题 #h-e4154c34e95d3c23 的代数核心 (i)**：乘积条目为零当且仅当每条完整路径含零边。 -/
+theorem matProd_apply_eq_zero_iff [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (m : ℕ)
+    (i j : I) : matProd M (m + 1) i j = 0 ↔ ∀ s : Fin m → I, PathHasZero M i j s := by
+  rw [matProd_apply_eq_sum_paths, Finset.sum_eq_zero_iff]
+  simp [pathWeight, PathHasZero, Finset.prod_eq_zero_iff]
+
+/-- **命题 #h-e4154c34e95d3c23 的代数核心 (ii)**：乘积条目为正当且仅当存在全正路径。 -/
+theorem matProd_apply_pos_iff [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (m : ℕ)
+    (i j : I) : 0 &lt; matProd M (m + 1) i j ↔ ∃ s : Fin m → I, PathAllPos M i j s := by
+  rw [pos_iff_ne_zero, Ne, matProd_apply_eq_zero_iff]
+  simp only [PathHasZero, PathAllPos, not_forall, not_exists, pos_iff_ne_zero]
+
+/-- **命题 #h-e4154c34e95d3c23 (i)**：沿 `n = m + 1 ≥ 1` 步的算子链与实际局部 Lip 证书，
+`[L^{(n)} ⋯ L^{(1)}]_{i→j} = 0` 当且仅当每个中间指标序列都有某层条目为零。 -/
+theorem LipChain.prod_entry_eq_zero_iff [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}
+    {m : ℕ} (C : LipChain bot d (m + 1)) (i j : I) :
+    matProd C.mats (m + 1) i j = 0 ↔ ∀ s : Fin m → I, PathHasZero C.mats i j s :=
+  matProd_apply_eq_zero_iff C.mats m i j
+
+/-- **命题 #h-e4154c34e95d3c23 (ii)**：`[K^{(n)} ⋯ K^{(1)}]_{i→j} &gt; 0` 当且仅当存在一条全正路径。 -/
+theorem CoLipChain.prod_entry_pos_iff [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}
+    {m : ℕ} (C : CoLipChain bot d (m + 1)) (i j : I) :
+    0 &lt; matProd C.mats (m + 1) i j ↔ ∃ s : Fin m → I, PathAllPos C.mats i j s :=
+  matProd_apply_pos_iff C.mats m i j
+
+/-- **命题 #h-e4154c34e95d3c23 (i)，`n ≥ 1` 字面形式**：中间指标序列为 `Fin (n-1) → I`。 -/
+theorem LipChain.prod_entry_eq_zero_iff' [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}
+    {n : ℕ} (C : LipChain bot d n) (hn : 1 ≤ n) (i j : I) :
+    matProd C.mats n i j = 0 ↔ ∀ s : Fin (n - 1) → I, PathHasZero C.mats i j s := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  exact matProd_apply_eq_zero_iff C.mats m i j
+
+/-- **命题 #h-e4154c34e95d3c23 (ii)，`n ≥ 1` 字面形式**。 -/
+theorem CoLipChain.prod_entry_pos_iff' [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}
+    {n : ℕ} (C : CoLipChain bot d n) (hn : 1 ≤ n) (i j : I) :
+    0 &lt; matProd C.mats n i j ↔ ∃ s : Fin (n - 1) → I, PathAllPos C.mats i j s := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  exact matProd_apply_pos_iff C.mats m i j
+
+/-- `n = 1` 退化：唯一空中间序列，判据成为 `[L^{(1)}]_{i→j} = 0`。 -/
+theorem pathHasZero_length_one (M : ℕ → CoefMat I) (i j : I) (s : Fin 0 → I) :
+    PathHasZero M i j s ↔ M 0 i j = 0 := by
+  simp [PathHasZero, pathEdge, fullPath_length_one]
+
+/-- `n = 1` 退化：判据成为 `[K^{(1)}]_{i→j} &gt; 0`。 -/
+theorem pathAllPos_length_one (M : ℕ → CoefMat I) (i j : I) (s : Fin 0 → I) :
+    PathAllPos M i j s ↔ 0 &lt; M 0 i j := by
+  simp [PathAllPos, pathEdge, fullPath_length_one]
+
+/-- `n = 1` 时中间序列唯一。 -/
+theorem intermediate_length_one_unique (s t : Fin 0 → I) : s = t := Subsingleton.elim s t
+
+theorem LipChain.prod_entry_eq_zero_iff_one [Fintype I] [DecidableEq I]
+    {d : I → X → X → ENNReal} (C : LipChain bot d 1) (i j : I) :
+    matProd C.mats 1 i j = 0 ↔ C.mats 0 i j = 0 := by
+  rw [matProd_one]
+
+theorem CoLipChain.prod_entry_pos_iff_one [Fintype I] [DecidableEq I]
+    {d : I → X → X → ENNReal} (C : CoLipChain bot d 1) (i j : I) :
+    0 &lt; matProd C.mats 1 i j ↔ 0 &lt; C.mats 0 i j := by
+  rw [matProd_one]
+
+
+/-! ## 5. 分量通道与单通道 Lip 常数 -/
+
+/-- 分量通道 `(i, j) ∈ I × I`：从输入分量 `d_i` 到输出分量 `d_j`。 -/
+abbrev Channel (I : Type) := I × I
+
+/-- 单通道可行标量族 `S_{ij} = {λ ∈ ℝ≥0∞ | ∀ x, y ∈ U, d_j(φx, φy) ≤ λ d_i(x, y)}`。 -/
+def chanFeasible (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i j : I) :
+    Set ENNReal :=
+  {c | ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ c * d i x y}
+
+/-- 单通道 Lip 常数 `L̲_{i→j}(φ; U) = inf S_{ij}`（`inf ∅ = +∞`）。 -/
+def chanLip (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i j : I) : ENNReal :=
+  sInf (chanFeasible d ϕ U i j)
+
+/-- 以通道为参数的单通道 Lip 常数。 -/
+def channelLip (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (c : Channel I) :
+    ENNReal :=
+  chanLip d ϕ U c.1 c.2
+
+/-- `inf ∅ = +∞` 约定。 -/
+theorem chanLip_eq_top_of_empty {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}
+    {i j : I} (h : chanFeasible d ϕ U i j = ∅) : chanLip d ϕ U i j = ⊤ := by
+  rw [chanLip, h, sInf_empty]
+
+/-- 零输入距而正输出距的点对使可行族为空，从而 `L̲_{i→j}(φ; U) = +∞`。 -/
+theorem chanFeasible_empty_of_pair {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}
+    {i j : I} {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hin : d i x y = 0)
+    (hout : 0 &lt; d j (ϕ.func x) (ϕ.func y)) :
+    (∀ c : ENNReal, c ∉ chanFeasible d ϕ U i j) ∧ chanFeasible d ϕ U i j = ∅ ∧
+      chanLip d ϕ U i j = ⊤ := by
+  have hno : ∀ c : ENNReal, c ∉ chanFeasible d ϕ U i j := by
+    intro c hc
+    have h := hc x hx y hy
+    rw [hin, mul_zero] at h
+    exact absurd (le_antisymm h (zero_le _)) hout.ne'
+  have hempty : chanFeasible d ϕ U i j = ∅ := Set.eq_empty_iff_forall_notMem.2 hno
+  exact ⟨hno, hempty, chanLip_eq_top_of_empty hempty⟩
+
+/-- 可行族向上封闭：`λ₀ ∈ S`、`λ₀ ≤ λ₁` 蕴含 `λ₁ ∈ S`。 -/
+theorem chanFeasible_upward {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}
+    {i j : I} {c₀ c₁ : ENNReal} (h₀ : c₀ ∈ chanFeasible d ϕ U i j) (h : c₀ ≤ c₁) :
+    c₁ ∈ chanFeasible d ϕ U i j := by
+  intro x hx y hy
+  calc d j (ϕ.func x) (ϕ.func y) ≤ c₀ * d i x y := h₀ x hx y hy
+    _ ≤ c₁ * d i x y := by gcongr
+
+/-- 下确界以上的每个常数（允许 `λ = +∞`）都可行；特别地在 `0 &lt; a &lt; +∞` 语境中成立。 -/
+theorem mem_chanFeasible_of_chanLip_lt {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {i j : I} {c : ENNReal} (h : chanLip d ϕ U i j &lt; c) :
+    c ∈ chanFeasible d ϕ U i j := by
+  obtain ⟨c₀, hc₀, hlt⟩ := sInf_lt_iff.1 h
+  exact chanFeasible_upward hc₀ hlt.le
+
+/-- 原文语境形式：`0 &lt; a &lt; +∞` 时任意 `λ &gt; a`（含 `λ = +∞`）属于 `S`。 -/
+theorem mem_chanFeasible_of_gt_of_pos_finite {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {i j : I} (h0 : 0 &lt; chanLip d ϕ U i j) (htop : chanLip d ϕ U i j &lt; ⊤)
+    {c : ENNReal} (h : chanLip d ϕ U i j &lt; c) : c ∈ chanFeasible d ϕ U i j :=
+  mem_chanFeasible_of_chanLip_lt h
+
+/-- 正有限下确界可被取到：`0 &lt; a &lt; +∞` 时 `a ∈ S`，即完整点对标量界成立。 -/
+theorem chanLip_mem_of_pos_of_lt_top {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {i j : I} (h0 : 0 &lt; chanLip d ϕ U i j) (htop : chanLip d ϕ U i j &lt; ⊤) :
+    chanLip d ϕ U i j ∈ chanFeasible d ϕ U i j := by
+  intro x hx y hy
+  have hS : ∀ c, chanLip d ϕ U i j &lt; c →
+      d j (ϕ.func x) (ϕ.func y) ≤ c * d i x y :=
+    fun c hc =&gt; mem_chanFeasible_of_chanLip_lt hc x hx y hy
+  by_cases hB0 : d i x y = 0
+  · have h := hS ⊤ htop
+    rw [hB0, mul_zero] at h ⊢
+    exact h
+  by_cases hBtop : d i x y = ⊤
+  · rw [hBtop, ENNReal.mul_top h0.ne']
+    exact le_top
+  by_contra hlt
+  push Not at hlt
+  have h1 : chanLip d ϕ U i j &lt; d j (ϕ.func x) (ϕ.func y) / d i x y :=
+    (ENNReal.lt_div_iff_mul_lt (Or.inl hB0) (Or.inl hBtop)).2 hlt
+  obtain ⟨c, hac, hcA⟩ := exists_between h1
+  have h2 : c * d i x y &lt; d j (ϕ.func x) (ϕ.func y) :=
+    (ENNReal.lt_div_iff_mul_lt (Or.inl hB0) (Or.inl hBtop)).1 hcA
+  exact absurd (hS c hac) (not_le.2 h2)
+
+/-- 正有限下确界的完整点对标量界形式。 -/
+theorem chanLip_bound_of_pos_of_lt_top {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {i j : I} (h0 : 0 &lt; chanLip d ϕ U i j) (htop : chanLip d ϕ U i j &lt; ⊤) :
+    ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ chanLip d ϕ U i j * d i x y :=
+  chanLip_mem_of_pos_of_lt_top h0 htop
+
+/-- 零下确界：任意有限正数 `0 &lt; λ &lt; +∞` 都是标量证书。 -/
+theorem mem_chanFeasible_of_chanLip_eq_zero {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {i j : I} (h : chanLip d ϕ U i j = 0) {c : ENNReal} (hc0 : 0 &lt; c)
+    (hctop : c &lt; ⊤) : c ∈ chanFeasible d ϕ U i j :=
+  mem_chanFeasible_of_chanLip_lt (h ▸ hc0)
+
+/-- 下确界有限当且仅当存在有限可行常数。 -/
+theorem chanLip_lt_top_iff {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}
+    {i j : I} :
+    chanLip d ϕ U i j &lt; ⊤ ↔
+      ∃ c : ENNReal, c &lt; ⊤ ∧ ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ c * d i x y := by
+  rw [chanLip, sInf_lt_iff]
+  constructor
+  · rintro ⟨c, hc, hlt⟩
+    exact ⟨c, hlt, hc⟩
+  · rintro ⟨c, hlt, hc⟩
+    exact ⟨c, hc, hlt⟩
+
+/-- 下确界有限当且仅当存在有限（`ℝ≥0`）常数 `λ` 使单分量上界成立。 -/
+theorem chanLip_lt_top_iff_nnreal {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}
+    {i j : I} :
+    chanLip d ϕ U i j &lt; ⊤ ↔
+      ∃ c : NNReal, ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ (c : ENNReal) * d i x y := by
+  rw [chanLip_lt_top_iff]
+  constructor
+  · rintro ⟨c, hlt, hc⟩
+    refine ⟨c.toNNReal, ?_⟩
+    rwa [ENNReal.coe_toNNReal hlt.ne]
+  · rintro ⟨c, hc⟩
+    exact ⟨c, ENNReal.coe_lt_top, hc⟩
+
+/-- 单通道常数与矩阵条目是不同对象；二者的唯一一般联系：若合法证书 `L` 的第 `j` 行
+仅在输入 `i` 处可能非零，则 `L_{i→j}` 是可行标量，故 `L̲_{i→j}(φ; U) ≤ L_{i→j}`。 -/
+theorem chanLip_le_of_rowSparse [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I}
+    (hrow : ∀ k, k ≠ i → L k j = 0) : chanLip d ϕ U i j ≤ L i j := by
+  refine sInf_le ?_
+  intro x hx y hy
+  have hsum : ∑ k, L k j * d k x y = L i j * d i x y :=
+    Fintype.sum_eq_single i fun k hk =&gt; by rw [hrow k hk, zero_mul]
+  exact hsum ▸ hL.2 x hx y hy j
+
+/-! ### 反例：零下确界未必由 `0` 实现 -/
+
+/-- 离散 `{0, +∞}` 值距离。 -/
+def discreteTopDist {Y : Type} [DecidableEq Y] (x y : Y) : ENNReal := if x = y then 0 else ⊤
+
+/-- `Fin 3`（吸收元 `0`）上的离散 `{0, +∞}` 距离是扩展伪度量（满足公理 (i)–(iv) 与非吸收部分非空）。 -/
+theorem discreteTopDist_extendedPseudoMetric :
+    ExtendedPseudoMetric (Fin 3) 0 (discreteTopDist (Y := Fin 3)) where
+  nonabsorbing := ⟨1, by decide⟩
+  dist_self x := by simp [discreteTopDist]
+  symm x y := by
+    by_cases h : x = y
+    · subst h; rfl
+    · simp [discreteTopDist, h, Ne.symm h]
+  triangle x y z := by
+    unfold discreteTopDist
+    by_cases hxz : x = z
+    · simp [hxz]
+    · by_cases hxy : x = y
+      · subst hxy; simp [hxz]
+      · simp [hxy]
+  isolate_bot x hx := by simp [discreteTopDist, hx]
+
+/-- 反例的单分量规范族（`I = Unit`）。 -/
+def cexDist : Unit → Fin 3 → Fin 3 → ENNReal := fun _ =&gt; discreteTopDist
+
+/-- 反例的评估域 `U = {1, 2}`。 -/
+def cexU : Set (Fin 3) := {1, 2}
+
+theorem cex_chanLip_eq_zero :
+    chanLip cexDist (idOp : Operator (Fin 3) 0) cexU () () = 0 := by
+  have hmem : ∀ c : ENNReal, 0 &lt; c → c ∈ chanFeasible cexDist (idOp : Operator (Fin 3) 0) cexU () () := by
+    intro c hc x _ y _
+    simp only [cexDist, idOp_func, id]
+    unfold discreteTopDist
+    by_cases h : x = y
+    · simp [h]
+    · simp [h, ENNReal.mul_top hc.ne']
+  refine le_antisymm ?_ (zero_le _)
+  refine le_of_forall_gt_imp_ge_of_dense fun c hc =&gt; ?_
+  exact sInf_le (hmem c hc)
+
+theorem cex_zero_not_mem :
+    (0 : ENNReal) ∉ chanFeasible cexDist (idOp : Operator (Fin 3) 0) cexU () () := by
+  intro h
+  have := h 1 (by simp [cexU]) 2 (by simp [cexU])
+  simp [cexDist, discreteTopDist] at this
+
+/-- **反例（零下确界未必由 `0` 实现）**：存在合法扩展规范空间、合法算子 `φ` 与非空合法
+`U ⊆ dom φ`，使 `L̲_{i→j}(φ; U) = 0` 而 `λ = 0` 不满足相应标量上界。 -/
+theorem chanLip_zero_not_attained :
+    ∃ (X : Type) (bot : X) (I : Type) (_ : Fintype I) (_ : Nonempty I)
+      (d : I → X → X → ENNReal) (_ : ∀ i, ExtendedPseudoMetric X bot (d i))
+      (ϕ : Operator X bot) (U : Set X) (i j : I),
+      U.Nonempty ∧ U ⊆ dom ϕ ∧ chanLip d ϕ U i j = 0 ∧ (0 : ENNReal) ∉ chanFeasible d ϕ U i j := by
+  refine ⟨Fin 3, 0, Unit, inferInstance, inferInstance, cexDist,
+    fun _ =&gt; discreteTopDist_extendedPseudoMetric, idOp, cexU, (), (), ⟨1, by simp [cexU]⟩,
+    ?_, cex_chanLip_eq_zero, cex_zero_not_mem⟩
+  intro x hx
+  simp only [cexU, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+  rcases hx with rfl | rfl &lt;;&gt; simp [dom, idOp]
+
+/-! ## 6. 矩阵证书的通道结构：零系数、行/列解耦、对角 -/
+
+/-- 单行稀疏 `Row(L, i, j)`：第 `j` 行除输入位置 `i` 外全为零（`∀ k ≠ i, L_{k→j} = 0`）。 -/
+def RowSparse (L : CoefMat I) (i j : I) : Prop := ∀ k, k ≠ i → L k j = 0
+
+/-- 矩阵第 `j` 行至多一项非零：`∃ i, Row(L, i, j)`。 -/
+def RowSingle (L : CoefMat I) (j : I) : Prop := ∃ i, RowSparse L i j
+
+/-- 单列稀疏 `Col(L, i, j)`：第 `i` 列除输出位置 `j` 外全为零（`∀ k ≠ j, L_{i→k} = 0`）。 -/
+def ColSparse (L : CoefMat I) (i j : I) : Prop := ∀ k, k ≠ j → L i k = 0
+
+/-- 矩阵第 `i` 列至多一项非零：`∃ j, Col(L, i, j)`。 -/
+def ColSingle (L : CoefMat I) (i : I) : Prop := ∃ j, ColSparse L i j
+
+/-- 对角：所有非对角项为零。 -/
+def IsDiagonal (L : CoefMat I) : Prop := ∀ i j, i ≠ j → L i j = 0
+
+/-- 行解耦：存在 `L ∈ 𝓛(φ)|_U` 使第 `j` 行至多一项非零。 -/
+def RowDecoupled [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (j : I) : Prop :=
+  ∃ L ∈ LipSetOn d ϕ U, RowSingle L j
+
+/-- 列解耦：存在 `L ∈ 𝓛(φ)|_U` 使第 `i` 列至多一项非零。 -/
+def ColDecoupled [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (i : I) : Prop :=
+  ∃ L ∈ LipSetOn d ϕ U, ColSingle L i
+
+/-- 完全解耦体系：给定的上界证书为对角矩阵。 -/
+def FullyDecoupledCert [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : CoefMat I) : Prop :=
+  L ∈ LipSetOn d ϕ U ∧ IsDiagonal L
+
+/-- 行列方向：`Row(L, i, j)` 即显示矩阵第 `j` 行除第 `i` 列外为零。 -/
+theorem rowSparse_iff_display (L : CoefMat I) (i j : I) :
+    RowSparse L i j ↔ ∀ k, k ≠ i → toDisplay L j k = 0 := Iff.rfl
+
+/-- 行列方向：`Col(L, i, j)` 即显示矩阵第 `i` 列除第 `j` 行外为零。 -/
+theorem colSparse_iff_display (L : CoefMat I) (i j : I) :
+    ColSparse L i j ↔ ∀ k, k ≠ j → toDisplay L k i = 0 := Iff.rfl
+
+/-- 对角性与显示矩阵对角性一致。 -/
+theorem isDiagonal_iff_display (L : CoefMat I) : IsDiagonal L ↔ (toDisplay L).IsDiag := by
+  constructor
+  · intro h j i hji
+    exact h i j (Ne.symm hji)
+  · intro h i j hij
+    exact h (Ne.symm hij)
+
+/-- “第 `j` 行至多有一项非零”与 `∃ i, Row(L, i, j)` 等价（`I` 非空）。 -/
+theorem rowSingle_iff_atMostOne [Nonempty I] (L : CoefMat I) (j : I) :
+    RowSingle L j ↔ ∀ k k', L k j ≠ 0 → L k' j ≠ 0 → k = k' := by
+  constructor
+  · rintro ⟨i, hi⟩ k k' hk hk'
+    have h1 : k = i := by by_contra h; exact hk (hi k h)
+    have h2 : k' = i := by by_contra h; exact hk' (hi k' h)
+    rw [h1, h2]
+  · intro h
+    by_cases hex : ∃ k, L k j ≠ 0
+    · obtain ⟨k, hk⟩ := hex
+      refine ⟨k, fun k' hk' =&gt; ?_⟩
+      by_contra hne
+      exact hk' (h k' k hne hk)
+    · push Not at hex
+      exact ⟨Classical.arbitrary I, fun k _ =&gt; hex k⟩
+
+/-- “第 `i` 列至多有一项非零”与 `∃ j, Col(L, i, j)` 等价（`I` 非空）。 -/
+theorem colSingle_iff_atMostOne [Nonempty I] (L : CoefMat I) (i : I) :
+    ColSingle L i ↔ ∀ k k', L i k ≠ 0 → L i k' ≠ 0 → k = k' := by
+  constructor
+  · rintro ⟨j, hj⟩ k k' hk hk'
+    have h1 : k = j := by by_contra h; exact hk (hj k h)
+    have h2 : k' = j := by by_contra h; exact hk' (hj k' h)
+    rw [h1, h2]
+  · intro h
+    by_cases hex : ∃ k, L i k ≠ 0
+    · obtain ⟨k, hk⟩ := hex
+      refine ⟨k, fun k' hk' =&gt; ?_⟩
+      by_contra hne
+      exact hk' (h k' k hne hk)
+    · push Not at hex
+      exact ⟨Classical.arbitrary I, fun k _ =&gt; hex k⟩
+
+/-- 零系数移除求和项：`L_{i→j} = 0` 时 `L_{i→j} d_i(x,y) = 0`（允许 `d_i = +∞`），
+且输出求和可删去该输入项。 -/
+theorem zero_coef_term [Fintype I] [DecidableEq I] (L : CoefMat I) {i j : I} (h : L i j = 0)
+    (D : I → ENNReal) :
+    L i j * D i = 0 ∧ ∑ k, L k j * D k = ∑ k ∈ Finset.univ.erase i, L k j * D k := by
+  refine ⟨by rw [h, zero_mul], ?_⟩
+  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i), h, zero_mul, zero_add]
+
+/-- **(i) 通道隔离**：`L_{i→j} = 0` 时，该证书的 `d_j` 输出上界中 `d_i` 项不参与。 -/
+theorem lip_bound_erase_of_zero [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}
+    {ϕ : Operator X bot} {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I}
+    (h : L i j = 0) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      L i j * d i x y = 0 ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ ∑ k ∈ Finset.univ.erase i, L k j * d k x y := by
+  intro x hx y hy
+  obtain ⟨h1, h2⟩ := zero_coef_term L h (fun k =&gt; d k x y)
+  exact ⟨h1, h2 ▸ hL.2 x hx y hy j⟩
+
+/-- **(ii) 行解耦的化简**：`L` 合法且 `∀ k ≠ i, L_{k→j} = 0`（`i` 不必等于 `j`），
+则 `d_j(φx, φy) ≤ L_{i→j} d_i(x, y)`。 -/
+theorem rowSparse_bound [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I} (hrow : RowSparse L i j) :
+    ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y := by
+  intro x hx y hy
+  have hsum : ∑ k, L k j * d k x y = L i j * d i x y :=
+    Fintype.sum_eq_single i fun k hk =&gt; by rw [hrow k hk, zero_mul]
+  exact hsum ▸ hL.2 x hx y hy j
+
+/-- 行解耦（存在形式）给出单输入分量上界。 -/
+theorem RowDecoupled.bound [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {j : I} (h : RowDecoupled d ϕ U j) :
+    ∃ L ∈ LipSetOn d ϕ U, ∃ i, ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y := by
+  obtain ⟨L, hL, i, hi⟩ := h
+  exact ⟨L, hL, i, rowSparse_bound hL hi⟩
+
+/-- **(iii) 列解耦的贡献范围**：所选 `L` 的第 `i` 列仅输出 `j` 可能非零，则对每个 `k ≠ j`，
+`L_{i→k} d_i(x, y) = 0`，从而输出 `k` 的上界可删去输入 `i`。 -/
+theorem colSparse_contribution [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}
+    {ϕ : Operator X bot} {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I}
+    (hcol : ColSparse L i j) :
+    ∀ k, k ≠ j → ∀ x ∈ U, ∀ y ∈ U,
+      L i k * d i x y = 0 ∧
+      d k (ϕ.func x) (ϕ.func y) ≤ ∑ l ∈ Finset.univ.erase i, L l k * d l x y :=
+  fun k hk =&gt; lip_bound_erase_of_zero hL (hcol k hk)
+
+/-- **(iv) 完全解耦体系**：对角合法证书给出所有分量的标量上界。 -/
+theorem diagonal_bound [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) (hdiag : IsDiagonal L) :
+    ∀ j : I, ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  fun j =&gt; rowSparse_bound hL fun k hk =&gt; hdiag k j hk
+
+/-- **引理 #h-6a98a58b5bc95360（对角输入项的标量双侧界）**：只假设 Lip 行稀疏
+`∀ k ≠ j, L_{k→j} = 0`，则 `K_{j→j} d_j(x,y) ≤ d_j(φx, φy) ≤ L_{j→j} d_j(x,y)`。 -/
+theorem diag_two_sided [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {L K : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) (hK : K ∈ CoLipSetOn d ϕ U)
+    {j : I} (hrow : ∀ k, k ≠ j → L k j = 0) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y := by
+  intro x hx y hy
+  refine ⟨?_, rowSparse_bound hL hrow x hx y hy⟩
+  calc K j j * d j x y ≤ ∑ k, K k j * d k x y :=
+        Finset.single_le_sum (f := fun k =&gt; K k j * d k x y) (fun _ _ =&gt; zero_le _)
+          (Finset.mem_univ j)
+    _ ≤ d j (ϕ.func x) (ϕ.func y) := hK.2.2 x hx y hy j
+
+/-- 逐分量双侧界：对角输入项条件对所有 `j` 成立时，全部分量双侧界同时成立；
+若另有 `L_{j→j}, K_{j→j} &lt; +∞`，则双侧界的标量系数为有限（`ℝ≥0`）常数。 -/
+theorem all_two_sided [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {L K : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) (hK : K ∈ CoLipSetOn d ϕ U)
+    (hrow : ∀ j k, k ≠ j → L k j = 0) :
+    (∀ j : I, ∀ x ∈ U, ∀ y ∈ U,
+      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y) ∧
+    ((∀ j, L j j &lt; ⊤ ∧ K j j &lt; ⊤) →
+      ∀ j : I, ∃ c C : NNReal, (c : ENNReal) = K j j ∧ (C : ENNReal) = L j j ∧
+        ∀ x ∈ U, ∀ y ∈ U,
+          (c : ENNReal) * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+          d j (ϕ.func x) (ϕ.func y) ≤ (C : ENNReal) * d j x y) := by
+  have hall : ∀ j : I, ∀ x ∈ U, ∀ y ∈ U,
+      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+    fun j =&gt; diag_two_sided hL hK (hrow j)
+  refine ⟨hall, fun hfin j =&gt; ?_⟩
+  refine ⟨(K j j).toNNReal, (L j j).toNNReal, ENNReal.coe_toNNReal (hfin j).2.ne,
+    ENNReal.coe_toNNReal (hfin j).1.ne, ?_⟩
+  rw [ENNReal.coe_toNNReal (hfin j).2.ne, ENNReal.coe_toNNReal (hfin j).1.ne]
+  exact hall j
+
+/-! ## 7. 正 co-Lip 通道的可分辨保持 -/
+
+/-- **(i) 正下界传递**：`K ∈ 𝓚(φ)|_U` 给出 `K_{i→j} d_i(x, y) ≤ d_j(φx, φy)`。 -/
+theorem coLip_single_lower [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) (i j : I) :
+    ∀ x ∈ U, ∀ y ∈ U, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+  intro x hx y hy
+  calc K i j * d i x y ≤ ∑ k, K k j * d k x y :=
+        Finset.single_le_sum (f := fun k =&gt; K k j * d k x y) (fun _ _ =&gt; zero_le _)
+          (Finset.mem_univ i)
+    _ ≤ d j (ϕ.func x) (ϕ.func y) := hK.2.2 x hx y hy j
+
+/-- **命题 #h-f82672ec0dd48f28 (i)**：`K_{i→j} &gt; 0` 时 `d_i(x,y) &gt; 0 ⟹ d_j(φx, φy) &gt; 0`。 -/
+theorem coLip_pos_preserves [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) {i j : I} (hij : 0 &lt; K i j) :
+    ∀ x ∈ U, ∀ y ∈ U, 0 &lt; d i x y → 0 &lt; d j (ϕ.func x) (ϕ.func y) := by
+  intro x hx y hy hd
+  exact lt_of_lt_of_le (ENNReal.mul_pos hij.ne' hd.ne') (coLip_single_lower hK i j x hx y hy)
+
+/-- **命题 #h-f82672ec0dd48f28 (ii)**：全部 `K_{j→j} &gt; 0` 时 `φ` 反射族零距关系。 -/
+theorem coLip_reflects_gaugeZero [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}
+    {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) (hdiag : ∀ j, 0 &lt; K j j) :
+    ∀ x ∈ U, ∀ y ∈ U, GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y := by
+  intro x hx y hy hrel j
+  by_contra hne
+  have := coLip_pos_preserves hK (hdiag j) x hx y hy (pos_iff_ne_zero.2 hne)
+  exact this.ne' (hrel j)
+
+end formal_oet.vol_01.ch_02_operator_bounds
+
+end
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;HCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {&quot;id&quot;: &quot;HC02-D01&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipSetOn&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipSet&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.mem_LipSet_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoefMat&quot;}],
+     &quot;representation&quot;: &quot;LipSetOn d φ U : Set (I→I→ENNReal) = {L | U ⊆ dom φ ∧ ∀x∈U ∀y∈U ∀j, d j (φx)(φy) ≤ Σ_i L i j * d i x y}；LipSet d φ = LipSetOn d φ (dom φ)。I 为 Fintype（有限），系数与距离都是 ENNReal，并采用 mathlib 的 0·⊤=0 约定。定义本身不要求度量公理与 Nonempty I；在扩展规范空间语境下直接代入即可。&quot;,
+     &quot;dependencies&quot;: []},
+    {&quot;id&quot;: &quot;HC02-D02&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipSetOn&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.zero_mem_CoLipSetOn&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.update_top_mem_CoLipSetOn&quot;}],
+     &quot;representation&quot;: &quot;CoLipSetOn d φ U = {K | U.Nonempty ∧ U ⊆ dom φ ∧ ∀x,y∈U ∀j, Σ_i K i j * d i x y ≤ d j (φx)(φy)}，非空性与定义域条件都写在成员条件里。系数 0 合法见 zero_mem_CoLipSetOn；系数 ⊤ 合法（0·⊤=0）见 update_top_mem_CoLipSetOn。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;]},
+    {&quot;id&quot;: &quot;HC02-D03&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoefMat&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.toDisplay&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.toDisplay_apply&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.toDisplay_injective&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matComp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.toDisplay_matComp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.sum_matComp_mul&quot;}],
+     &quot;representation&quot;: &quot;CoefMat I := I→I→ENNReal 按输入优先存储，M i j = M_{i→j}。toDisplay M : Matrix I I ENNReal 满足 (toDisplay M) j i = M i j，即第 j 行第 i 列。matComp M₂ M₁ i j = Σ_k M₂ k j * M₁ i k；已证 toDisplay (matComp M₂ M₁) = toDisplay M₂ * toDisplay M₁（通常矩阵乘法），并证 toDisplay 为单射。&quot;,
+     &quot;dependencies&quot;: []},
+    {&quot;id&quot;: &quot;HC02-D04&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.idMat&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.toDisplay_idMat&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd_zero&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd_succ&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd_one&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.toDisplay_matProd&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matComp_idMat_right&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matComp_idMat_left&quot;}],
+     &quot;representation&quot;: &quot;idMat i j = if i=j then 1 else 0（δ_ij），其显示矩阵为 1。matProd L 0 = idMat（空乘积）；matProd L (k+1) = matComp (L k) (matProd L k)，因此 matProd L k = L_k⋯L_1（0 起下标）：施行顺序 φ_1,…,φ_k 对应左乘顺序。toDisplay_matProd 把它写成通常矩阵列表积 [L_k,…,L_1].prod；matProd_one 给出 k=1 时乘积等于 L 0。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D03&quot;]},
+    {&quot;id&quot;: &quot;HC02-D05&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.idOp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.opComp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.opComp_eq_operatorChain&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.mem_dom_opComp_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.subset_dom_of_subset_dom_opComp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chainComp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chainComp_eq_operatorChain&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.imageSeq&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chainComp_image&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.dom_chainComp_anti&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.imageSeq_subset_dom&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.subset_dom_chainComp_of_le&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipChain&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipChain&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipChain.imageSeq_props&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.imageSeq_props&quot;}],
+     &quot;representation&quot;: &quot;chainComp ϕ 0 = id，chainComp ϕ (k+1) = ϕ k ∘ chainComp ϕ k，即 c_k，并证明它等于第 1 章的 OperatorChain [φ_k,…,φ_1]。imageSeq ϕ U 0 = U，imageSeq ϕ U (m+1) = ϕ m '' imageSeq ϕ U m，即 U_{m+1}=φ_m(U_m)（0 起下标）。已证 c_m(U_1) = U_{m+1}（chainComp_image）；由 U_1 ⊆ dom c_k 得 m&lt;k 时 U_m ⊆ dom φ_m（imageSeq_subset_dom）。LipChain/CoLipChain 的字段只有算子序列、逐步矩阵、起始域、U_1 ⊆ dom c_k 以及每步在实际 U_m 上的证书资格，不含最终复合界。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;, &quot;HC02-D02&quot;]},
+    {&quot;id&quot;: &quot;HC02-D06&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.fullPath&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.fullPath_zero&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.fullPath_last&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.fullPath_succ_castSucc&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.fullPath_length_one&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.intermediate_length_one_unique&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pathEdge&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pathWeight&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.PathAllPos&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.PathHasZero&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pathWeight_snoc&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_eq_sum_paths&quot;}],
+     &quot;representation&quot;: &quot;n = m+1 层（n≥1）时，中间指标序列为任意 s : Fin m → I，不加正性约束。fullPath i j s : Fin (m+2) → I 满足 k_0=i、k_t=s_{t-1}、k_n=j。pathEdge 是第 t 层边 [M^{(t+1)}]_{k_t→k_{t+1}}，pathWeight 是各层边的乘积；PathAllPos 表示所有边&gt;0，PathHasZero 表示某边=0。n=1 时 Fin 0 → I 只有一个空序列，路径为 ![i,j]。matProd_apply_eq_sum_paths 证明乘积条目等于全部路径权重之和。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D04&quot;]},
+    {&quot;id&quot;: &quot;HC02-D07&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.Channel&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.RowSparse&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.RowSingle&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.ColSparse&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.ColSingle&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.IsDiagonal&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.RowDecoupled&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.ColDecoupled&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.FullyDecoupledCert&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.rowSparse_iff_display&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.colSparse_iff_display&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.isDiagonal_iff_display&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.rowSingle_iff_atMostOne&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.colSingle_iff_atMostOne&quot;}],
+     &quot;representation&quot;: &quot;Channel I := I×I。RowSparse L i j := ∀k≠i, L k j = 0；RowSingle L j := ∃i RowSparse L i j；RowDecoupled d φ U j := ∃L∈LipSetOn d φ U, RowSingle L j。ColSparse L i j := ∀k≠j, L i k = 0；ColSingle、ColDecoupled 同理。IsDiagonal L := ∀ i≠j, L i j = 0。另证与显示矩阵的行、列、对角（Matrix.IsDiag）一致，并在 I 非空时证明 ∃i Row 等价于“第 j 行至多一项非零”（列同理）。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;, &quot;HC02-D03&quot;]},
+    {&quot;id&quot;: &quot;HC02-D08&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanFeasible&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.channelLip&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_eq_top_of_empty&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_le_of_rowSparse&quot;}],
+     &quot;representation&quot;: &quot;chanFeasible d φ U i j = {c : ENNReal | ∀x∈U ∀y∈U, d j (φx)(φy) ≤ c * d i x y}（即 S_ij）；chanLip = sInf S_ij，并有 sInf ∅ = ⊤（chanLip_eq_top_of_empty）。原文把 U ⊆ dom φ 作为语境前提，这里的定义对任意 U 都成立。chanLip 与矩阵条目是两个独立对象，唯一证明的联系是：若 L 合法且第 j 行只在 i 处可能非零，则 chanLip ≤ L i j。&quot;,
+     &quot;dependencies&quot;: []},
+    {&quot;id&quot;: &quot;HC02-P01&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipSetOn_single_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipSet_single_iff&quot;}],
+     &quot;representation&quot;: &quot;I={i} 用假设 ∀k:I, k=i 表示。L 合法（受限或全域）当且仅当 ∀x,y, d i (φx)(φy) ≤ L i i * d i x y；这是等价式，比单向退化更强。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;]},
+    {&quot;id&quot;: &quot;HC02-P02&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipSet_subset_lipSetOn&quot;}],
+     &quot;representation&quot;: &quot;U ⊆ dom φ → LipSet d φ ⊆ LipSetOn d φ U。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;]},
+    {&quot;id&quot;: &quot;HC02-P03&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipSetOn_anti&quot;}],
+     &quot;representation&quot;: &quot;U ⊆ V → V ⊆ dom φ → LipSetOn d φ V ⊆ LipSetOn d φ U。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;]},
+    {&quot;id&quot;: &quot;HC02-P04&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipEntryInf&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipEntryInf_mono&quot;}],
+     &quot;representation&quot;: &quot;lipEntryInf d φ U i j = sInf {M i j | M ∈ LipSetOn d φ U}；U ⊆ V ⊆ dom φ 时 a_ij(U) ≤ a_ij(V)。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P03&quot;]},
+    {&quot;id&quot;: &quot;HC02-P05&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_comp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.subset_dom_of_subset_dom_opComp&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.sum_matComp_mul&quot;}],
+     &quot;representation&quot;: &quot;条件 U₁ ⊆ dom(opComp φ₂ φ₁)，U₂ = operator_image φ₁ U₁（第 1 章的像集），L₁ ∈ LipSetOn d φ₁ U₁，L₂ ∈ LipSetOn d φ₂ U₂；结论 matComp L₂ L₁ ∈ LipSetOn d (opComp φ₂ φ₁) U₁。另单独证明 U₂ ⊆ dom φ₂。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;, &quot;HC02-D03&quot;, &quot;HC02-D05&quot;]},
+    {&quot;id&quot;: &quot;HC02-P06&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLip_entry_eq_zero_of_pair&quot;}],
+     &quot;representation&quot;: &quot;若 x,y ∈ dom φ，d j (φx)(φy) = 0 且 0 &lt; d i x y，则 ∀K ∈ CoLipSetOn d φ (dom φ)，K i j = 0。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D02&quot;]},
+    {&quot;id&quot;: &quot;HC02-P07&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLip_comp&quot;}],
+     &quot;representation&quot;: &quot;实际像域设定与 P05 相同。K₁ ∈ CoLipSetOn d φ₁ U₁，K₂ ∈ CoLipSetOn d φ₂ (φ₁ '' U₁)，则 matComp K₂ K₁ ∈ CoLipSetOn d (φ₂∘φ₁) U₁；结论包含 U₁ 非空（取自 K₁）。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D02&quot;, &quot;HC02-D03&quot;, &quot;HC02-D05&quot;]},
+    {&quot;id&quot;: &quot;HC02-P08&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_forward&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_core&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.two_mul_eq_add_self&quot;}],
+     &quot;representation&quot;: &quot;语境：hd : ∀i ExtendedPseudoMetric X bot (d i)，U ⊆ dom φ₁ ∩ dom φ₂（即 dom(φ₁,φ₂)），δ : I → ENNReal，∀z∈U ∀j, d j (φ₁z)(φ₂z) ≤ δ j。结论：∀x,y∈U ∀j，d j(φ₂x)(φ₂y) ≤ d j(φ₁x)(φ₁y) + 2δ_j，并同时给出 +δ_j+δ_j 形式。&quot;,
+     &quot;dependencies&quot;: []},
+    {&quot;id&quot;: &quot;HC02-P09&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_backward&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_symm&quot;}],
+     &quot;representation&quot;: &quot;前提与 P08 相同。结论 d j(φ₁x)(φ₁y) ≤ d j(φ₂x)(φ₂y) + 2δ_j（以及 +δ_j+δ_j 形式），由对称性交换 φ₁、φ₂ 得到。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P10&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_lip_bridge&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_lip_bridge_swap&quot;}],
+     &quot;representation&quot;: &quot;另设 L₁ ∈ LipSetOn d φ₁ U，则 d j(φ₂x)(φ₂y) ≤ Σ_i L₁ i j d i x y + 2δ_j。swap 版本对应原文“交换 φ₁,φ₂”：φ₂ 的证书控制 φ₁。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P08&quot;, &quot;HC02-P09&quot;]},
+    {&quot;id&quot;: &quot;HC02-P11&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_coLip_bridge&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.perturb_coLip_bridge_swap&quot;}],
+     &quot;representation&quot;: &quot;另设 K₁ ∈ CoLipSetOn d φ₁ U，则 Σ_i K₁ i j d i x y ≤ d j(φ₂x)(φ₂y) + 2δ_j；另给交换版本。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P09&quot;, &quot;HC02-P08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P12&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_mem&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_matProd_mem&quot;}],
+     &quot;representation&quot;: &quot;C : LipChain bot d k，k ≥ 1：只要 U_1 ⊆ dom c_k 且 ∀m&lt;k，L m ∈ LipSetOn d (φ m) (imageSeq … m)（实际 U_{m+1}），就有 matProd C.mats k（=L_k⋯L_1）∈ LipSetOn d (chainComp ops k) U_1。lip_matProd_mem 对所有 k（含 0）成立，证明对 k 归纳，使用 P05 与 P14。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P05&quot;, &quot;HC02-P14&quot;, &quot;HC02-D05&quot;, &quot;HC02-D04&quot;]},
+    {&quot;id&quot;: &quot;HC02-P13&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_mem&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLip_matProd_mem_of_nonempty&quot;}],
+     &quot;representation&quot;: &quot;C : CoLipChain bot d k，k ≥ 1，每步 co-Lip 证书资格都含非空性；结论 K_k⋯K_1 ∈ CoLipSetOn d c_k U_1。U_1 非空由第 0 步证书取得，然后对 k 归纳。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P07&quot;, &quot;HC02-P15&quot;, &quot;HC02-D05&quot;, &quot;HC02-D04&quot;]},
+    {&quot;id&quot;: &quot;HC02-P14&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.idMat_mem_LipSetOn&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.zero_step_certificate&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.sum_idMat_dist&quot;}],
+     &quot;representation&quot;: &quot;c_0 = chainComp ϕ 0 = idOp，空乘积 matProd L 0 = idMat。U ⊆ dom id 时 idMat ∈ LipSetOn d idOp U：这一条不需要非空性，强于原文。zero_step_certificate 给出原文的非空形式，结论落在 Lip 与 co-Lip 证书族的交集中。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D04&quot;, &quot;HC02-D05&quot;]},
+    {&quot;id&quot;: &quot;HC02-P15&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.idMat_mem_CoLipSetOn&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.zero_step_certificate&quot;}],
+     &quot;representation&quot;: &quot;对同一非空 U ⊆ dom id，idMat ∈ CoLipSetOn d idOp U。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D04&quot;, &quot;HC02-D05&quot;]},
+    {&quot;id&quot;: &quot;HC02-P16&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_entry_eq_zero_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_entry_eq_zero_iff'&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_eq_zero_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pathHasZero_length_one&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_entry_eq_zero_iff_one&quot;}],
+     &quot;representation&quot;: &quot;在 C : LipChain bot d (m+1) 下（即 n=m+1≥1 的非空算子链加实际证书序列）：(L_n⋯L_1) i j = 0 ⟺ ∀ s : Fin m → I，PathHasZero（某层边为 0）。带撇版本对 n 加 1≤n，并取 s : Fin (n-1) → I。n=1 时退化为 L^{(1)} i j = 0。证明经路径展开与 ENNReal 中“和为零⟺各项为零、积为零⟺某因子为零”。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D06&quot;, &quot;HC02-D05&quot;]},
+    {&quot;id&quot;: &quot;HC02-P17&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_entry_pos_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_entry_pos_iff'&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_pos_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pathAllPos_length_one&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_entry_pos_iff_one&quot;}],
+     &quot;representation&quot;: &quot;在 C : CoLipChain bot d (m+1) 下：0 &lt; (K_n⋯K_1) i j ⟺ ∃ s : Fin m → I，PathAllPos（所有边&gt;0）。另给 n≥1 字面版本；n=1 时唯一空序列，判据为 0 &lt; K^{(1)} i j。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D06&quot;, &quot;HC02-P16&quot;, &quot;HC02-D05&quot;]},
+    {&quot;id&quot;: &quot;HC02-P18&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanFeasible_empty_of_pair&quot;}],
+     &quot;representation&quot;: &quot;x,y∈U，d i x y = 0，0 &lt; d j (φx)(φy) ⇒ ∀c:ENNReal，c ∉ S_ij；S_ij = ∅；chanLip = ⊤。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P19&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_mem_of_pos_of_lt_top&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_bound_of_pos_of_lt_top&quot;}],
+     &quot;representation&quot;: &quot;0 &lt; a &lt; ⊤（a = chanLip）⇒ a ∈ S_ij，即 ∀x,y∈U，d j(φx)(φy) ≤ a·d i x y。证明按原文对 B=0、0&lt;B&lt;∞、B=∞ 三种情况分别处理。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P21&quot;, &quot;HC02-P20&quot;, &quot;HC02-D08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P20&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanFeasible_upward&quot;}],
+     &quot;representation&quot;: &quot;c₀ ∈ S_ij，c₀ ≤ c₁ ⇒ c₁ ∈ S_ij。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P21&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.mem_chanFeasible_of_chanLip_lt&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.mem_chanFeasible_of_gt_of_pos_finite&quot;}],
+     &quot;representation&quot;: &quot;a &lt; c（c 可以是 ⊤）⇒ c ∈ S_ij。通用版本不需要 0&lt;a&lt;∞，强于原文；另给带 0&lt;a&lt;∞ 前提的原文语境版本。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P20&quot;]},
+    {&quot;id&quot;: &quot;HC02-P22&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.mem_chanFeasible_of_chanLip_eq_zero&quot;}],
+     &quot;representation&quot;: &quot;chanLip = 0 且 0 &lt; c &lt; ⊤ ⇒ c ∈ S_ij。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P21&quot;]},
+    {&quot;id&quot;: &quot;HC02-P23&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_zero_not_attained&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.discreteTopDist&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.discreteTopDist_extendedPseudoMetric&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.cexDist&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.cexU&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.cex_chanLip_eq_zero&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.cex_zero_not_mem&quot;}],
+     &quot;representation&quot;: &quot;存在性陈述：∃ X、bot、有限非空 I、d，每个分量满足 ExtendedPseudoMetric（公理 (i)–(iv) 与非吸收部分非空），以及 φ、非空 U ⊆ dom φ、i、j，使 chanLip = 0 且 0 ∉ S_ij。具体取 X=Fin 3，bot=0，I=Unit，d 为离散 {0,⊤} 距离，φ=id，U={1,2}：每个 c&gt;0 都可行（c·⊤=⊤），但 c=0 不可行（0·⊤=0&lt;⊤）。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P24&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_lt_top_iff&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.chanLip_lt_top_iff_nnreal&quot;}],
+     &quot;representation&quot;: &quot;chanLip &lt; ⊤ ⟺ ∃ c &lt; ⊤，∀x,y∈U，d j(φx)(φy) ≤ c·d i x y；另给 ∃ c : ℝ≥0 形式。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D08&quot;]},
+    {&quot;id&quot;: &quot;HC02-P25&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.zero_coef_term&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_bound_erase_of_zero&quot;}],
+     &quot;representation&quot;: &quot;L i j = 0 ⇒ 对任意 D : I→ENNReal（D 可取 ⊤），L i j · D i = 0，且 Σ_k L k j D k = Σ_{k∈univ.erase i} L k j D k。对合法证书而言，d_j 的输出上界可以删去输入 i 这一项。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D01&quot;]},
+    {&quot;id&quot;: &quot;HC02-P26&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.rowSparse_bound&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.RowDecoupled.bound&quot;}],
+     &quot;representation&quot;: &quot;L ∈ LipSetOn d φ U，RowSparse L i j（∀k≠i，L k j = 0；i 可以不等于 j）⇒ ∀x,y∈U，d j(φx)(φy) ≤ L i j · d i x y；另给行解耦存在形式的推论。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D07&quot;, &quot;HC02-D01&quot;]},
+    {&quot;id&quot;: &quot;HC02-P27&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.colSparse_contribution&quot;}],
+     &quot;representation&quot;: &quot;L 合法，ColSparse L i j ⇒ ∀k≠j ∀x,y∈U，L i k · d i x y = 0，且输出 k 的上界可删去输入 i 这一项；即在该证书中输入 i 至多向输出 j 贡献。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P25&quot;, &quot;HC02-D07&quot;]},
+    {&quot;id&quot;: &quot;HC02-P28&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.diagonal_bound&quot;}],
+     &quot;representation&quot;: &quot;L ∈ LipSetOn d φ U，IsDiagonal L ⇒ ∀j ∀x,y∈U，d j(φx)(φy) ≤ L j j · d j x y。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P26&quot;, &quot;HC02-D07&quot;]},
+    {&quot;id&quot;: &quot;HC02-P29&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.diag_two_sided&quot;}],
+     &quot;representation&quot;: &quot;L ∈ LipSetOn，K ∈ CoLipSetOn（同一 U），只假设 ∀k≠j，L k j = 0（对 K 不加任何稀疏假设）⇒ ∀x,y∈U，K j j·d j x y ≤ d j(φx)(φy) ≤ L j j·d j x y。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P26&quot;]},
+    {&quot;id&quot;: &quot;HC02-P30&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.all_two_sided&quot;}],
+     &quot;representation&quot;: &quot;若 ∀j ∀k≠j，L k j = 0，则所有 j 的双侧界同时成立。若另有 ∀j，L j j &lt; ⊤ ∧ K j j &lt; ⊤，则对每个 j 存在 c, C : ℝ≥0，满足 ↑c = K j j、↑C = L j j，并且 c·d_j ≤ d_j∘φ ≤ C·d_j，即有限标量双侧放缩界。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P29&quot;]},
+    {&quot;id&quot;: &quot;HC02-P31&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLip_pos_preserves&quot;},
+       {&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLip_single_lower&quot;}],
+     &quot;representation&quot;: &quot;K ∈ CoLipSetOn d φ U，0 &lt; K i j ⇒ ∀x,y∈U，0 &lt; d i x y → 0 &lt; d j(φx)(φy)。另证正下界传递 K i j·d i x y ≤ d j(φx)(φy)。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-D02&quot;]},
+    {&quot;id&quot;: &quot;HC02-P32&quot;, &quot;status&quot;: &quot;complete&quot;,
+     &quot;declarations&quot;: [{&quot;file&quot;: &quot;Main.lean&quot;, &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLip_reflects_gaugeZero&quot;}],
+     &quot;representation&quot;: &quot;K ∈ CoLipSetOn d φ U，∀j 0 &lt; K j j ⇒ ∀x,y∈U，GaugeZeroRelated d (φx)(φy) → GaugeZeroRelated d x y。这里使用第 1 章冻结模块中的 ∼_G 定义。&quot;,
+     &quot;dependencies&quot;: [&quot;HC02-P31&quot;]}
+  ]
+}
+</code></pre>
+<h2>完成情况</h2>
+<ul>
+<li><strong>整章已完整完成，并与原文严格对齐。</strong> 40 项义务全部标为 complete，每项列出的声明都在 <code>Main.lean</code> 中实际存在，且已通过编译。</li>
+<li><strong>没有未完成的部分。</strong></li>
+<li><strong>需要说明的地方：</strong>
+<ul>
+<li><strong>0 起下标与路径长度。</strong> 链下标从 0 开始；路径判据以 <code>n = m+1</code> 为主形式，另附 <code>n ≥ 1</code> 的字面形式。</li>
+<li><strong>定理比原文强的地方：</strong>
+<ul>
+<li>多数定理不要求度量公理，对任意距离族成立。</li>
+<li>P14 不要求 U 非空。</li>
+<li>P21 的通用版本不要求 0&lt;a&lt;∞。</li>
+<li>P01 给出的是等价式，而不只是单向退化。</li>
+</ul>
+</li>
+<li><strong>单通道常数的定义没有内含 U ⊆ dom φ。</strong> 原文的 S_ij 以 U ⊆ dom φ 为语境前提，这里的定义对任意 U 都成立，因为这一前提在证明中用不到。</li>
+<li><strong>原文的叙述性内容没有逐句写成定理。</strong> 例如“证书只记录数据”的说明，以及本章末尾关于上下界不能互相替代的总结，都是叙述而非可证命题。</li>
+</ul>
+</li>
+</ul>
+</div>

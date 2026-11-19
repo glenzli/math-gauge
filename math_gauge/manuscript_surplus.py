@@ -135,9 +135,15 @@ def validate_review(review, policy):
 def source_context(public_root, private_root, model_id, record_id, *, include_judgments=False):
     """Resolve selected manuscripts across CLI, returned-paper and native archives."""
     public_root, private_root = Path(public_root), Path(private_root)
-    from .editions import result_archive
-    edition = json.loads((public_root / 'benchmark.json').read_bytes())
-    relative = Path(result_archive(edition, model_id)) / model_id / record_id
+    from .editions import result_archive, source_edition
+    edition = source_edition(public_root)
+    from .current_assessment_admissions import record_paths
+    initial = record_paths(public_root).get(model_id)
+    if initial is not None:
+        relative = Path(initial).parent
+        require(relative.name == record_id, 'Manuscript source differs from its selected initial record')
+    else:
+        relative = Path(result_archive(edition, model_id)) / model_id / record_id
     P, D = public_root / relative, private_root / relative
     name = 'record.json' if (D / 'record.json').is_file() else 'native-observation.json'
     record = json.loads((D / name).read_bytes())
@@ -191,9 +197,42 @@ def source_context(public_root, private_root, model_id, record_id, *, include_ju
             'inputs': descriptor(D / input_item['path'], private_root)}
 
 
+def delivery_context(root, context, scope=None):
+    """Opt in to mathematical companions already bound by the selected inputs.
+
+    Legacy reviews keep their original document inventory. This does not read
+    arbitrary work files or reinterpret control receipts as mathematical text.
+    """
+    require(scope in (None, 'all_bound_additional_deliveries'), 'Unknown observation delivery scope')
+    if scope is None:
+        return context
+    context = copy.deepcopy(context)
+    inputs = read_source(root, context['inputs'])
+    additional = inputs.get('additional_deliveries') or {}
+    require(isinstance(additional, dict), 'Invalid retained additional-delivery inventory')
+    archive = Path(root) / Path(context['record']['path']).parent
+    for cid, row in context['cases'].items():
+        if row['source_status'] != 'reviewed':
+            continue
+        known = {item['sha256'] for item in row['documents']}
+        for number, entry in enumerate(additional.get(cid, []), 1):
+            item = entry['source']
+            if Path(item['path']).suffix.lower() not in {'.md', '.tex', '.txt', '.lean'}:
+                continue
+            raw = evidence_bytes(archive, item)
+            raw.decode('utf-8')
+            if item['sha256'] not in known:
+                row['documents'].append({'role': f'additional_delivery_{number}',
+                    'path': (archive / item['path']).relative_to(root).as_posix(),
+                    'bytes': len(raw), 'sha256': item['sha256']})
+                known.add(item['sha256'])
+    return context
+
+
 def validate_sources(review, root, context, baseline, policy):
     validate_context_rebinding(review, root)
     validate_review(review, policy)
+    context = delivery_context(root, context, review.get('delivery_scope'))
     for key, expected in (('source_record', context['record']), ('source_score', context['score']), ('source_inputs', context['inputs'])):
         require(review.get(key) == expected, 'Surplus binds another selected record/score/input')
         evidence_bytes(root, expected)
@@ -384,10 +423,33 @@ def load_public(folder, public_root):
     return result
 
 
+def observation_relative_path(path, model_id, record_id):
+    """Confine an indexed observation to its own snapshot or named amendment."""
+    relative = Path(path)
+    require(not relative.is_absolute() and '..' not in relative.parts
+            and relative.as_posix() == path, 'Unsafe manuscript observation path')
+    base = ROOT_PATH / model_id / record_id
+    require(relative.is_relative_to(base), 'Observation path belongs to another snapshot')
+    tail = relative.relative_to(base).parts
+    require(tail == ('observation.json',) or (len(tail) == 3
+            and tail[0] == 'amendments' and tail[2] == 'observation.json'),
+            'Observation must use its snapshot or a named amendment')
+    return relative
+
+
 def check_pair(public_root, private_root, model_id, record_id):
     from .scoring import summarize_manuscript_observations
     public_root, private_root = Path(public_root), Path(private_root)
     relative = ROOT_PATH / model_id / record_id
+    index_path = public_root / ROOT_PATH / 'observations.json'
+    if index_path.is_file():
+        rows = [row for row in json.loads(index_path.read_bytes())['models']
+                if row['model_id'] == model_id and row['record_id'] == record_id]
+        require(len(rows) <= 1, 'Duplicate selected manuscript observation')
+        if rows:
+            item = rows[0]['observation']
+            relative = observation_relative_path(item['path'], model_id, record_id).parent
+            evidence_bytes(public_root, item)
     D, P = private_root / relative, public_root / relative
     stored = json.loads((D / 'observation.json').read_bytes())
     review = read_source(private_root, stored['source_review'])

@@ -1,0 +1,96 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "sol-6.2-xhigh",
+  "record_id": "20261119",
+  "source_record": {
+    "path": "results/v1.0.0/sol-6.2-xhigh/20261119/record.json",
+    "bytes": 42832,
+    "sha256": "360ea7241e7c7bf8d43f0b80bb1e01ee57b018d5d0e2485c9f73957642fd5718"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "44d8052576c306844e8ebcd8c25e3dbcc40844aa40e3229d74967b7d6b3836a3",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 8,
+    "total_groups": 8,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "e1897d4ecf1b0e6b6baad3eb088acd07dd835994769e04156e7c85cde9403aef",
+      "original_task": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true,
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "已完整覆盖所有源绑定交付：response 6040 bytes / SHA256 e1897d4ecf1b0e6b6baad3eb088acd07dd835994769e04156e7c85cde9403aef。已确认每文件结尾；重复 final/附稿仅算同一数学结果。独立枚举后核对旧审全部候选；原题completion/strict与原response SHA不变。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "点对模量的矩阵等价及阈值传递",
+          "statement": "sup/inf距离模量和上下矩阵、联合阈值的等价；普通矩阵复合。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "sup/inf定义、矩阵保序、取r=D(x,y)及蕴涵串接直接证明这些性质；端点与定义域差别为M1–M6正常边界。",
+          "proof_review": "sup/inf定义、矩阵保序、取r=D(x,y)及蕴涵串接直接证明这些性质；端点与定义域差别为M1–M6正常边界。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "sup/inf定义、矩阵保序、取r=D(x,y)及蕴涵串接直接证明这些性质；端点与定义域差别为M1–M6正常边界。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "e1897d4ecf1b0e6b6baad3eb088acd07dd835994769e04156e7c85cde9403aef",
+              "start_byte": 2454,
+              "end_byte": 6040,
+              "quote": "## 2. 任意算子的距离模量\n\n对任意 \\(\\phi\\) 和任意输入距离阈值 \\(r\\in E^I\\)，定义\n\\[\n\\omega^+_{\\phi,j}(r)\n=\\sup_{D(x,y)\\le r}d_j(\\phi(x),\\phi(y)),\n\\qquad\n\\omega^-_{\\phi,j}(r)\n=\\inf_{D(x,y)\\ge r}d_j(\\phi(x),\\phi(y)).\n\\]\n前者记录输入距离**至多**为 \\(r\\) 时的最小统一输出上界，后者记录输入距离**至少**为 \\(r\\) 时的最大统一输出下界。两者都在 \\(E\\) 中取值，因此即使不存在上界矩阵，\\(\\omega^+_\\phi\\) 仍然有定义。\n\n矩阵估计与距离模量精确对应：\n\\[\n\\begin{aligned}\nA\\text{ 是上界矩阵}\n&\\iff \\omega^+_\\phi(r)\\le Ar &&\\text{对所有 }r\\in E^I,\\\\\nB\\text{ 是下界矩阵}\n&\\iff Br\\le\\omega^-_\\phi(r) &&\\text{对所有 }r\\in E^I.\n\\end{aligned}\n\\]\n例如，若 \\(A\\) 是上界矩阵，则 \\(D(x,y)\\le r\\) 蕴含 \\(D_\\phi(x,y)\\le Ar\\)，取逐分量上确界即得第一式的正向。反向只需对每一对 \\(x,y\\) 取 \\(r=D(x,y)\\)。下界同理。\n\n## 3. 零距离阈值矩阵\n\n称 \\(R\\in E^{I\\times I}\\) 为 \\(\\phi\\) 的**零距离阈值矩阵**，若它的每一行 \\(j\\) 都满足\n\\[\n\\bigl[d_i(x,y)\\le R_{ji}\\ \\text{对所有 }i\\in I\\bigr]\n\\quad\\Longrightarrow\\quad\nd_j(\\phi(x),\\phi(y))=0.\n\\]\n这一行的阈值需要**同时**满足。比如，若一个输入集合中任意两点都满足第 \\(j\\) 行的阈值，则该集合的像在 \\(d_j\\) 下直径为零。若满足每一行的条件，则所有输出分量均为零。按 CH1 的约定，此时两个输出仍可能是不同的点。\n\n第 \\(j\\) 行的全部可用阈值由距离模量给出：\n\\[\n\\mathcal C_j(\\phi)\n=\\{r\\in E^I:\\omega^+_{\\phi,j}(r)=0\\}.\n\\]\n这个集合向下封闭，因为减小阈值只会缩小满足条件的输入对范围。若 \\(A\\) 是上界矩阵且 \\((Ar)_j=0\\)，则 \\(r\\in\\mathcal C_j(\\phi)\\)。特别地，只要第 \\(j\\) 行中正系数对应的输入距离全为零，第 \\(j\\) 个输出距离就为零。下界矩阵给出反向推论：若 \\(B_{ji}>0\\)，则第 \\(j\\) 个输出距离为零蕴含第 \\(i\\) 个输入距离为零。\n\n阈值也能沿复合传递。若 \\(\\omega_\\phi^+(r)\\in\\mathcal C_j(\\psi)\\)，则 \\(r\\in\\mathcal C_j(\\psi\\circ\\phi)\\)，因为 \\(D(x,y)\\le r\\) 时，中间距离 \\(D_\\phi(x,y)\\) 逐分量至多为 \\(\\omega_\\phi^+(r)\\)。\n\n如果只想记录**单独限制输入分量 \\(i\\)** 能否保证输出分量 \\(j\\) 为零，就把其他输入阈值设为 \\(+\\infty\\)。这时每个矩阵条目可以记录一个允许的阈值区间。令\n\\[\nS_{ji}=\\{d_i(x,y):d_j(\\phi(x),\\phi(y))>0\\},\n\\qquad c_{ji}=\\inf S_{ji},\\qquad \\inf\\varnothing=+\\infty.\n\\]\n阈值 \\(t\\) 可用，当且仅当 \\(t<s\\) 对每个 \\(s\\in S_{ji}\\) 成立。因此所有 \\(t<c_{ji}\\) 都可用，端点 \\(t=c_{ji}\\) 恰在 \\(c_{ji}\\notin S_{ji}\\) 时可用。记录临界值时也要记录端点是否包含，其中 \\(+\\infty\\) 同样可能是端点。\n\n## 4. 有效定义域上的版本\n\n在全空间版本中，只要存在非吸收点 \\(x\\) 满足 \\(\\phi(x)=\\bot\\)，零矩阵就是唯一的下界矩阵。对输入对 \\((x,\\bot)\\)，输入距离各分量均为 \\(+\\infty\\)，输出距离各分量均为零。因此 \\(B\\) 的任何正条目都会使相应的下界不等式失败。\n\n若要研究**两次求值都有效时**的距离行为，可以把各定义中的点对限制为 \\(x,y\\in\\mathrm{dom}(\\phi)\\)。定义距离模量时沿用 \\(\\sup\\varnothing=0\\) 和 \\(\\inf\\varnothing=+\\infty\\)。矩阵复合公式仍成立，因为 \\(x,y\\in\\mathrm{dom}(\\psi\\circ\\phi)\\) 保证 \\(x,y\\in\\mathrm{dom}(\\phi)\\)，且 \\(\\phi(x),\\phi(y)\\in\\mathrm{dom}(\\psi)\\)，所以两段估计可以依次应用。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

@@ -318,6 +318,90 @@ class ManuscriptObservationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'retained contexts'):
                 validate_reuse_binding(binding, public, private)
 
+    def test_indexed_review_amendment_rebuilds_without_overwriting_originals(self):
+        from unittest.mock import patch
+        from scripts.manuscript_observations import run
+        with tempfile.TemporaryDirectory() as temp:
+            public, private, review_path, write = self.reuse_fixture(Path(temp))
+            with patch('scripts.manuscript_observations.summary_report', return_value='fixture summary'):
+                run(public, private, write=True)
+                frozen = {private / review_path: (private / review_path).read_bytes()}
+                for root in (public, private):
+                    path = root / ROOT_PATH / 'fixture-model/old/observation.json'
+                    frozen[path] = path.read_bytes()
+                    path = root / 'results/v0.6.0/fixture-model/old/record.json'
+                    frozen[path] = path.read_bytes()
+                review = json.loads((private / review_path).read_bytes())
+                second = copy.deepcopy(review['cases'][0]['candidates'][0])
+                second.update(id='second', group_id='independent-second')
+                review['cases'][0]['candidates'].append(second)
+                amended = review_path.parent / 'amendments/paired/review.json'
+                source = write(private, amended, review)
+                index_path = ROOT_PATH / 'observations.json'
+                index = json.loads((private / index_path).read_bytes())
+                index['models'][0].update(source_review=source, observation=(
+                    ROOT_PATH / 'fixture-model/old/amendments/paired/observation.json').as_posix())
+                write(private, index_path, index)
+                run(public, private, write=True)
+                run(public, private)
+            self.assertEqual(check_pair(public, private, 'fixture-model', 'old')['counts']['confirmed_groups'], 2)
+            for path, raw in frozen.items():
+                self.assertEqual(path.read_bytes(), raw)
+            index = json.loads((public / index_path).read_bytes())
+            index['models'][0]['observation']['path'] = (
+                ROOT_PATH / 'other-model/old/amendments/paired/observation.json').as_posix()
+            write(public, index_path, index)
+            with self.assertRaisesRegex(ValueError, 'another snapshot'):
+                check_pair(public, private, 'fixture-model', 'old')
+            (private / amended).write_bytes((private / amended).read_bytes() + b' ')
+            with self.assertRaises(ValueError):
+                run(public, private)
+
+    def test_full_delivery_review_uses_bound_companions_without_changing_legacy_scope(self):
+        from math_gauge.manuscript_surplus import delivery_context, source_context
+        with tempfile.TemporaryDirectory() as temp:
+            public, private, review_path, write = self.reuse_fixture(Path(temp))
+            review = json.loads((private / review_path).read_bytes())
+            archive = private / 'results/v0.6.0/fixture-model/old'
+            inputs = json.loads((archive / 'inputs.json').read_bytes())
+            companion = write(archive, 'extra.md', b'additional original theorem')
+            inputs['additional_deliveries'] = {'MG-MCP003': [
+                {'role': 'source_additional_manuscript', 'source': companion}]}
+            record = json.loads((archive / 'record.json').read_bytes())
+            record['manuscript_completion_inputs'] = write(archive, 'inputs.json', inputs)
+            write(archive, 'record.json', record)
+            review['source_record'] = descriptor(archive / 'record.json', private)
+            review['source_inputs'] = descriptor(archive / 'inputs.json', private)
+            context = source_context(public, private, 'fixture-model', 'old')
+            baseline = json.loads((private / review['baseline']['path']).read_bytes())
+            policy = json.loads((private / review['policy']['path']).read_bytes())
+            before = copy.deepcopy(context)
+            validate_sources(review, private, context, baseline, policy)
+            complete = delivery_context(private, context, 'all_bound_additional_deliveries')
+            self.assertEqual(context, before)
+            self.assertEqual(len(context['cases']['MG-MCP003']['documents']), 2)
+            self.assertEqual(len(complete['cases']['MG-MCP003']['documents']), 3)
+            amended = copy.deepcopy(review)
+            amended['delivery_scope'] = 'all_bound_additional_deliveries'
+            amended['cases'][0]['documents'] = complete['cases']['MG-MCP003']['documents']
+            source = amended['cases'][0]['documents'][-1]
+            amended['cases'][0]['candidates'][0]['citations'] = [{
+                'source': {k: v for k, v in source.items() if k != 'role'},
+                'start_byte': 0, 'end_byte': len(b'additional'), 'quote': 'additional'}]
+            validate_sources(amended, private, context, baseline, policy)
+            without_scope = copy.deepcopy(amended)
+            without_scope.pop('delivery_scope')
+            with self.assertRaisesRegex(ValueError, 'original delivery'):
+                validate_sources(without_scope, private, context, baseline, policy)
+            with self.assertRaisesRegex(ValueError, 'Unknown observation delivery scope'):
+                delivery_context(private, context, 'unselected_workspace')
+            amended['cases'][1]['documents'].append(copy.deepcopy(source))
+            with self.assertRaisesRegex(ValueError, 'original delivery'):
+                validate_sources(amended, private, context, baseline, policy)
+            (archive / companion['path']).write_bytes(b'damaged companion')
+            with self.assertRaises(ValueError):
+                delivery_context(private, context, 'all_bound_additional_deliveries')
+
     def test_reuse_rejects_changed_answer_role_or_original_judgment(self):
         for change in ('answer', 'role', 'judgment'):
             with self.subTest(change=change), tempfile.TemporaryDirectory() as temp:

@@ -1,0 +1,194 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>审阅结论</h2>
+<p><strong>命题层面（#h-012f4ba72aeb3f20，节点域加细情形）：源码已准确、完整地证明，且比正文更强。</strong></p>
+<ul>
+<li>构造型：<code>NodePartitionData.network_extensional_eq</code>（<code>domain_refinement_construction.lean:258</code>）证明 <code>P.network.extensional_operator = N.extensional_operator</code>。这是全空间的算子相等，强于正文的 <code>≡_U</code>。</li>
+<li>关系型：<code>refinement_preserves_local_equivalence</code>（<code>network_refinement.lean:377</code>）和 <code>refinement_preserves_representation</code>（:404）。</li>
+<li><code>lake build formal_oet</code> 通过。关键定理的 <code>#print axioms</code> 只含 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>，没有 <code>sorry</code>。</li>
+</ul>
+<p><strong>定义层面（#h-eddd1f2d0a9d3528 (i)）：不完全准确、不完整。</strong> 这不影响命题的真假，但影响 API 能否被宣称与正文定义一一对应。</p>
+<ol>
+<li>构造型实现与正文一致，但正文的入口片、边域公式没有写成定理，只有自环的 <code>self_loop_choice_iff</code> 例外。</li>
+<li>关系型 <code>NodeDomainRefinement</code> 严格弱于正文定义。<code>NetworkRefinement.node_domain</code> 用的正是这个版本，下文有可复核反例。</li>
+<li>源码从未证明构造满足关系型。两个模块互不 <code>import</code>，全库也没有任何文件同时引用 <code>NodePartitionData</code> 与 <code>NodeDomainRefinement</code>。</li>
+</ol>
+<h2>一、正文要素与 Lean 的逐项对应</h2>
+<table>
+<thead>
+<tr>
+<th>正文要素</th>
+<th>构造型 <code>NodePartitionData</code></th>
+<th>关系型 <code>NodeDomainRefinement</code></th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>被加细节点 β</td>
+<td><code>target</code>（:12）</td>
+<td><code>target</code></td>
+<td>对应</td>
+</tr>
+<tr>
+<td>有限非空分划，块非空</td>
+<td><code>count_pos, piece, nonempty, disjoint, cover = N.node_dom target</code></td>
+<td>同名字段</td>
+<td>对应</td>
+</tr>
+<tr>
+<td><code>f_{β,a}</code>：dom = <code>U_{β,a}</code>，与 <code>f_β</code> 局部等价</td>
+<td><code>local_op, local_domain, local_eq</code>；<code>local_op_eq_restrict</code>（:31）证明 `f_{β,a} = f_β</td>
+<td>U_{β,a}`</td>
+<td><code>local_factor, local_domain, local_equiv</code></td>
+</tr>
+<tr>
+<td>新节点集 (V∖β)⊔{β_a}</td>
+<td><code>Label</code>、<code>lift_label</code>（:64）</td>
+<td><code>source, source_injective</code></td>
+<td>对应</td>
+</tr>
+<tr>
+<td>删去未被经过的子节点</td>
+<td><code>presentation.prune</code>（<code>Reached</code>）</td>
+<td><code>old_node_present</code>、<code>piece_node_present_iff_reached</code>（<code>NodePieceReached</code>，:51）</td>
+<td>构造型隐含；关系型为字段；二者之间无证明</td>
+</tr>
+<tr>
+<td>入口片 <code>U^in∩U_{β,a}</code></td>
+<td><code>entry := lift_label (N.entry x) x</code></td>
+<td><code>entry_projection</code></td>
+<td>公式未陈述</td>
+</tr>
+<tr>
+<td>入边/出边域</td>
+<td><code>choice</code>（:111）</td>
+<td><code>choice_projection</code>（仅实际输出，:108）</td>
+<td>公式未陈述</td>
+</tr>
+<tr>
+<td>自环 <code>D∩f(U_a)∩U_b</code></td>
+<td><code>self_loop_choice_iff</code>（:119）</td>
+<td>—</td>
+<td>已证（仅此一条）</td>
+</tr>
+<tr>
+<td>终止域 = 出边域补集</td>
+<td><code>choice = stop</code></td>
+<td>—</td>
+<td>隐含</td>
+</tr>
+<tr>
+<td>N′ 是有限算子网络、统一长度界、同一输入域</td>
+<td><code>presentation</code>（:208）各字段、<code>depth_bound := N.depth_bound</code>、<code>prune</code></td>
+<td>假设 N′ 已是网络，<code>same_input_domain</code></td>
+<td>构造型已证</td>
+</tr>
+<tr>
+<td>命题 <code>φ_{N′} ≡_U φ_N</code></td>
+<td><code>network_extensional_eq</code></td>
+<td><code>refinement_preserves_local_equivalence</code></td>
+<td>已证</td>
+</tr>
+</tbody>
+</table>
+<h2>二、源码已证明的结论</h2>
+<ul>
+<li><strong>轨迹重着色（构造型）。</strong>
+<ul>
+<li><code>colour_path</code> 按每次出现时的当前输入，把 β 换成 <code>β_{piece_at(输入)}</code>；同一路径上不同次出现可选不同子节点。</li>
+<li><code>coloured_terminal</code> 证明重着色后仍是终止轨迹，<code>coloured_eval</code> 证明输出不变。</li>
+<li><code>network_path_projection</code>（:249）证明路径长度不变。</li>
+<li><code>choice_next_mem</code> 证明路由合法。</li>
+</ul>
+</li>
+<li><strong>关系型的证明链。</strong> 它只用到算子逐点一致（<code>node_eval_eq</code>）和实际输出上的路由相容（<code>choice_projection</code>）。依次得到 <code>terminal_projection</code>、<code>terminal_path_unique</code>、<code>path_projection</code> 和 <code>eval_projected</code>，最后给出 <code>NetworkRefinement.path_eval_eq</code> 与 <code>refinement_preserves_local_equivalence</code>。</li>
+<li><strong>未被使用的字段。</strong> <code>piece_nonempty/disjoint/cover</code>、<code>source_injective</code>、<code>old_node_present</code>、<code>piece_node_present_iff_reached</code>、<code>part_count_pos</code> 在全库任何证明里都没有被使用。关系型定理其实是对任何&quot;投影模拟&quot;的 N′ 成立的更一般结果。</li>
+</ul>
+<h2>三、需要补充的内容</h2>
+<p>以下 S1、S2、S3 是宣称&quot;与正文定义一一对应&quot;所必需的，S4 是建议。除 S3 的反例用 Lean 核验外，其余补充我在附件之外的草稿中用 Lean 证明并编译通过，未改动附件。</p>
+<p><strong>S1 桥接引理缺失。</strong></p>
+<ul>
+<li>需要补：<code>NodePartitionData.toRefinement : NodeDomainRefinement N P.network</code>。</li>
+<li>影响：没有它，<code>NetworkRefinement</code> 层的结论（如 <code>refinement_preserves_representation</code>）无法用于正文的那个加细操作，关系型对真实加细是否空洞也无从判断。</li>
+<li>我已证明它成立，因此不空洞。证明要点如下：
+<ul>
+<li><code>old_node_present</code>：非 target 标签在着色下不变，而 <code>N.node_reachable</code> 给出它出现在某条路径上。</li>
+<li><code>piece_node_present_iff_reached</code>：<code>inr a ∈ colour_path p y ↔ ∃ n, p[n]=target ∧ piece_at(前缀求值)=a</code>。前缀输入属于 <code>node_dom target</code>，由 <code>terminal_path_prefix_input_mem</code> 给出，所以 <code>piece_at = a ↔ ∈ piece a</code>。</li>
+<li><code>choice_projection</code>（关键）：
+<ul>
+<li>设 z 是节点 v 的实际输出，y 是对应的实际输入。由 <code>network_path_projection</code>，有 <code>N.path_of x = pref.map π ++ π v :: suffix.map π</code>。再用&quot;前缀求值相等&quot;得 y = N 沿投影前缀的求值。</li>
+<li>若 <code>N.choice (π v) z = stop</code>，则两侧路由都是 stop。</li>
+<li>若为 <code>next u</code>，<code>terminal_path_suffix_of_next_at_prefix</code> 说明 u 紧随 <code>π v</code>，所以着色路径中出现 <code>lift u z</code>，它是 <code>Reached</code> 的，<code>prune_choice</code> 不会把该边改成 stop，投影后为 <code>next u</code>。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>S2 显式公式未成定理。</strong> 对保留节点，我证明了：</p>
+<pre><code class="language-lean">entry_domain ⟨inl β⟩   = N.entry_domain β
+entry_domain ⟨inr a⟩   = N.entry_domain target ∩ P.piece a
+edge_domain ⟨inl γ⟩ ⟨inl δ⟩ = N.edge_domain γ δ
+edge_domain ⟨inl γ⟩ ⟨inr a⟩ = N.edge_domain γ target ∩ P.piece a
+edge_domain ⟨inr a⟩ ⟨inl δ⟩ = N.edge_domain target δ ∩ (P.local_op a).func '' P.piece a
+edge_domain ⟨inr a⟩ ⟨inr b⟩ = N.edge_domain target target ∩ (P.local_op a).func '' P.piece a ∩ P.piece b
+</code></pre>
+<ul>
+<li>这几条与正文公式逐字一致；入边那条用到 <code>D_{γ→β} ⊆ U_β</code>，所以 <code>piece_at z = a ↔ z ∈ U_{β,a}</code>。</li>
+<li>另有：旧节点全部保留（<code>Reached (inl β)</code>），子节点保留当且仅当 <code>NodePieceReached</code>。</li>
+<li>终止域在删除后只有 <code>T′ ⊇ f_{β,a}(U_{β,a}) ∩ T_β</code>，等号仅在删除前成立。正文的证明也是&quot;先考察尚未删除冗余节点的数据&quot;。</li>
+<li>反映这一点的例子（手算，未用 Lean 核验）：X={0,1,2,3}，f:1↦1, 2↦3, 3↦3，U={1}，自环 D={3}，分划 {1,2}、{3}。删除前 T′_a={1}，删除后 T′_a={1,3}。</li>
+<li>影响：没有这些定理，就无法在 Lean 里对照检查 <code>P.network</code> 是否正是正文的 N′。后续章节（有效边域、矩阵证书沿加细边传递等）依赖这些公式。</li>
+</ul>
+<p><strong>S3 关系型严格弱于正文定义（反例）。</strong> <code>choice_projection</code> 只约束&quot;实际输出&quot;（删除冗余后必须如此），因此在从未产生的输出点上，N′ 的边域和终止域可以任意。</p>
+<ul>
+<li>反例数据：X=Fin 4，⊥=0，单节点 β，f=id（dom={1,2,3}），U={1}。
+<ul>
+<li>N：choice 恒为 stop，无边。</li>
+<li>N′：只把输出 2、3 处的路由改为 <code>next β</code>，即自环，转移域 {2,3}。</li>
+<li>N′ 在正文意义下合法：{2,3} ⊆ f(U_β)∩U_β；输入 1 的轨迹仍是 (β,1) 且 1 在终止域 {1} 内；该自环从不被走。</li>
+</ul>
+</li>
+<li>在 Lean 中我构造了 <code>NodeDomainRefinement N N′</code>（q=1，piece={1,2,3}，其余字段平凡；<code>choice_projection</code> 只需检查实际输出 1，两边都是 stop）。</li>
+<li>按正文，N 的任何节点域加细都没有边，因为每个 <code>D′</code> 都含因子 <code>D_{β→β}=∅</code>。我也在 Lean 里证明了 <code>∀ P v w, P.network.edge_domain v w = ∅</code>，而 <code>2 ∈ N′.edge_domain β β</code>。</li>
+<li>所以 N′ 属于关系型，却不是正文的任何一次节点域加细，哪怕允许重命名。</li>
+<li>影响：
+<ul>
+<li>命题仍然真，因为关系型是更一般的模拟关系。</li>
+<li>但它不能当作&quot;一步加细&quot;的定义。若用它定义规则族 R，平凡分划下 N→N′ 这种仅改动未使用路由的扰动也算加细，会改变&quot;不可约代表&quot;的含义，也与 <code>NetworkObject</code> 按 <code>presentation_data</code>（含 <code>edge_domain</code>）区分对象的做法冲突。</li>
+<li>目前 <code>IrreducibleRepresentative</code> 对 R 是抽象的，故源码内暂无误用，属潜在风险。</li>
+</ul>
+</li>
+<li>修复方向：
+<ul>
+<li>要么把加细定义为 <code>∃ P e, (N′.relabel e).presentation_data = P.network.presentation_data</code>，这样命题可由 <code>presentation_data_eq_extensional_operator</code>、<code>relabel_extensional_operator</code> 和 <code>network_extensional_eq</code> 直接得到。</li>
+<li>要么在关系型里加入 S2 的公式。</li>
+<li>保留现有弱关系，但改名为&quot;行为模拟&quot;，并修正 <code>NodeDomainRefinement</code> 的文档（现写 &quot;domain intersections in the text&quot;，与字段不符）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>S4 建议补充（均为形式或附带结论，不影响命题）。</strong></p>
+<ul>
+<li><code>NetworkRefinement</code> 结论可封装为 <code>FiniteOperatorNetwork.ExtensionalEquivalent</code>，对象层可借 <code>encode_extensional_operator</code> 得到 <code>NetworkObject.ExtensionalEquivalent</code>。目前源码没有用这两个定义。</li>
+<li>求值深度 <code>P.network.evaluation_depth = N.evaluation_depth</code>：我已证明，由 <code>network_path_projection</code> 逐输入长度相等得到。</li>
+<li><code>trivialPartition</code> 证明对任意节点都存在分划（分划不会空缺）。</li>
+</ul>
+<h2>四、不构成缺陷的设计</h2>
+<ul>
+<li><code>choice_projection</code> 限于实际输出：删除冗余子节点会改变从未产生的输出上的路由，所以这是必要的弱化，反例与 S3 的具体论证已给出。</li>
+<li>构造型结论是算子相等而不只是 <code>≡_U</code>，两者在域外都取 ⊥，故强于正文。</li>
+<li><code>count_pos</code> 冗余，因为 <code>node_dom_nonempty</code> 已蕴含它。</li>
+<li>不要求显式假设 U 非空：加细节点存在，则 V 非空，故 U 非空。</li>
+</ul>
+<h2>五、核验记录</h2>
+<ul>
+<li>工程内：<code>lake build formal_oet</code> 成功；对 <code>refinement_preserves_local_equivalence</code>、<code>refinement_preserves_representation</code>、<code>network_extensional_eq</code>、<code>network_path_projection</code>、<code>self_loop_choice_iff</code> 运行 <code>#print axioms</code>，仅有标准公理。</li>
+<li>工程外草稿（<code>import</code> 附件模块，均以标准公理编译通过）：
+<ul>
+<li><code>toRefinement</code>（S1）。</li>
+<li>公式引理：入口片 2 条，边域 4 条（S2）。</li>
+<li><code>network_evaluation_depth</code>、<code>trivialPartition</code>（S4）。</li>
+<li>反例 <code>exN</code>、<code>exN'</code>、<code>exRef</code> 及 <code>exN_all_refined_edges_empty</code>（S3）。</li>
+</ul>
+</li>
+<li>未审阅代数加细及其他章节。</li>
+</ul>
+</div>

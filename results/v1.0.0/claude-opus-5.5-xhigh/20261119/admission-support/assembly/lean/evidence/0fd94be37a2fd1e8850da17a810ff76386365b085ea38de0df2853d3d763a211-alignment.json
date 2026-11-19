@@ -1,0 +1,121 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.IsLipMatrix"},
+        {"file": "Main.lean", "name": "LCH01.lipMatrices"},
+        {"file": "Main.lean", "name": "LCH01.IsRestrictedLipMatrix"},
+        {"file": "Main.lean", "name": "LCH01.restrictedLipMatrices"},
+        {"file": "Main.lean", "name": "LCH01.mem_lipMatrices_iff"},
+        {"file": "Main.lean", "name": "LCH01.mem_restrictedLipMatrices_iff"},
+        {"file": "Main.lean", "name": "LCH01.restrictedLipMatrices_dom"},
+        {"file": "Main.lean", "name": "LCH01.lip_term_eq_zero_of_dist_eq_zero"},
+        {"file": "Main.lean", "name": "LCH01.lip_ineq_of_entry_eq_top"}
+      ],
+      "representation": "对象：X 为带吸收元 bot 的类型，算子 ϕ : Operator X bot（冻结模块），dom ϕ 为冻结模块的定义域，规范族 {d_i} 为 d : I → X → X → ENNReal，有限指标集为 [Fintype I]，矩阵 L : BoundMatrix I = Matrix I I ENNReal（条目在 [0,+∞]，自动非负，允许 +∞），条目 L_{i→j} = entry L i j。全域 Lip 谓词 IsLipMatrix d ϕ L：∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j, d j (ϕ x) (ϕ y) ≤ ∑ i, entry L i j * d i x y，与正文量词与不等式一致；证书族 𝓛(ϕ) = lipMatrices d ϕ（集合）。受限谓词 IsRestrictedLipMatrix d ϕ U L：正文前提 U ⊆ dom(ϕ)（字段 subset_dom）且 ∀ x y ∈ U, ∀ j 同一不等式（字段 le）；证书族 𝓛(ϕ)|_U = restrictedLipMatrices d ϕ U（U ⊄ dom ϕ 时为空集，属全函数化处理）。mem_*_iff 给出展开形式；restrictedLipMatrices_dom 证明 𝓛(ϕ)|_{dom ϕ} = 𝓛(ϕ)。广义 Lip 约定（0·(+∞)=0；L_{i→j}=+∞ 且 d_i>0 时不等式平凡成立）由 lip_term_eq_zero_of_dist_eq_zero、lip_ineq_of_entry_eq_top 形式化。这里只定义集合，不预设存在实现下确界的指定矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.IsRestrictedCoLipMatrix"},
+        {"file": "Main.lean", "name": "LCH01.restrictedCoLipMatrices"},
+        {"file": "Main.lean", "name": "LCH01.mem_restrictedCoLipMatrices_iff"},
+        {"file": "Main.lean", "name": "LCH01.nonempty_of_mem_restrictedCoLipMatrices"},
+        {"file": "Main.lean", "name": "LCH01.restrictedCoLipMatrices_empty"}
+      ],
+      "representation": "受限 co-Lip 谓词 IsRestrictedCoLipMatrix d ϕ U K 有三个字段：subset_dom : U ⊆ dom ϕ；nonempty : U.Nonempty（即正文的 U ≠ ∅）；ge : ∀ x ∈ U, ∀ y ∈ U, ∀ j, ∑ i, entry K i j * d i x y ≤ d j (ϕ x) (ϕ y)（即 d_j(ϕx,ϕy) ≥ ∑_i K_{i→j} d_i(x,y)）。下界证书族 𝓚(ϕ)|_U = restrictedCoLipMatrices d ϕ U。正文要求凡出现 𝓚(ϕ)|_U 均含非空条件：由 nonempty_of_mem_restrictedCoLipMatrices 体现，restrictedCoLipMatrices_empty 证明 𝓚(ϕ)|_∅ = ∅。mem_restrictedCoLipMatrices_iff 给出展开的合取形式。不预设存在实现上确界的指定矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.BoundMatrix"},
+        {"file": "Main.lean", "name": "LCH01.entry"},
+        {"file": "Main.lean", "name": "LCH01.entry_apply"},
+        {"file": "Main.lean", "name": "LCH01.row_eq_entries"},
+        {"file": "Main.lean", "name": "LCH01.col_eq_entries"},
+        {"file": "Main.lean", "name": "LCH01.fin_three_layout"},
+        {"file": "Main.lean", "name": "LCH01.fin_three_entry_two_to_one"},
+        {"file": "Main.lean", "name": "LCH01.entry_mul"},
+        {"file": "Main.lean", "name": "LCH01.entry_one"},
+        {"file": "Main.lean", "name": "LCH01.sum_entry_mul_sum"},
+        {"file": "Main.lean", "name": "LCH01.ennreal_conventions"}
+      ],
+      "representation": "以输出分量为行、输入分量为列：BoundMatrix I = Matrix I I ENNReal，entry M i j := M j i，即 (𝐋)_{ji} = L_{i→j}（entry_apply）。第 j 行汇集指向输出 d_j 的系数（row_eq_entries），第 i 列汇集来自输入 d_i 的系数（col_eq_entries）。I={1,2,3} 的行列排布示例用 Fin 3（0,1,2 对应 d_1,d_2,d_3）给出：fin_three_layout 是 3×3 排布，fin_three_entry_two_to_one 说明 L_{2→1} 位于第一行第二列。乘法取 mathlib 矩阵乘法 M₂ * M₁，entry_mul 证明 (𝐋^{(2)}·𝐋^{(1)})_{i→j} = ∑_k L^{(2)}_{k→j} L^{(1)}_{i→k}；entry_one 给出单位矩阵条目；sum_entry_mul_sum 证明先用 𝐋^{(1)} 再用 𝐋^{(2)} 作用于向量 v，等于乘积矩阵直接作用（在 [0,+∞] 中交换有限和）。ennreal_conventions 记录 [0,+∞] 算术约定：0·∞=0，a>0 时 a·∞=∞，a+∞=∞。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.ComponentChannel"},
+        {"file": "Main.lean", "name": "LCH01.ComponentChannel.input"},
+        {"file": "Main.lean", "name": "LCH01.ComponentChannel.output"},
+        {"file": "Main.lean", "name": "LCH01.channelCoeff"},
+        {"file": "Main.lean", "name": "LCH01.channelCoeff_mk"},
+        {"file": "Main.lean", "name": "LCH01.bound_sum_eq_sum_erase_of_channelCoeff_eq_zero"},
+        {"file": "Main.lean", "name": "LCH01.RowSingleInput"},
+        {"file": "Main.lean", "name": "LCH01.isDiag_iff_forall_rowSingleInput"}
+      ],
+      "representation": "分量通道 (i,j) 表示为有序对 ComponentChannel I := I × I，input 取第一分量 i（输入 d_i），output 取第二分量 j（输出 d_j）。通道系数 channelCoeff M (i,j) = L_{i→j}（channelCoeff_mk）。正文“系数为零时相应项不参与该上界”由 bound_sum_eq_sum_erase_of_channelCoeff_eq_zero 形式化：∑_k L_{k→j} d_k = ∑_{k≠i} L_{k→j} d_k。单行稀疏“第 j 行除 L_{i→j} 外均为零”为 RowSingleInput M i j := ∀ k ≠ i, entry M k j = 0。对角矩阵取 mathlib 的 Matrix.IsDiag（Pairwise，非对角条目为 0）；isDiag_iff_forall_rowSingleInput 证明它等价于每个输出 j 的行只保留同分量通道 (j,j)。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.row_sum_eq_single"},
+        {"file": "Main.lean", "name": "LCH01.lip_row_single_input"},
+        {"file": "Main.lean", "name": "LCH01.lip_row_single_input_le"},
+        {"file": "Main.lean", "name": "LCH01.lip_diagonal"},
+        {"file": "Main.lean", "name": "LCH01.lip_row_single_input_textbook"}
+      ],
+      "representation": "前提：L ∈ restrictedLipMatrices d ϕ U（即 𝓛(ϕ)|_U，已含 U ⊆ dom ϕ），以及 RowSingleInput L i j（第 j 行除 L_{i→j} 外为零）。结论（lip_row_single_input）：∀ x ∈ U, ∀ y ∈ U, d_j(ϕx,ϕy) ≤ ∑_k L_{k→j} d_k(x,y) 且 ∑_k L_{k→j} d_k(x,y) = L_{i→j} d_i(x,y)，与正文的不等式-等式链一致；lip_row_single_input_le 是合并后的 d_j(ϕx,ϕy) ≤ L_{i→j} d_i(x,y)。代数核心为 row_sum_eq_single。对角特例 lip_diagonal：若 L.IsDiag，则对每个 i 和所有 x,y ∈ U，链式结论对通道 (i,i) 成立。主定理对任意分量族 d 成立，不需要伪度量公理；lip_row_single_input_textbook 补回原文完整语境（[Nonempty I]、∀ i, ExtendedPseudoMetric X bot (d i)、U ⊆ dom ϕ），并同时给出一般行化简与对角特例。",
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.coLip_single_term_le"},
+        {"file": "Main.lean", "name": "LCH01.coLip_pos_channel"},
+        {"file": "Main.lean", "name": "LCH01.coLip_pos_channel_textbook"}
+      ],
+      "representation": "命题 2.8(i)。前提：K ∈ restrictedCoLipMatrices d ϕ U（即 𝓚(ϕ)|_U，含 U ⊆ dom ϕ 与 U 非空），以及 0 < entry K i j（K_{i→j} > 0）。结论：∀ x ∈ U, ∀ y ∈ U, 0 < d i x y → 0 < d j (ϕ x) (ϕ y)。证明路线与原文一致：coLip_single_term_le 给出 K_{i→j} d_i(x,y) ≤ ∑_k K_{k→j} d_k(x,y) ≤ d_j(ϕx,ϕy)（co-Lip 不等式加非负性），再由 ENNReal.mul_pos 得到严格正。主定理对任意分量族成立；coLip_pos_channel_textbook 补回规范空间语境（[Nonempty I] 与伪度量公理）。",
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.coLip_reflects_gaugeZeroRelated"},
+        {"file": "Main.lean", "name": "LCH01.coLip_reflects_gaugeZeroRelated_textbook"},
+        {"file": "Main.lean", "name": "LCH01.ceDist"},
+        {"file": "Main.lean", "name": "LCH01.ceDist_isExtendedPseudoMetric"},
+        {"file": "Main.lean", "name": "LCH01.ceOp"},
+        {"file": "Main.lean", "name": "LCH01.ceDom"},
+        {"file": "Main.lean", "name": "LCH01.ce_one_mem_restrictedCoLipMatrices"},
+        {"file": "Main.lean", "name": "LCH01.coLip_reflects_not_point_eq"}
+      ],
+      "representation": "命题 2.8(ii)。前提：K ∈ 𝓚(ϕ)|_U，且 ∀ j, 0 < entry K j j（全部对角条目 K_{j→j} > 0）。结论（coLip_reflects_gaugeZeroRelated）：∀ x ∈ U, ∀ y ∈ U, GaugeZeroRelated d (ϕ x) (ϕ y) → GaugeZeroRelated d x y，即 ϕ(x) ∼_𝒢 ϕ(y) ⇒ x ∼_𝒢 y。族零距关系使用冻结模块的 GaugeZeroRelated。结论只到族零距关系，没有加强为 x = y。证明同原文：固定 j，若 d_j(x,y) > 0，则由 P20 用通道 (j,j) 得到矛盾。附加的反例 coLip_reflects_not_point_eq 说明点相等确实不成立：非分离空间 Option Bool（bot = none，ceDist 满足 ExtendedPseudoMetric），ceOp 为恒等算子，ceDom = {some false, some true} ⊆ dom，单位矩阵 1 ∈ 𝓚(ceOp)|_{ceDom} 且对角为正，但 some false ∼ some true 且两点不同。textbook 版本补回规范空间语境。",
+      "dependencies": ["CH02-D02", "CH02-D03", "CH02-P20"]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {"file": "Main.lean", "name": "LCH01.scalar_two_sided_bound"},
+        {"file": "Main.lean", "name": "LCH01.scalar_two_sided_bound_textbook"}
+      ],
+      "representation": "习题 2.2。对象：ϕ : Operator X bot，U : Set X，j : I，L ∈ restrictedLipMatrices d ϕ U（𝓛(ϕ)|_U），K ∈ restrictedCoLipMatrices d ϕ U（𝓚(ϕ)|_U）。前提：∀ k ≠ j, entry L k j = 0（L_{k→j} = 0，定义上等于 RowSingleInput L j j）。正文的 U ⊆ dom(ϕ) 已包含在两个证书族的成员关系中；textbook 版本另外把它和规范空间公理作为显式前提列出。结论：∀ x ∈ U, ∀ y ∈ U, K_{j→j}·d_j(x,y) ≤ d_j(ϕx,ϕy) ∧ d_j(ϕx,ϕy) ≤ L_{j→j}·d_j(x,y)。证明：上界取 P19 中 i = j 的单行化简（lip_row_single_input_le）；下界用 P20 中的 coLip_single_term_le（单项 ≤ 和 ≤ 像距）。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D07", "CH02-P19", "CH02-P20"]
+    }
+  ]
+}

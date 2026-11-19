@@ -1,0 +1,177 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "deepseek-v4.1-flash-1017",
+  "record_id": "20261110",
+  "source_record": {
+    "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261110/record.json",
+    "bytes": 17790,
+    "sha256": "0132d043b328e8d2b95403c9f15a999aff64b2ad82bb7ce2f0934c6823679637"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "b5a3139b701b79bf6315d04bfaba1cf39de7029dcbf2297044d9e63aa60761db",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 0,
+    "total_groups": 0,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+      "original_task": {
+        "strict_pass": false,
+        "completion": {
+          "lower": 0.69,
+          "upper": 0.69,
+          "exact": 0.69
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "已从源序全文独立筛查所有定义、定理、推论、例子、讨论与开放问题；随后才核对旧总括排除。普通任务完成、修正必需错误、必要证明、定义展开与简单代入均不计。主任务失败不自动否定独立额外成果；下面分别记录正确必需工作、直接推论及错误/未证明附带结论。value无论高低均不进入中性观察门槛。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "逐对上下斜率、零类商与幂集零化",
+          "statement": "逐对正有限距离比值给上下读出；零类保持等价于商良定；幂集布尔矩阵记录合取的零距蕴含。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "M1-M6所需上下控制、∞/零距和不可分辨基本框架。",
+          "proof_review": "比值sup/inf只在明确的正有限输入距离上量化；下界单独加入无限输入输出有限时强制0。零类商良定就是代表元条件；幂集C只增大已给输入零关系族。源文常值下矩阵等退化泛称另行排除，不作正确性背书。",
+          "nontrivial_step": "完成被要求的矩阵化与非分离处理。",
+          "value_rationale": "本成果的用途限于所述研究情境；无文献首创主张，value不作为0.1中性观察的计数门槛。",
+          "reason": "正常框架，不计。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+              "start_byte": 1618,
+              "end_byte": 7797,
+              "quote": "## 2. 上 Lipschitz 矩阵\n\n### 定义 2.1（上 Lipschitz 矩阵）\n\n对 \\(i,j\\in I\\)，令\n\n\\[\nu_{ji}(\\phi)\n:=\n\\sup_{\\substack{x,y\\in\\operatorname{dom}(\\phi)\\\\ 0<d_i(x,y)<\\infty}}\n\\frac{d_j(\\phi x,\\phi y)}{d_i(x,y)},\n\\qquad \\sup\\varnothing:=0.\n\\]\n\n称\n\n\\[\nU(\\phi):=(u_{ji}(\\phi))_{j,i\\in I}\\in \\overline{\\mathbb R}_+^{I\\times I}\n\\]\n\n为 \\(\\phi\\) 的**上 Lipschitz 矩阵**，其行指标为输出分量 \\(j\\)，列指标为输入分量 \\(i\\)。\n\n### 命题 2.2（逐分量上界）\n\n对任意 \\(x,y\\in\\operatorname{dom}(\\phi)\\) 与 \\(i,j\\in I\\)，若 \\(0<d_i(x,y)<\\infty\\)，则\n\n\\[\nd_j(\\phi x,\\phi y)\\le u_{ji}(\\phi)\\,d_i(x,y).\n\\]\n\n若存在 \\(i\\) 使 \\(0<d_i(x,y)<\\infty\\)，则\n\n\\[\nd_j(\\phi x,\\phi y)\n\\le \\min_{\\substack{i:\\,0<d_i(x,y)<\\infty}} u_{ji}(\\phi)d_i(x,y)\n\\le \\max_{i\\in I}u_{ji}(\\phi)d_i(x,y)\n\\le \\sum_{i\\in I}u_{ji}(\\phi)d_i(x,y).\n\\]\n\n**证明.** 第一式由 \\(u_{ji}\\) 作为商的上确界直接得到。对第二式，对每个满足 \\(0<d_i(x,y)<\\infty\\) 的 \\(i\\) 都有第一式，故输出不超过这些上界的极小值；而极小值不超过最大值，且非负项的最大值不超过和。证毕。\n\n**意义.**\n\n- \\(u_{ji}<\\infty\\)：第 \\(i\\) 个输入分量到第 \\(j\\) 个输出分量有有限上控制。\n- \\(u_{ji}=+\\infty\\)：该方向上的商无界，即没有有限 Lipschitz 控制；这正是“支持 \\(\\infty\\)”的位置。\n- 在 \\(0<d_i<\\infty\\) 上，\\(u_{ji}\\) 是最小的上常数：任何满足 \\(d_j(\\phi x,\\phi y)\\le a d_i(x,y)\\) 的 \\(a\\) 都必须 \\(\\ge u_{ji}\\)。\n- 注意 \\(u_{ji}\\) 只控制正距离对。若 \\(d_i(x,y)=0\\) 而输出 \\(d_j(\\phi x,\\phi y)>0\\)，这不是靠把 \\(u_{ji}\\) 改成 \\(+\\infty\\) 能修补的，因为按题设算术 \\(0\\cdot(+\\infty)=0\\)。这类“零类被打散”的信息由第 4 节的 \\(K(\\phi)\\) 记录。\n\n---\n\n## 3. 下 Lipschitz 矩阵\n\n### 定义 3.1（下 Lipschitz 矩阵）\n\n先令\n\n\\[\n\\ell^0_{ji}(\\phi)\n:=\n\\inf_{\\substack{x,y\\in\\operatorname{dom}(\\phi)\\\\ 0<d_i(x,y)<\\infty}}\n\\frac{d_j(\\phi x,\\phi y)}{d_i(x,y)},\n\\qquad \\inf\\varnothing:=+\\infty.\n\\]\n\n再并入无限输入边界：\n\n\\[\n\\ell_{ji}(\\phi):=\n\\begin{cases}\n0,&\\text{若存在 }x,y\\in\\operatorname{dom}(\\phi)\n\\text{ 使 }d_i(x,y)=\\infty,\\ d_j(\\phi x,\\phi y)<\\infty,\\\\[2mm]\n\\ell^0_{ji}(\\phi),&\\text{否则}.\n\\end{cases}\n\\]\n\n称\n\n\\[\nL(\\phi):=(\\ell_{ji}(\\phi))_{j,i\\in I}\n\\]\n\n为 \\(\\phi\\) 的**下 Lipschitz 矩阵**。\n\n### 命题 3.2（逐分量下界）\n\n对任意 \\(x,y\\in\\operatorname{dom}(\\phi)\\)、\\(i,j\\in I\\)，只要 \\(d_i(x,y)>0\\)，就有\n\n\\[\nd_j(\\phi x,\\phi y)\\ge \\ell_{ji}(\\phi)\\,d_i(x,y).\n\\]\n\n从而对任意 \\(x,y\\in\\operatorname{dom}(\\phi)\\)，包括全零对，\n\n\\[\nd_j(\\phi x,\\phi y)\n\\ge \\max_{i\\in I}\\ell_{ji}(\\phi)d_i(x,y).\n\\]\n\n**证明.** 若 \\(0<d_i(x,y)<\\infty\\)，由下确界定义，\\(\\ell_{ji}\\le d_j(\\phi x,\\phi y)/d_i(x,y)\\)，即得。若 \\(d_i(x,y)=\\infty\\)：\n\n- 当 \\(d_j(\\phi x,\\phi y)<\\infty\\) 时，按定义 \\(\\ell_{ji}=0\\)，右边为 \\(0\\)；\n- 当 \\(d_j(\\phi x,\\phi y)=\\infty\\) 时，若 \\(\\ell_{ji}\\) 有限，则 \\(\\ell_{ji}\\cdot\\infty=\\infty\\)；若 \\(\\ell_{ji}=\\infty\\)，也有 \\(\\infty\\cdot\\infty=\\infty\\)。故不等式成立。\n\n若 \\(d_i(x,y)=0\\)，右边为 \\(0\\)，不等式自动成立。证毕。\n\n**意义.**\n\n- \\(\\ell_{ji}>0\\)：第 \\(i\\) 个输入分量上的正距离必然导致第 \\(j\\) 个输出分量上的正距离，且至少有线性增长率 \\(\\ell_{ji}\\)。这是共 Lipschitz/扩张型下界。\n- \\(\\ell_{ji}=0\\)：没有正下界；可能把第 \\(i\\) 个方向上的可区分性完全压掉。\n- \\(\\ell_{ji}=+\\infty\\)：只要第 \\(i\\) 个输入距离为正，第 \\(j\\) 个输出距离就为 \\(+\\infty\\)（或在有限部分为空时作为空下确界的约定）。\n- 在有限正距离上，\\(\\ell_{ji}\\) 是**最大的**下常数：任何满足 \\(d_j(\\phi x,\\phi y)\\ge b d_i(x,y)\\) 的 \\(b\\) 都必须 \\(\\le\\ell_{ji}\\)。\n\n特别地，若\n\n\\[\n0<\\ell_{ji}(\\phi)\\le u_{ji}(\\phi)<\\infty,\n\\]\n\n则在不计零距离对时，第 \\(i\\) 个输入分量与第 \\(j\\) 个输出分量是双向控制的：\n\n\\[\n\\ell_{ji}d_i(x,y)\n\\le d_j(\\phi x,\\phi y)\n\\le u_{ji}d_i(x,y)\n\\qquad(0<d_i(x,y)<\\infty).\n\\]\n\n---\n\n## 4. 不可分辨矩阵：零距离的传播\n\n上、下矩阵只处理正距离。伪度量空间里还必须记录：哪些输入零类被送到哪些输出零类。\n\n### 定义 4.1（不可分辨矩阵）\n\n定义 Boolean 矩阵\n\n\\[\nK(\\phi)=(k_{ji}(\\phi))_{j,i\\in I}\\in\\{0,1\\}^{I\\times I}\n\\]\n\n为\n\n\\[\nk_{ji}(\\phi)=1\n\\iff\n\\forall x,y\\in\\operatorname{dom}(\\phi),\\quad\nd_i(x,y)=0\\Longrightarrow d_j(\\phi x,\\phi y)=0.\n\\]\n\n其行指标为输出分量 \\(j\\)，列指标为输入分量 \\(i\\)。\n\n### 命题 4.2（零类诱导映射）\n\n\\(k_{ji}(\\phi)=1\\) 当且仅当 \\(\\phi\\) 诱导出良定义的映射\n\n\\[\n\\overline\\phi_{ji}:\n\\operatorname{dom}(\\phi)/\\!\\sim_i\n\\longrightarrow\n\\mathcal X/\\!\\sim_j,\n\\qquad\n[x]_i\\mapsto[\\phi x]_j.\n\\]\n\n即：只要 \\(x\\sim_i y\\)，就有 \\(\\phi x\\sim_j\\phi y\\)。\n\n**证明.** 这正是 \\(k_{ji}=1\\) 的定义；良定义性只需验证同一等价类中的代表元有相同像类。证毕。\n\n### 命题 4.3（与下界配合）\n\n若 \\(\\ell_{ji}(\\phi)>0\\) 且 \\(k_{ji}(\\phi)=1\\)，则对任意 \\(x,y\\in\\operatorname{dom}(\\phi)\\)，\n\n\\[\nd_i(x,y)=0\n\\iff\nd_j(\\phi x,\\phi y)=0.\n\\]\n\n因此 \\(\\overline\\phi_{ji}\\) 在零类上是单射。若进一步 \\(u_{ji}(\\phi)<\\infty\\)，则它是双 Lipschitz 嵌入：\n\n\\[\n\\ell_{ji}d_i(x,y)\n\\le d_j(\\phi x,\\phi y)\n\\le u_{ji}d_i(x,y),\n\\]\n\n其中零距离由 \\(k_{ji}=1\\) 保证，无限距离由扩展算术按上述约定处理。\n\n**证明.** 由 \\(k_{ji}=1\\)，若 \\(d_i(x,y)=0\\)，则 \\(d_j(\\phi x,\\phi y)=0\\)。反向，若 \\(d_j(\\phi x,\\phi y)=0\\)，而 \\(d_i(x,y)>0\\)：\n\n- 若 \\(0<d_i(x,y)<\\infty\\)，则 \\(\\ell_{ji}>0\\) 给出 \\(d_j(\\phi x,\\phi y)\\ge \\ell_{ji}d_i(x,y)>0\\)，矛盾；\n- 若 \\(d_i(x,y)=\\infty\\)，则按 \\(\\ell_{ji}>0\\) 的定义边界，不可能出现 \\(d_j(\\phi x,\\phi y)<\\infty\\)，故 \\(d_j(\\phi x,\\phi y)=0\\) 仍矛盾。\n\n故只能 \\(d_i(x,y)=0\\)。单射性由：不同 \\(i\\)-类有正距离，故输出正距离，不能落入同一 \\(j\\)-类。双 Lipschitz 不等式由第 2、3 节的逐分量估计及零距离结论合并得到。证毕。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "布尔/下界的基础复合",
+          "statement": "零关系通过中间分量/中间子集传递；实际下界逐步代入给max-times下界复合。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "不是原MCP003必需的完整迭代理论，但新增步骤仅蕴含传递与不等式代入。",
+          "proof_review": "在dom(ψφ)点对上，φ像属于domψ，选择布尔乘积见证中间子集即可串接两蕴含；下界用非负乘法单调性和已有逐分量下界。",
+          "nontrivial_step": "两次定义串接，无独立新结构/构造。",
+          "value_rationale": "本成果的用途限于所述研究情境；无文献首创主张，value不作为0.1中性观察的计数门槛。",
+          "reason": "正确直接推论，不计。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+              "start_byte": 8578,
+              "end_byte": 9380,
+              "quote": "### 命题 5.2（复合）\n\n设 \\(\\psi\\circ\\phi\\) 有意义。则\n\n\\[\nK(\\psi\\circ\\phi)\\succeq K(\\psi)\\odot K(\\phi),\n\\]\n\n其中 \\(\\odot\\) 是 Boolean 矩阵乘法：\n\n\\[\n(P\\odot Q)_{ki}=\\bigvee_{j\\in I}\\bigl(P_{kj}\\wedge Q_{ji}\\bigr).\n\\]\n\n更完整地，\n\n\\[\nC_{\\psi\\circ\\phi}(T,S)\n\\succeq\n\\bigvee_{S'\\subseteq I}\nC_\\psi(T,S')\\wedge C_\\phi(S',S).\n\\]\n\n**证明.** 若 \\(C_\\phi(S',S)=1\\)，则 \\(x\\sim_S y\\) 推出 \\(\\phi x\\sim_{S'}\\phi y\\)。若再有 \\(C_\\psi(T,S')=1\\)，则 \\(\\psi\\phi x\\sim_T\\psi\\phi y\\)。因此复合关系成立。\\(K\\) 的情形取 \\(S=\\{i\\}\\)、\\(S'=\\{j\\}\\)、\\(T=\\{k\\}\\) 即得。证毕。\n\n---\n\n## 6. 复合、单位元与基本运算\n\n定义 **max-plus 矩阵乘法**\n\n\\[\n(A\\boxtimes B)_{ki}\n:=\n\\max_{j\\in I} A_{kj}B_{ji},\n\\qquad A,B\\in\\overline{\\mathbb R}_+^{I\\times I}.\n\\]\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S03",
+          "group_id": "G03",
+          "title": "全零保持足以保证上斜率max-times复合",
+          "statement": "声称外层全零保持即保证对包括无限中间距离的场景有U(ψφ)≤U(ψ)⊠U(φ)。",
+          "scope": "beyond_required",
+          "correctness": "incorrect",
+          "nontrivial": true,
+          "value": "none",
+          "independent_of_errors": false,
+          "scope_delta": "这是对基础读出的额外组合强化，须正确处理正无限中间距离。",
+          "proof_review": "定义U只读取正有限输入距离；原证明把中间“某分量正”误当成可套用命题2.2要求的“某分量正且有限”。中间仅∞/0的场景没有该控制。可取离散有限源对经φ送至∞分离中间对，ψ在中间对保持不同输出、却在所有其余有限距离类上常值；Uψ可为0但复合正有限斜率>0，全零保持仍成立。该边界不能靠原布尔信息补齐。",
+          "nontrivial_step": "缺失无限中间距离分支，不补评审证明。",
+          "value_rationale": "本成果的用途限于所述研究情境；无文献首创主张，value不作为0.1中性观察的计数门槛。",
+          "reason": "不计所声称的一般复合定理。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+              "start_byte": 9380,
+              "end_byte": 12002,
+              "quote": "### 定理 6.1（复合律）\n\n设 \\(\\psi\\circ\\phi\\) 有意义。\n\n1. **下矩阵无条件次可乘：**\n\n\\[\nL(\\psi\\circ\\phi)\n\\succeq\nL(\\psi)\\boxtimes L(\\phi),\n\\]\n\n即\n\n\\[\n\\ell^{\\psi\\circ\\phi}_{ki}\n\\ge\n\\max_{j\\in I}\\ell^\\psi_{kj}\\ell^\\phi_{ji}.\n\\]\n\n2. **上矩阵在“全零保持”条件下次可乘。** 若 \\(\\psi\\) 满足\n\n\\[\n\\forall x,y\\in\\operatorname{dom}(\\psi),\\quad\n\\Big(\\forall j\\in I,\\ d_j(x,y)=0\\Big)\n\\Longrightarrow\n\\Big(\\forall k\\in I,\\ d_k(\\psi x,\\psi y)=0\\Big),\n\\]\n\n则对有限正输入距离有\n\n\\[\nu^{\\psi\\circ\\phi}_{ki}\n\\le\n\\max_{j\\in I}u^\\psi_{kj}u^\\phi_{ji}.\n\\]\n\n在通常的分离规范空间（全分量零距离仅当两点相同）中，该条件自动满足，于是\n\n\\[\nU(\\psi\\circ\\phi)\n\\preceq\nU(\\psi)\\boxtimes U(\\phi).\n\\]\n\n3. **不可分辨矩阵：**\n\n\\[\nK(\\psi\\circ\\phi)\n\\succeq\nK(\\psi)\\odot K(\\phi),\n\\qquad\nC_{\\psi\\circ\\phi}\n\\succeq\nC_\\psi\\odot C_\\phi.\n\\]\n\n**证明.**\n\n1. 取 \\(x,y\\in\\operatorname{dom}(\\psi\\circ\\phi)\\)，令 \\(z=\\phi x\\)、\\(w=\\phi y\\)。对任意 \\(j,k\\)，\n\n\\[\nd_k(\\psi z,\\psi w)\n\\ge \\ell^\\psi_{kj}d_j(z,w).\n\\]\n\n若 \\(d_j(z,w)>0\\)，则\n\n\\[\nd_j(z,w)\\ge \\ell^\\phi_{ji}d_i(x,y);\n\\]\n\n若 \\(d_j(z,w)=0\\)，右边下界为 \\(0\\)，上述不等式仍平凡成立。于是\n\n\\[\nd_k(\\psi\\phi x,\\psi\\phi y)\n\\ge\n\\ell^\\psi_{kj}\\ell^\\phi_{ji}d_i(x,y)\n\\]\n\n对每个 \\(j\\) 成立，故\n\n\\[\nd_k(\\psi\\phi x,\\psi\\phi y)\n\\ge\n\\Bigl(\\max_{j\\in I}\\ell^\\psi_{kj}\\ell^\\phi_{ji}\\Bigr)d_i(x,y).\n\\]\n\n由 \\(\\ell^{\\psi\\circ\\phi}_{ki}\\) 是最大下常数，即得第一式。\n\n2. 令 \\(z=\\phi x,w=\\phi y\\)。若 \\(z,w\\) 在某个分量上有正距离，则由命题 2.2 的聚合形式，\n\n\\[\nd_k(\\psi z,\\psi w)\n\\le\n\\max_{j\\in I}u^\\psi_{kj}d_j(z,w)\n\\le\n\\max_{j\\in I}u^\\psi_{kj}u^\\phi_{ji}d_i(x,y).\n\\]\n\n若所有 \\(d_j(z,w)=0\\)，即 \\(z,w\\) 完全不可分辨，则由 \\(\\psi\\) 的全零保持性，\\(\\psi z,\\psi w\\) 也完全不可分辨，输出距离为 \\(0\\)，不等式仍成立。对 \\(0<d_i(x,y)<\\infty\\) 取商的上确界，即得第二式。\n\n3. 已由命题 5.2 证明。证毕。\n\n> **注 6.2（全零保持条件不能随意去掉）。** 伪度量族不分离时，\\(\\phi\\) 可能把一个正距离对送进“全零但不同点”的类，随后 \\(\\psi\\) 又把这些不同点分开；这时只靠 \\(U(\\phi),U(\\psi)\\) 的数值无法控制。例如取 \\(I=\\{1\\}\\)，\\(d_1(a,b)=0\\)，\\(d_1(a,c)=d_1(b,c)=1\\)，令\n> \\[\n> \\phi(a)=b,\\quad \\phi(b)=a,\\quad \\phi(c)=a,\n> \\qquad\n> \\psi(a)=a,\\quad \\psi(b)=c,\\quad \\psi(c)=a.\n> \\]\n> 则 \\(u(\\phi)=0\\)、\\(u(\\psi)=1\\)，但 \\(u(\\psi\\circ\\phi)=1\\)，而 \\(u(\\psi)u(\\phi)=0\\)。此时 \\(K(\\psi)=0\\)，零矩阵正好记录了这个缺陷。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "现有核验尚未确认闭合且正确的数学成果，不计入已核实额外成果组。"
+        },
+        {
+          "id": "S04",
+          "group_id": "G04",
+          "title": "常值映射的下矩阵恒零",
+          "statement": "声称任意常值算子均有L=0。",
+          "scope": "required",
+          "correctness": "incorrect",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": false,
+          "scope_delta": "M4的退化边界。",
+          "proof_review": "若有效域为单点或d_i在有效域恒0，则定义下确界集合为空，且没有无限输入的有限输出反例，故ell_ji=∞，并非0。原文未加存在正输入距离条件。",
+          "nontrivial_step": "简单退化例否定泛称。",
+          "value_rationale": "本成果的用途限于所述研究情境；无文献首创主张，value不作为0.1中性观察的计数门槛。",
+          "reason": "不计。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+              "start_byte": 13165,
+              "end_byte": 13541,
+              "quote": "2. **常值算子**  \n   若 \\(\\phi(x)=x_0\\neq\\bot\\) 对所有 \\(x\\in\\operatorname{dom}(\\phi)\\)，则\n   \\[\n   U(\\phi)=0,\\qquad L(\\phi)=0,\\qquad K(\\phi)=\\mathbf 1\n   \\]\n   （所有 \\(k_{ji}=1\\)）。上矩阵为 \\(0\\) 表示像是零直径；下矩阵为 \\(0\\) 表示所有可区分性都被压掉；\\(K=\\mathbf 1\\) 表示每个输入零类都被送进每个输出零类。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

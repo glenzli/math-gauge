@@ -1,0 +1,35 @@
+{
+  "schema": "math-gauge.theorem-extension-calibration-review/v1",
+  "version": "0.1.0",
+  "case_id": "MG-TX001",
+  "answer_sha256": "d469e07c48f58722e0fae25bdcde49cb30c9fd109e967faa60a3df91c940f553",
+  "source_review_sha256": "56a0f0f7439ba6fbc83c074badac978333f93d7e1caef329ee0d3885a0b22593",
+  "baseline_B": 2,
+  "old_R": 2,
+  "new_R": 1,
+  "policy_sha256": "5c43272773477bceb43e1087c7f363e984300dc7d805f9ff946b0489e7ac76ab",
+  "standard_sha256": "8394afa8aa936ba4eb9cae937483fb3268a90ab52b9585a6ea977e17cbfa98d9",
+  "reviewer_kind": "ai",
+  "reviewer": [
+    "gpt-6-astra",
+    "Codex coordinator: source verification and cross-case adjudication"
+  ],
+  "human_review": "pending",
+  "post_observation": true,
+  "status": "reviewed",
+  "reason": "已证明局部锐性/边界信息，符合R1；按冻结尺度，单个特定支撑的取等族不因参数化而达到R2。",
+  "attained": "在支撑{0,1,2}上给出恰有两个单位根零点的严格锐性构造。\n范围：原素数幂范围；特定三元支撑的取等族，并非任意固定支撑插值。\n核验：所给二次多项式的两个指定根不同且属于mu_N；指数0,1,2满足原条件，因N为奇数相关系数不退化。证明统一上界可达，未建立任意支撑的逆问题。\n\n删除模p互异条件后存在三根的二项式反例。\n范围：N=9，支撑0,3,4，第三系数为0。\n核验：z^3−1的三个根均为九次单位根；反例有效，但不是所有支撑的必要充分分类。",
+  "not_attained": "未交付任意允许支撑/任意指定两根的完整插值、统一弱条件定理或同等实质拓展。",
+  "citations": [
+    {
+      "quote": "### 四、上界 2 的紧性（最优性）\n\n该结论的上界 $2$ 无法再降低。\n**反例/构造验证**：\n取 $p = 3, r = 2, N = 3^2 = 9$。\n取 $a_1 = 0, a_2 = 1, a_3 = 2$。此时 $a_1, a_2, a_3 \\pmod 3$ 分别为 $0, 1, 2$，两两不同。\n令 $\\omega = e^{2\\pi i / 9} \\in \\mu_9$。\n若我们希望 $z_1 = 1 \\in \\mu_9$ 与 $z_2 = \\omega \\in \\mu_9$ 均为根，只需令：\n$$P(z) = (z - 1)(z - \\omega) = \\omega - (1 + \\omega)z + z^2.$$\n取复系数 $c_1 = \\omega, c_2 = -(1 + \\omega), c_3 = 1$（均非零）。\n此时 $P(z)$ 作为二次多项式在全复平面上恰有两个根 $1$ 和 $\\omega$，且这两个根均属于 $\\mu_9$。\n因此满足条件的单位根个数恰好可以达到 $2$。\n\n---\n\n### 五、题设条件的必要性解析",
+      "start_byte": 5758,
+      "end_byte": 6514
+    },
+    {
+      "quote": "2. **为什么需要 $a_1, a_2, a_3 \\pmod p$ 两两不同？**\n   如果允许其中有两个数模 $p$ 同余，结论将不成立：\n   例如取 $p = 3, r = 2, N = 9$。\n   若取 $a_1 = 0, a_2 = 3, a_3 = 4$（此时 $a_1 \\equiv a_2 \\equiv 0 \\pmod 3$），取 $c_3 = 0, c_1 = -1, c_2 = 1$，则：\n   $$P(z) = z^3 - 1 = 0.$$\n   由于 $\\gcd(3, 9) = 3$，方程 $z^3 = 1$ 在 $\\mu_9$ 中有 $3$ 个根：$\\{1, e^{2\\pi i / 3}, e^{4\\pi i / 3}\\} \\subset \\mu_9$，打破了“至多两个根”的结论。\n   因此，要求 $a_i \\pmod p$ 两两不同，本质上排除了任何两项指数差被 $p$ 整除的可能，确保了单射性的成立。\n",
+      "start_byte": 6806,
+      "end_byte": 7455
+    }
+  ]
+}

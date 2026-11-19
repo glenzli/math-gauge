@@ -26,6 +26,21 @@ def embedded(value):
     return json.dumps(display_harness_labels(project_payload(value)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
 
 
+
+def background_source_review(folder, review_path, expected_sha256):
+    """Resolve the two retained BC layouts; damaged originals never fall back."""
+    review = Path(folder) / review_path
+    candidates = (review.parent / 'source-review.json',
+                  review.parent / review.stem / 'source-review.json')
+    path = next((candidate for candidate in candidates if retained_file(candidate)), None)
+    if path is None:
+        raise ValueError('Missing retained background detailed review in either fixed layout')
+    raw = retained_bytes(path)
+    if hashlib.sha256(raw).hexdigest() != expected_sha256:
+        raise ValueError('Background detailed review does not match its retained conversion')
+    return path, raw
+
+
 def source_link(source, page, label, *, root=None):
     root = Path(root or HERE.parent).resolve()
     source = Path(source)
@@ -95,7 +110,7 @@ def shell(page, title, subtitle, body, data, script, *, back=None, show_controls
         '<title>'+html.escape(title)+' · Math Gauge</title><link rel="stylesheet" href="'+local('assets/results.css')+'"></head><body>'
         '<header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="'+local('index.html')+'"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a>'
         '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-nav-method data-context-link href="'+local('method.html')+'">方法与数据</a></div>'+language_switch()+'</nav></header>'
-        '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v1.0.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
+        '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v<span data-edition-version>'+html.escape(data['benchmark_version'])+'</span></div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
         +review_status(data, prefix+'/method.html#review-process')+
         ('<section class="panel context-panel">'+controls(data)+'</section>' if show_controls else '')+body+
         '<footer class="footer"><span>Math Gauge</span><a data-context-link href="'+local('method.html')+'">方法与数据</a></footer></main>'
@@ -225,10 +240,7 @@ def public_evidence(folder, record, cid, condition, task):
                 primary = review_projection(json.loads(sources[-1]['raw']))
                 # Background R conversion binds the original, more detailed review.
                 if primary.get('source_review_sha256'):
-                    path = (folder / item['path']).parent / 'source-review.json'
-                    raw = retained_bytes(path)
-                    if hashlib.sha256(raw).hexdigest() != primary['source_review_sha256']:
-                        raise ValueError('Background detailed review does not match its retained conversion')
+                    path, raw = background_source_review(folder, item['path'], primary['source_review_sha256'])
                     item = {'path': str(path.relative_to(folder)), 'bytes': len(raw), 'sha256': primary['source_review_sha256']}
                     sources.append(descriptor(folder, item, role='source_review'))
         if row.get('missing_response_reason'):
@@ -357,6 +369,42 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
                 label+=' 待补原记录复核。'
             current += panel('提交来源','<div class="prose"><p>'+html.escape(label)+'</p></div>')
         current += panel('判定与主要理由', '<div class="prose"><ul class="findings">'+reasons+'</ul></div>')
+        initial = model.get('initial_assessment')
+        if initial and cid in {'MG-TX001','MG-TX002'}:
+            ref = next(r['review'] for r in initial['public_reviews'][condition] if r['case_id']==cid)
+            raw = evidence_bytes(root,ref)
+            wrapper = json.loads(raw)
+            label = 'B'+str(wrapper['baseline_B'])+' · R'+str(wrapper['research_R'])
+            content = '<div class="prose"><p><strong>'+html.escape(label)+'</strong></p>'
+            content += '<p data-lang-content="zh">1.1 初次评审，题目与执行来源为 1.0；没有旧版研究档位或旧版成绩。原始数学判断与答卷保持不变。</p>'
+            content += '<p data-lang-content="en" hidden>Initially assessed under 1.1, using tasks and execution from 1.0. No earlier-edition tier or score exists. Original judgments and answers are retained.</p></div>'
+            content += '<p class="panel-foot">'+source_link(ref['path'],page,'1.1 · Initial assessment ↗',root=root)+'</p>'
+            current += '<div data-assessment-only="1.1.0">'+panel('TX · 1.1',content)+'</div>'
+            item['sources'].append({'path':ref['path'],'sha256':ref['sha256'],
+                                    'role':'initial_assessment_binding','raw':raw})
+        calibration = model.get('tx_calibration')
+        if calibration and cid in {'MG-TX001','MG-TX002'}:
+            ref = next(r['review'] for r in calibration['public_reviews'][condition] if r['case_id']==cid)
+            raw = evidence_bytes(root,ref)
+            review = json.loads(raw)
+            old_r, new_r, baseline = review['old_R'], review['new_R'], review['baseline_B']
+            label = (('B'+str(baseline)+' · R'+str(old_r)+' → R'+str(new_r))
+                     if review['status']=='reviewed' else '未作研究档位复审 / No tier reassessment')
+            content = '<div class="prose"><p><strong>'+html.escape(label)+'</strong></p>'
+            if review['status']!='reviewed':
+                content += '<p data-lang-content="zh">没有可用于本轮档位复评的正常答卷，保留原交付与未知状态；不把无答卷解释为研究能力R0。</p>'
+                content += '<p data-lang-content="en" hidden>No normal final is available for this tier reassessment. Original delivery and unknown states are retained; an unavailable answer is not a mathematical R0 judgment.</p>'
+            content += '<p data-lang-content="zh">按研究增量最高已达档复评；B、原错误扣罚及提交来源保持。SMC要求原题正确且完整达到R3。B2/R0表示原题证明正确、尚无研究增量。</p>'
+            content += '<p data-lang-content="en" hidden>Reassessed by the highest attained research tier. Baseline, original error penalties and submission status are retained. TX SMC requires a correct baseline and a complete R3 research contribution. B2/R0 means the original proof is correct without additional research credit.</p>'
+            content += markdown.add(review['reason'])
+            content += '<details class="evidence-fold nested"><summary>R · 依据与边界 / Evidence and scope</summary>'
+            content += markdown.add(review['attained']+'\n\n**下一档 / Next tier：** '+review['not_attained'])
+            content += '</details></div><p class="panel-foot">'
+            content += source_link(ref['path'],page,'1.1 · AI review ↗',root=root)+' · '
+            content += source_link(calibration['policy']['path'],page,'R0–R3 ↗',root=root)+'</p>'
+            current += '<div data-assessment-only="1.1.0">'+panel('TX · 1.1',content)+'</div>'
+            item['sources'].append({'path':ref['path'],'sha256':ref['sha256'],
+                                    'role':'calibration_review','raw':raw})
         # Many Lean obligations belong in an expandable audit, while short proof criteria stay visible.
         selected_review = item['review']
         engineering = next((s.get('selected') for s in item['sources'] if s['role']=='engineering_review'), None)
@@ -489,7 +537,7 @@ def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_
         body += panel('重跑与来源备注', '<div class="prose">'
             +interface_paragraph(model['retry']['note'], model['retry'].get('note_en'), original=True)+'</div>'
             '<p class="panel-foot"><span>首答 MC / RMC / SMC：</span>'
-            +'<span class="mono">'+' / '.join(first)+'</span> · '
+            +'<span class="mono" data-first-attempt-scores>'+' / '.join(first)+'</span> · '
             '<a data-context-link href="../../method.html">查看方法与来源 →</a></p>',
             id='retry-provenance')
     body += panel('下载当前口径', '<div class="downloads panel-downloads" id="downloads"></div><p class="panel-foot"><a data-context-link href="../../method.html">查看完整方法与数据说明 →</a></p>')
@@ -508,6 +556,9 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
         if model.get('record_kind') == 'paper_observation':
             record = json.loads((folder/'record.json').read_bytes())
             projection = json.loads(evidence_bytes(folder,record['public_task_scores']))
+            source_projection = projection
+            if model.get('tx_calibration'):
+                projection = json.loads(evidence_bytes(root,model['tx_calibration']['public_tasks']))
             claims = json.loads(evidence_bytes(folder,record['public_claim_review']))['conditions']
             model['public_claims'] = {c:claims[c]['cases'] for c in CONDITIONS}
             rows = {r['case_id']:r for r in record['public_deliveries']}
@@ -518,7 +569,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
                 row,entry = rows[cid],catalog[cid]
                 evidence = {}
                 for condition in CONDITIONS:
-                    task = next(t for t in projection['views']['partial'][condition]['tasks'] if t['case_id']==cid)
+                    task = next(t for t in source_projection['views']['partial'][condition]['tasks'] if t['case_id']==cid)
                     evidence[condition] = public_evidence(folder, record, cid, condition, task)
                 cases.append({'id':cid, 'title':entry['title'], 'category':entry['category'],
                     'category_title':CATEGORY_TITLES.get(entry['category'],entry['category']),
@@ -533,6 +584,8 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
         if model.get('record_kind') == 'native_harness':
             record = json.loads((folder/'native-observation.json').read_bytes())
             projection = json.loads(evidence_bytes(folder,record['public_task_scores']))
+            if model.get('tx_calibration'):
+                projection = json.loads(evidence_bytes(root,model['tx_calibration']['public_tasks']))
             if set(projection['public_case_ids']) != set(catalog):
                 raise ValueError('Native public projection differs from the fixed public catalog')
             native_rows = {row['case_id']:row for row in record['public_deliveries']}
@@ -575,10 +628,13 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
             for condition in correction['affected_conditions']:
                 model['public_claims'][condition] = [corrected_claim if row['case_id'] == 'HCH02' else row
                     for row in model['public_claims'][condition]]
+        source_projection = projection
+        if model.get('tx_calibration'):
+            projection = json.loads(evidence_bytes(root,model['tx_calibration']['public_tasks']))
         for cid in projection['public_case_ids']:
             entry = catalog[cid]
             evidence = {c: public_evidence(folder, record, cid, c,
-                next(r for r in projection['views']['partial'][c]['tasks'] if r['case_id']==cid)) for c in CONDITIONS
+                next(r for r in source_projection['views']['partial'][c]['tasks'] if r['case_id']==cid)) for c in CONDITIONS
                 if not (correction and cid in correction['affected_cases'] and c in correction['affected_conditions'])}
             if correction and cid in correction['affected_cases']:
                 for condition in correction['affected_conditions']:

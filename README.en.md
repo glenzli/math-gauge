@@ -4,7 +4,7 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge evaluates models on mathematical work: written proofs, Lean formalization and mathematical research tasks. The current version is **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**.
+Math Gauge evaluates models on mathematical work: written proofs, Lean formalization and mathematical research tasks. The current scoring edition is **[1.1.0](docs/theorem-extension-reassessment.md)**; the latest published task distribution is **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**.
 
 [Live leaderboard](https://glenzli.com/benchmarks/math-gauge/?lang=en) · [Full results](docs/results.md) · [Public tasks](cases/README.md) · [Harness guide](docs/harness-guide.md)
 
@@ -44,11 +44,15 @@ For a first example, read the [matrix-estimate idea-to-manuscript task](cases/ma
 
 All three use the same rule-selected answers and fixed weights, reported against **100 points**. Unrun tasks retain unknown ranges; measured coverage is never scaled up to a full score. Each task uses the first normal final allowed by the rules. Without one, verified original work present by the cutoff may earn MC; RMC and SMC are zero. See the [scoring specification](protocol/benchmark-scoring.md) for the detailed criteria.
 
+Theorem-extension tasks also assess the research increment actually delivered: R1 is useful local progress, R2 is a substantive extension, and R3 is a deep and complete research contribution. Equivalent routes and strong results inside the proof receive the same credit. SMC for this category requires a correct baseline and a complete R3 result. B2/R0 means the original proof is correct without additional research credit. See the [1.1.0 scoring notes](docs/theorem-extension-reassessment.md) for the detailed standards.
+
 ## Current results
 
-The leaderboard defaults to RMC. The [interactive page](https://glenzli.com/benchmarks/math-gauge/?lang=en) lets you switch between the three scores, compare categories and open model pages with public answers and task reviews. The [full written report](docs/results.md) retains the score table, source corrections and supplementary tests.
+The leaderboard defaults to RMC. The results page opens **1.1.0** and can switch to **1.0.0**; model pages, task reviews and downloads follow that selection. See [edition switching](docs/edition-views.md). The [interactive page](https://glenzli.com/benchmarks/math-gauge/?lang=en) lets you switch between the three scores, compare categories and open model pages with public answers and task reviews. The [full written report](docs/results.md) retains the score table, source corrections and supplementary tests.
 
-The fresh [Sol 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/sol-6.2-max/?lang=en) run on November 18 is now on the leaderboard: MC **93.21**, RMC **93.21**, SMC **89.17**. See the [full results](docs/results.md#sol-62-max--2026-11-18) for the changes from Sol 6.1 Max.
+The November 19 [Claude Opus 5.5 (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/claude-opus-5.5-xhigh/?lang=en) answers were fully reviewed in parallel by Sol 6.1 Max: MC **91.36**, RMC **88.80**, SMC **54.92**. All 39 initial tasks and three self-checks delivered normally. See the [full results](docs/results.md#claude-opus-55-xhigh--2026-11-19) for evidence and execution conditions.
+
+The November 19 [Astra 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/astra-6.2-max/?lang=en) run completed all 39 initial tasks and three self-checks. After comparing its original answers with Astra 6, its first assessment under 1.1.0 gives MC **92.25**, RMC **92.25** and SMC **87.17**. See the [full results](docs/results.md#astra-62-max--2026-11-19) for category scores, reliability, attainment, the mathematical profile and execution conditions. The Sol 6.2 Max/xHigh results and comparisons with their predecessors remain there as well.
 
 [![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en)
 
@@ -81,10 +85,8 @@ To run the assessment, use the [harness and delivery guide](docs/harness-guide.m
 |---|---|
 | Tasks and selection | [Public tasks](cases/README.md) · [Selection rationale](docs/selection.md) |
 | Scoring and review | [Evaluation protocol](protocol/evaluation.md) · [Scoring specification](protocol/benchmark-scoring.md) · [Review process](docs/review-process.md) |
-| Supplementary metrics | [Content reliability and goal attainment](protocol/content-rates.md) · [Additional manuscript results](docs/manuscript-observations.md) |
+| Supplementary metrics | [Mathematical profile (1.1.0)](protocol/mathematical-profile.md) · [Content reliability and goal attainment](protocol/content-rates.md) · [Additional manuscript results](docs/manuscript-observations.md) |
 | Execution and records | [Harness and delivery guide](docs/harness-guide.md) · [Result-record contract](protocol/result-record.md) |
 | Time and cost | [Timing method](docs/answer-timings.md) · [Cost method](docs/cost-reference.md) |
 | Failures and supplements | [Source corrections](docs/harness-corrections.md) · [Whole-chapter self-check supplements](docs/c003-sealed-continuation.md) · [Attempt and retry statistics](docs/execution-attempts.md) |
-| Versions and evidence | [1.0.0 release](releases/v1.0.0/README.md) · [Past releases](releases/) · [Evidence retention and recovery](docs/evidence-retention.md) |
-
-Historical answers adopted by 1.0.0 keep their original execution versions, responses and reviews; the release notes explain compatibility. Viewing or recomputing those results does not mean the models were tested again.
+| Versions and evidence | [1.1.0 scoring notes](docs/theorem-extension-reassessment.md) · [1.0.0 release](releases/v1.0.0/README.md) · [Evidence retention and recovery](docs/evidence-retention.md) |

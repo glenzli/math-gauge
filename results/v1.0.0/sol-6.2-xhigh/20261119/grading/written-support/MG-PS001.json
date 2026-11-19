@@ -1,0 +1,193 @@
+{
+  "complete_goals": [
+    {
+      "id": "G1",
+      "attained": true,
+      "reason": "完整判定结论及尖锐性由任意 f 的稀疏取样块证实，核与满射判据也各有具体证明。",
+      "evidence": [
+        {
+          "line_start": 10,
+          "line_end": 48,
+          "utf8_start": 388,
+          "utf8_end": 2143,
+          "quote": "记\n\\[\np(x)=\\limsup_{M\\to\\infty}\\frac1M\\sum_{m=1}^M|x_m|.\n\\]\n这是 \\(E\\) 上的半范数，且 \\(\\bar d([x],[y])=p(x-y)\\)。由于 \\(P_f\\) 线性，它能诱导商空间上的映射当且仅当 \\(p(x)=0\\) 蕴含 \\(p(P_fx)=0\\)。\n\n若 \\(C_f<\\infty\\)，由 \\(f\\) 严格递增可得\n\\[\n\\frac1n\\sum_{j=1}^n|x_{f(j)}|\n\\le\n\\frac{f(n)}n\\cdot\\frac1{f(n)}\\sum_{m=1}^{f(n)}|x_m|.\n\\]\n取上极限，得到 \\(p(P_fx)\\le C_f p(x)\\)。因此 \\(T_f\\) 良定义且连续，其最小 Lipschitz 常数至多为 \\(C_f\\)。\n\n下面用同一个构造证明这个上界最优，并排除 \\(C_f=\\infty\\) 的情形。固定 \\(0<\\varepsilon\\le1\\)，选取趋于无穷的整数 \\(n_i\\)，令 \\(\\ell_i=\\lfloor\\varepsilon n_i\\rfloor\\)，使得\n\\[\n\\frac{f(n_i)}{n_i}\\longrightarrow C_f,\\qquad\nn_{i+1}>n_i+\\ell_i,\\qquad\n\\frac{\\sum_{h<i}\\ell_h}{n_i}\\longrightarrow0.\n\\]\n这样的选取总是可行，因为可从实现上极限的子列中，每次选取足够大的 \\(n_i\\)。令 \\(x\\) 为集合\n\\[\n\\bigcup_{i\\ge1}\\{f(n_i+1),\\ldots,f(n_i+\\ell_i)\\}\n\\]\n的示性数列。在取样后的第 \\(n_i+\\ell_i\\) 项处，前缀中至少有 \\(\\ell_i\\) 个 \\(1\\)，所以\n\\[\np(P_fx)\\ge \\lim_{i\\to\\infty}\\frac{\\ell_i}{n_i+\\ell_i}\n=\\frac{\\varepsilon}{1+\\varepsilon}.\n\\]\n另一方面，若 \\(f(n_i)\\le M<f(n_{i+1})\\)，则\n\\[\n\\frac1M\\sum_{m=1}^M x_m\n\\le \\frac{\\sum_{h\\le i}\\ell_h}{f(n_i)}.\n\\]\n右端趋于 \\(\\varepsilon/C_f\\)，其中 \\(C_f=\\infty\\) 时该值为 \\(0\\)。因此 \\(p(x)\\le \\varepsilon/C_f\\)。若 \\(C_f=\\infty\\)，就有 \\(p(x)=0\\) 而 \\(p(P_fx)>0\\)，故映射不能下降到商空间。若 \\(C_f<\\infty\\)，任何 Lipschitz 常数 \\(K\\) 都满足\n\\[\n\\frac{\\varepsilon}{1+\\varepsilon}\\le Kp(x)\\le K\\frac{\\varepsilon}{C_f}.\n\\]\n令 \\(\\varepsilon\\downarrow0\\)，得到 \\(K\\ge C_f\\)。\n"
+        },
+        {
+          "line_start": 50,
+          "line_end": 67,
+          "utf8_start": 2144,
+          "utf8_end": 2977,
+          "quote": "对每个允许的 \\(f\\)，任给 \\(y\\in E\\)，令 \\(x_{f(j)}=y_j\\)，并在 \\(f(\\mathbb N)\\) 之外令 \\(x_m=0\\)。则 \\(x\\in E\\) 且 \\(P_fx=y\\)，所以 \\(T_f\\) 满射。\n\n再令 \\(S=f(\\mathbb N)\\)。若 \\(C_f>1\\)，则 \\(S^c=\\mathbb N\\setminus S\\) 的示性数列满足\n\\[\np(\\mathbf 1_{S^c})\\ge\n\\limsup_{n\\to\\infty}\\frac{f(n)-n}{f(n)}\n=1-\\frac1{C_f}>0,\n\\qquad P_f\\mathbf 1_{S^c}=0.\n\\]\n故 \\(T_f\\) 不是单射。若 \\(C_f=1\\)，由于 \\(f(n)\\ge n\\)，有 \\(f(n)/n\\to1\\)。记 \\(m=m(M)=\\#(S\\cap\\{1,\\ldots,M\\})\\)。对充分大的 \\(M\\)，有 \\(f(m)\\le M<f(m+1)\\)，从而 \\(m/M\\to1\\)。若 \\(p(P_fx)=0\\)，则\n\\[\n\\frac1M\\sum_{i=1}^M|x_i|\n\\le\n\\frac{m}{M}\\cdot\\frac1m\\sum_{j=1}^m |x_{f(j)}|\n+\\left(1-\\frac mM\\right)\\|x\\|_\\infty\n\\longrightarrow0.\n\\]\n因此 \\(p(x)=0\\)。这说明线性映射 \\(T_f\\) 的核为零，故它是单射。\n"
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "attained": true,
+      "reason": "给出实际迭代常数和次乘根极限，并对每个允许的 (C,r) 完成切换函数、取样上极限及全部端点估计。",
+      "evidence": [
+        {
+          "line_start": 71,
+          "line_end": 112,
+          "utf8_start": 3013,
+          "utf8_end": 4986,
+          "quote": "用 \\(f^{\\circ k}\\) 表示 \\(f\\) 的 \\(k\\) 次复合。由 \\(T_f^k=T_{f^{\\circ k}}\\) 和第 1 问，\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^{\\circ k}(n)}n.\n\\]\n复合映射的 Lipschitz 常数满足 \\(L_{k+h}\\le L_kL_h\\)，且 \\(1\\le L_k\\le L_1^k\\)。令 \\(L_0=1\\)。固定 \\(m\\ge1\\)，写 \\(k=qm+s\\)，其中 \\(0\\le s<m\\)。由 \\(L_k\\le L_m^q L_s\\) 得\n\\[\n\\limsup_{k\\to\\infty} L_k^{1/k}\\le L_m^{1/m}.\n\\]\n对 \\(m\\) 取下确界，并注意每个 \\(L_k^{1/k}\\) 都至少为这个下确界，可得\n\\[\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}=\\inf_{m\\ge1}L_m^{1/m}.\n\\]\n特别地，\\(1\\le R_f\\le L_1\\)。\n\n现在任取 \\(1\\le r\\le C<\\infty\\)。令 \\(a=C-1\\)，取 \\(N_i=2^{i^2}\\)（\\(i\\ge0\\)），并令 \\(N(n)=\\max\\{N_i:N_i\\le n\\}\\)。定义\n\\[\nf(n)=\\max\\bigl\\{\\lfloor rn\\rfloor,\\ n+\\lfloor aN(n)\\rfloor\\bigr\\}.\n\\]\n两个取最大值的项每步都至少增加 \\(1\\)，所以 \\(f\\) 严格递增。又有 \\(n\\le f(n)\\le Cn\\)，且 \\(f(N_i)=\\lfloor C N_i\\rfloor\\)，故 \\(L_1=C\\)。\n\n由 \\(f(n)\\ge rn-1\\)，对每个固定的 \\(k\\) 迭代可得\n\\[\nf^{\\circ k}(n)\\ge r^k n-\\sum_{j=0}^{k-1}r^j.\n\\]\n因此 \\(L_k\\ge r^k\\)。\n\n为证明反向的增长率上界，固定 \\(k\\)。由于 \\(N_{i+1}/N_i\\to\\infty\\)，当 \\(n\\) 充分大时，区间 \\([n,C^kn]\\) 至多包含一个 \\(N_i\\)。而从 \\(n\\) 开始的前 \\(k\\) 步迭代都落在这个区间内，轨道单调不减。因此这 \\(k\\) 步可以分成至多两段，每段各步的输入具有相同的 \\(N(\\cdot)\\) 值。\n\n考虑其中一段，设起点为 \\(u\\)，共 \\(t\\) 步，共同的 \\(N(\\cdot)\\) 值为 \\(N\\le u\\)。对于该段每一步的输入 \\(v\\)，有\n\\[\nf(v)\\le rv+au.\n\\]\n所以该段的终点至多为\n\\[\n\\left(r^t+a\\sum_{j=0}^{t-1}r^j\\right)u\n\\le (1+at)r^t u.\n\\]\n将至多两段的放大倍数相乘，得到\n\\[\nf^{\\circ k}(n)\\le (1+ak)^2 r^k n\n\\]\n对充分大的 \\(n\\) 成立。故 \\(r^k\\le L_k\\le (1+ak)^2r^k\\)。取 \\(k\\) 次方根再令 \\(k\\to\\infty\\)，得到 \\(R_f=r\\)，从而实现了所给的每一对 \\((C,r)\\)。"
+        }
+      ]
+    }
+  ],
+  "content_claims": [
+    {
+      "label": "商下降条件及有限 Lipschitz 上界",
+      "verdict": "correct",
+      "reason": "明确用有限半范数 p 表示原商距离。由取样的线性准确得到零半范数核的下降条件。",
+      "evidence": [
+        {
+          "line_start": 10,
+          "line_end": 22,
+          "utf8_start": 388,
+          "utf8_end": 893,
+          "quote": "记\n\\[\np(x)=\\limsup_{M\\to\\infty}\\frac1M\\sum_{m=1}^M|x_m|.\n\\]\n这是 \\(E\\) 上的半范数，且 \\(\\bar d([x],[y])=p(x-y)\\)。由于 \\(P_f\\) 线性，它能诱导商空间上的映射当且仅当 \\(p(x)=0\\) 蕴含 \\(p(P_fx)=0\\)。\n\n若 \\(C_f<\\infty\\)，由 \\(f\\) 严格递增可得\n\\[\n\\frac1n\\sum_{j=1}^n|x_{f(j)}|\n\\le\n\\frac{f(n)}n\\cdot\\frac1{f(n)}\\sum_{m=1}^{f(n)}|x_m|.\n\\]\n取上极限，得到 \\(p(P_fx)\\le C_f p(x)\\)。因此 \\(T_f\\) 良定义且连续，其最小 Lipschitz 常数至多为 \\(C_f\\)。\n"
+        }
+      ]
+    },
+    {
+      "label": "无限取样膨胀阻碍下降及有限常数锐性",
+      "verdict": "correct",
+      "reason": "选达到上极限且前块可忽略的 n_i，原密度由 f(n_i) 控制，取样密度由 n_i+ℓ_i 控制。",
+      "evidence": [
+        {
+          "line_start": 24,
+          "line_end": 48,
+          "utf8_start": 894,
+          "utf8_end": 2143,
+          "quote": "下面用同一个构造证明这个上界最优，并排除 \\(C_f=\\infty\\) 的情形。固定 \\(0<\\varepsilon\\le1\\)，选取趋于无穷的整数 \\(n_i\\)，令 \\(\\ell_i=\\lfloor\\varepsilon n_i\\rfloor\\)，使得\n\\[\n\\frac{f(n_i)}{n_i}\\longrightarrow C_f,\\qquad\nn_{i+1}>n_i+\\ell_i,\\qquad\n\\frac{\\sum_{h<i}\\ell_h}{n_i}\\longrightarrow0.\n\\]\n这样的选取总是可行，因为可从实现上极限的子列中，每次选取足够大的 \\(n_i\\)。令 \\(x\\) 为集合\n\\[\n\\bigcup_{i\\ge1}\\{f(n_i+1),\\ldots,f(n_i+\\ell_i)\\}\n\\]\n的示性数列。在取样后的第 \\(n_i+\\ell_i\\) 项处，前缀中至少有 \\(\\ell_i\\) 个 \\(1\\)，所以\n\\[\np(P_fx)\\ge \\lim_{i\\to\\infty}\\frac{\\ell_i}{n_i+\\ell_i}\n=\\frac{\\varepsilon}{1+\\varepsilon}.\n\\]\n另一方面，若 \\(f(n_i)\\le M<f(n_{i+1})\\)，则\n\\[\n\\frac1M\\sum_{m=1}^M x_m\n\\le \\frac{\\sum_{h\\le i}\\ell_h}{f(n_i)}.\n\\]\n右端趋于 \\(\\varepsilon/C_f\\)，其中 \\(C_f=\\infty\\) 时该值为 \\(0\\)。因此 \\(p(x)\\le \\varepsilon/C_f\\)。若 \\(C_f=\\infty\\)，就有 \\(p(x)=0\\) 而 \\(p(P_fx)>0\\)，故映射不能下降到商空间。若 \\(C_f<\\infty\\)，任何 Lipschitz 常数 \\(K\\) 都满足\n\\[\n\\frac{\\varepsilon}{1+\\varepsilon}\\le Kp(x)\\le K\\frac{\\varepsilon}{C_f}.\n\\]\n令 \\(\\varepsilon\\downarrow0\\)，得到 \\(K\\ge C_f\\)。\n"
+        }
+      ]
+    },
+    {
+      "label": "满射与精确单射判据",
+      "verdict": "correct",
+      "reason": "直接将有界 y 延拓到取样位置给满射。C_f>1 时像补集有正上密度并被取样消去，C_f=1 时补集密度为零并用有界性推出商核为零。连续性由有限 Lipschitz 界得到。",
+      "evidence": [
+        {
+          "line_start": 50,
+          "line_end": 67,
+          "utf8_start": 2144,
+          "utf8_end": 2977,
+          "quote": "对每个允许的 \\(f\\)，任给 \\(y\\in E\\)，令 \\(x_{f(j)}=y_j\\)，并在 \\(f(\\mathbb N)\\) 之外令 \\(x_m=0\\)。则 \\(x\\in E\\) 且 \\(P_fx=y\\)，所以 \\(T_f\\) 满射。\n\n再令 \\(S=f(\\mathbb N)\\)。若 \\(C_f>1\\)，则 \\(S^c=\\mathbb N\\setminus S\\) 的示性数列满足\n\\[\np(\\mathbf 1_{S^c})\\ge\n\\limsup_{n\\to\\infty}\\frac{f(n)-n}{f(n)}\n=1-\\frac1{C_f}>0,\n\\qquad P_f\\mathbf 1_{S^c}=0.\n\\]\n故 \\(T_f\\) 不是单射。若 \\(C_f=1\\)，由于 \\(f(n)\\ge n\\)，有 \\(f(n)/n\\to1\\)。记 \\(m=m(M)=\\#(S\\cap\\{1,\\ldots,M\\})\\)。对充分大的 \\(M\\)，有 \\(f(m)\\le M<f(m+1)\\)，从而 \\(m/M\\to1\\)。若 \\(p(P_fx)=0\\)，则\n\\[\n\\frac1M\\sum_{i=1}^M|x_i|\n\\le\n\\frac{m}{M}\\cdot\\frac1m\\sum_{j=1}^m |x_{f(j)}|\n+\\left(1-\\frac mM\\right)\\|x\\|_\\infty\n\\longrightarrow0.\n\\]\n因此 \\(p(x)=0\\)。这说明线性映射 \\(T_f\\) 的核为零，故它是单射。\n"
+        }
+      ]
+    },
+    {
+      "label": "实际迭代的常数和根极限",
+      "verdict": "correct",
+      "reason": "按实际复合取样确定 L_k，用次乘性和除法带余数给出根极限及必要区间。",
+      "evidence": [
+        {
+          "line_start": 71,
+          "line_end": 83,
+          "utf8_start": 3013,
+          "utf8_end": 3600,
+          "quote": "用 \\(f^{\\circ k}\\) 表示 \\(f\\) 的 \\(k\\) 次复合。由 \\(T_f^k=T_{f^{\\circ k}}\\) 和第 1 问，\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^{\\circ k}(n)}n.\n\\]\n复合映射的 Lipschitz 常数满足 \\(L_{k+h}\\le L_kL_h\\)，且 \\(1\\le L_k\\le L_1^k\\)。令 \\(L_0=1\\)。固定 \\(m\\ge1\\)，写 \\(k=qm+s\\)，其中 \\(0\\le s<m\\)。由 \\(L_k\\le L_m^q L_s\\) 得\n\\[\n\\limsup_{k\\to\\infty} L_k^{1/k}\\le L_m^{1/m}.\n\\]\n对 \\(m\\) 取下确界，并注意每个 \\(L_k^{1/k}\\) 都至少为这个下确界，可得\n\\[\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}=\\inf_{m\\ge1}L_m^{1/m}.\n\\]\n特别地，\\(1\\le R_f\\le L_1\\)。\n"
+        }
+      ]
+    },
+    {
+      "label": "所有允许对均由同一切换族实现",
+      "verdict": "correct",
+      "reason": "用分界 N_i=2^{i²} 及两个递增项的最大值，为每个实数对构造合法 f。分界上达到 C，固定 k 的远尾轨道至多越过一个分界，两段仿射估计给 r^k≤L_k≤(1+ak)²r^k，故得到包括端点的全部根极限。",
+      "evidence": [
+        {
+          "line_start": 85,
+          "line_end": 112,
+          "utf8_start": 3601,
+          "utf8_end": 4986,
+          "quote": "现在任取 \\(1\\le r\\le C<\\infty\\)。令 \\(a=C-1\\)，取 \\(N_i=2^{i^2}\\)（\\(i\\ge0\\)），并令 \\(N(n)=\\max\\{N_i:N_i\\le n\\}\\)。定义\n\\[\nf(n)=\\max\\bigl\\{\\lfloor rn\\rfloor,\\ n+\\lfloor aN(n)\\rfloor\\bigr\\}.\n\\]\n两个取最大值的项每步都至少增加 \\(1\\)，所以 \\(f\\) 严格递增。又有 \\(n\\le f(n)\\le Cn\\)，且 \\(f(N_i)=\\lfloor C N_i\\rfloor\\)，故 \\(L_1=C\\)。\n\n由 \\(f(n)\\ge rn-1\\)，对每个固定的 \\(k\\) 迭代可得\n\\[\nf^{\\circ k}(n)\\ge r^k n-\\sum_{j=0}^{k-1}r^j.\n\\]\n因此 \\(L_k\\ge r^k\\)。\n\n为证明反向的增长率上界，固定 \\(k\\)。由于 \\(N_{i+1}/N_i\\to\\infty\\)，当 \\(n\\) 充分大时，区间 \\([n,C^kn]\\) 至多包含一个 \\(N_i\\)。而从 \\(n\\) 开始的前 \\(k\\) 步迭代都落在这个区间内，轨道单调不减。因此这 \\(k\\) 步可以分成至多两段，每段各步的输入具有相同的 \\(N(\\cdot)\\) 值。\n\n考虑其中一段，设起点为 \\(u\\)，共 \\(t\\) 步，共同的 \\(N(\\cdot)\\) 值为 \\(N\\le u\\)。对于该段每一步的输入 \\(v\\)，有\n\\[\nf(v)\\le rv+au.\n\\]\n所以该段的终点至多为\n\\[\n\\left(r^t+a\\sum_{j=0}^{t-1}r^j\\right)u\n\\le (1+at)r^t u.\n\\]\n将至多两段的放大倍数相乘，得到\n\\[\nf^{\\circ k}(n)\\le (1+ak)^2 r^k n\n\\]\n对充分大的 \\(n\\) 成立。故 \\(r^k\\le L_k\\le (1+ak)^2r^k\\)。取 \\(k\\) 次方根再令 \\(k\\to\\infty\\)，得到 \\(R_f=r\\)，从而实现了所给的每一对 \\((C,r)\\)。"
+        }
+      ]
+    }
+  ],
+  "claim_findings": [],
+  "extra_findings": [],
+  "profile_observations": {
+    "proof": "密度见证逐前缀控制上极限。迭代构造先固定 k 获得远尾两段上界，再对 k 取根极限，顺序适切。",
+    "fidelity": "在原有界序列的零伪距商内工作，严格递增整数取样和任意实参数边界均保留。"
+  },
+  "schema": "math-gauge.written-response-support/v1",
+  "case_id": "MG-PS001",
+  "response_sha256": "fcabcdaca904f7509f693eaa2ef283f373b9704257ed3fcf4c98aabbff35cd83",
+  "reviewer": "GPT-6.2 Sol Max; independent Math Gauge AI reviewer",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "original_contract_kind": "written_proof",
+  "receipt_binding": {
+    "model_id": "gpt-6.2-sol/xhigh",
+    "native_prompt": {
+      "path": "sessions/MG-PS001/physical-1/input/task.md",
+      "bytes": 1012,
+      "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7"
+    },
+    "physical_attempt": 1,
+    "selection": "first_qualified_normal_native_final_by_physical_attempt",
+    "native_final": {
+      "path": "sessions/MG-PS001/physical-1/output/response.md",
+      "bytes": 4986,
+      "sha256": "fcabcdaca904f7509f693eaa2ef283f373b9704257ed3fcf4c98aabbff35cd83"
+    },
+    "runner_response": {
+      "path": "runner-runs/MG-PS001/physical-1/MG-PS001/response.md",
+      "bytes": 4986,
+      "sha256": "fcabcdaca904f7509f693eaa2ef283f373b9704257ed3fcf4c98aabbff35cd83"
+    },
+    "source_seal": {
+      "path": "sessions/MG-PS001/physical-1/runtime/seal.json",
+      "bytes": 844,
+      "sha256": "7a8bf35f515ea2e8d748bde1f8fa94fe8b91d137983468c588afae4a8b2ccfc1"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-PS001/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 825,
+      "sha256": "13031eb6a67f21d152a9648f0aea65a94a30c324ca5be65d26939f8c80e3b9a5"
+    },
+    "native_command_probe": {
+      "path": "sessions/MG-PS001/physical-1/runtime/native-command-probe.json",
+      "bytes": 2541,
+      "sha256": "e201d6d29adc152273a4ef941b14d77c682d3413bcf8375e560d27f68059fcea"
+    },
+    "execution": {
+      "path": "sessions/MG-PS001/physical-1/runtime/execution.json",
+      "bytes": 6502,
+      "sha256": "8b6d12c84428b68ae27592ac1ca28c75a615d63a862cfcf9a6482b3a3f93bdbf"
+    },
+    "native_events": {
+      "path": "sessions/MG-PS001/physical-1/output/events.ndjson",
+      "bytes": 6399,
+      "sha256": "417296fa462956e21a64c1446943fb11bc0505515cc4db0b53bf368a60afb8ef"
+    },
+    "collection": {
+      "path": "sessions/MG-PS001/physical-1/runtime/collection.json",
+      "bytes": 9142,
+      "sha256": "3a1b333d08a8b1af11e9e30079f06c04744dc587ff45b494a95c3f2eb2299cf3"
+    },
+    "first_terminal_index_one_based": 6,
+    "terminal_prefix_bytes": 6399,
+    "terminal_prefix_sha256": "417296fa462956e21a64c1446943fb11bc0505515cc4db0b53bf368a60afb8ef",
+    "native_final_item": "item_2",
+    "observed_backend_model": null,
+    "observed_backend_effort": null,
+    "normal_delivery_and_seal_verified": true
+  },
+  "source_bindings": {
+    "acquisition_plan_sha256": "abf20cd5dc37b9c605451371af65b6f15ac08c6e3ee2c199af62e8a88f213c23",
+    "native_final_sha256": "fcabcdaca904f7509f693eaa2ef283f373b9704257ed3fcf4c98aabbff35cd83",
+    "collection_sha256": "3a1b333d08a8b1af11e9e30079f06c04744dc587ff45b494a95c3f2eb2299cf3",
+    "physical_attempt": 1,
+    "task_sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+    "rubric_sha256": "390aa44a16523d40435f5e3b51f982a3268e2ead23a9ad6b939623c9adaa6186",
+    "reference_sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+    "terminal_source_observation_sha256": "13031eb6a67f21d152a9648f0aea65a94a30c324ca5be65d26939f8c80e3b9a5",
+    "source_seal_sha256": "7a8bf35f515ea2e8d748bde1f8fa94fe8b91d137983468c588afae4a8b2ccfc1"
+  }
+}

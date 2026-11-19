@@ -1,0 +1,1175 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-AR001",
+  "task_id": "MG-AR001:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/task.md",
+      "sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+      "bytes": 352
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/reference.md",
+      "sha256": "654eebbce1f5cd742a55f3ddca4f504bc9cc3fcec6d9025a6196240e0116870b",
+      "bytes": 5172
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/rubric.json",
+      "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+      "bytes": 5207
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+      "bytes": 6286,
+      "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/request.json",
+      "bytes": 24624,
+      "sha256": "492c295bb78887612ffc08fb36cc3ec87c01b641a4925f9fd37704d4a86badfa"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/case.json",
+      "sha256": "664cbf9a727b366459e849585abd78e81195af57b0ddb4305a9eb9921663972b"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/rubric.json",
+      "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+      "bytes": 5207
+    },
+    "solver_files": [
+      {
+        "target": "materials.md",
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/candidate/materials.md",
+        "sha256": "25b76865744ef567f25ffdfbe6e260de02a49152aa81039e7c40890b6c2bbdb7",
+        "bytes": 153
+      },
+      {
+        "target": "original-task.md",
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/candidate/original-task.md",
+        "sha256": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+        "bytes": 2184
+      },
+      {
+        "target": "original-answer.md",
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/candidate/original-answer.md",
+        "sha256": "a3cc5657b1b01339dd034288600e0393122f5e5cf1dd35533204f6129c95b40d",
+        "bytes": 19236
+      }
+    ],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/group-contract.json",
+      "sha256": "4ccdc7089c7369593ddfac73ac4c37f65ddf2587690ce5a72828d766fa9e21df",
+      "bytes": 2402
+    }
+  },
+  "criteria": [
+    {
+      "id": "local_lift",
+      "parent_dimension": "core_judgment",
+      "source_definition": {
+        "id": "local_lift",
+        "points": 15,
+        "full_credit": "认可逐元素幂零指数的整数多项式提升及交换唯一性。"
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "整数多项式的两条整除关系与交换唯一性都核查正确；指数逐元素选择，不引入2可逆或统一nil指数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1007,
+          "end_utf8": 1181,
+          "quote": "  我用 sympy 对 n = 1,…,6 在 ℤ[X] 中做多项式除法，两条整除关系都成立。指数 n 可以随 x 变化，也没有假设 2 可逆，符合题目要求。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "inverse_limit",
+      "parent_dimension": "core_judgment",
+      "source_definition": {
+        "id": "inverse_limit",
+        "points": 20,
+        "full_credit": "认可逐层唯一性组装、极限分解与自然性，区分极限核nil和元素提升。"
+      },
+      "points": 20,
+      "score": 20,
+      "strict_pass": true,
+      "reason": "逐层唯一性给相容性，正交与单位和、商分解及自然性均有独立内容核查；未要求极限核nil。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1406,
+          "end_utf8": 1447,
+          "quote": "  - 单射：逐层用 S1 的唯一性。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "idealization",
+      "parent_dimension": "core_judgment",
+      "source_definition": {
+        "id": "idealization",
+        "points": 15,
+        "full_credit": "认可理想化环反例及不满射性，不要求过渡满射。"
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "准确识别理想化乘法和导子条件，P_n=1+tP_{n+1}反驳多项式相容提升，不增加过渡满射条件。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 3524,
+          "end_utf8": 3558,
+          "quote": "  - 像恰为 {a : a′(0) = 0}。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "noncommutative",
+      "parent_dimension": "core_judgment",
+      "source_definition": {
+        "id": "noncommutative",
+        "points": 10,
+        "full_credit": "认可矩阵反例；结合上下文读懂充分性和必要性，不把编辑标签当作实质反例。"
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "矩阵平方零核及不唯一性正确。虽称表格为“实质性误归类”，仍明确承认正向蕴含与逆命题反例都正确，将修改限定为拆行，按合法编辑意见接受。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 4550,
+          "end_utf8": 4704,
+          "quote": "   - 答卷用 S3 加 S2 实际说明的是**逆命题**“极限幂等提升唯一 ⟹ 极限核逐元素幂零”不成立。这一点本身是对的。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "lift_evidence",
+      "parent_dimension": "evidence_scope",
+      "source_definition": {
+        "id": "lift_evidence",
+        "points": 10,
+        "full_credit": "给出多项式整除关系及逐层相容等实质核查依据；无需复算每一乘法。"
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "整除及逐层相容的代数理由充分；有限Sympy检查只作补充，未替代一般证明。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 808,
+          "end_utf8": 900,
+          "quote": "  - E_n − X ∈ (X)∩(1−X) = (X(1−X))。两个理想互素，所以交等于乘积。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "counterexample_evidence",
+      "parent_dimension": "evidence_scope",
+      "source_definition": {
+        "id": "counterexample_evidence",
+        "points": 10,
+        "full_credit": "确认题中理想化结构适用，并以P_n=1+tP_(n+1)与有限次数矛盾等充分依据核查反例；不因未重写Leibniz展开扣分。"
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "导子恒等式适用于任意域，有限次数与全部系数为1矛盾核查充分。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 3348,
+          "end_utf8": 3505,
+          "quote": "- **不满射：** 若 x 有原像，则 P_n = 1 + tP_{n+1}，从而 P₁ 的每个系数都是 1，与多项式只有有限项非零矛盾。论证正确。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "scope_evidence",
+      "parent_dimension": "evidence_scope",
+      "source_definition": {
+        "id": "scope_evidence",
+        "points": 10,
+        "full_credit": "区分至多唯一与存在唯一的讨论范围，且不为原题增补非交换存在证明义务。"
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "区分至多唯一与存在唯一；Z到Z/6例明确标为共同设定外的逻辑说明，没有增加非交换存在性义务。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 5367,
+          "end_utf8": 5557,
+          "quote": "   - 一般反例：单层 ℤ → ℤ/6。这里幂等提升至多一个，但 3 没有幂等提升。这个例子不满足共同设定，所以在共同设定内该行结论不受影响。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "empty_family",
+      "parent_dimension": "completeness",
+      "source_definition": {
+        "id": "empty_family",
+        "points": 5,
+        "full_credit": "覆盖空J/零环边界；允许通过明确认可原文该项处理完成核查。"
+      },
+      "points": 5,
+      "score": 5,
+      "strict_pass": true,
+      "reason": "明确验证空J迫使零环，并保留商公式退化情形。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1298,
+          "end_utf8": 1386,
+          "quote": "- **J = ∅：** 由 1 ∈ ker p_i 幂零推出 R_i = 0，进而 L = 0，讨论正确。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "element_surjectivity",
+      "parent_dimension": "completeness",
+      "source_definition": {
+        "id": "element_surjectivity",
+        "points": 5,
+        "full_credit": "保留S3与S4的不同目标，不把元素提升升级为环同态截面。"
+      },
+      "points": 5,
+      "score": 5,
+      "strict_pass": true,
+      "reason": "S3极限nil失败与S4元素递归选取分开，没有将元素选取升级为环截面。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 2552,
+          "end_utf8": 2652,
+          "quote": "- 证明确实没有用到交换性或 nil 核。实际上只需要 p₁ 满射和各 ρ_n 满射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 100,
+    "positive_mathematical_denominator": 100,
+    "removed_reliability_points": 0,
+    "removed_reliability_denominator": 0,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/task.md",
+        "sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "verbatim_in_actual_request": true
+      },
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/candidate/materials.md",
+        "sha256": "25b76865744ef567f25ffdfbe6e260de02a49152aa81039e7c40890b6c2bbdb7",
+        "verbatim_in_actual_request": true
+      },
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/candidate/original-task.md",
+        "sha256": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+        "verbatim_in_actual_request": true
+      },
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/answer-review/MG-AR001/candidate/original-answer.md",
+        "sha256": "a3cc5657b1b01339dd034288600e0393122f5e5cf1dd35533204f6129c95b40d",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "not_supplied_as_separate_self_assessment",
+    "verbatim_evidence": [],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "local_lift",
+      "label": "认可逐元素幂零指数的整数多项式提升及交换唯一性。",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "local_lift",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "认可逐元素幂零指数的整数多项式提升及交换唯一性。",
+      "reason": "整数多项式的两条整除关系与交换唯一性都核查正确；指数逐元素选择，不引入2可逆或统一nil指数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1007,
+          "end_utf8": 1181,
+          "quote": "  我用 sympy 对 n = 1,…,6 在 ℤ[X] 中做多项式除法，两条整除关系都成立。指数 n 可以随 x 变化，也没有假设 2 可逆，符合题目要求。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "inverse_limit",
+      "label": "认可逐层唯一性组装、极限分解与自然性，区分极限核nil和元素提升。",
+      "delivery_weight": 20,
+      "claim_weight": 20,
+      "source_unit_id": "inverse_limit",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "认可逐层唯一性组装、极限分解与自然性，区分极限核nil和元素提升。",
+      "reason": "逐层唯一性给相容性，正交与单位和、商分解及自然性均有独立内容核查；未要求极限核nil。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1406,
+          "end_utf8": 1447,
+          "quote": "  - 单射：逐层用 S1 的唯一性。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 20,
+      "asserted_denominator": 20,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "idealization",
+      "label": "认可理想化环反例及不满射性，不要求过渡满射。",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "idealization",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "认可理想化环反例及不满射性，不要求过渡满射。",
+      "reason": "准确识别理想化乘法和导子条件，P_n=1+tP_{n+1}反驳多项式相容提升，不增加过渡满射条件。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 3524,
+          "end_utf8": 3558,
+          "quote": "  - 像恰为 {a : a′(0) = 0}。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "noncommutative",
+      "label": "认可矩阵反例；结合上下文读懂充分性和必要性，不把编辑标签当作实质反例。",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "noncommutative",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "认可矩阵反例；结合上下文读懂充分性和必要性，不把编辑标签当作实质反例。",
+      "reason": "矩阵平方零核及不唯一性正确。虽称表格为“实质性误归类”，仍明确承认正向蕴含与逆命题反例都正确，将修改限定为拆行，按合法编辑意见接受。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 4550,
+          "end_utf8": 4704,
+          "quote": "   - 答卷用 S3 加 S2 实际说明的是**逆命题**“极限幂等提升唯一 ⟹ 极限核逐元素幂零”不成立。这一点本身是对的。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "lift_evidence",
+      "label": "给出多项式整除关系及逐层相容等实质核查依据；无需复算每一乘法。",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "lift_evidence",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "给出多项式整除关系及逐层相容等实质核查依据；无需复算每一乘法。",
+      "reason": "整除及逐层相容的代数理由充分；有限Sympy检查只作补充，未替代一般证明。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 808,
+          "end_utf8": 900,
+          "quote": "  - E_n − X ∈ (X)∩(1−X) = (X(1−X))。两个理想互素，所以交等于乘积。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "counterexample_evidence",
+      "label": "确认题中理想化结构适用，并以P_n=1+tP_(n+1)与有限次数矛盾等充分依据核查反例；不因未重写Leibniz展开扣分。",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "counterexample_evidence",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "确认题中理想化结构适用，并以P_n=1+tP_(n+1)与有限次数矛盾等充分依据核查反例；不因未重写Leibniz展开扣分。",
+      "reason": "导子恒等式适用于任意域，有限次数与全部系数为1矛盾核查充分。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 3348,
+          "end_utf8": 3505,
+          "quote": "- **不满射：** 若 x 有原像，则 P_n = 1 + tP_{n+1}，从而 P₁ 的每个系数都是 1，与多项式只有有限项非零矛盾。论证正确。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "scope_evidence",
+      "label": "区分至多唯一与存在唯一的讨论范围，且不为原题增补非交换存在证明义务。",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "scope_evidence",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "区分至多唯一与存在唯一的讨论范围，且不为原题增补非交换存在证明义务。",
+      "reason": "区分至多唯一与存在唯一；Z到Z/6例明确标为共同设定外的逻辑说明，没有增加非交换存在性义务。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 5367,
+          "end_utf8": 5557,
+          "quote": "   - 一般反例：单层 ℤ → ℤ/6。这里幂等提升至多一个，但 3 没有幂等提升。这个例子不满足共同设定，所以在共同设定内该行结论不受影响。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "empty_family",
+      "label": "覆盖空J/零环边界；允许通过明确认可原文该项处理完成核查。",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "empty_family",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "覆盖空J/零环边界；允许通过明确认可原文该项处理完成核查。",
+      "reason": "明确验证空J迫使零环，并保留商公式退化情形。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1298,
+          "end_utf8": 1386,
+          "quote": "- **J = ∅：** 由 1 ∈ ker p_i 幂零推出 R_i = 0，进而 L = 0，讨论正确。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "element_surjectivity",
+      "label": "保留S3与S4的不同目标，不把元素提升升级为环同态截面。",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "element_surjectivity",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "保留S3与S4的不同目标，不把元素提升升级为环同态截面。",
+      "reason": "S3极限nil失败与S4元素递归选取分开，没有将元素选取升级为环截面。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 2552,
+          "end_utf8": 2652,
+          "quote": "- 证明确实没有用到交换性或 nil 核。实际上只需要 p₁ 满射和各 ρ_n 满射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "A1",
+      "label": "交换nil核上的单层幂等提升审计",
+      "statement": "对原S1逐元素幂零整数多项式构造与交换唯一性给出完整、有据的正确性审计，准确保留无统一指数、无2可逆的原范围。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 25,
+      "weight_origin": "{\"kind\": \"original_check_weights_coarsened_by_independent_audited_claim\", \"original_unit_weights\": {\"lift_evidence\": 10, \"local_lift\": 15}, \"rule\": \"证据/范围/大小只是完整审计的验收条件；原跨阶段retained/target权重归包含其核心结论的审计块，仅计一次。\", \"sum\": 25}",
+      "acceptance_conditions": [
+        "对原S1逐元素幂零整数多项式构造与交换唯一性给出完整、有据的正确性审计，准确保留无统一指数、无2可逆的原范围。",
+        "审阅结论、可核查数学依据和影响范围合在一起构成完整审计成果；不能单靠判断/证据/边界check各自计交付。",
+        "原题是审阅，不要求重做整套原题；有充分的短证/合法替代核查可通过。"
+      ],
+      "dependency_scope": [
+        "所有用于该审计结论的反例条件、标准定理、原文读取和依赖范围都必须闭合。",
+        "跨块原有效内容只作为影响边界，不重复获得权重；可分离且不支撑当前判决的额外错误只留内容可靠率。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "local_lift",
+        "lift_evidence"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/task.md",
+          "sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/candidate/original-task.md",
+          "sha256": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/0/checks/0"
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/1/checks/0"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-AR001:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "A1",
+      "passed": true,
+      "reason": "整数多项式的两条整除关系与交换唯一性都核查正确；指数逐元素选择，不引入2可逆或统一nil指数。 整除及逐层相容的代数理由充分；有限Sympy检查只作补充，未替代一般证明。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1007,
+          "end_utf8": 1181,
+          "quote": "  我用 sympy 对 n = 1,…,6 在 ℤ[X] 中做多项式除法，两条整除关系都成立。指数 n 可以随 x 变化，也没有假设 2 可逆，符合题目要求。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 808,
+          "end_utf8": 900,
+          "quote": "  - E_n − X ∈ (X)∩(1−X) = (X(1−X))。两个理想互素，所以交等于乘积。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 25,
+      "denominator": 25
+    },
+    {
+      "id": "A2",
+      "label": "逆极限、分解与元素提升边界审计",
+      "statement": "完整审计原S2–S4：逐层唯一提升组装、有限正交分解及自然性，极限核未必nil与元素提升区别，过渡满射下仅元素满射，并核查空J/零环。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 30,
+      "weight_origin": "{\"kind\": \"original_check_weights_coarsened_by_independent_audited_claim\", \"original_unit_weights\": {\"element_surjectivity\": 5, \"empty_family\": 5, \"inverse_limit\": 20}, \"rule\": \"证据/范围/大小只是完整审计的验收条件；原跨阶段retained/target权重归包含其核心结论的审计块，仅计一次。\", \"sum\": 30}",
+      "acceptance_conditions": [
+        "完整审计原S2–S4：逐层唯一提升组装、有限正交分解及自然性，极限核未必nil与元素提升区别，过渡满射下仅元素满射，并核查空J/零环。",
+        "审阅结论、可核查数学依据和影响范围合在一起构成完整审计成果；不能单靠判断/证据/边界check各自计交付。",
+        "原题是审阅，不要求重做整套原题；有充分的短证/合法替代核查可通过。"
+      ],
+      "dependency_scope": [
+        "所有用于该审计结论的反例条件、标准定理、原文读取和依赖范围都必须闭合。",
+        "跨块原有效内容只作为影响边界，不重复获得权重；可分离且不支撑当前判决的额外错误只留内容可靠率。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "inverse_limit",
+        "empty_family",
+        "element_surjectivity"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/task.md",
+          "sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/candidate/original-task.md",
+          "sha256": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/0/checks/1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/2/checks/0"
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/2/checks/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-AR001:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "A2",
+      "passed": true,
+      "reason": "逐层唯一性给相容性，正交与单位和、商分解及自然性均有独立内容核查；未要求极限核nil。 明确验证空J迫使零环，并保留商公式退化情形。 S3极限nil失败与S4元素递归选取分开，没有将元素选取升级为环截面。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1406,
+          "end_utf8": 1447,
+          "quote": "  - 单射：逐层用 S1 的唯一性。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 1298,
+          "end_utf8": 1386,
+          "quote": "- **J = ∅：** 由 1 ∈ ker p_i 幂零推出 R_i = 0，进而 L = 0，讨论正确。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 2552,
+          "end_utf8": 2652,
+          "quote": "- 证明确实没有用到交换性或 nil 核。实际上只需要 p₁ 满射和各 ρ_n 满射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 30,
+      "denominator": 30
+    },
+    {
+      "id": "A3",
+      "label": "非满射逆系理想化反例审计",
+      "statement": "对原S5理想化环、导子过渡与实际不满射反例给完整条件核查及有效有限次数矛盾，不暗加过渡满射。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 25,
+      "weight_origin": "{\"kind\": \"original_check_weights_coarsened_by_independent_audited_claim\", \"original_unit_weights\": {\"counterexample_evidence\": 10, \"idealization\": 15}, \"rule\": \"证据/范围/大小只是完整审计的验收条件；原跨阶段retained/target权重归包含其核心结论的审计块，仅计一次。\", \"sum\": 25}",
+      "acceptance_conditions": [
+        "对原S5理想化环、导子过渡与实际不满射反例给完整条件核查及有效有限次数矛盾，不暗加过渡满射。",
+        "审阅结论、可核查数学依据和影响范围合在一起构成完整审计成果；不能单靠判断/证据/边界check各自计交付。",
+        "原题是审阅，不要求重做整套原题；有充分的短证/合法替代核查可通过。"
+      ],
+      "dependency_scope": [
+        "所有用于该审计结论的反例条件、标准定理、原文读取和依赖范围都必须闭合。",
+        "跨块原有效内容只作为影响边界，不重复获得权重；可分离且不支撑当前判决的额外错误只留内容可靠率。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "idealization",
+        "counterexample_evidence"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/task.md",
+          "sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/candidate/original-task.md",
+          "sha256": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/0/checks/2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/1/checks/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-AR001:A1/goals/2"
+        }
+      ],
+      "source_goal_id": "A3",
+      "passed": true,
+      "reason": "准确识别理想化乘法和导子条件，P_n=1+tP_{n+1}反驳多项式相容提升，不增加过渡满射条件。 导子恒等式适用于任意域，有限次数与全部系数为1矛盾核查充分。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 3524,
+          "end_utf8": 3558,
+          "quote": "  - 像恰为 {a : a′(0) = 0}。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 3348,
+          "end_utf8": 3505,
+          "quote": "- **不满射：** 若 x 有原像，则 P_n = 1 + tP_{n+1}，从而 P₁ 的每个系数都是 1，与多项式只有有限项非零矛盾。论证正确。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 25,
+      "denominator": 25
+    },
+    {
+      "id": "A4",
+      "label": "非交换唯一性和逻辑关系审计",
+      "statement": "完整审计S6平方零核矩阵反例及前五阶段逻辑范围，区分存在/至多唯一、充分/必要，按上下文读取编辑标签且不增补非交换存在义务。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 20,
+      "weight_origin": "{\"kind\": \"original_check_weights_coarsened_by_independent_audited_claim\", \"original_unit_weights\": {\"noncommutative\": 10, \"scope_evidence\": 10}, \"rule\": \"证据/范围/大小只是完整审计的验收条件；原跨阶段retained/target权重归包含其核心结论的审计块，仅计一次。\", \"sum\": 20}",
+      "acceptance_conditions": [
+        "完整审计S6平方零核矩阵反例及前五阶段逻辑范围，区分存在/至多唯一、充分/必要，按上下文读取编辑标签且不增补非交换存在义务。",
+        "审阅结论、可核查数学依据和影响范围合在一起构成完整审计成果；不能单靠判断/证据/边界check各自计交付。",
+        "原题是审阅，不要求重做整套原题；有充分的短证/合法替代核查可通过。"
+      ],
+      "dependency_scope": [
+        "所有用于该审计结论的反例条件、标准定理、原文读取和依赖范围都必须闭合。",
+        "跨块原有效内容只作为影响边界，不重复获得权重；可分离且不支撑当前判决的额外错误只留内容可靠率。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "noncommutative",
+        "scope_evidence"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/task.md",
+          "sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/candidate/original-task.md",
+          "sha256": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+          "pointer": ""
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/0/checks/3"
+        },
+        {
+          "repository": "public",
+          "path": "cases/answer-review/MG-AR001/rubric.json",
+          "sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+          "pointer": "/criteria/1/checks/2"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-AR001:A1/goals/3"
+        }
+      ],
+      "source_goal_id": "A4",
+      "passed": true,
+      "reason": "矩阵平方零核及不唯一性正确。虽称表格为“实质性误归类”，仍明确承认正向蕴含与逆命题反例都正确，将修改限定为拆行，按合法编辑意见接受。 区分至多唯一与存在唯一；Z到Z/6例明确标为共同设定外的逻辑说明，没有增加非交换存在性义务。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 4550,
+          "end_utf8": 4704,
+          "quote": "   - 答卷用 S3 加 S2 实际说明的是**逆命题**“极限幂等提升唯一 ⟹ 极限核逐元素幂零”不成立。这一点本身是对的。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+          "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+          "start_utf8": 5367,
+          "end_utf8": 5557,
+          "quote": "   - 一般反例：单层 ℤ → ℤ/6。这里幂等提升至多一个，但 3 没有幂等提升。这个例子不满足共同设定，所以在共同设定内该行结论不受影响。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 20,
+      "denominator": 20
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-AR001:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1007,
+            "end_utf8": 1181,
+            "quote": "  我用 sympy 对 n = 1,…,6 在 ℤ[X] 中做多项式除法，两条整除关系都成立。指数 n 可以随 x 变化，也没有假设 2 可逆，符合题目要求。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1406,
+            "end_utf8": 1447,
+            "quote": "  - 单射：逐层用 S1 的唯一性。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 3524,
+            "end_utf8": 3558,
+            "quote": "  - 像恰为 {a : a′(0) = 0}。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 4550,
+            "end_utf8": 4704,
+            "quote": "   - 答卷用 S3 加 S2 实际说明的是**逆命题**“极限幂等提升唯一 ⟹ 极限核逐元素幂零”不成立。这一点本身是对的。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 808,
+            "end_utf8": 900,
+            "quote": "  - E_n − X ∈ (X)∩(1−X) = (X(1−X))。两个理想互素，所以交等于乘积。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 3348,
+            "end_utf8": 3505,
+            "quote": "- **不满射：** 若 x 有原像，则 P_n = 1 + tP_{n+1}，从而 P₁ 的每个系数都是 1，与多项式只有有限项非零矛盾。论证正确。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 5367,
+            "end_utf8": 5557,
+            "quote": "   - 一般反例：单层 ℤ → ℤ/6。这里幂等提升至多一个，但 3 没有幂等提升。这个例子不满足共同设定，所以在共同设定内该行结论不受影响。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1298,
+            "end_utf8": 1386,
+            "quote": "- **J = ∅：** 由 1 ∈ ker p_i 幂零推出 R_i = 0，进而 L = 0，讨论正确。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 2552,
+            "end_utf8": 2652,
+            "quote": "- 证明确实没有用到交换性或 nil 核。实际上只需要 p₁ 满射和各 ρ_n 满射。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为100/100；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1007,
+            "end_utf8": 1181,
+            "quote": "  我用 sympy 对 n = 1,…,6 在 ℤ[X] 中做多项式除法，两条整除关系都成立。指数 n 可以随 x 变化，也没有假设 2 可逆，符合题目要求。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 808,
+            "end_utf8": 900,
+            "quote": "  - E_n − X ∈ (X)∩(1−X) = (X(1−X))。两个理想互素，所以交等于乘积。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1406,
+            "end_utf8": 1447,
+            "quote": "  - 单射：逐层用 S1 的唯一性。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1298,
+            "end_utf8": 1386,
+            "quote": "- **J = ∅：** 由 1 ∈ ker p_i 幂零推出 R_i = 0，进而 L = 0，讨论正确。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 2552,
+            "end_utf8": 2652,
+            "quote": "- 证明确实没有用到交换性或 nil 核。实际上只需要 p₁ 满射和各 ρ_n 满射。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 3524,
+            "end_utf8": 3558,
+            "quote": "  - 像恰为 {a : a′(0) = 0}。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 3348,
+            "end_utf8": 3505,
+            "quote": "- **不满射：** 若 x 有原像，则 P_n = 1 + tP_{n+1}，从而 P₁ 的每个系数都是 1，与多项式只有有限项非零矛盾。论证正确。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 4550,
+            "end_utf8": 4704,
+            "quote": "   - 答卷用 S3 加 S2 实际说明的是**逆命题**“极限幂等提升唯一 ⟹ 极限核逐元素幂零”不成立。这一点本身是对的。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 5367,
+            "end_utf8": 5557,
+            "quote": "   - 一般反例：单层 ℤ → ℤ/6。这里幂等提升至多一个，但 3 没有幂等提升。这个例子不满足共同设定，所以在共同设定内该行结论不受影响。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/11",
+        "reason": "独立核查提升、逆极限、理想化及矩阵反例；表格措辞虽偏重，但承认真实充分/必要关系，不按关键词误罚编辑评论。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1007,
+            "end_utf8": 1181,
+            "quote": "  我用 sympy 对 n = 1,…,6 在 ℤ[X] 中做多项式除法，两条整除关系都成立。指数 n 可以随 x 变化，也没有假设 2 可逆，符合题目要求。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1406,
+            "end_utf8": 1447,
+            "quote": "  - 单射：逐层用 S1 的唯一性。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 3524,
+            "end_utf8": 3558,
+            "quote": "  - 像恰为 {a : a′(0) = 0}。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 4550,
+            "end_utf8": 4704,
+            "quote": "   - 答卷用 S3 加 S2 实际说明的是**逆命题**“极限幂等提升唯一 ⟹ 极限核逐元素幂零”不成立。这一点本身是对的。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 808,
+            "end_utf8": 900,
+            "quote": "  - E_n − X ∈ (X)∩(1−X) = (X(1−X))。两个理想互素，所以交等于乘积。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 3348,
+            "end_utf8": 3505,
+            "quote": "- **不满射：** 若 x 有原像，则 P_n = 1 + tP_{n+1}，从而 P₁ 的每个系数都是 1，与多项式只有有限项非零矛盾。论证正确。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 5367,
+            "end_utf8": 5557,
+            "quote": "   - 一般反例：单层 ℤ → ℤ/6。这里幂等提升至多一个，但 3 没有幂等提升。这个例子不满足共同设定，所以在共同设定内该行结论不受影响。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 1298,
+            "end_utf8": 1386,
+            "quote": "- **J = ∅：** 由 1 ∈ ker p_i 幂零推出 R_i = 0，进而 L = 0，讨论正确。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-AR001-A1/attempt-1/response.md",
+            "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+            "start_utf8": 2552,
+            "end_utf8": 2652,
+            "quote": "- 证明确实没有用到交换性或 nil 核。实际上只需要 p₁ 满射和各 ρ_n 满射。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "7e24a55cc3fb5159eb36c21d7fb3dfb23b09e8a81c9853b466eb09f2c0a0ca7b",
+    "mathematical_judgments_changed": false
+  }
+}

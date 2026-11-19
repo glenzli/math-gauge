@@ -1,0 +1,47 @@
+{
+  "case_id": "AHR01",
+  "response_sha256": "c7b84126b1f3b944b837dcbbde33a5d35acd6313ad01f5c7cfc266fa673892b8",
+  "reviewer": "gpt-6-astra; independent AI review",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "Independently read complete response against frozen source/reference. Correctly separates canonical full-edge refinement from the broader operational relation, while preserving all valid extensional theorems. Its finite single-retained-node/self-loop counterexample is legitimate even though unused local states can loop: termination is required for global inputs U={a}. Repair handles deleted destinations and retained self-edges exactly.",
+  "findings": [],
+  "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "Identifies actual reachable output versus full local output scope in choice_projection; correctly concludes relation overbreadth rather than a false extensional theorem."
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "Checks partition restrictions and entry domains, all four edge types, pruning, current-input recoloring on revisits, length bound and the actual construction/global extensional proof, as well as the relation/path proof."
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "X={bottom,a,b,c,d},U={a}; old map fixes a,b,c and sends d→c, self-edge{b,c}; split A={a,b,d},B={c}. Canonical pruning retains A with self-edge{b}, removes B, stops at c. All-stop A satisfies operational relation on sole actual output a but loses the retained self-edge. All domain, reachability and global finite-termination requirements hold; retained local domain fixes the relevant split, so alternate witness cannot remove the discrepancy."
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "Requires exact full edge-domain intersections only between retained labels. Correctly shows full-output choice projection is too strong at c after legitimate removal of B. Construction/NodePieceReached and reverse data-characterization bridges are proposed precisely, without treating missing wrappers as invalidating existing construction."
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "abf20cd5dc37b9c605451371af65b6f15ac08c6e3ee2c199af62e8a88f213c23",
+    "native_final_sha256": "c7b84126b1f3b944b837dcbbde33a5d35acd6313ad01f5c7cfc266fa673892b8",
+    "collection_sha256": "d25cb39ecf7944156603e394c95387604517d11d2f9d78797434dc54cf6c3260",
+    "physical_attempt": 1,
+    "task_sha256": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6",
+    "rubric_sha256": "e9ccdf117f57aa1c533096363e69193ec4364d801ee8ace17d5a2fc113aea5b2",
+    "reference_sha256": "ab2f881f9ec5e342434081fad5d2a59e8749451a2932bfa0a571eb7e4035094d",
+    "seal_sha256": "447e707c29db6b7d6e2bae4aa851b4e3bcb849cf23a37b537a1ef2a41bcf91b0"
+  },
+  "human_review": "pending"
+}

@@ -1,0 +1,40 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>KEEP</p>
+<h3>一、本轮核查依据</h3>
+<ol>
+<li>
+<p><strong>数学义务清单覆盖度核查（100% 覆盖）</strong>：
+依据 [obligations.json](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/obligations.json) 规定的全部 92 项定义与证明义务（包含定义 <code>CH03-D01</code> ~ <code>CH03-D08</code>、正文定理与反例 <code>CH03-P01-01</code> ~ <code>CH03-P25-02</code>、章末习题 3.1 至 3.5 的完整合法性判定与端点边界 <code>CH03-P26-01</code> ~ <code>CH03-P30-04</code>），逐项比对 [alignment.json](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/alignment.json)。全部 92 项状态均为 <code>complete</code>，无漏项，无重复项。</p>
+</li>
+<li>
+<p><strong>证明义务与声明类型映射审计</strong>：
+系统遍历检查 [alignment.json](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/alignment.json) 中的全部 131 个独立声明，核验其是否真实存在于所声明的源文件中：</p>
+<ul>
+<li>8 项定义类义务（<code>CH03-D*</code>）均对应规范的非空数学定义与接口结构；</li>
+<li>全部 84 项证明类义务（<code>CH03-P*</code>）均如实映射到具体的 <code>theorem</code> 或 <code>lemma</code> 证明声明，未发现仅映射到辅助 <code>def</code> 而缺少实质证明的缺陷；上一轮修复的 <code>CH03-P17-04</code>（命题 3.14 (iii) 反例证明 <code>prop_3_14_iii</code>）核验完全完备。</li>
+</ul>
+</li>
+<li>
+<p><strong>内核公理依赖与无 sorry 审计</strong>：</p>
+<ul>
+<li>全局扫描工程源码与子目录，全项目完全无 <code>sorry</code>、<code>admit</code> 或自定义 <code>axiom</code>。</li>
+<li>运行全局公理检查脚本 [check_all_axioms.lean](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/check_all_axioms.lean)，核验 [all_axioms.txt](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/all_axioms.txt) 对齐声明内核公理依赖：全部 131 个声明仅依赖标准逻辑公理（<code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>），完全符合公理使用限制。</li>
+</ul>
+</li>
+<li>
+<p><strong>编译与依赖无环图（DAG）校验</strong>：</p>
+<ul>
+<li>在规定环境（Lean 4.29.1 + mathlib 提交 <code>5e932f97dd25535344f80f9dd8da3aab83df0fe6</code> + 冻结背景 [formal_oet/](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/formal_oet)）下对全部 6 个目标模块及入口文件 [Main.lean](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/Main.lean) 重新进行完整独立编译，全部通过编译器无警告检查（Exit code 0）。</li>
+<li>算法验证 [alignment.json](file:///private/tmp/math-gauge-flash-c003-supplement-20261114-v2/alignment/R3/physical-4/session/work/alignment.json) 依赖关系的拓扑性质，确认不存在任何循环依赖或非法自引，严格满足有向无环图（DAG）规范。</li>
+</ul>
+</li>
+</ol>
+<p>经全面复查，上一版封卷交付成果完备、自洽且严格对齐原书数学规范，未发现任何数学或形式化缺陷，决定维持全部交付成果不变（KEEP）。</p>
+<hr>
+<h3>二、仍有微小不确定性说明</h3>
+<ol>
+<li><strong>无穷度量熵情形下的差值良定性约定</strong>：
+在命题 3.18(ii-b) 与命题 3.20(ii) 中，度量熵取值于扩展实数域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi mathvariant="double-struck">R</mi><mo stretchy="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">\overline{\mathbb{R}}</annotation></semantics></math></span>（<code>EReal</code>）。若输入集合在给定精度下的内部覆盖数为无穷，则对应熵值为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span>。形式化实现中严格依据书本上下文，附加了有限输入熵良定前提（如 <code>hE_top : metric_entropy ≠ ⊤</code>）以在差值良定定义域内推导等式或单侧不等式；在输入熵发散时保持差值未定义以避免引入退化的假性算术等式。</li>
+<li><strong>抽象尺度函数接口与具体几何度量的实例化差异</strong>：
+第 3.4 节定义了满足单调性的广义尺度函数族 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>σ</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\sigma_i</annotation></semantics></math></span>。在处理反例 3.14(iii) 以及习题 3.4 与 3.5 的具体计算时，均采用标准集合直径 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">diam</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>U</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mrow><mi>sup</mi><mo>⁡</mo></mrow><mrow><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo>∈</mo><mi>U</mi></mrow></msub><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{diam}(U) = \sup_{x,y\in U} d(x,y)</annotation></semantics></math></span> 作为规范尺度函数实例。这一表示与原书习题计算完全吻合，但在理论上，若考虑更广泛的非度量单调泛函族，其具体数值边界形式化可能存在不同的扩展路线。</li>
+</ol>
+<p><a href="../../../results/v0.6.0/gemini-3.8-flash-high/20261105/supplements/c003-20261114/rounds/R3-final.md">原答文件 ↗</a> · <a href="../../../results/v0.6.0/gemini-3.8-flash-high/20261105/supplements/c003-20261114/rounds/R3-review.json">本轮审核 ↗</a></p></div>

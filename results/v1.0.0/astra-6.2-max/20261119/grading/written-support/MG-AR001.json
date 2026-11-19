@@ -1,0 +1,243 @@
+{
+  "complete_goals": [
+    {
+      "id": "A1",
+      "attained": true,
+      "reason": "完整复核当次缺陷指数、多项式整除和补幂等元给交换唯一性。",
+      "evidence": [
+        {
+          "line_start": 5,
+          "line_end": 5,
+          "utf8_start": 299,
+          "utf8_end": 620,
+          "quote": "| S1 | \\(E_n(X)-X\\) 被 \\(X(1-X)\\) 整除，\\(E_n(X)(1-E_n(X))\\) 被 \\(X^n(1-X)^n\\) 整除。代入所选原像 \\(x\\) 即同时得到提升性和幂等性。对两个幂等提升 \\(f,g\\)，\\(f(1-g)\\) 与 \\(g(1-f)\\) 都是核中的幂等元，因而为零，故 \\(f=g\\)。指数只需针对当前的 \\(x^2-x\\) 选取。 |\n"
+        }
+      ]
+    },
+    {
+      "id": "A2",
+      "attained": true,
+      "reason": "逐层组装、分解自然性、零环、极限核和可数塔元素满射都有内容核查。",
+      "evidence": [
+        {
+          "line_start": 6,
+          "line_end": 8,
+          "utf8_start": 620,
+          "utf8_end": 1452,
+          "quote": "| S2 | 共同上界保证 \\(p\\) 与指标无关。逐层提升存在，唯一性保证过渡相容，并可分别用于 \\(0,1\\) 的提升来验证正交性与单位和。商环分解的逆映射 \\((\\bar x_j)\\mapsto\\sum_j\\tilde e_jx_j\\) 良定，且与相容同态交换。空集情形也已覆盖，特别是 \\(S=0\\) 时每层的单位都在幂零核中，故每层都是零环。 |\n| S3 | 相容元组 \\(t\\) 属于极限核，而对每个 \\(m\\ge1\\)，其 \\(m\\) 次幂在第 \\(m\\) 层是非零的 \\(t^m\\bmod t^{m+1}\\)。这直接证实极限核中有非幂零元，与 S2 逐层拼接幂等元的证明一致。 |\n| S4 | 每次选取 \\(\\rho_n(x_{n+1})=x_n\\)，相容式就保证 \\(p_{n+1}(x_{n+1})=p_n(x_n)\\)。ZFC 中的依赖选择足以完成这条可数塔的构造。汇总表引用此结论时应保留可数塔的限定。 |\n"
+        }
+      ]
+    },
+    {
+      "id": "A3",
+      "attained": true,
+      "reason": "落实任意特征导子过渡与平方零，通过模任意幂的递推证真正不满射。",
+      "evidence": [
+        {
+          "line_start": 9,
+          "line_end": 9,
+          "utf8_start": 1452,
+          "utf8_end": 1774,
+          "quote": "| S5 | 求导的乘积法则保证 \\(\\rho_n\\) 保乘法。原文只展示了核元素自身的平方，直接用乘法公式还有 \\((0,P)(0,Q)=(0,0)\\)，故核理想确实平方为零。若 \\(x\\) 有相容原像，则对所有 \\(N\\) 都有 \\(P_1\\equiv 1+t+\\cdots+t^{N-1}\\pmod {t^N}\\)，这与 \\(P_1\\in k[t]\\) 矛盾。 |\n"
+        }
+      ]
+    },
+    {
+      "id": "A4",
+      "attained": true,
+      "reason": "认可矩阵反例并从末行的真实文字解释非必要性，区分字面箭头、上下文 S2 与范围外的反例。",
+      "evidence": [
+        {
+          "line_start": 10,
+          "line_end": 18,
+          "utf8_start": 1774,
+          "utf8_end": 3984,
+          "quote": "| S6 反例 | 严格上三角理想的任意两元素乘积为零，而 \\(X_0\\ne X_1\\)、\\(X_b^2=X_b\\)，且两者都映到 \\((1,0)\\)。这足以否定非交换情形的必然唯一性。 |\n\n**S6 汇总表需要修正或补全三处。**\n\n1. **末行混淆了充分性与必要性。** 记 \\(D\\) 为“极限核逐元素幂零”，\\(C\\) 为“每个目标幂等元至多有一个幂等提升”。S3 给出 \\(C\\land\\neg D\\)，所以证明了 \\(C\\nRightarrow D\\)。末行关于“\\(D\\) 并非必要”的文字判断正确，但它没有回答该行写出的 \\(D\\Rightarrow C\\)。事实上，在交换环中 \\(D\\Rightarrow C\\) 成立。直接对满射 \\(L\\twoheadrightarrow p(L)\\) 应用 S1，可知 \\(p(L)\\) 中每个幂等元恰有一个幂等提升。若要对整个 \\(S\\) 断言“存在且唯一”，还须说明每个目标幂等元都落在 \\(p(L)\\) 中；S2 的逐层构造给出了这一点。\n\n2. **“各层幂等提升唯一”若只指“至多一个”，就推不出极限提升存在。** S2 正文实际使用的是各层均**存在且唯一**，因此正文证明成立。这个区分也补出了表中遗漏的一个方向。取 S4 的常值塔 \\(R_n=\\mathbb Z\\)，过渡恒等，增广为 \\(\\mathbb Z\\twoheadrightarrow\\mathbb Z/6\\mathbb Z\\)。极限增广满射，但 \\(\\bar3^2=\\bar3\\)，而 \\(\\mathbb Z\\) 中仅有的幂等元 \\(0,1\\) 都不映到 \\(\\bar3\\)。所以普通元素都能提升，也不能保证幂等提升存在。若将增广改为第一投影 \\(k\\times k\\twoheadrightarrow k\\)，则所有幂等元都能提升，而 \\((0,0),(0,1)\\) 同时提升 \\(0\\)，说明存在性也不能单独保证唯一性。\n\n3. **极限增广满射与极限核逐元素幂零互不推出。** 答卷已有的两个例子就能核实两个方向。S3 的增广有常数截面，因而满射，核中却有非幂零元 \\(t\\)。反过来，S5 中若相容元组映到 \\(0\\)，则 \\(P_n=t^mP_{n+m}\\) 对每个 \\(m\\ge1\\) 都成立。多项式 \\(P_n\\) 只能为零，故该例甚至有 \\(\\ker p=0\\)，而 \\(p\\) 仍不满射。表中关于 \\(\\varprojlim^1\\) 的括注可精确表述为核的加法群塔中 \\((1,1,\\ldots)\\) 给出了非零的障碍类，其非零性正由 S5 的递推矛盾验证。"
+        }
+      ]
+    }
+  ],
+  "content_claims": [
+    {
+      "label": "S1 的逐元素幂零提升和交换唯一性",
+      "verdict": "correct",
+      "reason": "积分系数多项式的两个因子幂控制乘积，核中两个差型幂等元确为零。",
+      "evidence": [
+        {
+          "line_start": 5,
+          "line_end": 5,
+          "utf8_start": 299,
+          "utf8_end": 620,
+          "quote": "| S1 | \\(E_n(X)-X\\) 被 \\(X(1-X)\\) 整除，\\(E_n(X)(1-E_n(X))\\) 被 \\(X^n(1-X)^n\\) 整除。代入所选原像 \\(x\\) 即同时得到提升性和幂等性。对两个幂等提升 \\(f,g\\)，\\(f(1-g)\\) 与 \\(g(1-f)\\) 都是核中的幂等元，因而为零，故 \\(f=g\\)。指数只需针对当前的 \\(x^2-x\\) 选取。 |\n"
+        }
+      ]
+    },
+    {
+      "label": "S2 的相容组装、自然分解与零环",
+      "verdict": "correct",
+      "reason": "同值幂等提升的唯一性给相容、正交性及单位和，幂零核含单位的条件强制逐层零环。",
+      "evidence": [
+        {
+          "line_start": 6,
+          "line_end": 6,
+          "utf8_start": 620,
+          "utf8_end": 1003,
+          "quote": "| S2 | 共同上界保证 \\(p\\) 与指标无关。逐层提升存在，唯一性保证过渡相容，并可分别用于 \\(0,1\\) 的提升来验证正交性与单位和。商环分解的逆映射 \\((\\bar x_j)\\mapsto\\sum_j\\tilde e_jx_j\\) 良定，且与相容同态交换。空集情形也已覆盖，特别是 \\(S=0\\) 时每层的单位都在幂零核中，故每层都是零环。 |\n"
+        }
+      ]
+    },
+    {
+      "label": "S3 与 S4 的正确性和条件",
+      "verdict": "correct",
+      "reason": "t 的第 m 层非零 m 次幂见证极限核失败，普通元素满射的递归使用 S4 的过渡满射，并保留可数塔范围。",
+      "evidence": [
+        {
+          "line_start": 7,
+          "line_end": 8,
+          "utf8_start": 1003,
+          "utf8_end": 1452,
+          "quote": "| S3 | 相容元组 \\(t\\) 属于极限核，而对每个 \\(m\\ge1\\)，其 \\(m\\) 次幂在第 \\(m\\) 层是非零的 \\(t^m\\bmod t^{m+1}\\)。这直接证实极限核中有非幂零元，与 S2 逐层拼接幂等元的证明一致。 |\n| S4 | 每次选取 \\(\\rho_n(x_{n+1})=x_n\\)，相容式就保证 \\(p_{n+1}(x_{n+1})=p_n(x_n)\\)。ZFC 中的依赖选择足以完成这条可数塔的构造。汇总表引用此结论时应保留可数塔的限定。 |\n"
+        }
+      ]
+    },
+    {
+      "label": "S5 理想化构造及实际不满射",
+      "verdict": "correct",
+      "reason": "Leibniz 保乘法，两个核元素的任意乘积为零，模所有 t^N 的系数约束与有限次数矛盾。",
+      "evidence": [
+        {
+          "line_start": 9,
+          "line_end": 9,
+          "utf8_start": 1452,
+          "utf8_end": 1774,
+          "quote": "| S5 | 求导的乘积法则保证 \\(\\rho_n\\) 保乘法。原文只展示了核元素自身的平方，直接用乘法公式还有 \\((0,P)(0,Q)=(0,0)\\)，故核理想确实平方为零。若 \\(x\\) 有相容原像，则对所有 \\(N\\) 都有 \\(P_1\\equiv 1+t+\\cdots+t^{N-1}\\pmod {t^N}\\)，这与 \\(P_1\\in k[t]\\) 矛盾。 |\n"
+        }
+      ]
+    },
+    {
+      "label": "S6 非交换矩阵反例",
+      "verdict": "correct",
+      "reason": "平方零核中的不同矩阵给同一个幂等元的不同提升，只用来否定必然唯一性。",
+      "evidence": [
+        {
+          "line_start": 10,
+          "line_end": 10,
+          "utf8_start": 1774,
+          "utf8_end": 1964,
+          "quote": "| S6 反例 | 严格上三角理想的任意两元素乘积为零，而 \\(X_0\\ne X_1\\)、\\(X_b^2=X_b\\)，且两者都映到 \\((1,0)\\)。这足以否定非交换情形的必然唯一性。 |\n"
+        }
+      ]
+    },
+    {
+      "label": "表格的实际非必要性与字面充分性",
+      "verdict": "correct",
+      "reason": "明确认可末行解释和 S2，并澄清单看字面箭头的逻辑方向与存在范围。将措辞建议定位在表格而未否定实际结论。",
+      "evidence": [
+        {
+          "line_start": 12,
+          "line_end": 14,
+          "utf8_start": 1965,
+          "utf8_end": 2678,
+          "quote": "**S6 汇总表需要修正或补全三处。**\n\n1. **末行混淆了充分性与必要性。** 记 \\(D\\) 为“极限核逐元素幂零”，\\(C\\) 为“每个目标幂等元至多有一个幂等提升”。S3 给出 \\(C\\land\\neg D\\)，所以证明了 \\(C\\nRightarrow D\\)。末行关于“\\(D\\) 并非必要”的文字判断正确，但它没有回答该行写出的 \\(D\\Rightarrow C\\)。事实上，在交换环中 \\(D\\Rightarrow C\\) 成立。直接对满射 \\(L\\twoheadrightarrow p(L)\\) 应用 S1，可知 \\(p(L)\\) 中每个幂等元恰有一个幂等提升。若要对整个 \\(S\\) 断言“存在且唯一”，还须说明每个目标幂等元都落在 \\(p(L)\\) 中；S2 的逐层构造给出了这一点。\n"
+        }
+      ]
+    },
+    {
+      "label": "补充的三种可分性质及障碍类",
+      "verdict": "correct",
+      "reason": "Z/6 的3无整数幂等提升，第一投影存在但不唯一。S3 的常数截面与 S5 核零的递推分别见证极限核 nil 和增广满射两方向不蕴含，常数列的障碍类由同一递推检验。",
+      "evidence": [
+        {
+          "line_start": 16,
+          "line_end": 18,
+          "utf8_start": 2679,
+          "utf8_end": 3984,
+          "quote": "2. **“各层幂等提升唯一”若只指“至多一个”，就推不出极限提升存在。** S2 正文实际使用的是各层均**存在且唯一**，因此正文证明成立。这个区分也补出了表中遗漏的一个方向。取 S4 的常值塔 \\(R_n=\\mathbb Z\\)，过渡恒等，增广为 \\(\\mathbb Z\\twoheadrightarrow\\mathbb Z/6\\mathbb Z\\)。极限增广满射，但 \\(\\bar3^2=\\bar3\\)，而 \\(\\mathbb Z\\) 中仅有的幂等元 \\(0,1\\) 都不映到 \\(\\bar3\\)。所以普通元素都能提升，也不能保证幂等提升存在。若将增广改为第一投影 \\(k\\times k\\twoheadrightarrow k\\)，则所有幂等元都能提升，而 \\((0,0),(0,1)\\) 同时提升 \\(0\\)，说明存在性也不能单独保证唯一性。\n\n3. **极限增广满射与极限核逐元素幂零互不推出。** 答卷已有的两个例子就能核实两个方向。S3 的增广有常数截面，因而满射，核中却有非幂零元 \\(t\\)。反过来，S5 中若相容元组映到 \\(0\\)，则 \\(P_n=t^mP_{n+m}\\) 对每个 \\(m\\ge1\\) 都成立。多项式 \\(P_n\\) 只能为零，故该例甚至有 \\(\\ker p=0\\)，而 \\(p\\) 仍不满射。表中关于 \\(\\varprojlim^1\\) 的括注可精确表述为核的加法群塔中 \\((1,1,\\ldots)\\) 给出了非零的障碍类，其非零性正由 S5 的递推矛盾验证。"
+        }
+      ]
+    }
+  ],
+  "claim_findings": [],
+  "extra_findings": [],
+  "profile_observations": {
+    "proof": "把引用原答结论落实成多项式、理想化递推及矩阵的实质核查，并用合法例子测试可分性质。",
+    "fidelity": "完全保留原题各段独立假设和审阅任务要求。补充实例明确放在 S4 等适用域，未将其误用于交换 nil 体系。",
+    "discernment": "认可有效证明，区分表格箭头与真实证明结论。把各层唯一性的语义、整体存在性的商像对象和可数性分开，并给出实际解决方式。"
+  },
+  "schema": "math-gauge.written-response-support/v1",
+  "case_id": "MG-AR001",
+  "response_sha256": "c996fc5820407152d9efa384ae83401790c120b0f8a24397860aba071aa19409",
+  "reviewer": "GPT-6.2 Sol Max; independent Math Gauge AI reviewer",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "original_contract_kind": "answer_review",
+  "receipt_binding": {
+    "model_id": "gpt-6.2-astra/max",
+    "native_prompt": {
+      "path": "sessions/MG-AR001/physical-1/input/task.md",
+      "bytes": 22040,
+      "sha256": "8f08651c4aa09de8414f04490e74c4906591194a59dec4ae9b2d28b1a776bc18"
+    },
+    "physical_attempt": 1,
+    "selection": "first_qualified_normal_native_final_by_physical_attempt",
+    "native_final": {
+      "path": "sessions/MG-AR001/physical-1/output/response.md",
+      "bytes": 3984,
+      "sha256": "c996fc5820407152d9efa384ae83401790c120b0f8a24397860aba071aa19409"
+    },
+    "runner_response": {
+      "path": "runner-runs/MG-AR001/physical-1/MG-AR001/response.md",
+      "bytes": 3984,
+      "sha256": "c996fc5820407152d9efa384ae83401790c120b0f8a24397860aba071aa19409"
+    },
+    "source_seal": {
+      "path": "sessions/MG-AR001/physical-1/runtime/seal.json",
+      "bytes": 1297,
+      "sha256": "2d5f4cf7d5123d42a01f81755e081c3505417c019c37c45fd3d8b3700ad75236"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-AR001/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 1362,
+      "sha256": "e7124ac66497c1a8d8c6f0f1f2d0091b0e9d2e36a331bc4187e9667d6ef3ade3"
+    },
+    "native_command_probe": {
+      "path": "sessions/MG-AR001/physical-1/runtime/native-command-probe.json",
+      "bytes": 2541,
+      "sha256": "2c158d8dbac4e334e2483ba381f0b1ec68a5cada62d985411ca03a4b8a24561f"
+    },
+    "execution": {
+      "path": "sessions/MG-AR001/physical-1/runtime/execution.json",
+      "bytes": 6505,
+      "sha256": "e1071c8ea97a1a8184a27a1ee098696ddd0a8125b4b6a1dfbdc873211b54b106"
+    },
+    "native_events": {
+      "path": "sessions/MG-AR001/physical-1/output/events.ndjson",
+      "bytes": 5276,
+      "sha256": "c4c88116814313525ce054abc5bc7b951a930d85fca356db6cd2fa5e90d9efa3"
+    },
+    "collection": {
+      "path": "sessions/MG-AR001/physical-1/runtime/collection.json",
+      "bytes": 9143,
+      "sha256": "a9a439b6485ffe51c23df2afbcd8365ab614b4b95a16736d7d7a526910fe9655"
+    },
+    "first_terminal_index_one_based": 7,
+    "terminal_prefix_bytes": 5276,
+    "terminal_prefix_sha256": "c4c88116814313525ce054abc5bc7b951a930d85fca356db6cd2fa5e90d9efa3",
+    "native_final_item": "item_3",
+    "observed_backend_model": null,
+    "observed_backend_effort": null,
+    "normal_delivery_and_seal_verified": true
+  },
+  "source_bindings": {
+    "acquisition_plan_sha256": "407f693583a2806fd80aaf98dc0135f7f90b9c961332f4c1b5274a54ba54f35b",
+    "native_final_sha256": "c996fc5820407152d9efa384ae83401790c120b0f8a24397860aba071aa19409",
+    "collection_sha256": "a9a439b6485ffe51c23df2afbcd8365ab614b4b95a16736d7d7a526910fe9655",
+    "physical_attempt": 1,
+    "task_sha256": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+    "rubric_sha256": "e54cd6ee7a6bb9b6de4da7277f9bb0960e86f7f636688b6c1a9b80753e928f00",
+    "reference_sha256": "654eebbce1f5cd742a55f3ddca4f504bc9cc3fcec6d9025a6196240e0116870b",
+    "terminal_source_observation_sha256": "e7124ac66497c1a8d8c6f0f1f2d0091b0e9d2e36a331bc4187e9667d6ef3ade3",
+    "source_seal_sha256": "2d5f4cf7d5123d42a01f81755e081c3505417c019c37c45fd3d8b3700ad75236"
+  }
+}

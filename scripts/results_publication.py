@@ -2,9 +2,11 @@
 import base64
 import hashlib
 import html
+from html.parser import HTMLParser
 import json
 import os
 from pathlib import Path, PurePosixPath
+import posixpath
 import re
 import tempfile
 
@@ -141,3 +143,52 @@ def write_publication(destination, files, *, retired=()):
         target = dest / name
         if target.is_file():
             target.unlink()
+
+
+def data_literal(value):
+    return json.dumps(value, ensure_ascii=False, separators=(',', ':')).replace('<','\\u003c').replace('&','\\u0026').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
+
+
+class ProseBlocks(HTMLParser):
+    """Find outer prose blocks; UI components remain owned by shared templates."""
+    def __init__(self, source):
+        super().__init__(convert_charrefs=False)
+        self.source=source;self.offsets=[0];self.depth=0;self.start=None;self.blocks=[]
+        for line in source.splitlines(keepends=True):self.offsets.append(self.offsets[-1]+len(line))
+        self.feed(source)
+    def source_position(self):
+        line,column=self.getpos();return self.offsets[line-1]+column
+    def handle_starttag(self,tag,attrs):
+        if tag!='div':return
+        if self.depth:self.depth+=1
+        elif 'prose' in dict(attrs).get('class','').split():
+            begin=self.source_position();self.start=(begin,begin+len(self.get_starttag_text()));self.depth=1
+    def handle_endtag(self,tag):
+        if tag!='div' or not self.depth:return
+        self.depth-=1
+        if not self.depth:
+            begin,inner=self.start;end=self.source_position();self.blocks.append((begin,inner,end,end+len('</div>')))
+
+
+def lazy_prose(page, source, files):
+    for begin,inner,end,close in reversed(ProseBlocks(source).blocks):
+        content=source[inner:end]
+        if len(content.encode())<1200 or 'data-lazy-record=' in content or '<button' in content:
+            continue
+        # Links are stored relative to the shared content directory. The lazy
+        # renderer rebases them before mounting; standalone reading also works.
+        def rebase(match):
+            value=html.unescape(match[2])
+            if re.match(r'^[a-zA-Z][\w+.-]*:',value) or value.startswith(('/', '#','//')):return match[0]
+            target=posixpath.normpath(posixpath.join(str(PurePosixPath(page).parent),value))
+            return match[1]+html.escape(posixpath.relpath(target,'assets/content'),quote=True)+match[3]
+        content=re.sub(r'''(\bhref=["'])([^"']+)(["'])''',rebase,content)
+        digest=hashlib.sha256(content.encode()).hexdigest()
+        target='assets/content/'+digest+'.html';script='assets/content/'+digest+'.js'
+        files.setdefault(target,'<!doctype html><meta charset="utf-8"><div class="prose">'+content+'</div>')
+        files.setdefault(script,'window.MGProseData('+data_literal(digest)+','+data_literal({'html':content,'source':target})+');\n')
+        opening=source[begin:inner-1]+' data-lazy-prose="'+html.escape(DisplayAssets.relative(page,script),quote=True)+'" data-prose-key="'+digest+'">'
+        placeholder=('<p class="lazy-prose-link"><a href="'+html.escape(DisplayAssets.relative(page,target),quote=True)+'" target="_blank" rel="noreferrer">'
+             '<span data-lang-content="zh">阅读本节内容 ↗</span><span data-lang-content="en" hidden>Read this section ↗</span></a></p>')
+        source=source[:begin]+opening+placeholder+source[end:]
+    return source

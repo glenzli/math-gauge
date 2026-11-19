@@ -1,0 +1,1 @@
+window.MGEditionData("5c972ed2d76bc5d24506104f493e29d2bcce7ef4bdc0577bcc644a0c2302ef2b",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/claude-opus-5.5-xhigh/cases/LCH02.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"claude-opus-5.5-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

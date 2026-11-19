@@ -263,6 +263,7 @@ body.leaderboard-page .panel table :is(.initiative-count,.initiative-count stron
 .leaderboard-page .rate-figure .content-rate-bar[data-rate="attainment"]{background:var(--model-color);box-shadow:none}
 .leaderboard-page .rate-figure .legend-swatch.rmc{background:#cbd1dc;box-shadow:none}
 .leaderboard-page .rate-figure .legend-swatch.smc{background:#556075;box-shadow:none}
+.leaderboard-page .rate-figure :is(.chart-model a,.rate-value){color:var(--ink)}
 .leaderboard-page .topbar{height:54px}
 .leaderboard-page main{padding-top:22px;padding-bottom:22px}
 .leaderboard-page .intro{margin-bottom:12px}
@@ -306,3 +307,12 @@ body.leaderboard-page .panel table :is(th,td){padding-top:8px;padding-bottom:8px
 }
 
 :root{--smc-film:linear-gradient(180deg,#ffffff80 0%,#ffffff24 18%,transparent 45%,#12254b24 100%),radial-gradient(ellipse 58% 190% at 38% -42%,#ffffff6b 0%,#d9e9ff26 40%,transparent 76%),linear-gradient(114deg,transparent 5%,#aacaff40 25%,#fff0d766 43%,#c7cfff40 63%,#ffd2b333 78%,transparent 96%)}
+
+/* One display shell reads a selected, immutable assessment data snapshot. */
+html[data-edition-loading] [data-edition-content]{visibility:hidden}
+html[data-edition-error] [data-edition-content]{display:none}
+.edition-switch{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px;white-space:nowrap}
+.edition-switch select{max-width:168px;min-height:28px;padding:3px 22px 3px 7px;border:1px solid var(--line);border-radius:6px;background:var(--surface,#fff);color:var(--ink);font-family:inherit;font-size:11px;font-weight:500;line-height:1.3}
+#edition-load-error{max-width:760px;margin:40px auto;padding:18px;color:var(--ink);font-size:14px;line-height:1.7}
+.lazy-prose-link{font-size:12px;line-height:1.6}
+@media(max-width:600px){.edition-switch{gap:4px;font-size:10px}.edition-switch select{max-width:133px;font-size:10px}.edition-switch>span{display:none}}

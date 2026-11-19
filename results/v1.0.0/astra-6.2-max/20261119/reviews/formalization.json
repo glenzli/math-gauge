@@ -1,0 +1,3374 @@
+{
+  "schema": "math-gauge.formalization-engineering-review/v1",
+  "model_label": "Astra 6.2 Max",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+  "post_observation": true,
+  "new_candidate_calls": 0,
+  "cases": [
+    {
+      "case_id": "LCH01",
+      "case_version": "0.1.0",
+      "slot_id": "LCH01:A1",
+      "original_response_sha256": "cd79523e2aba2eade7ace68ecd552f40a0d77eb9806070cab71e7f8938b9aa3f",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "2cfe9ef1fb900a7a4a51b19a69898fae21201c58e483216fe5c4fadaeabf9b84",
+      "source_manifest": {
+        "path": "engineering/LCH01/manifest.json",
+        "bytes": 1073,
+        "sha256": "b208c8149dfa42d4bb8a7ca1373d64f22d098077ae98a88b9dda6687cb335c14"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "grading/lean-support/receipts/LCH01-A1-isolated/shared-verification/report.json",
+        "bytes": 43590,
+        "sha256": "8aabd80a4d675504208a02edcaef2c94e251c519f64cf85e3b6978e6386e2f23"
+      },
+      "compiled_sources": {
+        "LCH01.lean": "7ba72691e75d76e560ba23ae363c3287e67c680e1abbcfe12c8d05bd4e424430",
+        "Main.lean": "d0563e27f88e72b0e74a765927e1849cb425bcf62f5d0285ba74575a6878a5e1"
+      },
+      "source_files": {
+        "LCH01.lean": {
+          "path": "engineering/LCH01/LCH01.lean",
+          "bytes": 5241,
+          "sha256": "7ba72691e75d76e560ba23ae363c3287e67c680e1abbcfe12c8d05bd4e424430"
+        },
+        "Main.lean": {
+          "path": "engineering/LCH01/Main.lean",
+          "bytes": 13,
+          "sha256": "d0563e27f88e72b0e74a765927e1849cb425bcf62f5d0285ba74575a6878a5e1"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/LCH01/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/LCH01/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/LCH01.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.IsLip"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.IsLipOn"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.lipMatrices"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.lipMatricesOn"
+            }
+          ],
+          "notes": "Gauge carries the frozen finite nonempty extended-pseudometric family; IsLipOn keeps exact domain inclusion and every pair/output inequality. IsLip and the two certificate sets preserve full/restricted distinction, including empty restricted U."
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.IsCoLipOn"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.coLipMatricesOn"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.coLip_term_le"
+            }
+          ],
+          "notes": "IsCoLipOn explicitly retains U.Nonempty, domain inclusion and all lower row inequalities; coLipMatricesOn is the actual certificate set. The single-term lemma is derived from nonnegative finite sums, not inserted as a substitute definition."
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.BoundMatrix"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.entry"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.entry_mul"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.rowSum"
+            }
+          ],
+          "notes": "BoundMatrix uses mathlib Matrix; entry M i j=M j i realizes input columns/output rows. entry_mul proves second-times-first product convention and rowSum is the complete source-weighted sum."
+        },
+        {
+          "id": "CH02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.Channel"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.OnlyInput"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.channel_term_zero"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.isDiag_iff_onlyInput"
+            }
+          ],
+          "notes": "Channel is ordered input/output pair, OnlyInput quantifies every other input in the fixed output row, and the retained entry may vanish. isDiag_iff_onlyInput proves the exact diagonal equivalence. channel_term_zero includes infinite distances."
+        },
+        {
+          "id": "CH02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.rowSum_single"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.lip_single_input"
+            },
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.lip_diagonal"
+            }
+          ],
+          "notes": "rowSum_single proves exact sparse-row collapse for any designated input/output, then lip_single_input obtains the real output bound and lip_diagonal specializes every diagonal channel."
+        },
+        {
+          "id": "CH02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.positive_channel"
+            }
+          ],
+          "notes": "coLip_term_le derives the individual summand bound. ENNReal product positivity gives positive output from strictly positive coefficient and input distance, without assuming finiteness."
+        },
+        {
+          "id": "CH02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.reflects_gauge_zero"
+            }
+          ],
+          "notes": "Each positive diagonal channel contradicts any positive input distance when all output distances vanish. The conclusion uses frozen GaugeZeroRelated; no unjustified equality or separation strengthening."
+        },
+        {
+          "id": "CH02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01.lean",
+              "name": "LCH01.scalar_two_sided"
+            }
+          ],
+          "notes": "The same-pair/same-domain two-sided estimate combines the lower diagonal summand with the specified sparse Lip row. Only L has the row condition; arbitrary other K entries remain legal."
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "grading/lean-support/receipts/LCH01-A1-isolated/source-binding.json",
+          "bytes": 4285,
+          "sha256": "9cf311650e2735aee8704fbd3092f26f559b3fbdfe7ba0b89850d0d2e168d23a"
+        },
+        {
+          "path": "grading/lean-support/receipts/LCH01-A1-isolated/delivered-original.md",
+          "bytes": 12661,
+          "sha256": "cd79523e2aba2eade7ace68ecd552f40a0d77eb9806070cab71e7f8938b9aa3f"
+        },
+        {
+          "path": "grading/lean-support/receipts/LCH01-A1-isolated/shared-verification/manifest.json",
+          "bytes": 1702,
+          "sha256": "f51cf7b982541dd29d3b1ef02155f68487f13fb343132442881c27caba903982"
+        },
+        {
+          "path": "reviews/LCH01.json",
+          "bytes": 8527,
+          "sha256": "d911a89dabf26528287f8e0c2958e4b9dcfd235c9370a14c1b3de6cf38d9ac30"
+        }
+      ]
+    },
+    {
+      "case_id": "LCH02",
+      "case_version": "0.1.0",
+      "slot_id": "LCH02:A1",
+      "original_response_sha256": "743bcd6cfe28bf2d89b463c2efbdb91728981a31a6860f15ba6c0bc144e125d0",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "7c747294ce48619223f6ef63930d46fdd765a8462525ad784c2be22674f31f6e",
+      "source_manifest": {
+        "path": "engineering/LCH02/manifest.json",
+        "bytes": 1496,
+        "sha256": "099206ba9282d993d60bbaff2d4b4c8954cac40ef103e037e6359b8566482146"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "grading/lean-support/receipts/LCH02-A1-isolated/shared-verification/report.json",
+        "bytes": 59303,
+        "sha256": "2392ce5e4226c67c58a8b4b125c764c375406066bc628864eaa2ba5bcc81c397"
+      },
+      "compiled_sources": {
+        "Main.lean": "cd7ff42e3c13b74c68b353f701946706220cf52eca8d0ab89934e161ebba1a5d",
+        "LCH02/Matrices.lean": "399477be4755e67c6634ae3711527eee4d3f55a8b9f66f85656360afdb341cf9",
+        "LCH02/Bounds.lean": "ae50295c6b05e9509b045dbab9b1a38c6add1d728866ceab7bc62c8f463a65df",
+        "LCH02/Chains.lean": "a57788caf1adc0a4c16499543a3b0de4903437b90380e299426f9aea6e4ae670",
+        "LCH02/Paths.lean": "3d4921ecb407d0f090e033cf56f3f481d97ce4498205b407b4161eae616839b0"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "engineering/LCH02/Main.lean",
+          "bytes": 468,
+          "sha256": "cd7ff42e3c13b74c68b353f701946706220cf52eca8d0ab89934e161ebba1a5d"
+        },
+        "LCH02/Matrices.lean": {
+          "path": "engineering/LCH02/LCH02/Matrices.lean",
+          "bytes": 1806,
+          "sha256": "399477be4755e67c6634ae3711527eee4d3f55a8b9f66f85656360afdb341cf9"
+        },
+        "LCH02/Bounds.lean": {
+          "path": "engineering/LCH02/LCH02/Bounds.lean",
+          "bytes": 4584,
+          "sha256": "ae50295c6b05e9509b045dbab9b1a38c6add1d728866ceab7bc62c8f463a65df"
+        },
+        "LCH02/Chains.lean": {
+          "path": "engineering/LCH02/LCH02/Chains.lean",
+          "bytes": 3770,
+          "sha256": "a57788caf1adc0a4c16499543a3b0de4903437b90380e299426f9aea6e4ae670"
+        },
+        "LCH02/Paths.lean": {
+          "path": "engineering/LCH02/LCH02/Paths.lean",
+          "bytes": 2124,
+          "sha256": "3d4921ecb407d0f090e033cf56f3f481d97ce4498205b407b4161eae616839b0"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/LCH02/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/LCH02/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/LCH02.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.Gauge"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.Gauge.vec"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.LipOn"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.Lip"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lipFamily"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.globalLipFamily"
+            }
+          ],
+          "notes": "Gauge stores the frozen extended pseudometric family and nonempty index; Fintype supplies finite enumeration. Full/restricted Lip and certificate sets have the exact pairwise inequalities and domain conditions."
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.CoLipOn"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLipFamily"
+            }
+          ],
+          "notes": "CoLipOn explicitly includes nonempty U and domain inclusion; lower matrix sum and all quantifiers are preserved. No strongest certificate or finite entry assumption."
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.Bound"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.entry"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.row_sum"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.entry_mul"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.mulVec_mono"
+            }
+          ],
+          "notes": "Actual Matrix representation uses output row/input column through entry A i j=A j i. entry_mul has correct B-after-A multiplication and full intermediate sum."
+        },
+        {
+          "id": "CH02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.unitMatrix"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.entry_one"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.orderedProd"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.orderedProd_empty"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.orderedProd_succ"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.orderedProd_one"
+            },
+            {
+              "file": "LCH02/Matrices.lean",
+              "name": "LCH02.orderedProd_eq_reverse_prod"
+            }
+          ],
+          "notes": "orderedProd recursively multiplies the tail product by the first time-indexed factor; its reverse-list product theorem proves the representation bridge. Empty and singleton products and identity entries are exact."
+        },
+        {
+          "id": "CH02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_empty"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_eq_operatorChain"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.stage"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.stage_zero"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.stage_succ"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.stage_last"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.stage_nonempty"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.stage_subset_dom"
+            }
+          ],
+          "notes": "chain is orderedProd on frozen operators, explicitly bridged to OperatorChain on reversed List.ofFn. Recursive stage starts at U and takes exact images; zero/successor/last, nonemptiness and all stage-domain inclusions are proved using absorbing bottom."
+        },
+        {
+          "id": "CH02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.IndexPath"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.empty_path_unique"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.pathEntry"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.PositivePath"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.pathEntry_one"
+            }
+          ],
+          "notes": "IndexPath I n=Fin n→I supplies every middle sequence for n+1 edges. pathEntry uses Fin.cons i p and Fin.snoc p j for exact adjacent inputs/outputs; PositivePath quantifies every edge. Empty middle uniqueness and single-edge formula are proved."
+        },
+        {
+          "id": "CH02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_singleton"
+            }
+          ],
+          "notes": "Subsingleton I plus supplied i precisely represents a singleton family; finite sum reduction proves both directions of the scalar equivalence."
+        },
+        {
+          "id": "CH02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_restrict"
+            }
+          ],
+          "notes": "Restriction of arbitrary pairs from U to V proves certificate-family antitonicity, permitting empty U."
+        },
+        {
+          "id": "CH02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_compose"
+            }
+          ],
+          "notes": "The second certificate is on the exact first-step image. Actual monotonicity of mulVec and matrix-vector product identity prove B*A is the composite Lip certificate."
+        },
+        {
+          "id": "CH02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_restrict"
+            }
+          ],
+          "notes": "Nonempty smaller domain is retained for co-Lip antitonicity; all lower inequalities restrict directly."
+        },
+        {
+          "id": "CH02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_entry_zero"
+            }
+          ],
+          "notes": "A positive input distance and zero output imply the selected nonnegative row summand is zero; the ENNReal zero-product law forces the coefficient zero, including infinite entries."
+        },
+        {
+          "id": "CH02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_compose"
+            }
+          ],
+          "notes": "The lower matrix-bound argument has the correct inequality direction, exact intermediate image and nonempty initial domain inherited from the first certificate."
+        },
+        {
+          "id": "CH02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.identity_lip"
+            }
+          ],
+          "notes": "Identity matrix action gives the upper bound on any nonempty U in the identity domain, matching the zero-step source statement."
+        },
+        {
+          "id": "CH02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.identity_coLip"
+            }
+          ],
+          "notes": "Identity matrix action gives the lower bound with exactly the required nonempty domain."
+        },
+        {
+          "id": "CH02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.product_pos_iff"
+            }
+          ],
+          "notes": "Finite sum positivity and ENNReal product positivity yield a witness intermediate vertex and recursively a full positive path, and conversely. The singleton branch uses the unique empty middle sequence and exact single entry."
+        },
+        {
+          "id": "CH02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.global_lip_restrict"
+            }
+          ],
+          "notes": "Instantiates the larger domain as dom φ and keeps arbitrary restricted U."
+        },
+        {
+          "id": "CH02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.global_coLip_restrict"
+            }
+          ],
+          "notes": "Whole-domain co-Lip restriction retains the stipulated nonempty U."
+        },
+        {
+          "id": "CH02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_lip"
+            }
+          ],
+          "notes": "Fin(n+1)-indexed operators and matrices cover every positive length. Induction on n applies lip_compose to exact stage images; image_subset_dom proves tail legality and h m.succ reindexes the certificates. No chain conclusion is assumed."
+        },
+        {
+          "id": "CH02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_coLip"
+            }
+          ],
+          "notes": "The same proved induction applies the actual co-Lip composition theorem and preserves nonempty domains. All positive chain lengths are covered."
+        },
+        {
+          "id": "CH02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.product_zero_iff"
+            }
+          ],
+          "notes": "Negating the proved positive-path equivalence and ENNReal positivity iff nonzero yields every path having a zero factor. No infimum attainment or finite-coefficient assumption is introduced."
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "grading/lean-support/receipts/LCH02-A1-isolated/source-binding.json",
+          "bytes": 5442,
+          "sha256": "b60ac6d9a17e744335659cd928302aa19f3b03b81abd5379ac6628580603109d"
+        },
+        {
+          "path": "grading/lean-support/receipts/LCH02-A1-isolated/delivered-original.md",
+          "bytes": 24513,
+          "sha256": "743bcd6cfe28bf2d89b463c2efbdb91728981a31a6860f15ba6c0bc144e125d0"
+        },
+        {
+          "path": "grading/lean-support/receipts/LCH02-A1-isolated/shared-verification/manifest.json",
+          "bytes": 2477,
+          "sha256": "3326d3e005ea3862376035a0271c9ad4eb3b0249d28cc1ac613de2faaf20281a"
+        },
+        {
+          "path": "reviews/LCH02.json",
+          "bytes": 17159,
+          "sha256": "f504d742392717fbf2148befa2afcde0767a255d4235dfd4157ef6f8dd827298"
+        }
+      ]
+    },
+    {
+      "case_id": "HCH02",
+      "case_version": "0.1.0",
+      "slot_id": "HCH02:A1",
+      "original_response_sha256": "f0fc0ecca2bcbcee65f240d0a8ed6474a8b6e74143d5b4f875146dc2d186d6f0",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "df12092822d548cca91afa2769be744d0a666cba2930172ff05aa4e0cdfd7b6b",
+      "source_manifest": {
+        "path": "engineering/HCH02/manifest.json",
+        "bytes": 1341,
+        "sha256": "479a3868e79f978a67bc84474d64e85b49a5a7356cdd5d4a434155aee0b7ece8"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "grading/lean-support/receipts/HCH02-A1-isolated/shared-verification/report.json",
+        "bytes": 70271,
+        "sha256": "bc37f0938afbd1eca7cbb0bd1607cba39960862459bfe431f04282f1205b5b6e"
+      },
+      "compiled_sources": {
+        "Main.lean": "ff269483eee3efc72df4cb0aaac5d5f6c312436821a31dc5c5c91a90bb7a83bb",
+        "Bounds.lean": "a3dd8cbe1dfef8b9d88f5a4b395f2d0b5deee423bb66bec48659c06acf27263f",
+        "Chains.lean": "b1e3f6fc8d5407914d99b914147d53be1adf5048cb22286e19b6f261d9555d92",
+        "Channels.lean": "12d73f990ce40cb9e8658dcd5977b32c8c991b924ae5caff64591fc06dc71526"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "engineering/HCH02/Main.lean",
+          "bytes": 44,
+          "sha256": "ff269483eee3efc72df4cb0aaac5d5f6c312436821a31dc5c5c91a90bb7a83bb"
+        },
+        "Bounds.lean": {
+          "path": "engineering/HCH02/Bounds.lean",
+          "bytes": 8199,
+          "sha256": "a3dd8cbe1dfef8b9d88f5a4b395f2d0b5deee423bb66bec48659c06acf27263f"
+        },
+        "Chains.lean": {
+          "path": "engineering/HCH02/Chains.lean",
+          "bytes": 7142,
+          "sha256": "b1e3f6fc8d5407914d99b914147d53be1adf5048cb22286e19b6f261d9555d92"
+        },
+        "Channels.lean": {
+          "path": "engineering/HCH02/Channels.lean",
+          "bytes": 7045,
+          "sha256": "12d73f990ce40cb9e8658dcd5977b32c8c991b924ae5caff64591fc06dc71526"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/HCH02/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/HCH02/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 11333,
+          "sha256": "336ba7b68faebb4a79a39f0327ead65285bc519316503f209ed992e527b8b549"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/HCH02.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646"
+      },
+      "obligations": [
+        {
+          "id": "HC02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.Gauge"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.vec"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.globalLip"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_iff"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.top_entry"
+            }
+          ],
+          "notes": "Full/restricted Lip sets retain exact domain inclusion and all pairs/output components. ENNReal top coefficients at zero and positive distances are expressly verified. Gauge explicitly packages every frozen ExtendedPseudoMetric on the finite nonempty family."
+        },
+        {
+          "id": "HC02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.coLip"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.coLip_iff"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_term"
+            }
+          ],
+          "notes": "coLip includes nonempty U, domain inclusion and every lower row inequality. Arbitrary zero/infinite coefficients remain allowed; coLip_term is derived from the full nonnegative sum."
+        },
+        {
+          "id": "HC02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.Coeff"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display_entry"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mul"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display_mul"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.act"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.act_mul"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.act_mono"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.term_le_act"
+            }
+          ],
+          "notes": "Input-first Coeff i j is proved equal to display row j/column i. display_mul establishes the actual ordinary matrix multiplication bridge; act_mul and monotonicity are proved."
+        },
+        {
+          "id": "HC02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.unitM"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display_unit"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.act_unit"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mul_unit"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_empty"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_step"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_one"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.display_product"
+            }
+          ],
+          "notes": "Kronecker unit, action and right-unit multiplication are proved. product appends the last time step on the left; display_product bridges the full reverse list product. Empty and singleton cases are exact."
+        },
+        {
+          "id": "HC02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.ident"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.comp"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.comp_domain"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.run"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.run_eq_chain"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage_zero"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage_succ"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage_last"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stages_unique"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.final_image"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage_domain"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.OnStages"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.onStages_iff"
+            }
+          ],
+          "notes": "Actual frozen operators, comp, run and prefix-image stage are constructed. comp_domain derives both necessary domain inclusions; stage_domain proves each step legal. stages_unique and onStages_iff bridge every recursively supplied domain sequence to the concrete representation, and run_eq_chain bridges the frozen order."
+        },
+        {
+          "id": "HC02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.Path"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.edge"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.weight"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.HasZero"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.AllPositive"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.one_path"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.sum_paths"
+            }
+          ],
+          "notes": "Path I n=Fin n→I includes every middle sequence. edge uses Fin.cons and Fin.snoc to give each adjacent endpoint pair, weight multiplies all edges, and HasZero/AllPositive retain the exact quantifiers. one_path proves the unique empty middle sequence and all singleton reductions."
+        },
+        {
+          "id": "HC02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Channel"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Row"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Col"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Diagonal"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.RowDecoupled"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.ColDecoupled"
+            }
+          ],
+          "notes": "Channel, arbitrary input/output row and column sparsity, diagonal and existential legal-certificate decoupling have the correct orientations; neither row nor column forces i=j."
+        },
+        {
+          "id": "HC02-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.feasible"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.feasible_iff"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.best"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.best_empty"
+            }
+          ],
+          "notes": "feasible is the exact point-pair scalar-bound set under legal U via feasible_iff, and best its ENNReal sInf with empty-set value top. It is kept distinct from entrywise matrix infima."
+        },
+        {
+          "id": "HC02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.singleton_lip"
+            }
+          ],
+          "notes": "Singleton-family equivalence is proved by finite sum reduction in both directions."
+        },
+        {
+          "id": "HC02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.global_restrict"
+            }
+          ],
+          "notes": "Full-domain certificate restricts to arbitrary legitimate U."
+        },
+        {
+          "id": "HC02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_shrink"
+            }
+          ],
+          "notes": "Certificate inclusion follows restricting both domains and point pairs, including empty U."
+        },
+        {
+          "id": "HC02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.entryInf"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.entryInf_mono"
+            }
+          ],
+          "notes": "entryInf is the actual image of the legal matrix family; image inclusion and sInf antitonicity give the stated direction."
+        },
+        {
+          "id": "HC02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_comp"
+            }
+          ],
+          "notes": "The second certificate is on the actual first image and the final coefficient is L2*L1. act monotonicity and multiplication establish the inequality."
+        },
+        {
+          "id": "HC02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.collapsed_entry"
+            }
+          ],
+          "notes": "Zero output bounds each row summand by zero; positive input distance and ENNReal zero-product law force that coefficient zero."
+        },
+        {
+          "id": "HC02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_comp"
+            }
+          ],
+          "notes": "Exact intermediate image and first-domain nonemptiness survive the lower-bound composition; multiplication order and inequality direction are correct."
+        },
+        {
+          "id": "HC02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.CloseOn"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.close_swap"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb"
+            }
+          ],
+          "notes": "Two triangle inequalities plus symmetry and the stipulated pointwise perturbation yield the forward image-distance bound on the common domain."
+        },
+        {
+          "id": "HC02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_rev"
+            }
+          ],
+          "notes": "Swapping operators and using symmetry gives the reverse bound with the same perturbation data."
+        },
+        {
+          "id": "HC02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_bridge"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_bridge_rev"
+            }
+          ],
+          "notes": "Both directional Lip perturbation bounds substitute the valid original certificate and retain the additive 2δ term."
+        },
+        {
+          "id": "HC02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_bridge"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_bridge_rev"
+            }
+          ],
+          "notes": "Both directional co-Lip perturbation bounds combine the lower certificate with the reverse/forward image bound; no subtraction of infinite quantities."
+        },
+        {
+          "id": "HC02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_lip"
+            }
+          ],
+          "notes": "Induction on every Fin-indexed finite sequence uses actual prefix domains and local certificates only. The supplied theorem also correctly handles zero steps."
+        },
+        {
+          "id": "HC02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_coLip"
+            }
+          ],
+          "notes": "Every nonempty chain receives initial nonemptiness from its first co-Lip certificate; induction propagates actual nonempty images and the product bound."
+        },
+        {
+          "id": "HC02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.id_lip"
+            }
+          ],
+          "notes": "Identity and unit action prove the upper bound even for empty U, which includes the required nonempty case."
+        },
+        {
+          "id": "HC02-P15",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.id_coLip"
+            }
+          ],
+          "notes": "Identity and unit action prove the lower bound with the necessary nonempty U."
+        },
+        {
+          "id": "HC02-P16",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.path_criteria"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.one_path"
+            }
+          ],
+          "notes": "sum_paths proves the exact finite path-sum expansion using snocEquiv and weight_snoc. path_criteria retains the original positive-length operator chain and actual Lip/coLip certificate hypotheses; its first component gives zero iff every middle sequence contains zero. one_path handles singleton."
+        },
+        {
+          "id": "HC02-P17",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.path_criteria"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.one_path"
+            }
+          ],
+          "notes": "The second component of path_criteria gives positivity iff some middle sequence has every edge positive, by finite sum/product ENNReal laws; original chain context and singleton specialization are retained."
+        },
+        {
+          "id": "HC02-P18",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.empty_channel"
+            }
+          ],
+          "notes": "A zero-input/positive-output pair rules out all scalar ENNReal certificates, including top because top*0=0; the empty feasible set has infimum top."
+        },
+        {
+          "id": "HC02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.best_attained"
+            }
+          ],
+          "notes": "Positive finite infimum is attained. Zero input uses the feasible top certificate; infinite input uses strict positivity; finite nonzero input uses division and le_sInf directly over every feasible scalar. All branches valid."
+        },
+        {
+          "id": "HC02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.feasible_up"
+            }
+          ],
+          "notes": "Multiplication monotonicity proves upward closure of the entire scalar feasible set."
+        },
+        {
+          "id": "HC02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.above_best"
+            }
+          ],
+          "notes": "sInf_lt_iff supplies a smaller feasible scalar below any strict-above-infimum value; upward closure includes the possible top endpoint. The theorem validly exceeds the requested positive-finite-infimum subcase."
+        },
+        {
+          "id": "HC02-P22",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.zero_best"
+            }
+          ],
+          "notes": "At zero infimum every positive scalar is feasible, including every requested finite positive scalar."
+        },
+        {
+          "id": "HC02-P23",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.discreteGauge"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.zero_unattained"
+            }
+          ],
+          "notes": "discreteGauge uses Fin3 with bottom0 and Unit index; all distinct points have distance top. All frozen extended-pseudometric axioms are proved. Identity on its nonempty domain has distinct ordinary points1,2, whose input and output are both top; every positive scalar works since c*top=top, zero fails since0*top=0. Density proves the actual infimum zero. No requirement forces finite output distance."
+        },
+        {
+          "id": "HC02-P24",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.finite_iff"
+            }
+          ],
+          "notes": "finite_iff is exactly sInf_lt_iff at top, proving both directions including unattained zero infimum."
+        },
+        {
+          "id": "HC02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.erase_input"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.erase_upper"
+            }
+          ],
+          "notes": "Zero coefficient kills the term even at infinite distance; finite-sum erase identity establishes exact removal."
+        },
+        {
+          "id": "HC02-P26",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.row_bound"
+            }
+          ],
+          "notes": "An arbitrary sparse output row reduces its full bound to the designated input, with no i=j restriction."
+        },
+        {
+          "id": "HC02-P27",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.column_contribution"
+            }
+          ],
+          "notes": "An arbitrary sparse input column contributes zero to every other output; this is correctly only a statement about the selected certificate."
+        },
+        {
+          "id": "HC02-P28",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.diagonal_upper"
+            }
+          ],
+          "notes": "Diagonal upper bounds follow by applying the sparse-row theorem to each diagonal channel."
+        },
+        {
+          "id": "HC02-P29",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.two_sided"
+            }
+          ],
+          "notes": "Lower bound selects the co-Lip diagonal summand and upper bound uses only that Lip row. No diagonal restriction on K is added."
+        },
+        {
+          "id": "HC02-P30",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.diagonal_bounds"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.finite_diagonal"
+            }
+          ],
+          "notes": "diagonal_bounds proves all component two-sided inequalities. finite_diagonal constructs NNReal families via toNNReal and proves their coercions equal every finite diagonal coefficient, retaining the same inequalities without claiming finite distances."
+        },
+        {
+          "id": "HC02-P31",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.positive_channel"
+            }
+          ],
+          "notes": "Positive coefficient and positive input distance give positive output through the proved co-Lip term bound, including extended values."
+        },
+        {
+          "id": "HC02-P32",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.reflect_zero"
+            }
+          ],
+          "notes": "Each positive diagonal channel rules out a positive input distance when its output distance is zero; concludes the actual frozen family-zero relation, without point separation."
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "grading/lean-support/receipts/HCH02-A1-isolated/source-binding.json",
+          "bytes": 5029,
+          "sha256": "91850142b245aeeecbc110122874ff9f61b9cf3815c54c48d158539679b489f5"
+        },
+        {
+          "path": "grading/lean-support/receipts/HCH02-A1-isolated/delivered-original.md",
+          "bytes": 42845,
+          "sha256": "f0fc0ecca2bcbcee65f240d0a8ed6474a8b6e74143d5b4f875146dc2d186d6f0"
+        },
+        {
+          "path": "grading/lean-support/receipts/HCH02-A1-isolated/shared-verification/manifest.json",
+          "bytes": 2190,
+          "sha256": "ff34ba1cf4fe9bed4c85fa17c3bf98c6b3198b96003ba2a440eabaccbbc7ac0a"
+        },
+        {
+          "path": "reviews/HCH02.json",
+          "bytes": 32029,
+          "sha256": "81c5ee53b581f17b4c7e9497a97ba3199b90284f5f872cdeac6bac5d5a895c27"
+        }
+      ]
+    },
+    {
+      "case_id": "MG-C003",
+      "case_version": "0.1.1",
+      "slot_id": "MG-C003:A1",
+      "original_response_sha256": "ed40b3371f1730cb20a3a92462d736508845ca51deebe56cd6ffa3968cf9c350",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "e5bbd6dcf1db41a4b6c89f2aaac0a2d0a796727c7001895503ac993dca8d36c8",
+      "source_manifest": {
+        "path": "engineering/MG-C003/manifest.json",
+        "bytes": 2732,
+        "sha256": "eccb2421aaf02d3ecd1c822631c381c7f8996f208701432d2a8ffc2f12c6c9e7"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "grading/lean-support/receipts/MG-C003-A1-isolated/shared-verification/report.json",
+        "bytes": 176382,
+        "sha256": "fe920862fc1e90cab1caa380a1f4fd341335be02da930365f633a3a8b5493152"
+      },
+      "compiled_sources": {
+        "Main.lean": "57484cca96ae0c21fb1b0198b5f34f6fa2fda706f64664740b511630c0ec7faa",
+        "Ch3/Chapter.lean": "0e5b0b1778e5ac06d432cf8588232b9889b4a33685c3be7da4fdc2fef3fad527",
+        "Ch3/Components.lean": "6912c7d4818c4ef5ed04ac53dd2527364025cbeaf2992dfa28e94e2daa46bad6",
+        "Ch3/Correspondence.lean": "168e8c2e09a803006bfa8adf596849922dd4b789c79c2df5938bd7f8fc3dc8b9",
+        "Ch3/Entropy.lean": "bd9f5e15c2f9316e46d998c7b53b4b1cf1c89c7888b21cedcd50238c5657c6ca",
+        "Ch3/Factor.lean": "6a38f2054deed2286c29c4a24444427e61365010331859bc33d09560d2abf310",
+        "Ch3/Floor.lean": "3e1db2f47e8ca436f54cfcfc2066b8fd6e6181406b35f3d987c7573f6e6dc2ec",
+        "Ch3/Models.lean": "0d9279497f795371e11cbe849c27068ff056bd82c886dd5031fd2ea040824098",
+        "Ch3/Radius.lean": "287f0ccd4d5357d73e168057cc714196178d20fbac1c1f9f887050377e80c5a1",
+        "Ch3/Readout.lean": "4b9c5ac5d7210811d6cc86493f8518ee924dd6bf8b08a30e982df56fdf46537c",
+        "Ch3/RealTools.lean": "27f95350a0c0ae437c54a400e7acc30b2817e49f55e00bcbb43ec84635ed4087",
+        "Ch3/Rearrange.lean": "2f01be1210c21cb196cfd10a3c59b93f430c47676c5f3438cd6d72767a87e3be",
+        "Ch3/Scale.lean": "f4409fe479bc42ae8f8e9a7002c72b124e99e7346c93cdff460660f5c52bd78a",
+        "Ch3/Step.lean": "2e94a7d8454ff5535b141c02681a02e9dbd76abf7203edc6d7406f44a9b8dc85"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "engineering/MG-C003/Main.lean",
+          "bytes": 701,
+          "sha256": "57484cca96ae0c21fb1b0198b5f34f6fa2fda706f64664740b511630c0ec7faa"
+        },
+        "Ch3/Chapter.lean": {
+          "path": "engineering/MG-C003/Ch3/Chapter.lean",
+          "bytes": 8465,
+          "sha256": "0e5b0b1778e5ac06d432cf8588232b9889b4a33685c3be7da4fdc2fef3fad527"
+        },
+        "Ch3/Components.lean": {
+          "path": "engineering/MG-C003/Ch3/Components.lean",
+          "bytes": 7793,
+          "sha256": "6912c7d4818c4ef5ed04ac53dd2527364025cbeaf2992dfa28e94e2daa46bad6"
+        },
+        "Ch3/Correspondence.lean": {
+          "path": "engineering/MG-C003/Ch3/Correspondence.lean",
+          "bytes": 8704,
+          "sha256": "168e8c2e09a803006bfa8adf596849922dd4b789c79c2df5938bd7f8fc3dc8b9"
+        },
+        "Ch3/Entropy.lean": {
+          "path": "engineering/MG-C003/Ch3/Entropy.lean",
+          "bytes": 10776,
+          "sha256": "bd9f5e15c2f9316e46d998c7b53b4b1cf1c89c7888b21cedcd50238c5657c6ca"
+        },
+        "Ch3/Factor.lean": {
+          "path": "engineering/MG-C003/Ch3/Factor.lean",
+          "bytes": 6442,
+          "sha256": "6a38f2054deed2286c29c4a24444427e61365010331859bc33d09560d2abf310"
+        },
+        "Ch3/Floor.lean": {
+          "path": "engineering/MG-C003/Ch3/Floor.lean",
+          "bytes": 4077,
+          "sha256": "3e1db2f47e8ca436f54cfcfc2066b8fd6e6181406b35f3d987c7573f6e6dc2ec"
+        },
+        "Ch3/Models.lean": {
+          "path": "engineering/MG-C003/Ch3/Models.lean",
+          "bytes": 6220,
+          "sha256": "0d9279497f795371e11cbe849c27068ff056bd82c886dd5031fd2ea040824098"
+        },
+        "Ch3/Radius.lean": {
+          "path": "engineering/MG-C003/Ch3/Radius.lean",
+          "bytes": 7881,
+          "sha256": "287f0ccd4d5357d73e168057cc714196178d20fbac1c1f9f887050377e80c5a1"
+        },
+        "Ch3/Readout.lean": {
+          "path": "engineering/MG-C003/Ch3/Readout.lean",
+          "bytes": 4955,
+          "sha256": "4b9c5ac5d7210811d6cc86493f8518ee924dd6bf8b08a30e982df56fdf46537c"
+        },
+        "Ch3/RealTools.lean": {
+          "path": "engineering/MG-C003/Ch3/RealTools.lean",
+          "bytes": 4092,
+          "sha256": "27f95350a0c0ae437c54a400e7acc30b2817e49f55e00bcbb43ec84635ed4087"
+        },
+        "Ch3/Rearrange.lean": {
+          "path": "engineering/MG-C003/Ch3/Rearrange.lean",
+          "bytes": 6479,
+          "sha256": "2f01be1210c21cb196cfd10a3c59b93f430c47676c5f3438cd6d72767a87e3be"
+        },
+        "Ch3/Scale.lean": {
+          "path": "engineering/MG-C003/Ch3/Scale.lean",
+          "bytes": 2745,
+          "sha256": "f4409fe479bc42ae8f8e9a7002c72b124e99e7346c93cdff460660f5c52bd78a"
+        },
+        "Ch3/Step.lean": {
+          "path": "engineering/MG-C003/Ch3/Step.lean",
+          "bytes": 4206,
+          "sha256": "2e94a7d8454ff5535b141c02681a02e9dbd76abf7203edc6d7406f44a9b8dc85"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "bytes": 11435,
+          "sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean",
+          "bytes": 4007,
+          "sha256": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean",
+          "bytes": 9743,
+          "sha256": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean",
+          "bytes": 681,
+          "sha256": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/MG-C003.json",
+        "bytes": 122710,
+        "sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527"
+      },
+      "obligations": [
+        {
+          "id": "CH03-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.Const"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.Ident"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.Active"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.constSet"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.identSet"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.activeSet"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.componentSets"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.partition"
+            }
+          ],
+          "notes": "Const has priority; Ident explicitly excludes Const, and Active is the complement, giving a disjoint exhaustive partition."
+        },
+        {
+          "id": "CH03-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiber"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.subdist"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.subzero"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.subdistMaximum"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.blocks"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.fiberEmpty"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberEnds"
+            }
+          ],
+          "notes": "Arbitrary target fibers use the actual output family; finite sup is bridged to a maximum and zero iff every selected distance vanishes, including empty-family behavior."
+        },
+        {
+          "id": "CH03-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.atImage"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.ontoImage"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.pairs"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.eqRel"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.zeroRel"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.relationFiber"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.imageSetoid"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.ImageQuot"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.atClass"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.classEq"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.finer"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.finerFibers"
+            }
+          ],
+          "notes": "Actual image and surjective image map precede point and zero relations; the quotient uses the image zero setoid, with refinement equivalent to fiber inclusion."
+        },
+        {
+          "id": "CH03-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.legal"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.radius"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.legalBall"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.radiusEmpty"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.radiusSingle"
+            }
+          ],
+          "notes": "Legal radii are strictly positive and finite; radius is their ENNReal supremum, including empty and singleton endpoint lemmas."
+        },
+        {
+          "id": "CH03-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.uniform"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.matrix"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.radiusNotation"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.uniform_le"
+            }
+          ],
+          "notes": "Uniform radius is the infimum over the independently specified anchor set; matrix indexing is output j, input i, with evaluation on U retained."
+        },
+        {
+          "id": "CH03-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.Region"
+            },
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.Scale"
+            },
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.diam"
+            },
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.diamScale"
+            },
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.bits"
+            },
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.channel"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.channelTable"
+            }
+          ],
+          "notes": "Region is nonempty; Scale is arbitrary monotone scale, diameter is a concrete instance, and both strict/nonstrict Boolean comparisons are represented."
+        },
+        {
+          "id": "CH03-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.cover"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.entropy"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.Net"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.netBalls"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.boundedAtAll"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.boundedNets"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number_attained"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number_empty"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.log2_ereal"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy_nonneg"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy_empty"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy_eq_metric_entropy"
+            }
+          ],
+          "notes": "Internal centers remain in U; the aliases and frozen declarations supply attainment, infinity, empty and entropy endpoints without substituting external covers."
+        },
+        {
+          "id": "CH03-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.good"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.delta"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.mapDelta"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.mapDelta_formula"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.singletonDelta"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.deltaBranches"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.deltaSigns"
+            }
+          ],
+          "notes": "Good subtraction requires at least one finite operand; mapDelta retains nonempty sets/families and positive finite scale, avoiding infinity minus infinity."
+        },
+        {
+          "id": "CH03-P01-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.zeroRow"
+            }
+          ],
+          "notes": "Constant outputs give a zero row on every input pair."
+        },
+        {
+          "id": "CH03-P01-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.zeroEntry"
+            }
+          ],
+          "notes": "A constant output forces the corresponding co-Lipschitz entry K j i to zero when input component j has a positive-distance pair in U."
+        },
+        {
+          "id": "CH03-P01-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.identDist"
+            }
+          ],
+          "notes": "Identity output preserves the corresponding input distance and nonconstancy is retained."
+        },
+        {
+          "id": "CH03-P02-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.compActive"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.compSets"
+            }
+          ],
+          "notes": "Composition evaluates the outer operator on the actual inner image; active-set inclusion follows pointwise."
+        },
+        {
+          "id": "CH03-P02-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.chain"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.stepActive"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.chain_order"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.chain_domain"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.emptyActive"
+            },
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.chainActive"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.prefixOp"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.prefixDomains"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.finiteActive"
+            }
+          ],
+          "notes": "Both list-chain and arbitrary natural finite-prefix operators are provided, including zero length and exact prefix domains."
+        },
+        {
+          "id": "CH03-P02-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.compIdent"
+            }
+          ],
+          "notes": "Identity composition includes the needed nonconstant condition; it does not silently reclassify a constant as Ident."
+        },
+        {
+          "id": "CH03-P03-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.d"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.f"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.U"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.model"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.domain"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.image_eq"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.components"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Swap.classifications"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.strictInclusions"
+            }
+          ],
+          "notes": "Option Bool supplies exactly two nonabsorbing points and an absorbing failure point; the swap realizes both strict active-set inclusions."
+        },
+        {
+          "id": "CH03-P04-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.outerConst"
+            }
+          ],
+          "notes": "Constancy propagates through the outer map on its actual evaluation image."
+        },
+        {
+          "id": "CH03-P04-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.P"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.cardinality"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.key"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.d"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.first"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.lastOp"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.U"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.model"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Seven.exampleData"
+            }
+          ],
+          "notes": "Option of six ordinary points gives seven total points; the pseudometric merges only p and q and the actual partial maps establish the countermodel."
+        },
+        {
+          "id": "CH03-P05-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.diagConst"
+            }
+          ],
+          "notes": "Diagonal zero implies constant on the evaluation set by the pseudometric triangle relation."
+        },
+        {
+          "id": "CH03-P06-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberTarget"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.subfamilyTarget"
+            }
+          ],
+          "notes": "Fibers depend only on the target zero class, for single and selected output subfamilies."
+        },
+        {
+          "id": "CH03-P06-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberCover"
+            }
+          ],
+          "notes": "Every input lies in a fiber over its actual image."
+        },
+        {
+          "id": "CH03-P06-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberPartition"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.blockPartition"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.subfamilyPartition"
+            }
+          ],
+          "notes": "Nonempty actual-image blocks are deduplicated as a set; overlap entails equality, yielding a partition."
+        },
+        {
+          "id": "CH03-P06-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberInter"
+            }
+          ],
+          "notes": "Selected-family fibers are intersections of individual fibers."
+        },
+        {
+          "id": "CH03-P06-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberAnti"
+            }
+          ],
+          "notes": "Enlarging a selected family shrinks its fibers."
+        },
+        {
+          "id": "CH03-P06-06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.fiberEnds"
+            }
+          ],
+          "notes": "Empty-family and singleton-family formulas are explicit."
+        },
+        {
+          "id": "CH03-P06-07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.identFiber"
+            }
+          ],
+          "notes": "Identity fibers agree with the relevant input zero classes."
+        },
+        {
+          "id": "CH03-P06-08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Components.lean",
+              "name": "MG.constFiber"
+            }
+          ],
+          "notes": "Constant components have the whole-domain or empty target fiber as appropriate."
+        },
+        {
+          "id": "CH03-P07-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.transforms"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.pointFactor"
+            }
+          ],
+          "notes": "The point relation equivalence is proved through the full transform equation."
+        },
+        {
+          "id": "CH03-P07-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.atImage"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.ontoImage"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.descend"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.pointFactor"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.emptyTransform"
+            }
+          ],
+          "notes": "Surjectivity onto the actual image constructs the descent map; the empty image is handled separately."
+        },
+        {
+          "id": "CH03-P07-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.bothPoint"
+            }
+          ],
+          "notes": "Two point factorizations are equivalent to equality of induced point relations."
+        },
+        {
+          "id": "CH03-P07-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.factorLip"
+            }
+          ],
+          "notes": "Positive finite K and finite L imply factor Lipschitz L/K on the actual image; no ambient separation or finite-distance restriction is imposed."
+        },
+        {
+          "id": "CH03-P08-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.atClass"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.ontoClass"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.classEq"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.quotTransforms"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.quotFactor"
+            }
+          ],
+          "notes": "The actual-image quotient is surjected onto by atClass; equality of classes and the full factor formula establish descent."
+        },
+        {
+          "id": "CH03-P08-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.bothQuot"
+            }
+          ],
+          "notes": "Mutual quotient factorizations are equivalent to equality of zero relations."
+        },
+        {
+          "id": "CH03-P08-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.separatesOn"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.sepRel"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.separatedFactors"
+            }
+          ],
+          "notes": "Separation is required only on actual images; it identifies point and zero relations and gives the claimed comparison."
+        },
+        {
+          "id": "CH03-P09-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.finerRefl"
+            },
+            {
+              "file": "Ch3/Factor.lean",
+              "name": "MG.finerTrans"
+            }
+          ],
+          "notes": "Refinement is reflexive and transitive as relation inclusion."
+        },
+        {
+          "id": "CH03-P09-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.finiteFiner"
+            }
+          ],
+          "notes": "Finite chains use Fin(n+1), retaining the natural endpoint relation."
+        },
+        {
+          "id": "CH03-P09-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.strictFiniteFiner"
+            }
+          ],
+          "notes": "The explicit finite witness proves strict refinement, rather than only inclusion."
+        },
+        {
+          "id": "CH03-P10-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.extend"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.extended"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readDist"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readMetric"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.read_points"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.W"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.U"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.v"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.f"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.domain"
+            }
+          ],
+          "notes": "Option Real and an absorbing extension realize the usual metric readout and the two-sided punctured interval domain."
+        },
+        {
+          "id": "CH03-P10-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.across"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.legal_iff"
+            },
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.pointValue"
+            }
+          ],
+          "notes": "For every nonzero y in that domain, legal radii are exactly 0<r<=abs y and the point radius is abs y."
+        },
+        {
+          "id": "CH03-P10-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.uniformZero"
+            }
+          ],
+          "notes": "Anchors approaching zero give uniform radius zero despite each positive point radius."
+        },
+        {
+          "id": "CH03-P11-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.constSub"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.constSubFiber"
+            }
+          ],
+          "notes": "Constant selected outputs give whole-domain fibers."
+        },
+        {
+          "id": "CH03-P11-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.constRadii"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.subfamilyConstant"
+            }
+          ],
+          "notes": "Constancy yields infinite point/uniform radii for the specified family."
+        },
+        {
+          "id": "CH03-P11-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.channels"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.channelsMetric"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Swap.inputAndOutput"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.Swap.infiniteInput"
+            }
+          ],
+          "notes": "The finite swap model shows the requested converse failure with explicit input/output channels, including infinite input threshold."
+        },
+        {
+          "id": "CH03-P12-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.identBase"
+            }
+          ],
+          "notes": "Identity zero balls reproduce the base pseudometric zero behavior."
+        },
+        {
+          "id": "CH03-P12-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.identRadius"
+            }
+          ],
+          "notes": "The identity-radius statement keeps the exact zero-neighborhood condition; it does not assume a separated metric."
+        },
+        {
+          "id": "CH03-P13-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.radiusInf"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.finiteMin"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.pointMinimum"
+            }
+          ],
+          "notes": "Finite nonempty output families yield the infimum formula and an attained finite-family minimum via the radius criterion."
+        },
+        {
+          "id": "CH03-P13-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.uniformInf"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.matrixMinimum"
+            }
+          ],
+          "notes": "The uniform/matrix formula follows by commuting infima with the anchor domain retained."
+        },
+        {
+          "id": "CH03-P13-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.uniformAnti"
+            }
+          ],
+          "notes": "Increasing the family weakens the legal condition in the correct direction and decreases uniform radius."
+        },
+        {
+          "id": "CH03-P14-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.cutFiber"
+            }
+          ],
+          "notes": "A zero fiber is characterized by the open radius cut."
+        },
+        {
+          "id": "CH03-P14-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.extractRadius"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.cutPoint"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.cutSymm"
+            }
+          ],
+          "notes": "The radius extraction equivalence handles both 0 and top, not merely attained finite radii."
+        },
+        {
+          "id": "CH03-P14-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.cutComp"
+            }
+          ],
+          "notes": "The cut characterization composes through the actual image."
+        },
+        {
+          "id": "CH03-P15-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.compZeroRadius"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.compositeBounds"
+            }
+          ],
+          "notes": "Zero-preserving outer maps give the composite radius lower bound on the actual intermediate image."
+        },
+        {
+          "id": "CH03-P15-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.compLipRadius"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.pullbackEndpoints"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.compositeBounds"
+            }
+          ],
+          "notes": "Positive finite Lipschitz K gives the divided radius bound; zero and top endpoint cases are explicitly supplied."
+        },
+        {
+          "id": "CH03-P16-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.fourTypes"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.channelTable"
+            }
+          ],
+          "notes": "All four strict/nonstrict scale/radius Boolean channel combinations are exhaustively classified."
+        },
+        {
+          "id": "CH03-P16-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.scaleChannels"
+            }
+          ],
+          "notes": "The scale monotonicity implications follow the actual comparison inequalities."
+        },
+        {
+          "id": "CH03-P16-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.radiusChannels"
+            }
+          ],
+          "notes": "The radius monotonicity implications preserve strict versus nonstrict comparisons."
+        },
+        {
+          "id": "CH03-P17-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.scaleRestrict"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.restrictScaleRadius"
+            }
+          ],
+          "notes": "Restriction decreases arbitrary monotone scale by its stated axiom."
+        },
+        {
+          "id": "CH03-P17-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.restrictRadius"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.restrictScaleRadius"
+            }
+          ],
+          "notes": "Restricting the evaluation region weakens legal-ball demands, hence increases point radius."
+        },
+        {
+          "id": "CH03-P17-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.restrictUniform"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.restrictScaleRadius"
+            }
+          ],
+          "notes": "Restricting evaluation and anchor regions gives the claimed uniform-radius comparison."
+        },
+        {
+          "id": "CH03-P17-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/RealTools.lean",
+              "name": "MG.realDiam"
+            },
+            {
+              "file": "Ch3/RealTools.lean",
+              "name": "MG.pairDiam"
+            },
+            {
+              "file": "Ch3/RealTools.lean",
+              "name": "MG.scaleCounter"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readMetric"
+            }
+          ],
+          "notes": "A concrete real diameter example witnesses the requested failure; the scale is not treated as automatically arbitrary-domain invariant."
+        },
+        {
+          "id": "CH03-P18-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.uniform_le"
+            },
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.cutUniform"
+            }
+          ],
+          "notes": "The uniform infimum bounds each anchor radius, giving the uniform cut implication."
+        },
+        {
+          "id": "CH03-P18-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.separation"
+            }
+          ],
+          "notes": "The uniform threshold forces separation at every allowed anchor/pair."
+        },
+        {
+          "id": "CH03-P18-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.separationWitness"
+            }
+          ],
+          "notes": "An explicit witness establishes the sharp obstruction to the stronger separation statement."
+        },
+        {
+          "id": "CH03-P19-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.thresholdBall"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.coverConstraint"
+            }
+          ],
+          "notes": "A threshold ball maps inside an output zero fiber."
+        },
+        {
+          "id": "CH03-P19-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.pushNet"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.pushCover"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.thresholdCover"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.coverConstraint"
+            }
+          ],
+          "notes": "Finite internal centers are pushed through f to actual output centers, yielding the cover-number bound."
+        },
+        {
+          "id": "CH03-P19-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.logStrict"
+            },
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.entropyOrder"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.thresholdEntropy"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.coverConstraint"
+            }
+          ],
+          "notes": "Strict logarithmic monotonicity includes zero/top endpoints and converts the cover estimate to the required entropy statement."
+        },
+        {
+          "id": "CH03-P20-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Step.lean",
+              "name": "MG.Step.noUniformCover"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Step.pointwiseCoverFails"
+            }
+          ],
+          "notes": "The punctured-step example defeats any proposed positive uniform cover scale, with a=min(1,tau.toReal/4) controlling the witness."
+        },
+        {
+          "id": "CH03-P21-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Scale.lean",
+              "name": "MG.smallDomain"
+            }
+          ],
+          "notes": "A small-domain threshold puts all evaluated points into the required zero fiber."
+        },
+        {
+          "id": "CH03-P21-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.smallCover"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.constCover"
+            }
+          ],
+          "notes": "The small-domain image has an internal one-center cover; the constant case is also explicit."
+        },
+        {
+          "id": "CH03-P22-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.finiteCover"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.finiteLog"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.finiteData"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.subfamilyData"
+            }
+          ],
+          "notes": "FiniteCover/finiteLog and finiteData prove the nonempty finite-set results; subfamilyData gives the stated subfamily transfer."
+        },
+        {
+          "id": "CH03-P23-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.constDelta"
+            }
+          ],
+          "notes": "Constant-image entropy is zero and delta equals the input entropy, including infinite input entropy."
+        },
+        {
+          "id": "CH03-P23-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.pushNet"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.pullNet"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.identCover"
+            }
+          ],
+          "notes": "Internal nets are pushed and pulled on the actual image for equality of covering numbers."
+        },
+        {
+          "id": "CH03-P23-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.identDelta"
+            }
+          ],
+          "notes": "Identity entropy increment is zero under the explicit good-subtraction domain."
+        },
+        {
+          "id": "CH03-P24-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.lipCenters"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.lipCover"
+            }
+          ],
+          "notes": "Actual-image internal centers and the Lipschitz inequality give the scaled cover estimate."
+        },
+        {
+          "id": "CH03-P24-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.divScale"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.lipDelta"
+            }
+          ],
+          "notes": "The divided-scale entropy increment estimate uses total boundedness to justify finite operands."
+        },
+        {
+          "id": "CH03-P25-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Correspondence.lean",
+              "name": "MG.coCenters"
+            },
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.coCover"
+            }
+          ],
+          "notes": "Co-Lipschitz pullback centers remain in the source and give the reverse cover inequality."
+        },
+        {
+          "id": "CH03-P25-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Entropy.lean",
+              "name": "MG.coDelta"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.coEntropyBound"
+            }
+          ],
+          "notes": "The entropy comparison permits infinite output entropy and delta=-infinity, with the subtraction domain checked."
+        },
+        {
+          "id": "CH03-P26-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readMetric"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.read_points"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.f"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.U"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.domain"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.firstStep"
+            }
+          ],
+          "notes": "The affine 2x-1 operator is extended by bottom and evaluated on {0,1}; the first readout/fiber step is exact."
+        },
+        {
+          "id": "CH03-P26-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.domain"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.secondStep"
+            }
+          ],
+          "notes": "The second iterate and its precise effective domain are verified."
+        },
+        {
+          "id": "CH03-P26-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Affine.sameValue"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Affine.commonFiber"
+            }
+          ],
+          "notes": "The common fiber calculation uses the actual affine values and preserves the shared bottom boundary."
+        },
+        {
+          "id": "CH03-P27-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.pointGap"
+            }
+          ],
+          "notes": "A positive co-Lipschitz entry reflects output zero distance; no positive input distance can lie strictly below the point radius."
+        },
+        {
+          "id": "CH03-P27-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Radius.lean",
+              "name": "MG.uniformGap"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.gapDisjoint"
+            }
+          ],
+          "notes": "The uniform gap yields a uniform bound and the required disjointness statement."
+        },
+        {
+          "id": "CH03-P28-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readMetric"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.f"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.U"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.domain"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.translated"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.partitionId"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.partitionShift"
+            }
+          ],
+          "notes": "Translation on the specified finite domain yields two explicitly different fiber partitions."
+        },
+        {
+          "id": "CH03-P28-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.inputCount"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.outputCount"
+            },
+            {
+              "file": "Ch3/Readout.lean",
+              "name": "MG.Translation.entropyChange"
+            }
+          ],
+          "notes": "At epsilon=3/2 the internal cover changes from two to one and the entropy change is exactly one."
+        },
+        {
+          "id": "CH03-P29-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.f"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.domain"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Floor.fourDomains"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.channel_eq"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.firstInterval"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readMetric"
+            }
+          ],
+          "notes": "The first floor interval has the stated diameter and infinite radius, giving channel 11."
+        },
+        {
+          "id": "CH03-P29-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.crosses"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.jumpInterval"
+            }
+          ],
+          "notes": "The jump interval crosses an integer and has zero uniform radius, giving channel 10."
+        },
+        {
+          "id": "CH03-P29-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.pairValue"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.pairType"
+            }
+          ],
+          "notes": "The two-point domain has positive input gap, exact radius two and channel 01."
+        },
+        {
+          "id": "CH03-P29-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.crosses"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.wholeInterval"
+            }
+          ],
+          "notes": "The whole interval has diameter two and zero uniform radius, giving channel 00."
+        },
+        {
+          "id": "CH03-P29-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.counterexample"
+            },
+            {
+              "file": "Ch3/Floor.lean",
+              "name": "MG.Floor.pairValue"
+            }
+          ],
+          "notes": "The explicit pair/crossing examples establish the claimed converse failure with their precise domains."
+        },
+        {
+          "id": "CH03-P30-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.S"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.U"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.carrier"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.size"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.countSmall"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.countMiddle"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.countLarge"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.counts"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.midpoint"
+            },
+            {
+              "file": "Ch3/Models.lean",
+              "name": "MG.readMetric"
+            }
+          ],
+          "notes": "The four-point carrier has exact internal cover pieces 4/2/1 with endpoints 1 and 2; an external midpoint is explicitly excluded."
+        },
+        {
+          "id": "CH03-P30-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.f"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.g"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.outside"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Rearrange.table"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.domain"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.imageF"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.imageG"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.sameCounts"
+            }
+          ],
+          "notes": "Both partial rearrangement operators have domain and image equal to the specified four-point set, so the image counts agree."
+        },
+        {
+          "id": "CH03-P30-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.scalar"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.optimalF"
+            },
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.optimalG"
+            }
+          ],
+          "notes": "The two optimal Lipschitz constants are respectively 1 for f and 3 for g, with the actual input pair 0,1 establishing both lower bounds."
+        },
+        {
+          "id": "CH03-P30-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch3/Rearrange.lean",
+              "name": "MG.Rearrange.numericalBounds"
+            },
+            {
+              "file": "Ch3/Chapter.lean",
+              "name": "MG.Rearrange.scales"
+            }
+          ],
+          "notes": "At scale 7/4 the two theoretical bounds are 2 versus 4 while the true count is 2; all required numerical scales are exact."
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "grading/lean-support/receipts/MG-C003-A1-isolated/source-binding.json",
+          "bytes": 9105,
+          "sha256": "e2447ae292c9bc28b94eabcb00eb3d373b008e1e75d933e4247aa27ed8831dc4"
+        },
+        {
+          "path": "grading/lean-support/receipts/MG-C003-A1-isolated/delivered-original.md",
+          "bytes": 153697,
+          "sha256": "18746082828b3d914e58dcecc002135c095aebb5b02954d27a2d21c524b2baf3"
+        },
+        {
+          "path": "grading/lean-support/receipts/MG-C003-A1-isolated/shared-verification/manifest.json",
+          "bytes": 6072,
+          "sha256": "e1db3175cb8d02dc22e88cda8b3043248dcaedcdd1b898759c03d6290e48bcc5"
+        },
+        {
+          "path": "reviews/MG-C003.json",
+          "bytes": 72206,
+          "sha256": "048b4b0215c57be41dcd1ef0f56102dc84452c9e8ad8a5d3a71d1553fb43b5e4"
+        }
+      ]
+    }
+  ]
+}

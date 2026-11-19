@@ -34,8 +34,14 @@ from math_gauge.submission_evidence import load_review_completion
 from math_gauge.result_corrections import load_selected as load_result_correction
 from math_gauge.c003_continuations import load_selected_public as load_c003_continuation
 from math_gauge.evidence_retention import is_file as retained_file, read_bytes as retained_bytes
+from math_gauge.current_results import apply_current_assessment, public_reassessment_metadata, load_source_assessment, selected_current_cli_records
+from math_gauge.mathematical_profile import load_public_profiles
+from scripts.results_profile import render_panel as render_profile_panel
 
 MODEL_THEMES = {
+    "claude-opus-5.5-xhigh": {"color": "#d97757", "ink": "#9f4d34", "tint": "#fbf1ec"},
+    "astra-6.2-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
+    "sol-6.2-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "sol-6.2-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "glm-5.3-max": {"color": "#444b60", "ink": "#363d50", "tint": "#f1f2f5"},
     "kimi-3.1-pro-max": {"color": "#3568d4", "ink": "#244a9b", "tint": "#eef3ff"},
@@ -56,6 +62,9 @@ MODEL_THEMES = {
     "gemini-4-carbon-medium": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
+    "claude-opus-5.5-xhigh": ("Anthropic", "anthropic.svg"),
+    "astra-6.2-max": ("OpenAI", "openai.svg"),
+    "sol-6.2-xhigh": ("OpenAI", "openai.svg"),
     "sol-6.2-max": ("OpenAI", "openai.svg"),
     "glm-5.3-max": ("Z.ai", "zai.svg"),
     "kimi-3.1-pro-max": ("Kimi", "kimi.svg"),
@@ -76,6 +85,9 @@ MODEL_PROVIDERS = {
     "gemini-4-carbon-medium": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
+    "claude-opus-5.5-xhigh": "Claude Opus 5.5 (xHigh)",
+    "astra-6.2-max": "Astra 6.2 (max)",
+    "sol-6.2-xhigh": "Sol 6.2 (xhigh)",
     "sol-6.2-max": "Sol 6.2 (max)",
     "dot-underlying-model-20261108": "Dot Underlying (2026-11-08)",
     "glm-5.3-max": "GLM 5.3 (max)",
@@ -97,6 +109,9 @@ MODEL_LABELS = {
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 MODEL_SHORT_LABELS = {
+    "claude-opus-5.5-xhigh": "Opus 5.5 (xHigh)",
+    "astra-6.2-max": "Astra 6.2 (max)",
+    "sol-6.2-xhigh": "Sol 6.2 (xhigh)",
     "sol-6.2-max": "Sol 6.2 (max)",
     "dot-underlying-model-20261108": "Dot (2026-11-08)",
     "glm-5.3-max": "GLM (max)",
@@ -132,10 +147,13 @@ def recorded_test_order(folder, record):
     stamps = []
     if source:
         proof = json.loads(evidence_bytes(folder, source))
-        first = proof['first_dispatch']
-        stamps = [json.loads(evidence_bytes(folder, first))['utc']]
-        digest, basis = first['sha256'], 'first_recorded_dispatch'
-    else:
+        first = proof.get('first_dispatch')
+        if first is not None:
+            stamps = [json.loads(evidence_bytes(folder, first))['utc']]
+            digest, basis = first['sha256'], 'first_recorded_dispatch'
+        elif proof.get('schema') != 'math-gauge.portable-first-assessment-source-public/v1':
+            raise ValueError('Native source proof lost its original first dispatch')
+    if not stamps:
         path = folder / 'answer-timings.json'
         if retained_file(path):
             raw = retained_bytes(path)
@@ -157,10 +175,16 @@ def recorded_test_order(folder, record):
             'basis':basis,'source_sha256':digest}
 
 
-def build_data(source_root=ROOT):
+def build_data(source_root=ROOT, *, assessment_version=None):
     root = Path(source_root).resolve()
-    from math_gauge.editions import verify_compatibility
-    edition = verify_compatibility(root)
+    from math_gauge.editions import verify_compatibility, source_edition
+    current_edition = verify_compatibility(root)
+    historical = source_edition(root, current_edition)
+    requested = assessment_version or current_edition['version']
+    if requested not in {current_edition['version'], historical['version']}:
+        raise ValueError('Display edition is not one of the retained assessment snapshots')
+    edition = current_edition if requested == current_edition['version'] else historical
+    use_current_assessment = requested == current_edition['version']
     policy = json.loads((root / "protocol/scoring-policy.json").read_bytes())
     strict_policy = json.loads((root / "protocol/strict-scoring-policy.json").read_bytes())
     mode_catalog = json.loads((root / "protocol/score-modes.json").read_bytes())
@@ -171,27 +195,13 @@ def build_data(source_root=ROOT):
     harness_path = root / 'site/harnesses.json'
     harnesses = json.loads(harness_path.read_bytes())
     models, sources = [], []
-    for model, folder in selected_cli_records(root):
+    for model, folder in (selected_current_cli_records(root) if use_current_assessment else selected_cli_records(root)):
         label = MODEL_LABELS[model]
-        validate_record(folder)
-        record = json.loads((folder / "record.json").read_bytes())
+        record, original_scores, original_rates, correction, c003 = load_source_assessment(
+            root,model,(folder/'record.json').relative_to(root))
         harness = bound_harness_display(harnesses, model, folder / 'record.json')
         research_source = json.loads((folder / record["theorem_extension_evidence"]["path"]).read_bytes())
-        partial = load_assessment_results(folder, record)
-        strict = load_assessment_results(folder, record, mode="strict")
-        capability = load_assessment_results(folder, record, mode="capability")
-        if partial is None or strict is None or capability is None:
-            raise ValueError("Current display requires all three classified assessment modes")
-        correction = load_result_correction(root, model, folder, record=record)
-        if correction is not None:
-            for mode, views in (('partial', partial), ('strict', strict), ('capability', capability)):
-                views['nonlogical_retry_3'] = correction['_scores'][mode]
-        c003 = load_c003_continuation(root, model, folder, record=record, effective_scores={
-            'partial': partial['nonlogical_retry_3'], 'strict': strict['nonlogical_retry_3'],
-            'capability': capability['nonlogical_retry_3']})
-        if c003 is not None:
-            for mode, views in (('partial', partial), ('strict', strict), ('capability', capability)):
-                views['nonlogical_retry_3'] = c003['_scores'][mode]
+        partial, strict, capability = (original_scores[mode] for mode in ('partial','strict','capability'))
         combined = partial["single_attempt"]
         provider, filename = MODEL_PROVIDERS[model]
         icon_path = root / "site/assets/logos" / filename
@@ -201,7 +211,7 @@ def build_data(source_root=ROOT):
             "logo": {"label": provider, "data_url": "data:image/svg+xml;base64," + base64.b64encode(icon_bytes).decode("ascii"),
                      "sha256": hashlib.sha256(icon_bytes).hexdigest()},
             "combined": combined, "strict": strict, "capability": capability, "trajectory": record["trajectory"],
-            "content_rates": load_content_rates(folder, record),
+            "content_rates": original_rates,
             "evaluation_progress": {condition: evaluation_progress(result)
                                     for condition, result in partial.items()},
             "lean_formalization_breakdown": partial["nonlogical_retry_3"]["lean_formalization_breakdown"],
@@ -258,7 +268,7 @@ def build_data(source_root=ROOT):
         path = root / "protocol" / name
         sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
     for model, folder in selected_paper_records(root):
-        record, scores, rates = load_paper_record(folder)
+        record, scores, rates, _, _ = load_source_assessment(root,model,(folder/'record.json').relative_to(root))
         harness = bound_harness_display(harnesses, model, folder / 'record.json')
         provider, filename = MODEL_PROVIDERS[model]
         icon_path = root / 'site/assets/logos' / filename
@@ -290,7 +300,8 @@ def build_data(source_root=ROOT):
                 sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     native_folder = root / 'results/v0.6.0/dot-underlying-model-20261108/20261108'
     if (native_folder / 'native-observation.json').is_file():
-        native, scores, rates = load_public_record(native_folder)
+        native, scores, rates, _, _ = load_source_assessment(root,'dot-underlying-model-20261108',
+            (native_folder/'native-observation.json').relative_to(root))
         icon_path = root / 'site/assets/logos/openai.svg'
         icon = icon_path.read_bytes()
         partial = scores['partial']
@@ -313,6 +324,46 @@ def build_data(source_root=ROOT):
                      *(native_folder/item['path'] for field in ('assessment_results','capability_results','strict_results')
                        for item in native[field].values())]:
             sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+    # All harness kinds enter the same assessment layer after their original
+    # source corrections and trajectories, before any ranking or chart data.
+    for model in models:
+        if not use_current_assessment:
+            continue
+        record = json.loads((root / model['source_record']).read_bytes())
+        views = {'capability':model['capability'], 'strict':model['strict'],
+                 'partial':{'single_attempt':model['combined'],
+                            'nonlogical_retry_3':model['retry']['combined']}}
+        current, calibration = apply_current_assessment(root, model['id'], record, views)
+        model['capability'], model['strict'] = current['capability'], current['strict']
+        model['combined'] = current['partial']['single_attempt']
+        model['retry']['combined'] = current['partial']['nonlogical_retry_3']
+        model['evaluation_progress'] = {condition:evaluation_progress(score)
+                                       for condition,score in current['partial'].items()}
+        if calibration is not None:
+            if calibration.get('assessment_kind') == 'initial':
+                from math_gauge.current_assessment_admissions import public_metadata
+                model['initial_assessment'] = public_metadata(calibration)
+            else:
+                model['tx_calibration'] = public_reassessment_metadata(calibration)
+            def add_bound_sources(value):
+                if isinstance(value,dict):
+                    if set(value)=={'path','bytes','sha256'}:
+                        sources.append(value)
+                    else:
+                        for key,item in value.items():
+                            if not key.startswith('_'):
+                                add_bound_sources(item)
+                elif isinstance(value,list):
+                    for item in value:
+                        add_bound_sources(item)
+            add_bound_sources(calibration)
+            sources.append(calibration['_selection'])
+    if use_current_assessment and edition.get('assessment_transition') is not None:
+        from math_gauge.editions import load_assessment_transition
+        transition = load_assessment_transition(root, edition)
+        sources.extend([edition['assessment_transition'],transition['source_edition'],transition['policy']])
+        calibration_policy=json.loads(evidence_bytes(root,transition['policy']))
+        sources.append(calibration_policy['standards'])
     delivery_projections = load_legacy_projections(root)
     for model in models:
         selection_note = model['harness'].get('selection_note')
@@ -350,7 +401,7 @@ def build_data(source_root=ROOT):
     review_process = json.loads(review_path.read_bytes())
     sources.append({'path': 'protocol/review-process.json',
                     'sha256': hashlib.sha256(review_path.read_bytes()).hexdigest()})
-    return {"schema": "math-gauge.current-results-display/v6", "benchmark_version": edition["version"],
+    data = {"schema": "math-gauge.current-results-display/v6", "benchmark_version": edition["version"],
             "result_compatibility": edition.get("result_compatibility"),
             "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
             "human_review": review_process['human_review'], "review_process": review_process,
@@ -367,6 +418,11 @@ def build_data(source_root=ROOT):
             "capability_method_version": next(m['policy_version'] for m in mode_catalog['modes'] if m['id']=='capability'),
             "claim_penalty_method_version": "0.1.0",
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
+    # Select the independently reviewed all-content profile for current1.1 views.
+    profile = load_public_profiles(root, models, benchmark_version=edition['version'])
+    if profile is not None:
+        data['mathematical_profile'] = profile
+    return data
 
 
 def earned_value(result):
@@ -518,7 +574,7 @@ def render_gap_chart(data):
               for table in diagnostic['tables']}
     def order(model):
         value = lookup['RG'][model['id']]['value']
-        return (value is None, 0 if value is None else abs(value), *overall_key(model))
+        return (value is None, 0 if value is None else abs(value), model['id'])
     ordered = sorted(data['models'], key=order)
     for model in ordered:
         row = lookup['RG'][model['id']]
@@ -611,7 +667,7 @@ def render_content_rates(data):
                    ('attainment', '目标达成率', 'confirmed', 'strict'))
     def order(model):
         value = (model.get('content_rates') or {}).get('metrics', {}).get('reliability', {}).get('observed')
-        return (value is None, 0 if value is None else -value, *overall_key(model))
+        return (value is None, 0 if value is None else -value, model['id'])
     for model in sorted(data['models'], key=order):
         report = model.get('content_rates')
         if report is not None and report['version'] != '0.2.0':
@@ -722,7 +778,15 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
             '<td class="harness-cell">'+html.escape(harness_display_name(model))+'</td>'
             '<td class="numeric delivery-cell">'+delivered+'</td>'+''.join(score_cells)
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
-    values = {"DATA": payload, "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
+    values = {"DATA": payload, "VERSION":html.escape(data['benchmark_version']),
+              "MATHEMATICAL_PROFILE":render_profile_panel(data.get('mathematical_profile')),
+              "PROFILE_NAV":('<a class="optional" data-assessment-only="1.1.0" href="#mathematical-profile"><span data-lang-content="zh">数学画像</span><span data-lang-content="en" hidden>Profile</span></a>'
+                             if data.get('mathematical_profile') else ''),
+              "PROFILE_CSS":('<link rel="stylesheet" href="assets/mathematical-profile.css">'
+                             if data.get('mathematical_profile') else ''),
+              "PROFILE_JS":('<script src="assets/mathematical-profile.js"></script>'
+                            if data.get('mathematical_profile') else ''),
+              "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
               "REVIEW_STATUS": review_status(data, 'method.html#review-process'),
               "LANGUAGE_SWITCH": language_switch(),
               "OVERALL_CONTROLS": view_control()+sort_control('overall', '总榜排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], data['default_score_mode'])+score_board_settings('overall', data['display_score_modes']),
@@ -783,7 +847,7 @@ def write_site(destination, *, source_root=ROOT):
     if attempts is not None:
         files['downloads/execution-attempts.json'] = json.dumps(attempts,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js", "mathematical-profile.js", "mathematical-profile.css"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     files['assets/execution-anomalies.css'] = (Path(__file__).parent/'templates/execution-anomalies.css').read_text()
@@ -796,7 +860,8 @@ def write_site(destination, *, source_root=ROOT):
                 files["downloads/"+model["id"]+"-combined-capability"+suffix+".json"] = json.dumps(model["capability"][condition], ensure_ascii=False, indent=2)+"\n"
     retired = ["downloads/" + model["id"] + suffix for model in data["models"]
                for suffix in ("-public.json", "-public-retry.json")]
-    write_publication(dest, prepare_publication(files, source_root), retired=retired)
+    from scripts.results_editions import prepare_edition_publication
+    write_publication(dest, prepare_edition_publication(files, source_root, data), retired=retired)
     return data
 
 

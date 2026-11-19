@@ -1,0 +1,98 @@
+{
+  "schema": "math-gauge.rubric/v1",
+  "expected": "mixed",
+  "human_review": "pending",
+  "aggregation": "Average variants within each parent family, then average families; review dimensions are not independent samples.",
+  "grading_policy": {
+    "total_points": 100,
+    "method": "Core mathematical judgment 60 + evidence and impact scope 30 + supplementary completeness 10; shared continuous benchmark scoring.",
+    "per_criterion": "Each weighted check receives full, half or zero credit for substantively complete, correct but incomplete, or absent/false work. Sum checks within dimensions. No keyword scoring or additional blanket deductions.",
+    "strict_pass": "All listed checks substantively complete with no material unsupported rejection or false extra assertion; strict pass is auxiliary, not the main score.",
+    "accepted_variation": "Accept any correct equivalent proof, counterexample or scope explanation. New substantiated findings are admissible; a reference is not an exhaustive list of possible comments. Harmless notation or typography observations are not mandatory unless listed.",
+    "task_boundary": "The visible task is review, not a fresh solution or a requirement to reproduce reference proofs. A justified finding that a proof does not establish its target is distinct from proving the target false.",
+    "source_results": "Original response evidence stays immutable. The first v0.4.0 aggregation is explicit post-observation rescoring of existing answers, not a fresh examination.",
+    "brevity": "Concise sufficient mathematical verification earns full credit. Repeating the entire original proof, reference computation or Leibniz expansion is not required."
+  },
+  "required_evidence": [
+    "分别判断继承正文和current-check.md：主闭性结论及有效证明保留。",
+    "核验有限坐标方程或闭包点扩充系统的一条完整闭性路线，并承认另一条不依赖第三条。",
+    "定位第三条对仿射解集使用线性子空间定理的边界，给反例或等价结构说明，并准确限定影响。"
+  ],
+  "critical_errors": [
+    "由第三条的问题推断任意域的坐标像闭性为假，或否定正文全部阶段。",
+    "仅凭另有正确证明就称当前全部论据都无问题。",
+    "把线性紧性与通常拓扑紧性混为一谈，声称无限离散域上的乘积绝不线性紧。",
+    "在审阅中默默把S改成齐次方向空间，然后声称原文已完成该修复。"
+  ],
+  "criteria": [
+    {
+      "id": "core_judgment",
+      "points": 60,
+      "mandatory": true,
+      "title": "核心数学判断",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "body",
+          "points": 20,
+          "full_credit": "认可正文的代数延拓、坐标像、纤维和分类主结论。"
+        },
+        {
+          "id": "closure",
+          "points": 15,
+          "full_credit": "认可任意离散域的坐标像闭性及两条独立有效路线。"
+        },
+        {
+          "id": "affine_boundary",
+          "points": 25,
+          "full_credit": "识别补充第三条把仿射解集当成线性子空间的缺口；不以主结论正确为由认可全部论据。"
+        }
+      ]
+    },
+    {
+      "id": "evidence_scope",
+      "points": 30,
+      "mandatory": true,
+      "title": "依据与影响范围",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "closure_evidence",
+          "points": 10,
+          "full_credit": "以有限支撑闭方程或闭包点扩充系统给出实质闭性依据。"
+        },
+        {
+          "id": "affine_evidence",
+          "points": 10,
+          "full_credit": "以x=1或等价结构理由说明一般解集非线性空间；无需另做整题。"
+        },
+        {
+          "id": "limited_impact",
+          "points": 10,
+          "full_credit": "把缺口限于第三条，区别于已完成主证；如补平移或仿射定理，说明是修复。"
+        }
+      ]
+    },
+    {
+      "id": "completeness",
+      "points": 10,
+      "mandatory": true,
+      "title": "补充核查完整度",
+      "full_credit": "实质完成本维度所列检查；接受同等有效的短证与替代论证。",
+      "checks": [
+        {
+          "id": "field_range",
+          "points": 5,
+          "full_credit": "保留有限域通常紧性与任意域代数延拓的不同范围。"
+        },
+        {
+          "id": "support_range",
+          "points": 5,
+          "full_credit": "核查有限支撑解的反例不否定全积解；不把线性紧性等同通常紧性。"
+        }
+      ]
+    }
+  ],
+  "scoring_version": "0.4.0",
+  "major_error_policy": "把有效闭性结论或独立主证判假为重大误判；漏第三条仿射/线性缺口须扣对应分，但因主证独立有效且该步可局部修复，不单独记重大误判。"
+}

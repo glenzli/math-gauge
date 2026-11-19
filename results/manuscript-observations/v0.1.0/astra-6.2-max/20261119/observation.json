@@ -1,0 +1,150 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "astra-6.2-max",
+  "record_id": "20261119",
+  "source_record": {
+    "path": "results/v1.0.0/astra-6.2-max/20261119/record.json",
+    "bytes": 42793,
+    "sha256": "932c712a6957fd9e6646c472992e50bcd1ce60bf005ebf77faaa581e79d6a359"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "1236630cf0e01109ef8bd064a0126c1ecc302bcb5d220114b3fc979dcf54c7ba",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 4,
+    "total_groups": 4,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "fb013b07b78b2c4a24c44ebde7d4054bd88a1e1097f790a63ef4671a26e80c01",
+      "original_task": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true,
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "联合上下界、单列最优系数的零/无穷端点、零化半径及其端点属于M1–M6。模量与矩阵可行性的等价是取上确界并在实际点对回代；同斜率异半径例通过直接计算展示两种既有读数不同，未增加新证明桥。不核实到额外独立组。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "联合/逐项系数及严格零化半径",
+          "statement": "联合矩阵、可用单列系数集及严格坏点半径准确处理零和无穷端点。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "M1–M5直接要求这些定义、可行性及端点；不同表示不另计组。",
+          "proof_review": "逐点对分类t=0、有限正数、∞后取交；坏点距离inf给最大开半径。",
+          "nontrivial_step": "这是所选定义完整成立所需的基本论证。",
+          "value_rationale": "提供忠实的多分量估计和不可区分描述。",
+          "reason": "M1–M5直接要求这些定义、可行性及端点；不同表示不另计组。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "fb013b07b78b2c4a24c44ebde7d4054bd88a1e1097f790a63ef4671a26e80c01",
+              "start_byte": 705,
+              "end_byte": 5322,
+              "quote": "### 1. 联合上、下 Lipschitz 矩阵\n\n称 \\(A\\in E^{I\\times I}\\) 为 \\(\\phi\\) 的**上 Lipschitz 矩阵**，若对所有比较点对都有 \\(s\\le At\\)。类似地，称 \\(B\\in E^{I\\times I}\\) 为**下 Lipschitz 矩阵**，若 \\(Bt\\le s\\)。这里逐分量比较，即\n\\[\n\\boxed{\\qquad\n\\sum_{j\\in I}B_{ij}d_j(x,y)\n\\ \\le\\ d_i(\\phi x,\\phi y)\\\n\\le\\ \\sum_{j\\in I}A_{ij}d_j(x,y).\n\\qquad}\n\\]\n两侧可单独使用。单个伪度量时，这就给出通常的上、下 Lipschitz 不等式。\n\n这些定义有三个直接性质。\n\n- **存在性。** 零矩阵总是下界。允许 \\(+\\infty\\) 后，上界矩阵存在的充要条件是 \\(t=0\\Rightarrow s=0\\)。必要性来自 \\(A0=0\\)。充分性可取每个元素均为 \\(+\\infty\\) 的矩阵，因为只要某个 \\(t_j>0\\)，每一行的和就是 \\(+\\infty\\)。因此，对把全分量零距离点对送到可区分输出的算子，连扩展上界也不存在。\n- **复合。** 若先作用 \\(\\phi\\) 再作用 \\(\\psi\\)，则 \\(A_\\psi A_\\phi\\) 是复合的上界，\\(B_\\psi B_\\phi\\) 是复合的下界。在复合的有效域内，\\(\\phi x,\\phi y\\) 均属于 \\(\\operatorname{dom}(\\psi)\\)，连续应用两次估计并利用非负矩阵乘法的保序性即可。\n- **最优性。** 上界可逐项增大，下界可逐项减小，但联合估计一般没有逐项最优的矩阵。例如 \\(d_2=2d_1\\) 时，恒等算子的第一行取 \\((1,0)\\) 或 \\((0,\\tfrac12)\\) 都精确给出 \\(s_1=t_1\\)。只要存在 \\(0<t_1<\\infty\\) 的点对，这两行的逐项最小值就失去上界性质，逐项最大值也失去下界性质。\n\n### 2. 单个输入分量给出的最优斜率\n\n若希望每个矩阵元都能单独解释，先定义它的**可用系数集**\n\\[\n\\begin{aligned}\n\\mathcal U_{ij}(\\phi)\n &=\\{a\\in E\\mid s_i\\le a\\,t_j\\ \\text{对所有 }(x,y)\\in P_\\phi\\text{ 成立}\\},\\\\\n\\mathcal L_{ij}(\\phi)\n &=\\{b\\in E\\mid b\\,t_j\\le s_i\\ \\text{对所有 }(x,y)\\in P_\\phi\\text{ 成立}\\}.\n\\end{aligned}\n\\]\n于是每个算子都有两张数值矩阵\n\\[\nL^+_{ij}(\\phi)=\\inf\\mathcal U_{ij}(\\phi),\\qquad\nL^-_{ij}(\\phi)=\\sup\\mathcal L_{ij}(\\phi),\n\\]\n其中在 \\(E\\) 中取 \\(\\inf\\varnothing=+\\infty,\\ \\sup\\varnothing=0\\)。\n\n给定一个点对，令 \\(t=t_j,\\ s=s_i\\)。CH1 的算术约定给出全部约束如下。\n\n| 输入距离 | 上界 \\(s\\le at\\) 的条件 | 下界 \\(bt\\le s\\) 的条件 |\n|---|---|---|\n| \\(t=0\\) | 须有 \\(s=0\\)，此时 \\(a\\) 任意 | \\(b\\) 任意 |\n| \\(0<t<+\\infty\\) | \\(a\\ge s/t\\) | \\(b\\le s/t\\) |\n| \\(t=+\\infty\\) | \\(s=0\\) 或 \\(a>0\\) | \\(s=+\\infty\\) 或 \\(b=0\\) |\n\n对所有点对取交可知，\\(L^-_{ij}\\) 总是可用的最大下界。上端则有两个值得保留的细节。若某对输入有 \\(t_j=0,\\ s_i>0\\)，则 \\(\\mathcal U_{ij}=\\varnothing\\)，记值 \\(L^+_{ij}=+\\infty\\) 表示无可用系数。若所有点对都满足 \\(t_j=0\\Rightarrow s_i=0\\)，则 \\(+\\infty\\) 本身可用，且\n\\[\nL^+_{ij}=\\sup_{\\,0<t_j<+\\infty}\\frac{s_i}{t_j}.\n\\]\n此时只有一种情形使这个下确界不能直接代入上界不等式：它等于 \\(0\\)，而某个 \\(t_j=+\\infty\\) 的点对有 \\(s_i>0\\)。这时恰好每个正系数都可用。\n\n逐项估计按行合并时，可用上界取**最小值**，可用下界取**最大值**。例如，每列都有 \\(b_{ij}\\in\\mathcal L_{ij}\\) 时，直接得到的是 \\(\\max_j b_{ij}t_j\\le s_i\\)。要把这些项相加，则须验证第 1 节的联合下界条件。\n\n### 3. 输出不可区分的半径矩阵\n\n把“落入一定范围”具体化为输入距离低于一个统一阈值。定义\n\\[\n\\boxed{\\qquad\nR_{ij}(\\phi)=\n\\inf\\bigl\\{d_j(x,y)\\mid (x,y)\\in P_\\phi,\\ d_i(\\phi x,\\phi y)>0\\bigr\\}.\n\\qquad}\n\\]\n这个数就是使下列命题成立的**最大开半径** \\(r\\)：\n\\[\nd_j(x,y)<r\\quad\\Longrightarrow\\quad d_i(\\phi x,\\phi y)=0.\n\\]\n事实上，每个第 \\(i\\) 分量仍可区分的输出点对，其输入距离都至少为 \\(R_{ij}\\)。若 \\(r>R_{ij}\\)，下确界的定义保证存在一个这样的点对满足 \\(d_j(x,y)<r\\)。\n\n采用严格不等号可以准确处理端点。\\(R_{ij}=+\\infty\\) 保证所有**有限**的第 \\(j\\) 分量输入距离都被压为第 \\(i\\) 分量零距离。\\(R_{ij}=0\\) 时，零距离输入是否仍映为零距离要单独检查。若要使用闭阈值 \\(d_j(x,y)\\le R_{ij}\\)，恰好还须检查等号处的点对。\n\n写 \\(u\\sim v\\) 表示对所有 \\(i\\) 都有 \\(d_i(u,v)=0\\)。由各伪度量的三角不等式和对称性，\\(\\sim\\) 是等价关系。因此\n\\[\nd_j(x,y)<\\min_{i\\in I}R_{ij}(\\phi)\n\\quad\\Longrightarrow\\quad \\phi x\\sim\\phi y.\n\\]\n这正是 CH1 下的全分量不可区分。若另有族分离性，便可进一步得到 \\(\\phi x=\\phi y\\)。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "联合模量与矩阵可行性等价",
+          "statement": "Ω(h)=sup{输出距:输入距≤h}精确表达联合零化，并与所有h上的Ω(h)≤Ah等价。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "仅对原不等式取sup并回代实际距离，不另计成果。",
+          "proof_review": "正向对满足t≤h的点对取sup，逆向令h等于实际点对距离。",
+          "nontrivial_step": "没有独立于已有约束的新构造或障碍分析。",
+          "value_rationale": "是计算和表达上的可用转换。",
+          "reason": "仅对原不等式取sup并回代实际距离，不另计成果。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "fb013b07b78b2c4a24c44ebde7d4054bd88a1e1097f790a63ef4671a26e80c01",
+              "start_byte": 5322,
+              "end_byte": 5925,
+              "quote": "若“范围”由**多个输入分量同时**限定，还有一个对所有算子都适用的表达。对 \\(h\\in E^I\\) 定义\n\\[\n\\Omega_i^\\phi(h)=\\sup\\{s_i\\mid (x,y)\\in P_\\phi,\\ t\\le h\\}.\n\\]\n那么 \\(\\Omega_i^\\phi(h)=0\\) 精确表达“只要每个 \\(t_j\\le h_j\\)，第 \\(i\\) 个输出分量就不可区分”。为每个输出行选一个满足此式的 \\(h^{(i)}\\)，即可组成联合阈值矩阵。同一个 \\(\\Omega\\) 也刻画联合 Lipschitz 上界：\\(A\\) 可用当且仅当对所有 \\(h\\) 都有 \\(\\Omega^\\phi(h)\\le Ah\\)。正向用 \\(t\\le h\\) 和保序性，反向取 \\(h=t(x,y)\\) 即得。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S03",
+          "group_id": "G03",
+          "title": "相同最优斜率而不同零化半径",
+          "statement": "区间加一个孤立普通点的两个分段算子同有最优斜率0和1，半径分别为1和0。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "例子为两种读数提供独立信息的说明，但只逐项计算已有定义，未交付需新证明桥的独立机制。",
+          "proof_review": "分别在常值片、恒等片及跨片点对计算距离比与最小坏点距离，直接得到所报数值。",
+          "nontrivial_step": "有限分片上的直接代入与inf计算。",
+          "value_rationale": "帮助读者区分斜率与塌缩阈值；情境价值不改变非平凡性判定。",
+          "reason": "例子为两种读数提供独立信息的说明，但只逐项计算已有定义，未交付需新证明桥的独立机制。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "fb013b07b78b2c4a24c44ebde7d4054bd88a1e1097f790a63ef4671a26e80c01",
+              "start_byte": 5925,
+              "end_byte": 6497,
+              "quote": "**上下斜率相同的算子可以有不同的不可区分半径。** 例如，给 \\([0,1]\\cup\\{2\\}\\) 配通常距离，再添加隔离的 \\(\\bot\\)。取两个固定 \\(\\bot\\) 的算子\n\\[\n\\phi|_{[0,1]}\\equiv1,\\quad \\phi(2)=2,\\qquad\n\\psi|_{[0,1]}=\\mathrm{id},\\quad \\psi(2)=1.\n\\]\n两者在有效域上的距离比都介于 \\(0\\) 与 \\(1\\) 之间，也都能取到两个端点，故同有 \\(L^-=0,\\ L^+=1\\)。对 \\(\\phi\\)，仍可区分的最近输入是 \\(1,2\\)，故 \\(R(\\phi)=1\\)。对 \\(\\psi\\)，区间内任意近的两个不同输入都可区分，故 \\(R(\\psi)=0\\)。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "现有核验未确认区别于直接应用、代入或等价表达的实质独立内容，不另计一组。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

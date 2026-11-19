@@ -118,9 +118,15 @@ def check(root=ROOT, *, public_root=None):
         scoring_version = next(iter(views['partial'].values()))['scoring_method_version']
     if not archives:
         raise ValueError("No current user-selected archives found")
-    return {"passed": True, "benchmark_version": "0.6.0", "scoring_version": scoring_version,
+    result = {"passed": True, "benchmark_version": "0.6.0", "scoring_version": scoring_version,
             "strict_version": "0.2.0", "archives": archives, "candidate_calls": 0,
             "sealed_engineering_compilations": 0}
+    if load(selection_root/'benchmark.json').get('assessment_transition') is not None:
+        from scripts.reassess_theorem_extensions import check as check_current
+        result['current_assessment'] = check_current(selection_root,root if public_root is not None else None)
+        result['source_benchmark_version'] = result['benchmark_version']
+        result['benchmark_version'] = result['current_assessment']['benchmark_version']
+    return result
 
 
 def main():

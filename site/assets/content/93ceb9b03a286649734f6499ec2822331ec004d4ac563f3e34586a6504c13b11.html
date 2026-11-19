@@ -1,0 +1,56 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p><strong>结论：以正文给定的路径 Lip 证书族和目标 Lip 包络证书为前提，所给实现准确、完整地覆盖了该推论的两条包含关系。</strong>“全局”指把路径保证域合并；正文和源码都没有断言保证域覆盖整个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span>。</p>
+<p>本次核对的是数学含义与源码证明，未另行运行 Lean 编译。</p>
+<p>关键实现见 <span class="local-source-citation" title="/private/tmp/math-gauge-astra-xhigh-20261110/sessions/AHR02/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520">path_guarantee_domains.lean</span>，对应关系如下：</p>
+<table>
+<thead>
+<tr>
+<th>正文结论</th>
+<th>Lean 声明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分量保证域之并包含于真实分量误差区域</td>
+<td><code>path_component_guarantee_union_subset_proxy_error</code></td>
+</tr>
+<tr>
+<td>联合保证域之并包含于真实联合误差区域</td>
+<td><code>path_joint_guarantee_union_subset_proxy_error</code></td>
+</tr>
+<tr>
+<td>保留全局可评估性、有限阈值及 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\neq\varnothing</annotation></semantics></math></span> 的正文版本</td>
+<td><code>path_guarantee_union_subset_proxy_error_text</code></td>
+</tr>
+</tbody>
+</table>
+<p>定义的对应也是准确的：</p>
+<ul>
+<li><code>path_component_sample</code> 正是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_j\cap U_q</annotation></semantics></math></span>。路径可评估性定义为该交集非空，虽然没有再次写出 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}</annotation></semantics></math></span>，但它自动蕴含全局可评估性；<code>path_evaluable_subset_evaluable_components</code> 已证明这一点。</li>
+<li>路径保证域使用的矩阵是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>q</mi></msub><mo>+</mo><msup><mi>L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">L_q+L^*</annotation></semantics></math></span>，残差是对应路径采样上的残差上确界加同一个观测修正。<code>weighted_anchor_distance</code> 对整个加权和取同一锚点的下确界，没有改成各分量分别选锚点。</li>
+<li>联合保证域展开为
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>:</mo><mi mathvariant="normal">∀</mi><mi>j</mi><mo>∈</mo><mi>J</mi><mo separator="true">,</mo><mtext> </mtext><msub><mi>D</mi><mrow><msub><mi>A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\{x\in U_q:\forall j\in J,\ 
+  D_{A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}\le\tau_j\}.
+</annotation></semantics></math></span>
+在正文要求的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\neq\varnothing</annotation></semantics></math></span> 下，这恰好等于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></msub><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\bigcap_{j\in J}U_{q,j}(\tau_j)</annotation></semantics></math></span>。</li>
+</ul>
+<p>证明可以直接复核。以联合形式为例，左侧成员给出<strong>同一条路径</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span>，满足
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+J\subseteq I_{\mathrm{res}}(q),\qquad x\in U_{q,J}(\boldsymbol\tau).
+</annotation></semantics></math></span>
+因此 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">x\in U_q\subseteq U</annotation></semantics></math></span>，而对每个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span>，局部上界及保证域定义给出
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>D</mi><mrow><msub><mi>A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+d_j(c_q(x),\phi^\natural(x))
+\le D_{A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}
+\le\tau_j.
+</annotation></semantics></math></span>
+<code>path_chain_eq_represented_proxy_on_path</code> 再由 <code>hrep</code> 得到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">c_q(x)=\phi(x)</annotation></semantics></math></span>。这正是联合定理证明中的路径见证拆解、<code>path_domain_subset_source</code> 和最后的改写。分量形式则直接调用代理的路径分量误差界。<strong>源码没有把“存在一条路径同时保证所有分量”误换成其他量词顺序。</strong></p>
+<p>正文包装中的若干假设只写成 <code>have _ := ...</code>，不构成证明缺口。底层两个包含关系在允许无限阈值等更宽条件下仍成立；正文版本保留有限阈值和非空分量族，是为了符合正文适用范围。合法路径矩阵和目标包络仍由 <code>hLq</code>、<code>hLstar</code> 实质性提供，并没有被当作采样数据的自动结论。</p>
+<p>需要区分源码结论与进一步封装：</p>
+<ul>
+<li><strong>源码已证明</strong>：正文中的两条集合包含关系。</li>
+<li><strong>可补充但不是该推论的遗漏</strong>：令联合保证域之并为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>J</mi></msub></mrow><annotation encoding="application/x-tex">G_J</annotation></semantics></math></span>，可以进一步封装成 <code>InFittingBall d target proxy G_J J tau</code>。目标定义域由目标包络得到；代理定义域由路径 Lip 证书及路径链等于代理得到；有限阈值已有假设，误差方向可用对称性调整。上述三个最终声明没有直接返回这一结构。</li>
+<li><strong>不能据此推出</strong>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>J</mi></msub><mo>=</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">G_J=U</annotation></semantics></math></span>、保证域等于真实误差区域，或路径保证域与另一套全局证书保证域之间必有某个包含方向。这些也不是正文该推论所声称的内容。</li>
+</ul>
+<p>审阅对象为 Zhe Li（Glen Li / glenzli）《<a href="https://glenzli.com/books/oet/">The Operator Evolution Theory</a>》所附版本，许可为 CC BY 4.0。</p>
+</div>

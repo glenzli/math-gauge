@@ -1,0 +1,1076 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-GP001",
+  "task_id": "MG-GP001:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/task.md",
+      "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+      "bytes": 2186
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/reference.md",
+      "sha256": "e50e0749300a904e1a3de7ac3d35fee6f49c06c34844a1381f8b4894458070a8",
+      "bytes": 10998
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/rubric.json",
+      "sha256": "5aaed9b319bdbe1d5dd3ba44c4f8ea9b840db2ca85d0d73ceefe7bbdd078aca3",
+      "bytes": 768
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+      "bytes": 16456,
+      "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/request.json",
+      "bytes": 3977,
+      "sha256": "6541d37e91a0191d12b55396152823ee1f0a0acf64ccae8451c6a382f17034c6"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/case.json",
+      "sha256": "b0eb57773168912570b5ff144656bee60652e8d0515805d0b9a52c9c9bd0a563"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json",
+      "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+      "bytes": 9390
+    },
+    "solver_files": [],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json",
+      "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+      "bytes": 9390
+    }
+  },
+  "criteria": [
+    {
+      "id": "S1",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "可缩子复形的商",
+        "kind": "prove",
+        "assumptions": [
+          "有限 CW 对",
+          "A 非空可缩子复形"
+        ],
+        "required_evidence": [
+          "HEP 与商同伦连续",
+          "两复合"
+        ],
+        "critical_errors": [
+          "对任意非闭可缩子空间直接套用"
+        ],
+        "depends_on": [],
+        "points": 15,
+        "expected": "true",
+        "id": "S1",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "HEP延拓收缩，逐时刻保持A，紧到Hausdorff的乘积商映射保证下降同伦连续，两复合闭合。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 2577,
+          "end_utf8": 2614,
+          "quote": "3. **同伦为何能下降到商。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "非可缩底空间上的锥附着",
+        "kind": "prove",
+        "assumptions": [
+          "D 路径连通有限 CW",
+          "L 非空子复形",
+          "包含零伦"
+        ],
+        "required_evidence": [
+          "cofibration 与同伦余纤维",
+          "常值锥的具体商"
+        ],
+        "critical_errors": [
+          "把一般附着未经零伦就拆成楔"
+        ],
+        "depends_on": [
+          "S1"
+        ],
+        "points": 15,
+        "expected": "true",
+        "id": "S2",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "同伦不变附着的圆柱构造有效，常值锥给D楔非约化悬挂，并解释楔点选择。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 4776,
+          "end_utf8": 4902,
+          "quote": "4. 这个空间就是 $D\\vee(CL/L)$，而 $CL/L\\cong\\Sigma L$：底塌缩为一个极点 $s$，锥顶是另一个极点。 ∎",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "整数扭结的实例",
+        "kind": "construct",
+        "assumptions": [
+          "有限三角剖分 L of RP²",
+          "要求全部原型几何条件"
+        ],
+        "required_evidence": [
+          "实际 K,v,B",
+          "扭结同调与有理同调区别"
+        ],
+        "critical_errors": [
+          "只验欧拉示性数就断言可缩"
+        ],
+        "depends_on": [
+          "S1",
+          "S2"
+        ],
+        "points": 15,
+        "expected": "construction",
+        "id": "S3",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "双锥悬挂与边B满足原几何条件，整数H2=Z/2排除可缩而有理同调为零。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 6790,
+          "end_utf8": 6882,
+          "quote": "  - $\\tilde H_2=\\mathbb Z/2$，其余为 $0$（计算机复核 $K$：$H_2=\\mathbb Z/2$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "整体对象与全部恢复目标",
+        "kind": "decide",
+        "assumptions": [
+          "设 $K$ 是有限抽象单纯复形，$v$ 是它的一个顶点，$B\\subseteq K$ 是含有顶点 $v$ 的子复形。所有几何实现均取通常的拓扑。令\n\n$$X=|K|,\\qquad O=X\\setminus\\{v\\},\\qquad C=|B|.$$\n\n假设 $O$ 是非空可缩空间，且包含映射\n\n$$O\\cap C\\longrightarrow C$$\n\n是同伦等价。"
+        ],
+        "required_evidence": [
+          "Describe all possible homotopy types for every allowed triple. A correct answer proves |K| is homotopy equivalent to the unreduced suspension of the nonempty finite vertex link, or gives a mathematically equivalent full description.",
+          "Realize every type in the described class by an actual finite simplicial K, distinguished vertex v, and subcomplex B satisfying both original assumptions. The two-cone suspension with B a single edge is sufficient.",
+          "Give and prove a necessary-and-sufficient, finitely checkable contractibility criterion using only the specified local incidence data. The reference criterion is vanishing of all reduced integral homology of the link; justify its sufficiency with the actual suspension and CW structure, and its necessity without adding restrictions."
+        ],
+        "critical_errors": [
+          "Conclude X is always contractible from the open/closed cover and O intersection C to C being a homotopy equivalence.",
+          "Apply a homotopy pushout, gluing, or contractible-subspace quotient theorem directly to O without verifying the needed hypotheses; O need not be a closed subcomplex.",
+          "Extend the vertex-deletion radial homotopy across v without proving continuity, or confuse the deletion subcomplex with the punctured realization.",
+          "Ignore the empty-link or isolated-vertex case instead of excluding it from the actual hypotheses.",
+          "Treat arbitrary connected acyclic spaces as contractible, without establishing the simple connectivity and CW hypotheses used here.",
+          "Claim that the link must itself be contractible, rather than only integer acyclic, or silently add simple connectivity of the link.",
+          "Use only Euler characteristic, rational acyclicity, or integral ranks and ignore torsion or reduced degree-zero homology.",
+          "Claim that equivalent suspensions force homotopy-equivalent links, or describe the possible-type theorem as an algorithm deciding equivalence of arbitrary finite complexes.",
+          "Provide a realization whose B is not a subcomplex, whose punctured X is not contractible, or whose punctured B inclusion fails to be a homotopy equivalence.",
+          "Treat a single circle counterexample as completion of the requested general classification, realization and criterion."
+        ],
+        "depends_on": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "points": 25,
+        "expected": "true",
+        "id": "S4",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 25,
+      "score": 25,
+      "strict_pass": true,
+      "reason": "径向收缩只作用于穿孔空间；删除复形是合法可缩闭子复形。证明非空link、全部悬挂类型实现及整数增广链正合判据，保留扭结与H0。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 11156,
+          "end_utf8": 11276,
+          "quote": "**判据。** $X$ 可缩 ⟺ 有限自由链复形 $(\\mathbb Z[S_*],D_*)$ 正合。具体检验办法：对每个 $k$，",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "不提供子复形 B",
+        "kind": "decide",
+        "assumptions": [
+          "仅有限 K 和非空可缩穿孔实现",
+          "不要求存在 B"
+        ],
+        "required_evidence": [
+          "孤立顶点合法例",
+          "非空/空 link 两情况完整"
+        ],
+        "critical_errors": [
+          "静默排除空 link"
+        ],
+        "depends_on": [
+          "S1",
+          "S4"
+        ],
+        "points": 15,
+        "expected": "false",
+        "id": "S5",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "去掉B后仅新增孤立顶点的S0，非空/空link两种情况及实现都完整。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 12997,
+          "end_utf8": 13130,
+          "quote": "**结论：不必。** 恰好新增一种同伦型 $S^0$（若约定 $\\Sigma\\varnothing=S^0$，则它就是 $\\Sigma\\varnothing$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "悬挂信息的逆向恢复",
+        "kind": "decide",
+        "assumptions": [
+          "非空有限单纯复形",
+          "悬挂同伦等价"
+        ],
+        "required_evidence": [
+          "给出两个非空有限复形，核验其悬挂同伦等价而原复形不同伦等价；接受任何有效反例。"
+        ],
+        "critical_errors": [
+          "任意无环空间都可缩",
+          "从悬挂等价取消悬挂"
+        ],
+        "depends_on": [
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "points": 15,
+        "expected": "false",
+        "id": "S6",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "环面与S1楔S1楔S2悬挂同伦等价而基本群不同；另给无环非可缩有限复形例，两条有效。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 15125,
+          "end_utf8": 15260,
+          "quote": "6. **$L_1\\not\\simeq L_2$。** $\\pi_1(T^2)=\\mathbb Z^2$ 是交换群，而 $\\pi_1(S^1\\vee S^1\\vee S^2)=\\mathbb Z*\\mathbb Z$ 不交换。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 100,
+    "positive_mathematical_denominator": 100,
+    "removed_reliability_points": 0,
+    "removed_reliability_denominator": 0,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/task.md",
+        "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "not_supplied_as_separate_self_assessment",
+    "verbatim_evidence": [],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "S1",
+      "label": "可缩子复形的商",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S1",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "可缩子复形的商",
+      "reason": "HEP延拓收缩，逐时刻保持A，紧到Hausdorff的乘积商映射保证下降同伦连续，两复合闭合。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 2577,
+          "end_utf8": 2614,
+          "quote": "3. **同伦为何能下降到商。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S2",
+      "label": "非可缩底空间上的锥附着",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S2",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "非可缩底空间上的锥附着",
+      "reason": "同伦不变附着的圆柱构造有效，常值锥给D楔非约化悬挂，并解释楔点选择。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 4776,
+          "end_utf8": 4902,
+          "quote": "4. 这个空间就是 $D\\vee(CL/L)$，而 $CL/L\\cong\\Sigma L$：底塌缩为一个极点 $s$，锥顶是另一个极点。 ∎",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S3",
+      "label": "整数扭结的实例",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S3",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "整数扭结的实例",
+      "reason": "双锥悬挂与边B满足原几何条件，整数H2=Z/2排除可缩而有理同调为零。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 6790,
+          "end_utf8": 6882,
+          "quote": "  - $\\tilde H_2=\\mathbb Z/2$，其余为 $0$（计算机复核 $K$：$H_2=\\mathbb Z/2$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S4",
+      "label": "整体对象与全部恢复目标",
+      "delivery_weight": 25,
+      "claim_weight": 25,
+      "source_unit_id": "S4",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "整体对象与全部恢复目标",
+      "reason": "径向收缩只作用于穿孔空间；删除复形是合法可缩闭子复形。证明非空link、全部悬挂类型实现及整数增广链正合判据，保留扭结与H0。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 11156,
+          "end_utf8": 11276,
+          "quote": "**判据。** $X$ 可缩 ⟺ 有限自由链复形 $(\\mathbb Z[S_*],D_*)$ 正合。具体检验办法：对每个 $k$，",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 25,
+      "asserted_denominator": 25,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S5",
+      "label": "不提供子复形 B",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S5",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "不提供子复形 B",
+      "reason": "去掉B后仅新增孤立顶点的S0，非空/空link两种情况及实现都完整。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 12997,
+          "end_utf8": 13130,
+          "quote": "**结论：不必。** 恰好新增一种同伦型 $S^0$（若约定 $\\Sigma\\varnothing=S^0$，则它就是 $\\Sigma\\varnothing$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S6",
+      "label": "悬挂信息的逆向恢复",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S6",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "悬挂信息的逆向恢复",
+      "reason": "环面与S1楔S1楔S2悬挂同伦等价而基本群不同；另给无环非可缩有限复形例，两条有效。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 15125,
+          "end_utf8": 15260,
+          "quote": "6. **$L_1\\not\\simeq L_2$。** $\\pi_1(T^2)=\\mathbb Z^2$ 是交换群，而 $\\pi_1(S^1\\vee S^1\\vee S^2)=\\mathbb Z*\\mathbb Z$ 不交换。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "S1",
+      "label": "可缩子复形的商",
+      "statement": "S1 可缩子复形的商\n\n设 Y 为有限 CW 复形，A⊂Y 是非空可缩子复形。证明商映射 Y→Y/A 是同伦等价，并说明同伦为何能下降到商。\n\n",
+      "scope": "# 局部单形、锥附着与整体同伦型\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json\", \"pointer\": \"/stages/0/points\"}",
+      "acceptance_conditions": [
+        "HEP 与商同伦连续",
+        "两复合",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S1"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/task.md",
+          "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+          "pointer": "section:S1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/contract.json",
+          "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+          "pointer": "/stages/0"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP001:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "S1",
+      "passed": true,
+      "reason": "HEP延拓收缩，逐时刻保持A，紧到Hausdorff的乘积商映射保证下降同伦连续，两复合闭合。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 2577,
+          "end_utf8": 2614,
+          "quote": "3. **同伦为何能下降到商。**",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S2",
+      "label": "非可缩底空间上的锥附着",
+      "statement": "S2 非可缩底空间上的锥附着\n\n设 D 为路径连通有限 CW 复形，L 为非空有限子复形，包含 L→D 零伦。令 Y=D∪_L CL。证明 Y≃D∨ΣL，其中 Σ 为非约化悬挂，并说明楔点的选择。\n\n",
+      "scope": "# 局部单形、锥附着与整体同伦型\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json\", \"pointer\": \"/stages/1/points\"}",
+      "acceptance_conditions": [
+        "cofibration 与同伦余纤维",
+        "常值锥的具体商",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S2"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/task.md",
+          "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+          "pointer": "section:S2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/contract.json",
+          "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+          "pointer": "/stages/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP001:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "S2",
+      "passed": true,
+      "reason": "同伦不变附着的圆柱构造有效，常值锥给D楔非约化悬挂，并解释楔点选择。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 4776,
+          "end_utf8": 4902,
+          "quote": "4. 这个空间就是 $D\\vee(CL/L)$，而 $CL/L\\cong\\Sigma L$：底塌缩为一个极点 $s$，锥顶是另一个极点。 ∎",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S3",
+      "label": "整数扭结的实例",
+      "statement": "S3 整数扭结的实例\n\n取实射影平面 RP² 的任一有限单纯三角剖分 L。构造有限 K、顶点 v、含 v 子复形 B，使 |K|去 v 非空可缩、(|B|去 v)→|B| 为同伦等价，而 |K| 的约化有理同调全零但 |K| 不可缩。\n\n",
+      "scope": "# 局部单形、锥附着与整体同伦型\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json\", \"pointer\": \"/stages/2/points\"}",
+      "acceptance_conditions": [
+        "实际 K,v,B",
+        "扭结同调与有理同调区别",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S3"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/task.md",
+          "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+          "pointer": "section:S3"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/contract.json",
+          "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+          "pointer": "/stages/2"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP001:A1/goals/2"
+        }
+      ],
+      "source_goal_id": "S3",
+      "passed": true,
+      "reason": "双锥悬挂与边B满足原几何条件，整数H2=Z/2排除可缩而有理同调为零。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 6790,
+          "end_utf8": 6882,
+          "quote": "  - $\\tilde H_2=\\mathbb Z/2$，其余为 $0$（计算机复核 $K$：$H_2=\\mathbb Z/2$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S4",
+      "label": "整体对象与全部恢复目标",
+      "statement": "S4 整体对象与全部恢复目标\n\n判定下面所列目标在给定条件下是否成立。若成立，完成全部构造、分类与性质的证明；若不成立，给出满足全部给定条件的反例。\n\n设 $K$ 是有限抽象单纯复形，$v$ 是它的一个顶点，$B\\subseteq K$ 是含有顶点 $v$ 的子复形。所有几何实现均取通常的拓扑。令\n\n$$X=|K|,\\qquad O=X\\setminus\\{v\\},\\qquad C=|B|.$$\n\n假设 $O$ 是非空可缩空间，且包含映射\n\n$$O\\cap C\\longrightarrow C$$\n\n是同伦等价。\n\n刻画所有满足这些条件的三元组 $(K,v,B)$ 中 $X$ 的可能同伦类型，并为刻画中的全部类型给出满足原条件的实现构造。再给出一个只用 $K$ 中包含 $v$ 的单形及其面之间的有限关联数据即可检验的、$X$ 可缩的充要条件。请证明刻画、实现构造和判据。\n\n",
+      "scope": "# 局部单形、锥附着与整体同伦型\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 25,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json\", \"pointer\": \"/stages/3/points\"}",
+      "acceptance_conditions": [
+        "Describe all possible homotopy types for every allowed triple. A correct answer proves |K| is homotopy equivalent to the unreduced suspension of the nonempty finite vertex link, or gives a mathematically equivalent full description.",
+        "Realize every type in the described class by an actual finite simplicial K, distinguished vertex v, and subcomplex B satisfying both original assumptions. The two-cone suspension with B a single edge is sufficient.",
+        "Give and prove a necessary-and-sufficient, finitely checkable contractibility criterion using only the specified local incidence data. The reference criterion is vanishing of all reduced integral homology of the link; justify its sufficiency with the actual suspension and CW structure, and its necessity without adding restrictions.",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S4"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/task.md",
+          "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+          "pointer": "section:S4"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/contract.json",
+          "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+          "pointer": "/stages/3"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP001:A1/goals/3"
+        }
+      ],
+      "source_goal_id": "S4",
+      "passed": true,
+      "reason": "径向收缩只作用于穿孔空间；删除复形是合法可缩闭子复形。证明非空link、全部悬挂类型实现及整数增广链正合判据，保留扭结与H0。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 11156,
+          "end_utf8": 11276,
+          "quote": "**判据。** $X$ 可缩 ⟺ 有限自由链复形 $(\\mathbb Z[S_*],D_*)$ 正合。具体检验办法：对每个 $k$，",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 25,
+      "denominator": 25
+    },
+    {
+      "id": "S5",
+      "label": "不提供子复形 B",
+      "statement": "S5 不提供子复形 B\n\n设 K 有限、v 为顶点，仅假设 |K|去 v 非空可缩，不再给 B 及其同伦条件。判定 |K| 是否必同伦等价于非空有限复形的悬挂；若不必，分类新增的可能类型。\n\n",
+      "scope": "# 局部单形、锥附着与整体同伦型\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json\", \"pointer\": \"/stages/4/points\"}",
+      "acceptance_conditions": [
+        "孤立顶点合法例",
+        "非空/空 link 两情况完整",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S5"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/task.md",
+          "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+          "pointer": "section:S5"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/contract.json",
+          "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+          "pointer": "/stages/4"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP001:A1/goals/4"
+        }
+      ],
+      "source_goal_id": "S5",
+      "passed": true,
+      "reason": "去掉B后仅新增孤立顶点的S0，非空/空link两种情况及实现都完整。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 12997,
+          "end_utf8": 13130,
+          "quote": "**结论：不必。** 恰好新增一种同伦型 $S^0$（若约定 $\\Sigma\\varnothing=S^0$，则它就是 $\\Sigma\\varnothing$）。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S6",
+      "label": "悬挂信息的逆向恢复",
+      "statement": "S6 悬挂信息的逆向恢复\n\n对非空有限单纯复形 L_1,L_2，判定 Σ|L_1|≃Σ|L_2| 是否必推出 |L_1|≃|L_2|。\n",
+      "scope": "# 局部单形、锥附着与整体同伦型\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP001/contract.json\", \"pointer\": \"/stages/5/points\"}",
+      "acceptance_conditions": [
+        "给出两个非空有限复形，核验其悬挂同伦等价而原复形不同伦等价；接受任何有效反例。",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S6"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/task.md",
+          "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+          "pointer": "section:S6"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP001/contract.json",
+          "sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+          "pointer": "/stages/5"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP001:A1/goals/5"
+        }
+      ],
+      "source_goal_id": "S6",
+      "passed": true,
+      "reason": "环面与S1楔S1楔S2悬挂同伦等价而基本群不同；另给无环非可缩有限复形例，两条有效。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 15125,
+          "end_utf8": 15260,
+          "quote": "6. **$L_1\\not\\simeq L_2$。** $\\pi_1(T^2)=\\mathbb Z^2$ 是交换群，而 $\\pi_1(S^1\\vee S^1\\vee S^2)=\\mathbb Z*\\mathbb Z$ 不交换。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-GP001:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/20",
+        "reason": "全部核心数学要求及其必要桥梁、边界已独立核查成立。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 2577,
+            "end_utf8": 2614,
+            "quote": "3. **同伦为何能下降到商。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 4776,
+            "end_utf8": 4902,
+            "quote": "4. 这个空间就是 $D\\vee(CL/L)$，而 $CL/L\\cong\\Sigma L$：底塌缩为一个极点 $s$，锥顶是另一个极点。 ∎",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 6790,
+            "end_utf8": 6882,
+            "quote": "  - $\\tilde H_2=\\mathbb Z/2$，其余为 $0$（计算机复核 $K$：$H_2=\\mathbb Z/2$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 11156,
+            "end_utf8": 11276,
+            "quote": "**判据。** $X$ 可缩 ⟺ 有限自由链复形 $(\\mathbb Z[S_*],D_*)$ 正合。具体检验办法：对每个 $k$，",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 12997,
+            "end_utf8": 13130,
+            "quote": "**结论：不必。** 恰好新增一种同伦型 $S^0$（若约定 $\\Sigma\\varnothing=S^0$，则它就是 $\\Sigma\\varnothing$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 15125,
+            "end_utf8": 15260,
+            "quote": "6. **$L_1\\not\\simeq L_2$。** $\\pi_1(T^2)=\\mathbb Z^2$ 是交换群，而 $\\pi_1(S^1\\vee S^1\\vee S^2)=\\mathbb Z*\\mathbb Z$ 不交换。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 2577,
+            "end_utf8": 2614,
+            "quote": "3. **同伦为何能下降到商。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 4776,
+            "end_utf8": 4902,
+            "quote": "4. 这个空间就是 $D\\vee(CL/L)$，而 $CL/L\\cong\\Sigma L$：底塌缩为一个极点 $s$，锥顶是另一个极点。 ∎",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 6790,
+            "end_utf8": 6882,
+            "quote": "  - $\\tilde H_2=\\mathbb Z/2$，其余为 $0$（计算机复核 $K$：$H_2=\\mathbb Z/2$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 11156,
+            "end_utf8": 11276,
+            "quote": "**判据。** $X$ 可缩 ⟺ 有限自由链复形 $(\\mathbb Z[S_*],D_*)$ 正合。具体检验办法：对每个 $k$，",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 12997,
+            "end_utf8": 13130,
+            "quote": "**结论：不必。** 恰好新增一种同伦型 $S^0$（若约定 $\\Sigma\\varnothing=S^0$，则它就是 $\\Sigma\\varnothing$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 15125,
+            "end_utf8": 15260,
+            "quote": "6. **$L_1\\not\\simeq L_2$。** $\\pi_1(T^2)=\\mathbb Z^2$ 是交换群，而 $\\pi_1(S^1\\vee S^1\\vee S^2)=\\mathbb Z*\\mathbb Z$ 不交换。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为100/100；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 2577,
+            "end_utf8": 2614,
+            "quote": "3. **同伦为何能下降到商。**",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 4776,
+            "end_utf8": 4902,
+            "quote": "4. 这个空间就是 $D\\vee(CL/L)$，而 $CL/L\\cong\\Sigma L$：底塌缩为一个极点 $s$，锥顶是另一个极点。 ∎",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 6790,
+            "end_utf8": 6882,
+            "quote": "  - $\\tilde H_2=\\mathbb Z/2$，其余为 $0$（计算机复核 $K$：$H_2=\\mathbb Z/2$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 11156,
+            "end_utf8": 11276,
+            "quote": "**判据。** $X$ 可缩 ⟺ 有限自由链复形 $(\\mathbb Z[S_*],D_*)$ 正合。具体检验办法：对每个 $k$，",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 12997,
+            "end_utf8": 13130,
+            "quote": "**结论：不必。** 恰好新增一种同伦型 $S^0$（若约定 $\\Sigma\\varnothing=S^0$，则它就是 $\\Sigma\\varnothing$）。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+            "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+            "start_utf8": 15125,
+            "end_utf8": 15260,
+            "quote": "6. **$L_1\\not\\simeq L_2$。** $\\pi_1(T^2)=\\mathbb Z^2$ 是交换群，而 $\\pi_1(S^1\\vee S^1\\vee S^2)=\\mathbb Z*\\mathbb Z$ 不交换。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "non_penalized_review_notes": [
+    {
+      "kind": "harmless_optional_permutation_label_typo",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP001-A1/attempt-1/response.md",
+          "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+          "start_utf8": 15671,
+          "end_utf8": 15925,
+          "quote": "- **不可缩。** 令 $s\\mapsto(3\\,4\\,5)$，$t\\mapsto(1\\,3\\,5\\,2\\,4)$。则 $st=(1\\,3)(2\\,4)$，并且 $s^3=t^5=(st)^2=1$（我已用计算机验证）。这给出 $\\pi_1(L_1)$ 到 $A_5$ 的非平凡同态，所以 $\\pi_1(L_1)\\neq1$，$L_1$ 不可缩。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "reason": "原答可选S6例2写s=(3 4 5),t=(1 3 5 2 4)，并写st=(1 3)(2 4)。按右至左实际st=(1 4)(2 5)；按反向约定也是双换位。实际s^3=t^5=(st)^2=1和非平凡像均成立，未使用错误等式的精确点位推出其他性质。首个环面反例也独立完成S6。因此只记无害换点标签笔误，不触发local（它未影响所交推导）、可靠性处罚或Strict阻断。"
+    }
+  ],
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "46e3a345b6f6ad7aea54e354ed4d2924803634b3f9b3b4fd5e2f66f5ce259ad4",
+    "mathematical_judgments_changed": false
+  }
+}

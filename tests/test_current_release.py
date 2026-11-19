@@ -25,8 +25,13 @@ class CurrentReleaseTests(unittest.TestCase):
         plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite), suite)
         config = RELEASE.load_config()
         edition = json.loads((ROOT / "benchmark.json").read_bytes())
-        self.assertEqual(RELEASE.VERSION, edition["version"])
-        self.assertEqual(config["release_version"], config["suite_version"])
+        distribution, release = edition["latest_distribution"], edition["release"]
+        self.assertEqual((distribution["version"], distribution["benchmark_version"], release["version"]),
+                         (RELEASE.VERSION,) * 3)
+        self.assertEqual(release["status"], "sealed")
+        self.assertEqual(edition.get("source_task_version", edition["version"]), RELEASE.VERSION)
+        self.assertEqual((config["release_version"], config["suite_version"], suite.metadata["version"]),
+                         (RELEASE.VERSION,) * 3)
         self.assertEqual((config["case_count"], config["slot_count"]),
                          (len(suite.cases), plan["planned"]["all_slots"]))
         with tempfile.TemporaryDirectory() as directory:

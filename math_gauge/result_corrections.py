@@ -11,6 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from .editions import source_edition
 from .records import evidence_bytes, project_assessment_score
 from .claim_penalties import assess, validate_review
 
@@ -149,7 +150,7 @@ def verify_native_recovery(folder, proof):
 def load_selected(root, model_id, folder, *, record=None):
     """Only explicitly selected errata can replace current presentation views."""
     root, folder = Path(root), Path(folder)
-    edition = json.loads((root / 'benchmark.json').read_bytes())
+    edition = source_edition(root)
     selected = edition.get('result_corrections', {}).get(model_id)
     if selected is None:
         return None

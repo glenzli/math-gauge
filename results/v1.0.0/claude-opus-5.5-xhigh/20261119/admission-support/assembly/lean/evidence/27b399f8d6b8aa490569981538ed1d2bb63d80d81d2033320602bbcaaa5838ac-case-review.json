@@ -1,0 +1,2790 @@
+{
+  "schema": "math-gauge.independent-lean-case-review/v1",
+  "reviewer_kind": "ai",
+  "review_model": "gpt-6.1-sol",
+  "review_reasoning_effort": "max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "new_candidate_calls": 0,
+  "candidate_source_repaired": false,
+  "canonical_repositories_modified": false,
+  "case_id": "HCH02",
+  "slot_id": "HCH02",
+  "source_bindings": {
+    "identity": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/source-identity.json",
+      "bytes": 2457,
+      "sha256": "4ac8de1ee4dec3e12acb8940e05cfe37d67a8fae8496e01db3d98105257fd13c"
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/HCH02-A1/attempt-1/response.md",
+      "bytes": 87273,
+      "sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/HCH02-A1/attempt-1/request.json",
+      "bytes": 74612,
+      "sha256": "0fbbc019dbcf28078610fe01bc8f72e9fff9b55b84b4fef3123bc96b15b87e38"
+    }
+  },
+  "self_assessment": {
+    "original_prose": "完整文件已读出。最终答卷如下。\n\n# 第 2 章（算子界）Lean 形式化答卷\n\n整章（40 项义务）都已形式化，放在一个文件 `Main.lean`（1101 行）里。用 `lake env lean Main.lean` 编译，**没有错误，也没有警告**。文件中没有 `sorry`、`admit` 或新增公理。我对 `Main.lean` 的全部 130 个声明逐一运行了 `#print axioms`：127 个只依赖 `propext`、`Classical.choice`、`Quot.sound` 中的若干个，另外 3 个不依赖任何公理。两份冻结的前置模块只导入，没有改动；除这两份模块、Lean 标准库和固定版本的 mathlib 之外，没有使用其他材料。\n\n## 三个需要事先说明的表示选择\n\n- **下标从 0 开始。** 有限链用 `ℕ` 作下标。Lean 里的 `ϕ m`、`L m`、`imageSeq ϕ U m` 分别对应原文的 φ_{m+1}、L^{(m+1)}、U_{m+1}；长度为 k 的链只用到 `m < k` 的数据。\n- **路径判据。** n 层链写成 `n = m+1`，中间指标序列取类型 `Fin m → I`。另外给了字面上的 `n ≥ 1` 版本，中间序列取 `Fin (n-1) → I`。\n- **有些定理比原文更强。** 凡是证明用不到度量公理的地方，定理对任意距离族 `d` 都成立，因此代入扩展规范空间就得到原文的结论。只有扰动界（P08–P11）真正需要 `hd : ∀ i, ExtendedPseudoMetric X bot (d i)`。P14 不需要 U 非空；P21 不需要 0<a<∞，但仍另给了一个带原文前提的版本。\n\n\n\n\n\n## 完成情况\n\n- **整章已完整完成，并与原文严格对齐。** 40 项义务全部标为 complete，每项列出的声明都在 `Main.lean` 中实际存在，且已通过编译。\n- **没有未完成的部分。**\n- **需要说明的地方：**\n  - **0 起下标与路径长度。** 链下标从 0 开始；路径判据以 `n = m+1` 为主形式，另附 `n ≥ 1` 的字面形式。\n  - **定理比原文强的地方：**\n    - 多数定理不要求度量公理，对任意距离族成立。\n    - P14 不要求 U 非空。\n    - P21 的通用版本不要求 0<a<∞。\n    - P01 给出的是等价式，而不只是单向退化。\n  - **单通道常数的定义没有内含 U ⊆ dom φ。** 原文的 S_ij 以 U ⊆ dom φ 为语境前提，这里的定义对任意 U 都成立，因为这一前提在证明中用不到。\n  - **原文的叙述性内容没有逐句写成定理。** 例如“证书只记录数据”的说明，以及本章末尾关于上下界不能互相替代的总结，都是叙述而非可证命题。",
+    "claims_complete": true
+  },
+  "claim_findings": [],
+  "extra_assertion_review": {
+    "scope": "Entire original delivered prose, code comments, mathematical side claims and self-assessment, separately from kernel success.",
+    "findings": [],
+    "checks": [
+      "Prose self-assessment and explicit completion/verification statements reviewed with the mathematical source, not keyword confidence.",
+      "Original numeric exercise claims independently checked against the actual defined maps and gauges.",
+      "Generalized definitions are read only in the original admissible mathematical context; no new source obligation is imposed for optional wrappers."
+    ]
+  },
+  "kind": "formalization",
+  "judgment": "complete",
+  "obligations": [
+    {
+      "id": "HC02-D01",
+      "title": "全域及受限Lip矩阵与证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "LipSetOn includes U⊆dom and all required pair/output inequalities; LipSet is its exact full-domain instance.",
+      "candidate_representation": "LipSetOn d φ U : Set (I→I→ENNReal) = {L | U ⊆ dom φ ∧ ∀x∈U ∀y∈U ∀j, d j (φx)(φy) ≤ Σ_i L i j * d i x y}；LipSet d φ = LipSetOn d φ (dom φ)。I 为 Fintype（有限），系数与距离都是 ENNReal，并采用 mathlib 的 0·⊤=0 约定。定义本身不要求度量公理与 Nonempty I；在扩展规范空间语境下直接代入即可。",
+      "candidate_dependencies": [],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 209,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def LipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :\n    Set (CoefMat I) :=\n  {L | U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, L i j * d i x y}",
+          "response_byte_start": 10287,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipSet",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 214,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def LipSet [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (CoefMat I) :=\n  LipSetOn d ϕ (dom ϕ)",
+          "response_byte_start": 10584,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_LipSet_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 217,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_LipSet_iff [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : CoefMat I) :\n    L ∈ LipSet d ϕ ↔\n      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, L i j * d i x y := by\n  simp [LipSet, LipSetOn]",
+          "response_byte_start": 10708,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoefMat",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 127,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "abbrev CoefMat (I : Type) := I → I → ENNReal",
+          "response_byte_start": 6795,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/0"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        11,
+        25
+      ]
+    },
+    {
+      "id": "HC02-D02",
+      "title": "含非空性的co-Lip矩阵与证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "CoLipSetOn contains nonemptiness, domain inclusion and the required lower inequality. Valid zero and infinite-coefficient branches are proved.",
+      "candidate_representation": "CoLipSetOn d φ U = {K | U.Nonempty ∧ U ⊆ dom φ ∧ ∀x,y∈U ∀j, Σ_i K i j * d i x y ≤ d j (φx)(φy)}，非空性与定义域条件都写在成员条件里。系数 0 合法见 zero_mem_CoLipSetOn；系数 ⊤ 合法（0·⊤=0）见 update_top_mem_CoLipSetOn。",
+      "candidate_dependencies": [
+        "HC02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 224,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def CoLipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :\n    Set (CoefMat I) :=\n  {K | U.Nonempty ∧ U ⊆ dom ϕ ∧\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)}",
+          "response_byte_start": 11162,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_mem_CoLipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 230,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem zero_mem_CoLipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom ϕ) : (0 : CoefMat I) ∈ CoLipSetOn d ϕ U :=\n  ⟨hne, hU, fun x _ y _ j => by simp⟩",
+          "response_byte_start": 11508,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.update_top_mem_CoLipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 236,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem update_top_mem_CoLipSetOn [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    (ϕ : Operator X bot) {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) (i₀ : I)\n    (hzero : ∀ x ∈ U, ∀ y ∈ U, d i₀ x y = 0) :\n    Function.update K i₀ (fun _ => ⊤) ∈ CoLipSetOn d ϕ U := by\n  refine ⟨hK.1, hK.2.1, fun x hx y hy j => ?_⟩\n  refine le_trans (le_of_eq ?_) (hK.2.2 x hx y hy j)\n  refine Finset.sum_congr rfl fun i _ => ?_\n  by_cases h : i = i₀\n  · subst h\n    simp [hzero x hx y hy]\n  · simp [Function.update_of_ne h]",
+          "response_byte_start": 11946,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/1"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        73,
+        77
+      ]
+    },
+    {
+      "id": "HC02-D03",
+      "title": "输入输出指标、显示矩阵和乘法",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Input-first CoefMat is injectively identified with output-row toDisplay; matComp is proved to map to standard matrix multiplication.",
+      "candidate_representation": "CoefMat I := I→I→ENNReal 按输入优先存储，M i j = M_{i→j}。toDisplay M : Matrix I I ENNReal 满足 (toDisplay M) j i = M i j，即第 j 行第 i 列。matComp M₂ M₁ i j = Σ_k M₂ k j * M₁ i k；已证 toDisplay (matComp M₂ M₁) = toDisplay M₂ * toDisplay M₁（通常矩阵乘法），并证 toDisplay 为单射。",
+      "candidate_dependencies": [],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoefMat",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 127,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "abbrev CoefMat (I : Type) := I → I → ENNReal",
+          "response_byte_start": 6795,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplay",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 130,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def toDisplay (M : CoefMat I) : Matrix I I ENNReal := Matrix.of fun j i => M i j",
+          "response_byte_start": 6920,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplay_apply",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 132,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem toDisplay_apply (M : CoefMat I) (j i : I) : toDisplay M j i = M i j := rfl",
+          "response_byte_start": 7010,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplay_injective",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 134,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem toDisplay_injective : Function.Injective (toDisplay : CoefMat I → Matrix I I ENNReal) := by\n  intro M N h\n  funext i j\n  have := congrFun (congrFun h j) i\n  simpa using this",
+          "response_byte_start": 7094,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matComp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 141,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def matComp [Fintype I] (M₂ M₁ : CoefMat I) : CoefMat I :=\n  fun i j => ∑ k, M₂ k j * M₁ i k",
+          "response_byte_start": 7361,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplay_matComp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 145,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem toDisplay_matComp [Fintype I] (M₂ M₁ : CoefMat I) :\n    toDisplay (matComp M₂ M₁) = toDisplay M₂ * toDisplay M₁ := by\n  ext j i\n  simp [matComp, Matrix.mul_apply]",
+          "response_byte_start": 7548,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.sum_matComp_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 199,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem sum_matComp_mul [Fintype I] (M₂ M₁ : CoefMat I) (D : I → ENNReal) (j : I) :\n    ∑ k, M₂ k j * ∑ i, M₁ i k * D i = ∑ i, matComp M₂ M₁ i j * D i := by\n  simp only [matComp, Finset.mul_sum, Finset.sum_mul]\n  rw [Finset.sum_comm]\n  simp only [mul_assoc]",
+          "response_byte_start": 9807,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/2"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        27,
+        69,
+        307,
+        309
+      ]
+    },
+    {
+      "id": "HC02-D04",
+      "title": "单位矩阵、空乘积和有序乘积",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "idMat is the Kronecker unit; matProd uses the required left multiplication. Empty, singleton and reversed-list product identities are proved.",
+      "candidate_representation": "idMat i j = if i=j then 1 else 0（δ_ij），其显示矩阵为 1。matProd L 0 = idMat（空乘积）；matProd L (k+1) = matComp (L k) (matProd L k)，因此 matProd L k = L_k⋯L_1（0 起下标）：施行顺序 φ_1,…,φ_k 对应左乘顺序。toDisplay_matProd 把它写成通常矩阵列表积 [L_k,…,L_1].prod；matProd_one 给出 k=1 时乘积等于 L 0。",
+      "candidate_dependencies": [
+        "HC02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.idMat",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 151,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def idMat [DecidableEq I] : CoefMat I := fun i j => if i = j then 1 else 0",
+          "response_byte_start": 7765,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplay_idMat",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 153,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem toDisplay_idMat [DecidableEq I] : toDisplay (idMat : CoefMat I) = 1 := by\n  ext j i\n  simp [idMat, Matrix.one_apply, eq_comm]",
+          "response_byte_start": 7841,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 173,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def matProd [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) : ℕ → CoefMat I\n  | 0 => idMat\n  | k + 1 => matComp (M k) (matProd M k)",
+          "response_byte_start": 8593,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 177,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matProd_zero [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) :\n    matProd M 0 = idMat := rfl",
+          "response_byte_start": 8742,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_succ",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 180,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matProd_succ [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (k : ℕ) :\n    matProd M (k + 1) = matComp (M k) (matProd M k) := rfl",
+          "response_byte_start": 8849,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 184,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matProd_one [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) :\n    matProd M 1 = M 0 := by\n  rw [matProd_succ, matProd_zero, matComp_idMat_right]",
+          "response_byte_start": 9043,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplay_matProd",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 189,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem toDisplay_matProd [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (k : ℕ) :\n    toDisplay (matProd M k) = (((List.range k).map fun m => toDisplay (M m)).reverse).prod := by\n  induction k with\n  | zero => simp [toDisplay_idMat]\n  | succ k ih =>\n    rw [matProd_succ, toDisplay_matComp, ih, List.range_succ, List.map_append,\n      List.reverse_append]\n    simp",
+          "response_byte_start": 9320,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matComp_idMat_right",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 161,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matComp_idMat_right [Fintype I] [DecidableEq I] (M : CoefMat I) :\n    matComp M idMat = M := by\n  funext i j\n  simp [matComp, idMat]",
+          "response_byte_start": 8125,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matComp_idMat_left",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 166,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matComp_idMat_left [Fintype I] [DecidableEq I] (M : CoefMat I) :\n    matComp idMat M = M := by\n  funext i j\n  simp [matComp, idMat]",
+          "response_byte_start": 8267,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/3"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        219,
+        237
+      ]
+    },
+    {
+      "id": "HC02-D05",
+      "title": "实际像域与原文逐步数据的链表示",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Actual imageSeq, chain/domain bridges and step-domain legality are proved. LipChain/CoLipChain contain only given step data, never the final target; unbundled induction theorems also construct the final bounds.",
+      "candidate_representation": "chainComp ϕ 0 = id，chainComp ϕ (k+1) = ϕ k ∘ chainComp ϕ k，即 c_k，并证明它等于第 1 章的 OperatorChain [φ_k,…,φ_1]。imageSeq ϕ U 0 = U，imageSeq ϕ U (m+1) = ϕ m '' imageSeq ϕ U m，即 U_{m+1}=φ_m(U_m)（0 起下标）。已证 c_m(U_1) = U_{m+1}（chainComp_image）；由 U_1 ⊆ dom c_k 得 m<k 时 U_m ⊆ dom φ_m（imageSeq_subset_dom）。LipChain/CoLipChain 的字段只有算子序列、逐步矩阵、起始域、U_1 ⊆ dom c_k 以及每步在实际 U_m 上的证书资格，不含最终复合界。",
+      "candidate_dependencies": [
+        "HC02-D01",
+        "HC02-D02"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.idOp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 33,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def idOp : Operator X bot := ⟨id, rfl⟩",
+          "response_byte_start": 2623,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.opComp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 36,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def opComp (ψ ϕ : Operator X bot) : Operator X bot :=\n  ⟨ψ.func ∘ ϕ.func, by simp [ϕ.preserves_bot, ψ.preserves_bot]⟩",
+          "response_byte_start": 2720,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.opComp_eq_operatorChain",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 45,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem opComp_eq_operatorChain (ψ ϕ : Operator X bot) :\n    opComp ψ ϕ = OperatorChain [ψ, ϕ] := by\n  ext x\n  rfl",
+          "response_byte_start": 3112,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_dom_opComp_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 51,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_dom_opComp_iff {ψ ϕ : Operator X bot} {x : X} :\n    x ∈ dom (opComp ψ ϕ) ↔ x ∈ dom ϕ ∧ ϕ.func x ∈ dom ψ := by\n  simp only [dom, Set.mem_setOf_eq, opComp_func, Function.comp_apply]\n  constructor\n  · intro h\n    refine ⟨?_, h⟩\n    intro hx\n    rw [hx, ψ.preserves_bot] at h\n    exact h rfl\n  · exact fun h => h.2",
+          "response_byte_start": 3296,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.subset_dom_of_subset_dom_opComp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 63,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem subset_dom_of_subset_dom_opComp {ϕ₂ ϕ₁ : Operator X bot} {U₁ : Set X}\n    (h : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) :\n    U₁ ⊆ dom ϕ₁ ∧ operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by\n  refine ⟨fun x hx => (mem_dom_opComp_iff.1 (h hx)).1, ?_⟩\n  rintro _ ⟨x, hx, rfl⟩\n  exact (mem_dom_opComp_iff.1 (h hx)).2",
+          "response_byte_start": 3780,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chainComp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 72,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def chainComp (ϕ : ℕ → Operator X bot) : ℕ → Operator X bot\n  | 0 => idOp\n  | k + 1 => opComp (ϕ k) (chainComp ϕ k)",
+          "response_byte_start": 4250,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chainComp_eq_operatorChain",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 77,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainComp_eq_operatorChain (ϕ : ℕ → Operator X bot) (k : ℕ) :\n    chainComp ϕ k = OperatorChain (((List.range k).map ϕ).reverse) := by\n  induction k with\n  | zero => rfl\n  | succ k ih =>\n    rw [List.range_succ, List.map_append, List.reverse_append]\n    ext x\n    simp only [chainComp, opComp_func, List.map_cons, List.map_nil, List.reverse_cons,\n      List.reverse_nil, List.nil_append, List.cons_append, OperatorChain, ih]",
+          "response_byte_start": 4469,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.imageSeq",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 88,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def imageSeq (ϕ : ℕ → Operator X bot) (U : Set X) : ℕ → Set X\n  | 0 => U\n  | m + 1 => operator_image (ϕ m) (imageSeq ϕ U m)",
+          "response_byte_start": 4986,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chainComp_image",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 93,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainComp_image (ϕ : ℕ → Operator X bot) (U : Set X) (m : ℕ) :\n    operator_image (chainComp ϕ m) U = imageSeq ϕ U m := by\n  induction m with\n  | zero => simp [operator_image, chainComp, imageSeq]\n  | succ m ih =>\n    simp only [operator_image, chainComp, imageSeq, opComp_func] at ih ⊢\n    rw [Set.image_comp, ih]",
+          "response_byte_start": 5186,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.dom_chainComp_anti",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 102,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem dom_chainComp_anti (ϕ : ℕ → Operator X bot) {m k : ℕ} (h : m ≤ k) :\n    dom (chainComp ϕ k) ⊆ dom (chainComp ϕ m) := by\n  induction k, h using Nat.le_induction with\n  | base => exact le_rfl\n  | succ k hmk ih =>\n    intro x hx\n    exact ih (mem_dom_opComp_iff.1 hx).1",
+          "response_byte_start": 5567,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.imageSeq_subset_dom",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 111,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem imageSeq_subset_dom (ϕ : ℕ → Operator X bot) {U : Set X} {k : ℕ}\n    (hU : U ⊆ dom (chainComp ϕ k)) {m : ℕ} (hm : m < k) :\n    imageSeq ϕ U m ⊆ dom (ϕ m) := by\n  rw [← chainComp_image]\n  rintro _ ⟨x, hx, rfl⟩\n  have hx' : x ∈ dom (chainComp ϕ (m + 1)) := dom_chainComp_anti ϕ hm (hU hx)\n  exact (mem_dom_opComp_iff.1 hx').2",
+          "response_byte_start": 5968,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.subset_dom_chainComp_of_le",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 120,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem subset_dom_chainComp_of_le (ϕ : ℕ → Operator X bot) {U : Set X} {k m : ℕ}\n    (hU : U ⊆ dom (chainComp ϕ k)) (hm : m ≤ k) : U ⊆ dom (chainComp ϕ m) :=\n  hU.trans (dom_chainComp_anti ϕ hm)",
+          "response_byte_start": 6392,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChain",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 486,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "structure LipChain {X : Type} (bot : X) {I : Type} [Fintype I] (d : I → X → X → ENNReal)\n    (k : ℕ) where\n  /-- 算子 `φ_1, …, φ_k`（0 起下标，只用 `m < k`）。 -/\n  ops : ℕ → Operator X bot\n  /-- 逐步证书 `L^{(1)}, …, L^{(k)}`（0 起下标）。 -/\n  mats : ℕ → CoefMat I\n  /-- 起始子集 `U_1`。 -/\n  start : Set X\n  start_sub_dom : start ⊆ dom (chainComp ops k)\n  step_mem : ∀ m < k, mats m ∈ LipSetOn d (ops m) (imageSeq ops start m)",
+          "response_byte_start": 26549,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChain",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 498,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "structure CoLipChain {X : Type} (bot : X) {I : Type} [Fintype I] (d : I → X → X → ENNReal)\n    (k : ℕ) where\n  ops : ℕ → Operator X bot\n  mats : ℕ → CoefMat I\n  start : Set X\n  start_sub_dom : start ⊆ dom (chainComp ops k)\n  step_mem : ∀ m < k, mats m ∈ CoLipSetOn d (ops m) (imageSeq ops start m)",
+          "response_byte_start": 27124,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChain.imageSeq_props",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 556,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem LipChain.imageSeq_props [Fintype I] {d : I → X → X → ENNReal} {k : ℕ}\n    (C : LipChain bot d k) :\n    (∀ m < k, imageSeq C.ops C.start m ⊆ dom (C.ops m)) ∧\n    operator_image (chainComp C.ops k) C.start = imageSeq C.ops C.start k :=\n  ⟨fun _ hm => imageSeq_subset_dom C.ops C.start_sub_dom hm, chainComp_image C.ops C.start k⟩",
+          "response_byte_start": 30315,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.imageSeq_props",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 562,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem CoLipChain.imageSeq_props [Fintype I] {d : I → X → X → ENNReal} {k : ℕ}\n    (C : CoLipChain bot d k) :\n    (∀ m < k, imageSeq C.ops C.start m ⊆ dom (C.ops m)) ∧\n    operator_image (chainComp C.ops k) C.start = imageSeq C.ops C.start k :=\n  ⟨fun _ hm => imageSeq_subset_dom C.ops C.start_sub_dom hm, chainComp_image C.ops C.start k⟩",
+          "response_byte_start": 30670,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/4"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        27,
+        27,
+        92,
+        92,
+        219,
+        237
+      ]
+    },
+    {
+      "id": "HC02-D06",
+      "title": "全部有限索引路径与全正/含零谓词",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "fullPath ranges over every intermediate sequence with fixed endpoints, including unique empty sequence at n=1; path weights and their sum expansion are proved.",
+      "candidate_representation": "n = m+1 层（n≥1）时，中间指标序列为任意 s : Fin m → I，不加正性约束。fullPath i j s : Fin (m+2) → I 满足 k_0=i、k_t=s_{t-1}、k_n=j。pathEdge 是第 t 层边 [M^{(t+1)}]_{k_t→k_{t+1}}，pathWeight 是各层边的乘积；PathAllPos 表示所有边>0，PathHasZero 表示某边=0。n=1 时 Fin 0 → I 只有一个空序列，路径为 ![i,j]。matProd_apply_eq_sum_paths 证明乘积条目等于全部路径权重之和。",
+      "candidate_dependencies": [
+        "HC02-D04"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.fullPath",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 572,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def fullPath {m : ℕ} (i j : I) (s : Fin m → I) : Fin (m + 2) → I :=\n  Fin.cons (α := fun _ => I) i (Fin.snoc (α := fun _ => I) s j)",
+          "response_byte_start": 31236,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.fullPath_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 575,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem fullPath_zero {m : ℕ} (i j : I) (s : Fin m → I) : fullPath i j s 0 = i := by\n  simp [fullPath]",
+          "response_byte_start": 31385,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.fullPath_last",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 578,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem fullPath_last {m : ℕ} (i j : I) (s : Fin m → I) :\n    fullPath i j s (Fin.last (m + 1)) = j := by\n  rw [← Fin.succ_last]\n  simp [fullPath]",
+          "response_byte_start": 31501,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.fullPath_succ_castSucc",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 583,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem fullPath_succ_castSucc {m : ℕ} (i j : I) (s : Fin m → I) (t : Fin m) :\n    fullPath i j s t.castSucc.succ = s t := by\n  simp [fullPath]",
+          "response_byte_start": 31655,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.fullPath_length_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 588,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem fullPath_length_one (i j : I) (s : Fin 0 → I) : fullPath i j s = ![i, j] := by\n  funext t\n  fin_cases t\n  · simp\n  · exact fullPath_last i j s",
+          "response_byte_start": 31893,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.intermediate_length_one_unique",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 693,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem intermediate_length_one_unique (s t : Fin 0 → I) : s = t := Subsingleton.elim s t",
+          "response_byte_start": 37592,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathEdge",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 602,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def pathEdge (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) (t : Fin (m + 1)) : ENNReal :=\n  M t (fullPath i j s t.castSucc) (fullPath i j s t.succ)",
+          "response_byte_start": 32430,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 606,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def pathWeight (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) : ENNReal :=\n  ∏ t : Fin (m + 1), pathEdge M i j s t",
+          "response_byte_start": 32642,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.PathAllPos",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 610,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def PathAllPos (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) : Prop :=\n  ∀ t : Fin (m + 1), 0 < pathEdge M i j s t",
+          "response_byte_start": 32816,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.PathHasZero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 614,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def PathHasZero (M : ℕ → CoefMat I) {m : ℕ} (i j : I) (s : Fin m → I) : Prop :=\n  ∃ t : Fin (m + 1), pathEdge M i j s t = 0",
+          "response_byte_start": 32991,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight_snoc",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 617,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem pathWeight_snoc (M : ℕ → CoefMat I) {m : ℕ} (i j k : I) (s : Fin m → I) :\n    pathWeight M i j (Fin.snoc (α := fun _ => I) s k) = pathWeight M i k s * M (m + 1) k j := by\n  unfold pathWeight pathEdge\n  rw [Fin.prod_univ_castSucc]\n  congr 1\n  · refine Finset.prod_congr rfl fun t _ => ?_\n    rw [fullPath_snoc_castSucc, Fin.succ_castSucc, fullPath_snoc_castSucc]\n    simp\n  · rw [fullPath_snoc_castSucc, fullPath_last, Fin.succ_last, fullPath_last]\n    simp",
+          "response_byte_start": 33126,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_eq_sum_paths",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 629,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matProd_apply_eq_sum_paths [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (m : ℕ)\n    (i j : I) : matProd M (m + 1) i j = ∑ s : Fin m → I, pathWeight M i j s := by\n  induction m generalizing j with\n  | zero =>\n    rw [matProd_one]\n    simp [pathWeight, pathEdge, fullPath_length_one]\n  | succ m ih =>\n    rw [matProd_succ]\n    simp only [matComp, ih, Finset.mul_sum]\n    rw [← (Fin.snocEquiv fun _ => I).sum_comp, Fintype.sum_prod_type]\n    refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun s _ => ?_\n    have : (Fin.snocEquiv fun _ => I) (k, s) = Fin.snoc (α := fun _ => I) s k := rfl\n    rw [this, pathWeight_snoc, mul_comm]",
+          "response_byte_start": 33724,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/5"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        241,
+        259
+      ]
+    },
+    {
+      "id": "HC02-D07",
+      "title": "分量通道、任意单行/单列稀疏和对角",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Arbitrary row/column support positions, existential row/column single support, and diagonal structure are defined and proved consistent with display matrices.",
+      "candidate_representation": "Channel I := I×I。RowSparse L i j := ∀k≠i, L k j = 0；RowSingle L j := ∃i RowSparse L i j；RowDecoupled d φ U j := ∃L∈LipSetOn d φ U, RowSingle L j。ColSparse L i j := ∀k≠j, L i k = 0；ColSingle、ColDecoupled 同理。IsDiagonal L := ∀ i≠j, L i j = 0。另证与显示矩阵的行、列、对角（Matrix.IsDiag）一致，并在 I 非空时证明 ∃i Row 等价于“第 j 行至多一项非零”（列同理）。",
+      "candidate_dependencies": [
+        "HC02-D01",
+        "HC02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.Channel",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 709,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "abbrev Channel (I : Type) := I × I",
+          "response_byte_start": 38263,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.RowSparse",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 902,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def RowSparse (L : CoefMat I) (i j : I) : Prop := ∀ k, k ≠ i → L k j = 0",
+          "response_byte_start": 47780,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.RowSingle",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 905,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def RowSingle (L : CoefMat I) (j : I) : Prop := ∃ i, RowSparse L i j",
+          "response_byte_start": 47930,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.ColSparse",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 908,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ColSparse (L : CoefMat I) (i j : I) : Prop := ∀ k, k ≠ j → L i k = 0",
+          "response_byte_start": 48120,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.ColSingle",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 911,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ColSingle (L : CoefMat I) (i : I) : Prop := ∃ j, ColSparse L i j",
+          "response_byte_start": 48270,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.IsDiagonal",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 914,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def IsDiagonal (L : CoefMat I) : Prop := ∀ i j, i ≠ j → L i j = 0",
+          "response_byte_start": 48386,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.RowDecoupled",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 917,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def RowDecoupled [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)\n    (j : I) : Prop :=\n  ∃ L ∈ LipSetOn d ϕ U, RowSingle L j",
+          "response_byte_start": 48541,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.ColDecoupled",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 922,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ColDecoupled [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)\n    (i : I) : Prop :=\n  ∃ L ∈ LipSetOn d ϕ U, ColSingle L i",
+          "response_byte_start": 48784,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.FullyDecoupledCert",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 927,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def FullyDecoupledCert [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)\n    (L : CoefMat I) : Prop :=\n  L ∈ LipSetOn d ϕ U ∧ IsDiagonal L",
+          "response_byte_start": 49013,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.rowSparse_iff_display",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 932,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem rowSparse_iff_display (L : CoefMat I) (i j : I) :\n    RowSparse L i j ↔ ∀ k, k ≠ i → toDisplay L j k = 0 := Iff.rfl",
+          "response_byte_start": 49276,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colSparse_iff_display",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 936,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem colSparse_iff_display (L : CoefMat I) (i j : I) :\n    ColSparse L i j ↔ ∀ k, k ≠ j → toDisplay L k i = 0 := Iff.rfl",
+          "response_byte_start": 49499,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.isDiagonal_iff_display",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 940,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem isDiagonal_iff_display (L : CoefMat I) : IsDiagonal L ↔ (toDisplay L).IsDiag := by\n  constructor\n  · intro h j i hji\n    exact h i j (Ne.symm hji)\n  · intro h i j hij\n    exact h (Ne.symm hij)",
+          "response_byte_start": 49682,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.rowSingle_iff_atMostOne",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 948,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem rowSingle_iff_atMostOne [Nonempty I] (L : CoefMat I) (j : I) :\n    RowSingle L j ↔ ∀ k k', L k j ≠ 0 → L k' j ≠ 0 → k = k' := by\n  constructor\n  · rintro ⟨i, hi⟩ k k' hk hk'\n    have h1 : k = i := by by_contra h; exact hk (hi k h)\n    have h2 : k' = i := by by_contra h; exact hk' (hi k' h)\n    rw [h1, h2]\n  · intro h\n    by_cases hex : ∃ k, L k j ≠ 0\n    · obtain ⟨k, hk⟩ := hex\n      refine ⟨k, fun k' hk' => ?_⟩\n      by_contra hne\n      exact hk' (h k' k hne hk)\n    · push Not at hex\n      exact ⟨Classical.arbitrary I, fun k _ => hex k⟩",
+          "response_byte_start": 49985,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colSingle_iff_atMostOne",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 965,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem colSingle_iff_atMostOne [Nonempty I] (L : CoefMat I) (i : I) :\n    ColSingle L i ↔ ∀ k k', L i k ≠ 0 → L i k' ≠ 0 → k = k' := by\n  constructor\n  · rintro ⟨j, hj⟩ k k' hk hk'\n    have h1 : k = j := by by_contra h; exact hk (hj k h)\n    have h2 : k' = j := by by_contra h; exact hk' (hj k' h)\n    rw [h1, h2]\n  · intro h\n    by_cases hex : ∃ k, L i k ≠ 0\n    · obtain ⟨k, hk⟩ := hex\n      refine ⟨k, fun k' hk' => ?_⟩\n      by_contra hne\n      exact hk' (h k' k hne hk)\n    · push Not at hex\n      exact ⟨Classical.arbitrary I, fun k _ => hex k⟩",
+          "response_byte_start": 50671,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/6"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        263,
+        269,
+        311,
+        319
+      ]
+    },
+    {
+      "id": "HC02-D08",
+      "title": "单通道可行标量族及其下确界",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "chanFeasible is the all-pair single-channel scalar family, distinct from matrix entries, and chanLip is its sInf with the empty-family top convention. Total definition outside valid U is only a conservative extension.",
+      "candidate_representation": "chanFeasible d φ U i j = {c : ENNReal | ∀x∈U ∀y∈U, d j (φx)(φy) ≤ c * d i x y}（即 S_ij）；chanLip = sInf S_ij，并有 sInf ∅ = ⊤（chanLip_eq_top_of_empty）。原文把 U ⊆ dom φ 作为语境前提，这里的定义对任意 U 都成立。chanLip 与矩阵条目是两个独立对象，唯一证明的联系是：若 L 合法且第 j 行只在 i 处可能非零，则 chanLip ≤ L i j。",
+      "candidate_dependencies": [],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanFeasible",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 712,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def chanFeasible (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i j : I) :\n    Set ENNReal :=\n  {c | ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ c * d i x y}",
+          "response_byte_start": 38415,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 717,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def chanLip (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i j : I) : ENNReal :=\n  sInf (chanFeasible d ϕ U i j)",
+          "response_byte_start": 38695,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.channelLip",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 721,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def channelLip (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (c : Channel I) :\n    ENNReal :=\n  chanLip d ϕ U c.1 c.2",
+          "response_byte_start": 38882,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_eq_top_of_empty",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 726,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_eq_top_of_empty {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {i j : I} (h : chanFeasible d ϕ U i j = ∅) : chanLip d ϕ U i j = ⊤ := by\n  rw [chanLip, h, sInf_empty]",
+          "response_byte_start": 39056,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_le_of_rowSparse",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 828,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_le_of_rowSparse [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I}\n    (hrow : ∀ k, k ≠ i → L k j = 0) : chanLip d ϕ U i j ≤ L i j := by\n  refine sInf_le ?_\n  intro x hx y hy\n  have hsum : ∑ k, L k j * d k x y = L i j * d i x y :=\n    Fintype.sum_eq_single i fun k hk => by rw [hrow k hk, zero_mul]\n  exact hsum ▸ hL.2 x hx y hy j",
+          "response_byte_start": 44436,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/7"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        271,
+        309
+      ]
+    },
+    {
+      "id": "HC02-P01",
+      "title": "单分量矩阵界退化",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "A singleton finite index family gives the scalar condition, with equivalence to the matrix predicate.",
+      "candidate_representation": "I={i} 用假设 ∀k:I, k=i 表示。L 合法（受限或全域）当且仅当 ∀x,y, d i (φx)(φy) ≤ L i i * d i x y；这是等价式，比单向退化更强。",
+      "candidate_dependencies": [
+        "HC02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSetOn_single_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 251,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSetOn_single_iff [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (i : I) (hI : ∀ k : I, k = i) (L : CoefMat I) :\n    L ∈ LipSetOn d ϕ U ↔\n      U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) ≤ L i i * d i x y := by\n  have hsum : ∀ (j : I) (x y : X), ∑ k, L k j * d k x y = L i j * d i x y := by\n    intro j x y\n    exact Fintype.sum_eq_single i fun k hk => absurd (hI k) hk\n  constructor\n  · rintro ⟨hU, h⟩\n    refine ⟨hU, fun x hx y hy => ?_⟩\n    simpa [hsum] using h x hx y hy i\n  · rintro ⟨hU, h⟩\n    refine ⟨hU, fun x hx y hy j => ?_⟩\n    rw [hI j, hsum]\n    exact h x hx y hy",
+          "response_byte_start": 12641,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_single_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 268,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSet_single_iff [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (i : I) (hI : ∀ k : I, k = i) (L : CoefMat I) :\n    L ∈ LipSet d ϕ ↔\n      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i (ϕ.func x) (ϕ.func y) ≤ L i i * d i x y := by\n  rw [LipSet, lipSetOn_single_iff d ϕ _ i hI]\n  simp",
+          "response_byte_start": 13379,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/8"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        19,
+        23
+      ]
+    },
+    {
+      "id": "HC02-P02",
+      "title": "全域Lip证书可限制",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The global certificate restricts to every U⊆dom by direct pair transport.",
+      "candidate_representation": "U ⊆ dom φ → LipSet d φ ⊆ LipSetOn d φ U。",
+      "candidate_dependencies": [
+        "HC02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_subset_lipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 278,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSet_subset_lipSetOn [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    {U : Set X} (hU : U ⊆ dom ϕ) : LipSet d ϕ ⊆ LipSetOn d ϕ U := by\n  rintro L ⟨-, h⟩\n  exact ⟨hU, fun x hx y hy j => h x (hU hx) y (hU hy) j⟩",
+          "response_byte_start": 13798,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/9"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        25,
+        25
+      ]
+    },
+    {
+      "id": "HC02-P03",
+      "title": "缩小评估域扩大Lip证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Subset restriction expands the certificate family without changing the pairwise law.",
+      "candidate_representation": "U ⊆ V → V ⊆ dom φ → LipSetOn d φ V ⊆ LipSetOn d φ U。",
+      "candidate_dependencies": [
+        "HC02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSetOn_anti",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 284,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSetOn_anti [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    {U V : Set X} (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) : LipSetOn d ϕ V ⊆ LipSetOn d ϕ U := by\n  rintro L ⟨-, h⟩\n  exact ⟨hUV.trans hV, fun x hx y hy j => h x (hUV hx) y (hUV hy) j⟩",
+          "response_byte_start": 14162,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/10"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        25,
+        25
+      ]
+    },
+    {
+      "id": "HC02-P04",
+      "title": "逐条目下确界不增",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "lipEntryInf is defined as the image-family infimum and monotonicity follows from certificate-family inclusion in the correct direction.",
+      "candidate_representation": "lipEntryInf d φ U i j = sInf {M i j | M ∈ LipSetOn d φ U}；U ⊆ V ⊆ dom φ 时 a_ij(U) ≤ a_ij(V)。",
+      "candidate_dependencies": [
+        "HC02-P03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipEntryInf",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 290,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def lipEntryInf [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (i j : I) : ENNReal :=\n  sInf ((fun M : CoefMat I => M i j) '' LipSetOn d ϕ U)",
+          "response_byte_start": 14537,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipEntryInf_mono",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 295,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipEntryInf_mono [Fintype I] (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    {U V : Set X} (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) (i j : I) :\n    lipEntryInf d ϕ U i j ≤ lipEntryInf d ϕ V i j :=\n  sInf_le_sInf (Set.image_mono (lipSetOn_anti d ϕ hUV hV))",
+          "response_byte_start": 14822,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/11"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        25,
+        25
+      ]
+    },
+    {
+      "id": "HC02-P05",
+      "title": "两步Lip复合",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Outer bounds are instantiated on the actual inner image, then finite sums are expanded to matComp in the required order.",
+      "candidate_representation": "条件 U₁ ⊆ dom(opComp φ₂ φ₁)，U₂ = operator_image φ₁ U₁（第 1 章的像集），L₁ ∈ LipSetOn d φ₁ U₁，L₂ ∈ LipSetOn d φ₂ U₂；结论 matComp L₂ L₁ ∈ LipSetOn d (opComp φ₂ φ₁) U₁。另单独证明 U₂ ⊆ dom φ₂。",
+      "candidate_dependencies": [
+        "HC02-D01",
+        "HC02-D03",
+        "HC02-D05"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_comp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 304,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_comp [Fintype I] (d : I → X → X → ENNReal) {ϕ₁ ϕ₂ : Operator X bot}\n    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) {L₁ L₂ : CoefMat I}\n    (hL₁ : L₁ ∈ LipSetOn d ϕ₁ U₁) (hL₂ : L₂ ∈ LipSetOn d ϕ₂ (operator_image ϕ₁ U₁)) :\n    matComp L₂ L₁ ∈ LipSetOn d (opComp ϕ₂ ϕ₁) U₁ := by\n  refine ⟨hU₁, fun x hx y hy j => ?_⟩\n  have hx' : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩\n  have hy' : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩\n  calc d j ((opComp ϕ₂ ϕ₁).func x) ((opComp ϕ₂ ϕ₁).func y)\n      ≤ ∑ k, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := hL₂.2 _ hx' _ hy' j\n    _ ≤ ∑ k, L₂ k j * ∑ i, L₁ i k * d i x y := by\n        gcongr with k\n        exact hL₁.2 x hx y hy k\n    _ = ∑ i, matComp L₂ L₁ i j * d i x y := sum_matComp_mul L₂ L₁ _ j",
+          "response_byte_start": 15368,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.subset_dom_of_subset_dom_opComp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 63,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem subset_dom_of_subset_dom_opComp {ϕ₂ ϕ₁ : Operator X bot} {U₁ : Set X}\n    (h : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) :\n    U₁ ⊆ dom ϕ₁ ∧ operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by\n  refine ⟨fun x hx => (mem_dom_opComp_iff.1 (h hx)).1, ?_⟩\n  rintro _ ⟨x, hx, rfl⟩\n  exact (mem_dom_opComp_iff.1 (h hx)).2",
+          "response_byte_start": 3780,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.sum_matComp_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 199,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem sum_matComp_mul [Fintype I] (M₂ M₁ : CoefMat I) (D : I → ENNReal) (j : I) :\n    ∑ k, M₂ k j * ∑ i, M₁ i k * D i = ∑ i, matComp M₂ M₁ i j * D i := by\n  simp only [matComp, Finset.mul_sum, Finset.sum_mul]\n  rw [Finset.sum_comm]\n  simp only [mul_assoc]",
+          "response_byte_start": 9807,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/12"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        27,
+        69
+      ]
+    },
+    {
+      "id": "HC02-P06",
+      "title": "输出零距迫使co-Lip条目为0",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "A positive input / zero output pair forces the single co-Lip summand and then its coefficient to vanish.",
+      "candidate_representation": "若 x,y ∈ dom φ，d j (φx)(φy) = 0 且 0 < d i x y，则 ∀K ∈ CoLipSetOn d φ (dom φ)，K i j = 0。",
+      "candidate_dependencies": [
+        "HC02-D02"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_entry_eq_zero_of_pair",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 319,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_entry_eq_zero_of_pair [Fintype I] (d : I → X → X → ENNReal) {ϕ : Operator X bot}\n    {i j : I} {x y : X} (hx : x ∈ dom ϕ) (hy : y ∈ dom ϕ)\n    (hout : d j (ϕ.func x) (ϕ.func y) = 0) (hin : 0 < d i x y) :\n    ∀ K ∈ CoLipSetOn d ϕ (dom ϕ), K i j = 0 := by\n  intro K hK\n  have h1 : ∑ k, K k j * d k x y ≤ 0 := hout ▸ hK.2.2 x hx y hy j\n  have h2 : K i j * d i x y ≤ ∑ k, K k j * d k x y :=\n    Finset.single_le_sum (f := fun k => K k j * d k x y) (fun _ _ => zero_le _) (Finset.mem_univ i)\n  have h3 : K i j * d i x y = 0 := le_antisymm (h2.trans h1) (zero_le _)\n  rcases mul_eq_zero.1 h3 with h | h\n  · exact h\n  · exact absurd h hin.ne'",
+          "response_byte_start": 16356,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/13"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        79,
+        89
+      ]
+    },
+    {
+      "id": "HC02-P07",
+      "title": "两步co-Lip复合",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The two lower certificates yield the actual composite lower bound; nonemptiness is retained.",
+      "candidate_representation": "实际像域设定与 P05 相同。K₁ ∈ CoLipSetOn d φ₁ U₁，K₂ ∈ CoLipSetOn d φ₂ (φ₁ '' U₁)，则 matComp K₂ K₁ ∈ CoLipSetOn d (φ₂∘φ₁) U₁；结论包含 U₁ 非空（取自 K₁）。",
+      "candidate_dependencies": [
+        "HC02-D02",
+        "HC02-D03",
+        "HC02-D05"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_comp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 334,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_comp [Fintype I] (d : I → X → X → ENNReal) {ϕ₁ ϕ₂ : Operator X bot}\n    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (opComp ϕ₂ ϕ₁)) {K₁ K₂ : CoefMat I}\n    (hK₁ : K₁ ∈ CoLipSetOn d ϕ₁ U₁) (hK₂ : K₂ ∈ CoLipSetOn d ϕ₂ (operator_image ϕ₁ U₁)) :\n    matComp K₂ K₁ ∈ CoLipSetOn d (opComp ϕ₂ ϕ₁) U₁ := by\n  refine ⟨hK₁.1, hU₁, fun x hx y hy j => ?_⟩\n  have hx' : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩\n  have hy' : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩\n  calc ∑ i, matComp K₂ K₁ i j * d i x y\n      = ∑ k, K₂ k j * ∑ i, K₁ i k * d i x y := (sum_matComp_mul K₂ K₁ _ j).symm\n    _ ≤ ∑ k, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by\n        gcongr with k\n        exact hK₁.2.2 x hx y hy k\n    _ ≤ d j ((opComp ϕ₂ ϕ₁).func x) ((opComp ϕ₂ ϕ₁).func y) := hK₂.2.2 _ hx' _ hy' j",
+          "response_byte_start": 17283,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/14"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        92,
+        133
+      ]
+    },
+    {
+      "id": "HC02-P08",
+      "title": "正向点对像距扰动",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Two triangle inequalities and symmetry bound the forward image distance by the old one plus 2δ, also explicitly expressed as δ+δ.",
+      "candidate_representation": "语境：hd : ∀i ExtendedPseudoMetric X bot (d i)，U ⊆ dom φ₁ ∩ dom φ₂（即 dom(φ₁,φ₂)），δ : I → ENNReal，∀z∈U ∀j, d j (φ₁z)(φ₂z) ≤ δ j。结论：∀x,y∈U ∀j，d j(φ₂x)(φ₂y) ≤ d j(φ₁x)(φ₁y) + 2δ_j，并同时给出 +δ_j+δ_j 形式。",
+      "candidate_dependencies": [],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_forward",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 385,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_forward {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j) :\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n      d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + 2 * δ j ∧\n      d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + δ j + δ j := by\n  intro x hx y hy j\n  have h := perturb_core hd hδ hx hy j\n  refine ⟨h, ?_⟩\n  rwa [two_mul, ← add_assoc] at h",
+          "response_byte_start": 20117,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_core",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 352,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_core {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕa ϕb : Operator X bot} {U : Set X} {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕa.func z) (ϕb.func z) ≤ δ j)\n    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :\n    d j (ϕb.func x) (ϕb.func y) ≤ d j (ϕa.func x) (ϕa.func y) + 2 * δ j := by\n  calc d j (ϕb.func x) (ϕb.func y)\n      ≤ d j (ϕb.func x) (ϕa.func x) + d j (ϕa.func x) (ϕb.func y) := (hd j).triangle _ _ _\n    _ ≤ d j (ϕb.func x) (ϕa.func x) +\n          (d j (ϕa.func x) (ϕa.func y) + d j (ϕa.func y) (ϕb.func y)) := by\n        gcongr\n        exact (hd j).triangle _ _ _\n    _ ≤ δ j + (d j (ϕa.func x) (ϕa.func y) + δ j) := by\n        gcongr\n        · rw [(hd j).symm]\n          exact hδ x hx j\n        · exact hδ y hy j\n    _ = d j (ϕa.func x) (ϕa.func y) + 2 * δ j := by ring",
+          "response_byte_start": 18389,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.two_mul_eq_add_self",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 380,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem two_mul_eq_add_self (δ : ENNReal) : 2 * δ = δ + δ := two_mul δ",
+          "response_byte_start": 19782,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/15"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        138,
+        153,
+        180,
+        204
+      ]
+    },
+    {
+      "id": "HC02-P09",
+      "title": "反向点对像距扰动",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The perturbation premise is symmetrized and the same argument proves the reverse image-distance bound.",
+      "candidate_representation": "前提与 P08 相同。结论 d j(φ₁x)(φ₁y) ≤ d j(φ₂x)(φ₂y) + 2δ_j（以及 +δ_j+δ_j 形式），由对称性交换 φ₁、φ₂ 得到。",
+      "candidate_dependencies": [
+        "HC02-P08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_backward",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 398,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_backward {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j) :\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n      d j (ϕ₁.func x) (ϕ₁.func y) ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j ∧\n      d j (ϕ₁.func x) (ϕ₁.func y) ≤ d j (ϕ₂.func x) (ϕ₂.func y) + δ j + δ j := by\n  intro x hx y hy j\n  have h := perturb_core hd (perturb_symm hd hδ) hx hy j\n  refine ⟨h, ?_⟩\n  rwa [two_mul, ← add_assoc] at h",
+          "response_byte_start": 20917,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_symm",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 371,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_symm {d : I → X → X → ENNReal} (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j) :\n    ∀ z ∈ U, ∀ j, d j (ϕ₂.func z) (ϕ₁.func z) ≤ δ j := by\n  intro z hz j\n  rw [(hd j).symm]\n  exact hδ z hz j",
+          "response_byte_start": 19362,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/16"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        154,
+        160,
+        180,
+        204
+      ]
+    },
+    {
+      "id": "HC02-P10",
+      "title": "扰动Lip加性界",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The actual forward perturbation bound is composed with a valid Lip certificate; the exchanged-operator form is also proved.",
+      "candidate_representation": "另设 L₁ ∈ LipSetOn d φ₁ U，则 d j(φ₂x)(φ₂y) ≤ Σ_i L₁ i j d i x y + 2δ_j。swap 版本对应原文“交换 φ₁,φ₂”：φ₂ 的证书控制 φ₁。",
+      "candidate_dependencies": [
+        "HC02-P08",
+        "HC02-P09"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_lip_bridge",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 410,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_lip_bridge [Fintype I] {d : I → X → X → ENNReal}\n    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)\n    {L₁ : CoefMat I} (hL₁ : L₁ ∈ LipSetOn d ϕ₁ U) :\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n      d j (ϕ₂.func x) (ϕ₂.func y) ≤ ∑ i, L₁ i j * d i x y + 2 * δ j := by\n  intro x hx y hy j\n  calc d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + 2 * δ j :=\n        (perturb_forward hd hU hδ x hx y hy j).1\n    _ ≤ ∑ i, L₁ i j * d i x y + 2 * δ j := by\n        gcongr\n        exact hL₁.2 x hx y hy j",
+          "response_byte_start": 21639,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_lip_bridge_swap",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 437,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_lip_bridge_swap [Fintype I] {d : I → X → X → ENNReal}\n    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)\n    {L₂ : CoefMat I} (hL₂ : L₂ ∈ LipSetOn d ϕ₂ U) :\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n      d j (ϕ₁.func x) (ϕ₁.func y) ≤ ∑ i, L₂ i j * d i x y + 2 * δ j :=\n  perturb_lip_bridge hd (by rwa [Set.inter_comm]) (perturb_symm hd hδ) hL₂",
+          "response_byte_start": 23305,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/17"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        162,
+        168,
+        205,
+        209
+      ]
+    },
+    {
+      "id": "HC02-P11",
+      "title": "扰动co-Lip加性界",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The actual reverse perturbation bound is composed with a valid co-Lip certificate; no subtraction or hidden finite-distance argument is used.",
+      "candidate_representation": "另设 K₁ ∈ CoLipSetOn d φ₁ U，则 Σ_i K₁ i j d i x y ≤ d j(φ₂x)(φ₂y) + 2δ_j；另给交换版本。",
+      "candidate_dependencies": [
+        "HC02-P09",
+        "HC02-P08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_coLip_bridge",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 425,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_coLip_bridge [Fintype I] {d : I → X → X → ENNReal}\n    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)\n    {K₁ : CoefMat I} (hK₁ : K₁ ∈ CoLipSetOn d ϕ₁ U) :\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n      ∑ i, K₁ i j * d i x y ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j := by\n  intro x hx y hy j\n  calc ∑ i, K₁ i j * d i x y ≤ d j (ϕ₁.func x) (ϕ₁.func y) := hK₁.2.2 x hx y hy j\n    _ ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j := (perturb_backward hd hU hδ x hx y hy j).1",
+          "response_byte_start": 22470,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_coLip_bridge_swap",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 447,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem perturb_coLip_bridge_swap [Fintype I] {d : I → X → X → ENNReal}\n    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))\n    {ϕ₁ ϕ₂ : Operator X bot} {U : Set X} (hU : U ⊆ dom ϕ₁ ∩ dom ϕ₂) {δ : I → ENNReal}\n    (hδ : ∀ z ∈ U, ∀ j, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j)\n    {K₂ : CoefMat I} (hK₂ : K₂ ∈ CoLipSetOn d ϕ₂ U) :\n    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n      ∑ i, K₂ i j * d i x y ≤ d j (ϕ₁.func x) (ϕ₁.func y) + 2 * δ j :=\n  perturb_coLip_bridge hd (by rwa [Set.inter_comm]) (perturb_symm hd hδ) hK₂",
+          "response_byte_start": 24008,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/18"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        170,
+        178,
+        210,
+        215
+      ]
+    },
+    {
+      "id": "HC02-P12",
+      "title": "任意正长度链的指定Lip乘积",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Induction constructs the matrix product certificate from local step certificates and actual images; bundled final theorem simply applies this proved result.",
+      "candidate_representation": "C : LipChain bot d k，k ≥ 1：只要 U_1 ⊆ dom c_k 且 ∀m<k，L m ∈ LipSetOn d (φ m) (imageSeq … m)（实际 U_{m+1}），就有 matProd C.mats k（=L_k⋯L_1）∈ LipSetOn d (chainComp ops k) U_1。lip_matProd_mem 对所有 k（含 0）成立，证明对 k 归纳，使用 P05 与 P14。",
+      "candidate_dependencies": [
+        "HC02-P05",
+        "HC02-P14",
+        "HC02-D05",
+        "HC02-D04"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_mem",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 542,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem LipChain.prod_mem [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal} {k : ℕ}\n    (C : LipChain bot d k) (hk : 1 ≤ k) :\n    matProd C.mats k ∈ LipSetOn d (chainComp C.ops k) C.start :=\n  lip_matProd_mem d C.ops C.mats C.start k C.start_sub_dom C.step_mem",
+          "response_byte_start": 29383,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_matProd_mem",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 507,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_matProd_mem [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    (ϕ : ℕ → Operator X bot) (L : ℕ → CoefMat I) (U : Set X) :\n    ∀ k : ℕ, U ⊆ dom (chainComp ϕ k) →\n      (∀ m < k, L m ∈ LipSetOn d (ϕ m) (imageSeq ϕ U m)) →\n      matProd L k ∈ LipSetOn d (chainComp ϕ k) U := by\n  intro k\n  induction k with\n  | zero => intro hU _; exact idMat_mem_LipSetOn d hU\n  | succ k ih =>\n    intro hU hL\n    have hU' : U ⊆ dom (chainComp ϕ k) := subset_dom_chainComp_of_le ϕ hU (Nat.le_succ k)\n    have hprev := ih hU' fun m hm => hL m (Nat.lt_succ_of_lt hm)\n    have hstep : L k ∈ LipSetOn d (ϕ k) (operator_image (chainComp ϕ k) U) := by\n      rw [chainComp_image]; exact hL k (Nat.lt_succ_self k)\n    exact lip_comp d hU hprev hstep",
+          "response_byte_start": 27515,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/19"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        219,
+        233
+      ]
+    },
+    {
+      "id": "HC02-P13",
+      "title": "任意正长度链的指定co-Lip乘积",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Nonempty start is obtained from step zero for a positive-length chain, and the lower product certificate is proved inductively.",
+      "candidate_representation": "C : CoLipChain bot d k，k ≥ 1，每步 co-Lip 证书资格都含非空性；结论 K_k⋯K_1 ∈ CoLipSetOn d c_k U_1。U_1 非空由第 0 步证书取得，然后对 k 归纳。",
+      "candidate_dependencies": [
+        "HC02-P07",
+        "HC02-P15",
+        "HC02-D05",
+        "HC02-D04"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_mem",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 549,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem CoLipChain.prod_mem [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal} {k : ℕ}\n    (C : CoLipChain bot d k) (hk : 1 ≤ k) :\n    matProd C.mats k ∈ CoLipSetOn d (chainComp C.ops k) C.start := by\n  have hne : C.start.Nonempty := (C.step_mem 0 hk).1\n  exact coLip_matProd_mem_of_nonempty d C.ops C.mats C.start hne k C.start_sub_dom C.step_mem",
+          "response_byte_start": 29828,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_matProd_mem_of_nonempty",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 524,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_matProd_mem_of_nonempty [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    (ϕ : ℕ → Operator X bot) (K : ℕ → CoefMat I) (U : Set X) (hne : U.Nonempty) :\n    ∀ k : ℕ, U ⊆ dom (chainComp ϕ k) →\n      (∀ m < k, K m ∈ CoLipSetOn d (ϕ m) (imageSeq ϕ U m)) →\n      matProd K k ∈ CoLipSetOn d (chainComp ϕ k) U := by\n  intro k\n  induction k with\n  | zero => intro hU _; exact idMat_mem_CoLipSetOn d hne hU\n  | succ k ih =>\n    intro hU hK\n    have hU' : U ⊆ dom (chainComp ϕ k) := subset_dom_chainComp_of_le ϕ hU (Nat.le_succ k)\n    have hprev := ih hU' fun m hm => hK m (Nat.lt_succ_of_lt hm)\n    have hstep : K k ∈ CoLipSetOn d (ϕ k) (operator_image (chainComp ϕ k) U) := by\n      rw [chainComp_image]; exact hK k (Nat.lt_succ_self k)\n    exact coLip_comp d hU hprev hstep",
+          "response_byte_start": 28378,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/20"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        219,
+        233
+      ]
+    },
+    {
+      "id": "HC02-P14",
+      "title": "零步单位Lip证书",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The zero-step identity and matrix unit are proved and supply the Lip inequality; dropping unused nonemptiness strengthens the statement.",
+      "candidate_representation": "c_0 = chainComp ϕ 0 = idOp，空乘积 matProd L 0 = idMat。U ⊆ dom id 时 idMat ∈ LipSetOn d idOp U：这一条不需要非空性，强于原文。zero_step_certificate 给出原文的非空形式，结论落在 Lip 与 co-Lip 证书族的交集中。",
+      "candidate_dependencies": [
+        "HC02-D04",
+        "HC02-D05"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.idMat_mem_LipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 465,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem idMat_mem_LipSetOn [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    {U : Set X} (hU : U ⊆ dom (idOp : Operator X bot)) :\n    (idMat : CoefMat I) ∈ LipSetOn d (idOp : Operator X bot) U :=\n  ⟨hU, fun x _ y _ j => by simp only [idOp_func, id, sum_idMat_dist]; exact le_rfl⟩",
+          "response_byte_start": 25071,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_step_certificate",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 478,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem zero_step_certificate [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    (ϕ : ℕ → Operator X bot) (L : ℕ → CoefMat I)\n    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom (chainComp ϕ 0)) :\n    chainComp ϕ 0 = idOp ∧ matProd L 0 = idMat ∧\n    matProd L 0 ∈ LipSetOn d (chainComp ϕ 0) U ∩ CoLipSetOn d (chainComp ϕ 0) U :=\n  ⟨rfl, rfl, idMat_mem_LipSetOn d hU, idMat_mem_CoLipSetOn d hne hU⟩",
+          "response_byte_start": 25985,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.sum_idMat_dist",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 459,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem sum_idMat_dist [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal) (x y : X) (j : I) :\n    ∑ i, (idMat : CoefMat I) i j * d i x y = d j x y :=\n  sum_idMat_mul (fun i => d i x y) j",
+          "response_byte_start": 24705,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/21"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        235,
+        237
+      ]
+    },
+    {
+      "id": "HC02-P15",
+      "title": "零步单位co-Lip证书",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The zero-step co-Lip certificate retains the nonempty evaluation domain.",
+      "candidate_representation": "对同一非空 U ⊆ dom id，idMat ∈ CoLipSetOn d idOp U。",
+      "candidate_dependencies": [
+        "HC02-D04",
+        "HC02-D05"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.idMat_mem_CoLipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 471,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem idMat_mem_CoLipSetOn [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom (idOp : Operator X bot)) :\n    (idMat : CoefMat I) ∈ CoLipSetOn d (idOp : Operator X bot) U :=\n  ⟨hne, hU, fun x _ y _ j => by simp only [idOp_func, id, sum_idMat_dist]; exact le_rfl⟩",
+          "response_byte_start": 25497,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_step_certificate",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 478,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem zero_step_certificate [Fintype I] [DecidableEq I] (d : I → X → X → ENNReal)\n    (ϕ : ℕ → Operator X bot) (L : ℕ → CoefMat I)\n    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom (chainComp ϕ 0)) :\n    chainComp ϕ 0 = idOp ∧ matProd L 0 = idMat ∧\n    matProd L 0 ∈ LipSetOn d (chainComp ϕ 0) U ∩ CoLipSetOn d (chainComp ϕ 0) U :=\n  ⟨rfl, rfl, idMat_mem_LipSetOn d hU, idMat_mem_CoLipSetOn d hne hU⟩",
+          "response_byte_start": 25985,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/22"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        235,
+        237
+      ]
+    },
+    {
+      "id": "HC02-P16",
+      "title": "Lip乘积零值iff每条路径有零边",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The path-sum expansion and finite zero-product law establish all-paths-have-zero iff product-entry-zero. General n≥1 and n=1 forms are both present.",
+      "candidate_representation": "在 C : LipChain bot d (m+1) 下（即 n=m+1≥1 的非空算子链加实际证书序列）：(L_n⋯L_1) i j = 0 ⟺ ∀ s : Fin m → I，PathHasZero（某层边为 0）。带撇版本对 n 加 1≤n，并取 s : Fin (n-1) → I。n=1 时退化为 L^{(1)} i j = 0。证明经路径展开与 ENNReal 中“和为零⟺各项为零、积为零⟺某因子为零”。",
+      "candidate_dependencies": [
+        "HC02-D06",
+        "HC02-D05"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_entry_eq_zero_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 657,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem LipChain.prod_entry_eq_zero_iff [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}\n    {m : ℕ} (C : LipChain bot d (m + 1)) (i j : I) :\n    matProd C.mats (m + 1) i j = 0 ↔ ∀ s : Fin m → I, PathHasZero C.mats i j s :=\n  matProd_apply_eq_zero_iff C.mats m i j",
+          "response_byte_start": 35457,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_entry_eq_zero_iff'",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 669,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem LipChain.prod_entry_eq_zero_iff' [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}\n    {n : ℕ} (C : LipChain bot d n) (hn : 1 ≤ n) (i j : I) :\n    matProd C.mats n i j = 0 ↔ ∀ s : Fin (n - 1) → I, PathHasZero C.mats i j s := by\n  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hn\n  exact matProd_apply_eq_zero_iff C.mats m i j",
+          "response_byte_start": 36255,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_eq_zero_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 644,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matProd_apply_eq_zero_iff [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (m : ℕ)\n    (i j : I) : matProd M (m + 1) i j = 0 ↔ ∀ s : Fin m → I, PathHasZero M i j s := by\n  rw [matProd_apply_eq_sum_paths, Finset.sum_eq_zero_iff]\n  simp [pathWeight, PathHasZero, Finset.prod_eq_zero_iff]",
+          "response_byte_start": 34509,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathHasZero_length_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 683,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem pathHasZero_length_one (M : ℕ → CoefMat I) (i j : I) (s : Fin 0 → I) :\n    PathHasZero M i j s ↔ M 0 i j = 0 := by\n  simp [PathHasZero, pathEdge, fullPath_length_one]",
+          "response_byte_start": 37123,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChain.prod_entry_eq_zero_iff_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 695,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem LipChain.prod_entry_eq_zero_iff_one [Fintype I] [DecidableEq I]\n    {d : I → X → X → ENNReal} (C : LipChain bot d 1) (i j : I) :\n    matProd C.mats 1 i j = 0 ↔ C.mats 0 i j = 0 := by\n  rw [matProd_one]",
+          "response_byte_start": 37685,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/23"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        241,
+        245,
+        250,
+        259
+      ]
+    },
+    {
+      "id": "HC02-P17",
+      "title": "co-Lip乘积正值iff有一条全正路径",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The complement of the zero criterion gives the existential all-positive path law, with the correct empty-intermediate boundary.",
+      "candidate_representation": "在 C : CoLipChain bot d (m+1) 下：0 < (K_n⋯K_1) i j ⟺ ∃ s : Fin m → I，PathAllPos（所有边>0）。另给 n≥1 字面版本；n=1 时唯一空序列，判据为 0 < K^{(1)} i j。",
+      "candidate_dependencies": [
+        "HC02-D06",
+        "HC02-P16",
+        "HC02-D05"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_entry_pos_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 663,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem CoLipChain.prod_entry_pos_iff [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}\n    {m : ℕ} (C : CoLipChain bot d (m + 1)) (i j : I) :\n    0 < matProd C.mats (m + 1) i j ↔ ∃ s : Fin m → I, PathAllPos C.mats i j s :=\n  matProd_apply_pos_iff C.mats m i j",
+          "response_byte_start": 35863,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_entry_pos_iff'",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 676,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem CoLipChain.prod_entry_pos_iff' [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}\n    {n : ℕ} (C : CoLipChain bot d n) (hn : 1 ≤ n) (i j : I) :\n    0 < matProd C.mats n i j ↔ ∃ s : Fin (n - 1) → I, PathAllPos C.mats i j s := by\n  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hn\n  exact matProd_apply_pos_iff C.mats m i j",
+          "response_byte_start": 36683,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_pos_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 650,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matProd_apply_pos_iff [Fintype I] [DecidableEq I] (M : ℕ → CoefMat I) (m : ℕ)\n    (i j : I) : 0 < matProd M (m + 1) i j ↔ ∃ s : Fin m → I, PathAllPos M i j s := by\n  rw [pos_iff_ne_zero, Ne, matProd_apply_eq_zero_iff]\n  simp only [PathHasZero, PathAllPos, not_forall, not_exists, pos_iff_ne_zero]",
+          "response_byte_start": 34928,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathAllPos_length_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 688,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem pathAllPos_length_one (M : ℕ → CoefMat I) (i j : I) (s : Fin 0 → I) :\n    PathAllPos M i j s ↔ 0 < M 0 i j := by\n  simp [PathAllPos, pathEdge, fullPath_length_one]",
+          "response_byte_start": 37371,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChain.prod_entry_pos_iff_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 700,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem CoLipChain.prod_entry_pos_iff_one [Fintype I] [DecidableEq I]\n    {d : I → X → X → ENNReal} (C : CoLipChain bot d 1) (i j : I) :\n    0 < matProd C.mats 1 i j ↔ 0 < C.mats 0 i j := by\n  rw [matProd_one]",
+          "response_byte_start": 37904,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/24"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        241,
+        259
+      ]
+    },
+    {
+      "id": "HC02-P18",
+      "title": "零输入距而正输出距使可行族为空",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "All possible scalar certificates contradict the zero-input/positive-output pair, so the family is empty and its infimum top.",
+      "candidate_representation": "x,y∈U，d i x y = 0，0 < d j (φx)(φy) ⇒ ∀c:ENNReal，c ∉ S_ij；S_ij = ∅；chanLip = ⊤。",
+      "candidate_dependencies": [
+        "HC02-D08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanFeasible_empty_of_pair",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 731,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanFeasible_empty_of_pair {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {i j : I} {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hin : d i x y = 0)\n    (hout : 0 < d j (ϕ.func x) (ϕ.func y)) :\n    (∀ c : ENNReal, c ∉ chanFeasible d ϕ U i j) ∧ chanFeasible d ϕ U i j = ∅ ∧\n      chanLip d ϕ U i j = ⊤ := by\n  have hno : ∀ c : ENNReal, c ∉ chanFeasible d ϕ U i j := by\n    intro c hc\n    have h := hc x hx y hy\n    rw [hin, mul_zero] at h\n    exact absurd (le_antisymm h (zero_le _)) hout.ne'\n  have hempty : chanFeasible d ϕ U i j = ∅ := Set.eq_empty_iff_forall_notMem.2 hno\n  exact ⟨hno, hempty, chanLip_eq_top_of_empty hempty⟩",
+          "response_byte_start": 39370,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/25"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        273,
+        277
+      ]
+    },
+    {
+      "id": "HC02-P19",
+      "title": "正有限最优单通道下确界取到",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The positive finite infimum is proved feasible. The proof separately handles input distance 0 and top, and handles finite positive distance by a density/division contradiction.",
+      "candidate_representation": "0 < a < ⊤（a = chanLip）⇒ a ∈ S_ij，即 ∀x,y∈U，d j(φx)(φy) ≤ a·d i x y。证明按原文对 B=0、0<B<∞、B=∞ 三种情况分别处理。",
+      "candidate_dependencies": [
+        "HC02-P21",
+        "HC02-P20",
+        "HC02-D08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_mem_of_pos_of_lt_top",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 766,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_mem_of_pos_of_lt_top {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {i j : I} (h0 : 0 < chanLip d ϕ U i j) (htop : chanLip d ϕ U i j < ⊤) :\n    chanLip d ϕ U i j ∈ chanFeasible d ϕ U i j := by\n  intro x hx y hy\n  have hS : ∀ c, chanLip d ϕ U i j < c →\n      d j (ϕ.func x) (ϕ.func y) ≤ c * d i x y :=\n    fun c hc => mem_chanFeasible_of_chanLip_lt hc x hx y hy\n  by_cases hB0 : d i x y = 0\n  · have h := hS ⊤ htop\n    rw [hB0, mul_zero] at h ⊢\n    exact h\n  by_cases hBtop : d i x y = ⊤\n  · rw [hBtop, ENNReal.mul_top h0.ne']\n    exact le_top\n  by_contra hlt\n  push Not at hlt\n  have h1 : chanLip d ϕ U i j < d j (ϕ.func x) (ϕ.func y) / d i x y :=\n    (ENNReal.lt_div_iff_mul_lt (Or.inl hB0) (Or.inl hBtop)).2 hlt\n  obtain ⟨c, hac, hcA⟩ := exists_between h1\n  have h2 : c * d i x y < d j (ϕ.func x) (ϕ.func y) :=\n    (ENNReal.lt_div_iff_mul_lt (Or.inl hB0) (Or.inl hBtop)).1 hcA\n  exact absurd (hS c hac) (not_le.2 h2)",
+          "response_byte_start": 41435,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_bound_of_pos_of_lt_top",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 790,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_bound_of_pos_of_lt_top {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {i j : I} (h0 : 0 < chanLip d ϕ U i j) (htop : chanLip d ϕ U i j < ⊤) :\n    ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ chanLip d ϕ U i j * d i x y :=\n  chanLip_mem_of_pos_of_lt_top h0 htop",
+          "response_byte_start": 42487,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/26"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        279,
+        291,
+        293,
+        297
+      ]
+    },
+    {
+      "id": "HC02-P20",
+      "title": "标量可行族向上封闭",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Increasing the scalar coefficient preserves every pairwise bound by monotonicity of ENNReal multiplication.",
+      "candidate_representation": "c₀ ∈ S_ij，c₀ ≤ c₁ ⇒ c₁ ∈ S_ij。",
+      "candidate_dependencies": [
+        "HC02-D08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanFeasible_upward",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 745,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanFeasible_upward {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {i j : I} {c₀ c₁ : ENNReal} (h₀ : c₀ ∈ chanFeasible d ϕ U i j) (h : c₀ ≤ c₁) :\n    c₁ ∈ chanFeasible d ϕ U i j := by\n  intro x hx y hy\n  calc d j (ϕ.func x) (ϕ.func y) ≤ c₀ * d i x y := h₀ x hx y hy\n    _ ≤ c₁ * d i x y := by gcongr",
+          "response_byte_start": 40144,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/27"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        281,
+        285
+      ]
+    },
+    {
+      "id": "HC02-P21",
+      "title": "正有限下确界以上的每个常数可行",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "sInf<c supplies an actual feasible coefficient below c, and upward closure proves c feasible, including top. This valid general result covers the original positive-finite-infimum context.",
+      "candidate_representation": "a < c（c 可以是 ⊤）⇒ c ∈ S_ij。通用版本不需要 0<a<∞，强于原文；另给带 0<a<∞ 前提的原文语境版本。",
+      "candidate_dependencies": [
+        "HC02-P20"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_chanFeasible_of_chanLip_lt",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 753,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_chanFeasible_of_chanLip_lt {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {i j : I} {c : ENNReal} (h : chanLip d ϕ U i j < c) :\n    c ∈ chanFeasible d ϕ U i j := by\n  obtain ⟨c₀, hc₀, hlt⟩ := sInf_lt_iff.1 h\n  exact chanFeasible_upward hc₀ hlt.le",
+          "response_byte_start": 40630,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_chanFeasible_of_gt_of_pos_finite",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 760,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_chanFeasible_of_gt_of_pos_finite {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {i j : I} (h0 : 0 < chanLip d ϕ U i j) (htop : chanLip d ϕ U i j < ⊤)\n    {c : ENNReal} (h : chanLip d ϕ U i j < c) : c ∈ chanFeasible d ϕ U i j :=\n  mem_chanFeasible_of_chanLip_lt h",
+          "response_byte_start": 41023,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/28"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        285,
+        285
+      ]
+    },
+    {
+      "id": "HC02-P22",
+      "title": "零下确界给所有有限正常数",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The infimum-zero branch of the preceding proved theorem covers every finite positive scalar.",
+      "candidate_representation": "chanLip = 0 且 0 < c < ⊤ ⇒ c ∈ S_ij。",
+      "candidate_dependencies": [
+        "HC02-P21"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_chanFeasible_of_chanLip_eq_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 796,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_chanFeasible_of_chanLip_eq_zero {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {i j : I} (h : chanLip d ϕ U i j = 0) {c : ENNReal} (hc0 : 0 < c)\n    (hctop : c < ⊤) : c ∈ chanFeasible d ϕ U i j :=\n  mem_chanFeasible_of_chanLip_lt (h ▸ hc0)",
+          "response_byte_start": 42885,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/29"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        299,
+        305
+      ]
+    },
+    {
+      "id": "HC02-P23",
+      "title": "零下确界未必由0实现",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The legal discrete-top distance on Fin 3, identity operator, and U={1,2} make every positive scalar feasible and zero infeasible; full structure/domain proofs accompany infimum zero.",
+      "candidate_representation": "存在性陈述：∃ X、bot、有限非空 I、d，每个分量满足 ExtendedPseudoMetric（公理 (i)–(iv) 与非吸收部分非空），以及 φ、非空 U ⊆ dom φ、i、j，使 chanLip = 0 且 0 ∉ S_ij。具体取 X=Fin 3，bot=0，I=Unit，d 为离散 {0,⊤} 距离，φ=id，U={1,2}：每个 c>0 都可行（c·⊤=⊤），但 c=0 不可行（0·⊤=0<⊤）。",
+      "candidate_dependencies": [
+        "HC02-D08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_zero_not_attained",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 887,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_zero_not_attained :\n    ∃ (X : Type) (bot : X) (I : Type) (_ : Fintype I) (_ : Nonempty I)\n      (d : I → X → X → ENNReal) (_ : ∀ i, ExtendedPseudoMetric X bot (d i))\n      (ϕ : Operator X bot) (U : Set X) (i j : I),\n      U.Nonempty ∧ U ⊆ dom ϕ ∧ chanLip d ϕ U i j = 0 ∧ (0 : ENNReal) ∉ chanFeasible d ϕ U i j := by\n  refine ⟨Fin 3, 0, Unit, inferInstance, inferInstance, cexDist,\n    fun _ => discreteTopDist_extendedPseudoMetric, idOp, cexU, (), (), ⟨1, by simp [cexU]⟩,\n    ?_, cex_chanLip_eq_zero, cex_zero_not_mem⟩\n  intro x hx\n  simp only [cexU, Set.mem_insert_iff, Set.mem_singleton_iff] at hx\n  rcases hx with rfl | rfl <;> simp [dom, idOp]",
+          "response_byte_start": 46884,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.discreteTopDist",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 840,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def discreteTopDist {Y : Type} [DecidableEq Y] (x y : Y) : ENNReal := if x = y then 0 else ⊤",
+          "response_byte_start": 44976,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.discreteTopDist_extendedPseudoMetric",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 843,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem discreteTopDist_extendedPseudoMetric :\n    ExtendedPseudoMetric (Fin 3) 0 (discreteTopDist (Y := Fin 3)) where\n  nonabsorbing := ⟨1, by decide⟩\n  dist_self x := by simp [discreteTopDist]\n  symm x y := by\n    by_cases h : x = y\n    · subst h; rfl\n    · simp [discreteTopDist, h, Ne.symm h]\n  triangle x y z := by\n    unfold discreteTopDist\n    by_cases hxz : x = z\n    · simp [hxz]\n    · by_cases hxy : x = y\n      · subst hxy; simp [hxz]\n      · simp [hxy]\n  isolate_bot x hx := by simp [discreteTopDist, hx]",
+          "response_byte_start": 45212,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.cexDist",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 861,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def cexDist : Unit → Fin 3 → Fin 3 → ENNReal := fun _ => discreteTopDist",
+          "response_byte_start": 45794,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.cexU",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 864,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def cexU : Set (Fin 3) := {1, 2}",
+          "response_byte_start": 45916,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.cex_chanLip_eq_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 866,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem cex_chanLip_eq_zero :\n    chanLip cexDist (idOp : Operator (Fin 3) 0) cexU () () = 0 := by\n  have hmem : ∀ c : ENNReal, 0 < c → c ∈ chanFeasible cexDist (idOp : Operator (Fin 3) 0) cexU () () := by\n    intro c hc x _ y _\n    simp only [cexDist, idOp_func, id]\n    unfold discreteTopDist\n    by_cases h : x = y\n    · simp [h]\n    · simp [h, ENNReal.mul_top hc.ne']\n  refine le_antisymm ?_ (zero_le _)\n  refine le_of_forall_gt_imp_ge_of_dense fun c hc => ?_\n  exact sInf_le (hmem c hc)",
+          "response_byte_start": 45950,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.cex_zero_not_mem",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 879,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem cex_zero_not_mem :\n    (0 : ENNReal) ∉ chanFeasible cexDist (idOp : Operator (Fin 3) 0) cexU () () := by\n  intro h\n  have := h 1 (by simp [cexU]) 2 (by simp [cexU])\n  simp [cexDist, discreteTopDist] at this",
+          "response_byte_start": 46451,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/30"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        277,
+        277,
+        299,
+        305
+      ]
+    },
+    {
+      "id": "HC02-P24",
+      "title": "下确界有限iff存在有限可行常数",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The complete-lattice infimum-below-top criterion is instantiated in both ENNReal and NNReal forms, preserving all-pair feasibility.",
+      "candidate_representation": "chanLip < ⊤ ⟺ ∃ c < ⊤，∀x,y∈U，d j(φx)(φy) ≤ c·d i x y；另给 ∃ c : ℝ≥0 形式。",
+      "candidate_dependencies": [
+        "HC02-D08"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_lt_top_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 802,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_lt_top_iff {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {i j : I} :\n    chanLip d ϕ U i j < ⊤ ↔\n      ∃ c : ENNReal, c < ⊤ ∧ ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ c * d i x y := by\n  rw [chanLip, sInf_lt_iff]\n  constructor\n  · rintro ⟨c, hc, hlt⟩\n    exact ⟨c, hlt, hc⟩\n  · rintro ⟨c, hlt, hc⟩\n    exact ⟨c, hc, hlt⟩",
+          "response_byte_start": 43231,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chanLip_lt_top_iff_nnreal",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 814,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chanLip_lt_top_iff_nnreal {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {i j : I} :\n    chanLip d ϕ U i j < ⊤ ↔\n      ∃ c : NNReal, ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ (c : ENNReal) * d i x y := by\n  rw [chanLip_lt_top_iff]\n  constructor\n  · rintro ⟨c, hlt, hc⟩\n    refine ⟨c.toNNReal, ?_⟩\n    rwa [ENNReal.coe_toNNReal hlt.ne]\n  · rintro ⟨c, hc⟩\n    exact ⟨c, ENNReal.coe_lt_top, hc⟩",
+          "response_byte_start": 43740,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/31"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        299,
+        309
+      ]
+    },
+    {
+      "id": "HC02-P25",
+      "title": "零系数移除该证书求和项",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The selected zero term and its removal from the finite sum are proved even for infinite distances.",
+      "candidate_representation": "L i j = 0 ⇒ 对任意 D : I→ENNReal（D 可取 ⊤），L i j · D i = 0，且 Σ_k L k j D k = Σ_{k∈univ.erase i} L k j D k。对合法证书而言，d_j 的输出上界可以删去输入 i 这一项。",
+      "candidate_dependencies": [
+        "HC02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_coef_term",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 983,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem zero_coef_term [Fintype I] [DecidableEq I] (L : CoefMat I) {i j : I} (h : L i j = 0)\n    (D : I → ENNReal) :\n    L i j * D i = 0 ∧ ∑ k, L k j * D k = ∑ k ∈ Finset.univ.erase i, L k j * D k := by\n  refine ⟨by rw [h, zero_mul], ?_⟩\n  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i), h, zero_mul, zero_add]",
+          "response_byte_start": 51407,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_bound_erase_of_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 990,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_bound_erase_of_zero [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}\n    {ϕ : Operator X bot} {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I}\n    (h : L i j = 0) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      L i j * d i x y = 0 ∧\n      d j (ϕ.func x) (ϕ.func y) ≤ ∑ k ∈ Finset.univ.erase i, L k j * d k x y := by\n  intro x hx y hy\n  obtain ⟨h1, h2⟩ := zero_coef_term L h (fun k => d k x y)\n  exact ⟨h1, h2 ▸ hL.2 x hx y hy j⟩",
+          "response_byte_start": 51848,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/32"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        15,
+        15,
+        311,
+        311
+      ]
+    },
+    {
+      "id": "HC02-P26",
+      "title": "任意唯一输入位置的单行化简",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The selected row can be supported at any i, not only the diagonal, and the scalar bound is proved by sum collapse.",
+      "candidate_representation": "L ∈ LipSetOn d φ U，RowSparse L i j（∀k≠i，L k j = 0；i 可以不等于 j）⇒ ∀x,y∈U，d j(φx)(φy) ≤ L i j · d i x y；另给行解耦存在形式的推论。",
+      "candidate_dependencies": [
+        "HC02-D07",
+        "HC02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.rowSparse_bound",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1002,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem rowSparse_bound [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I} (hrow : RowSparse L i j) :\n    ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y := by\n  intro x hx y hy\n  have hsum : ∑ k, L k j * d k x y = L i j * d i x y :=\n    Fintype.sum_eq_single i fun k hk => by rw [hrow k hk, zero_mul]\n  exact hsum ▸ hL.2 x hx y hy j",
+          "response_byte_start": 52486,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.RowDecoupled.bound",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1011,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem RowDecoupled.bound [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {j : I} (h : RowDecoupled d ϕ U j) :\n    ∃ L ∈ LipSetOn d ϕ U, ∃ i, ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y := by\n  obtain ⟨L, hL, i, hi⟩ := h\n  exact ⟨L, hL, i, rowSparse_bound hL hi⟩",
+          "response_byte_start": 53002,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/33"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        313,
+        313
+      ]
+    },
+    {
+      "id": "HC02-P27",
+      "title": "任意单列支撑的证书贡献范围",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Column sparsity is applied only to the specified certificate contributions; no causal independence claim is substituted.",
+      "candidate_representation": "L 合法，ColSparse L i j ⇒ ∀k≠j ∀x,y∈U，L i k · d i x y = 0，且输出 k 的上界可删去输入 i 这一项；即在该证书中输入 i 至多向输出 j 贡献。",
+      "candidate_dependencies": [
+        "HC02-P25",
+        "HC02-D07"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colSparse_contribution",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1019,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem colSparse_contribution [Fintype I] [DecidableEq I] {d : I → X → X → ENNReal}\n    {ϕ : Operator X bot} {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) {i j : I}\n    (hcol : ColSparse L i j) :\n    ∀ k, k ≠ j → ∀ x ∈ U, ∀ y ∈ U,\n      L i k * d i x y = 0 ∧\n      d k (ϕ.func x) (ϕ.func y) ≤ ∑ l ∈ Finset.univ.erase i, L l k * d l x y :=\n  fun k hk => lip_bound_erase_of_zero hL (hcol k hk)",
+          "response_byte_start": 53548,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/34"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        315,
+        315
+      ]
+    },
+    {
+      "id": "HC02-P28",
+      "title": "对角Lip矩阵给所有分量标量上界",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Every diagonal row supplies its own scalar Lip bound.",
+      "candidate_representation": "L ∈ LipSetOn d φ U，IsDiagonal L ⇒ ∀j ∀x,y∈U，d j(φx)(φy) ≤ L j j · d j x y。",
+      "candidate_dependencies": [
+        "HC02-P26",
+        "HC02-D07"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.diagonal_bound",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1028,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem diagonal_bound [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {L : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) (hdiag : IsDiagonal L) :\n    ∀ j : I, ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=\n  fun j => rowSparse_bound hL fun k hk => hdiag k j hk",
+          "response_byte_start": 54076,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/35"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        317,
+        319
+      ]
+    },
+    {
+      "id": "HC02-P29",
+      "title": "双侧标量界仅要求Lip行稀疏",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Only the Lip row is sparse; the co-Lip diagonal summand gives the lower scalar bound without extra lower sparsity.",
+      "candidate_representation": "L ∈ LipSetOn，K ∈ CoLipSetOn（同一 U），只假设 ∀k≠j，L k j = 0（对 K 不加任何稀疏假设）⇒ ∀x,y∈U，K j j·d j x y ≤ d j(φx)(φy) ≤ L j j·d j x y。",
+      "candidate_dependencies": [
+        "HC02-P26"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.diag_two_sided",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1035,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem diag_two_sided [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {L K : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) (hK : K ∈ CoLipSetOn d ϕ U)\n    {j : I} (hrow : ∀ k, k ≠ j → L k j = 0) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧\n      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y := by\n  intro x hx y hy\n  refine ⟨?_, rowSparse_bound hL hrow x hx y hy⟩\n  calc K j j * d j x y ≤ ∑ k, K k j * d k x y :=\n        Finset.single_le_sum (f := fun k => K k j * d k x y) (fun _ _ => zero_le _)\n          (Finset.mem_univ j)\n    _ ≤ d j (ϕ.func x) (ϕ.func y) := hK.2.2 x hx y hy j",
+          "response_byte_start": 54602,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/36"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        320,
+        336
+      ]
+    },
+    {
+      "id": "HC02-P30",
+      "title": "逐分量双侧界及有限系数分支",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "All components are combined, and finite diagonal coefficients are explicitly represented by NNReal values under the additional finiteness premise.",
+      "candidate_representation": "若 ∀j ∀k≠j，L k j = 0，则所有 j 的双侧界同时成立。若另有 ∀j，L j j < ⊤ ∧ K j j < ⊤，则对每个 j 存在 c, C : ℝ≥0，满足 ↑c = K j j、↑C = L j j，并且 c·d_j ≤ d_j∘φ ≤ C·d_j，即有限标量双侧放缩界。",
+      "candidate_dependencies": [
+        "HC02-P29"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.all_two_sided",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1050,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem all_two_sided [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {L K : CoefMat I} (hL : L ∈ LipSetOn d ϕ U) (hK : K ∈ CoLipSetOn d ϕ U)\n    (hrow : ∀ j k, k ≠ j → L k j = 0) :\n    (∀ j : I, ∀ x ∈ U, ∀ y ∈ U,\n      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧\n      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y) ∧\n    ((∀ j, L j j < ⊤ ∧ K j j < ⊤) →\n      ∀ j : I, ∃ c C : NNReal, (c : ENNReal) = K j j ∧ (C : ENNReal) = L j j ∧\n        ∀ x ∈ U, ∀ y ∈ U,\n          (c : ENNReal) * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧\n          d j (ϕ.func x) (ϕ.func y) ≤ (C : ENNReal) * d j x y) := by\n  have hall : ∀ j : I, ∀ x ∈ U, ∀ y ∈ U,\n      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧\n      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=\n    fun j => diag_two_sided hL hK (hrow j)\n  refine ⟨hall, fun hfin j => ?_⟩\n  refine ⟨(K j j).toNNReal, (L j j).toNNReal, ENNReal.coe_toNNReal (hfin j).2.ne,\n    ENNReal.coe_toNNReal (hfin j).1.ne, ?_⟩\n  rw [ENNReal.coe_toNNReal (hfin j).2.ne, ENNReal.coe_toNNReal (hfin j).1.ne]\n  exact hall j",
+          "response_byte_start": 55499,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/37"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        338,
+        338
+      ]
+    },
+    {
+      "id": "HC02-P31",
+      "title": "正co-Lip通道保持可分辨性",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The selected positive co-Lip summand proves positive output distance; coefficients need not be finite.",
+      "candidate_representation": "K ∈ CoLipSetOn d φ U，0 < K i j ⇒ ∀x,y∈U，0 < d i x y → 0 < d j(φx)(φy)。另证正下界传递 K i j·d i x y ≤ d j(φx)(φy)。",
+      "candidate_dependencies": [
+        "HC02-D02"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_pos_preserves",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1084,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_pos_preserves [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) {i j : I} (hij : 0 < K i j) :\n    ∀ x ∈ U, ∀ y ∈ U, 0 < d i x y → 0 < d j (ϕ.func x) (ϕ.func y) := by\n  intro x hx y hy hd\n  exact lt_of_lt_of_le (ENNReal.mul_pos hij.ne' hd.ne') (coLip_single_lower hK i j x hx y hy)",
+          "response_byte_start": 57422,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_single_lower",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1074,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_single_lower [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) (i j : I) :\n    ∀ x ∈ U, ∀ y ∈ U, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by\n  intro x hx y hy\n  calc K i j * d i x y ≤ ∑ k, K k j * d k x y :=\n        Finset.single_le_sum (f := fun k => K k j * d k x y) (fun _ _ => zero_le _)\n          (Finset.mem_univ i)\n    _ ≤ d j (ϕ.func x) (ϕ.func y) := hK.2.2 x hx y hy j",
+          "response_byte_start": 56820,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/38"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        311,
+        311,
+        340,
+        348,
+        358,
+        368
+      ]
+    },
+    {
+      "id": "HC02-P32",
+      "title": "正对角co-Lip反射族零距",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "A zero output family contradicts every possible positive input distance, yielding exactly family-zero distance, not point equality.",
+      "candidate_representation": "K ∈ CoLipSetOn d φ U，∀j 0 < K j j ⇒ ∀x,y∈U，GaugeZeroRelated d (φx)(φy) → GaugeZeroRelated d x y。这里使用第 1 章冻结模块中的 ∼_G 定义。",
+      "candidate_dependencies": [
+        "HC02-P31"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_reflects_gaugeZero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+          "bytes": 56914,
+          "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200",
+          "line": 1091,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_reflects_gaugeZero [Fintype I] {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {K : CoefMat I} (hK : K ∈ CoLipSetOn d ϕ U) (hdiag : ∀ j, 0 < K j j) :\n    ∀ x ∈ U, ∀ y ∈ U, GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y := by\n  intro x hx y hy hrel j\n  by_contra hne\n  have := coLip_pos_preserves hK (hdiag j) x hx y hy (pos_iff_ne_zero.2 hne)\n  exact this.ne' (hrel j)",
+          "response_byte_start": 57911,
+          "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/HCH02/contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "pointer": "/stages/39"
+      },
+      "source_anchor": null,
+      "source_lines": [
+        350,
+        371
+      ]
+    }
+  ],
+  "required_obligations": 40,
+  "completed_obligations": 40,
+  "engineering_strict_pass": true,
+  "strict_pass": true,
+  "compilation": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/compilation.json",
+    "bytes": 3986,
+    "sha256": "ea64d87b87b9ed9466d37775b0f56fc49dc243b0820a4f72052bfa844047d8f3"
+  },
+  "effective_delivered_source": {
+    "slot_id": "HCH02",
+    "source_files": [
+      {
+        "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/Main.lean",
+        "bytes": 56914,
+        "sha256": "1b039b39a2cf7a6477c5b802d3eb8c4e1f9d6fe33c65560087919351cb607200"
+      }
+    ],
+    "alignment": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/HCH02/delivered/alignment.json",
+      "bytes": 27791,
+      "sha256": "821d4b133dd8a35ba1ecdc344559a63c912cb4f752d29e4286ebf62524e3a453"
+    },
+    "parent_byte_inheritance": false
+  }
+}

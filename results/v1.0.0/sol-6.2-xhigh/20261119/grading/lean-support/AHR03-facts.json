@@ -1,0 +1,89 @@
+{
+  "case_id": "AHR03",
+  "reviewer": "gpt-6-astra",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "source_sha256": "abbe7622183147d8cef2dbcbf651fdd56091b449f8ebc903d9223327dbc3e204",
+  "full_final_read": true,
+  "mathematical_findings": [
+    "Correct aligned judgment with exact retained-edge intersections, full node-image scope, canonical pruning and actual path/evaluation preservation. The terminal-domain caveat and alternative identity-network example are mathematically valid; extra global equality and maximum-depth conclusions are marked as derived, not misrepresented as existing declarations.",
+    "Accurately distinguishes OperationalNodeDomainRefinement from exact NodeDomainRefinement and verifies the canonical construction, rather than assuming an arbitrary refinement record exists.",
+    "Preserves nonempty disjoint full partition including one piece; full image edge intersections; entry intersections; per-visit colouring, unchanged lengths, reachability pruning and extensional equality.",
+    "The identity gamma-to-beta example with input a and beta pieces {a,b}/{c} shows removal of the unreachable c piece can enlarge gamma terminal domain to include c, while the retained edge still includes unvisited b. Correctly separates pre-pruning terminal equality from post-pruning behavior.",
+    "No necessary repair. Supplementary global-operator equality follows identical input domains and bottom outside; exact label projection/colouring gives identical terminating path lengths. These are expressly additional derivations, not missing core obligations."
+  ],
+  "additional_errors": [],
+  "profile_facts": {
+    "fidelity": "Exact supplied objects, scope and quantifiers preserved.",
+    "validity": "Actual semantic bridges checked independently of compilation.",
+    "judgment": "Aligned acceptance supported with concrete implementation correspondence and explicit boundaries."
+  },
+  "native_compile_claim_check": {
+    "events_line": 30,
+    "exit_code": 0,
+    "source": "output/events.ndjson",
+    "note": "Native command output supports successful target/dependency compilation and listed standard axioms. This observation is not independent reviewer compilation."
+  },
+  "evidence": [
+    {
+      "quote": "**结论：就附件正文的节点域加细而言，Lean 实现准确、完整。** 它从任意合法的有限分划构造加细后的网络，证明删点后所得网络满足精确的加细关系，并证明任意满足该关系的网络在共同输入域上外延等价。对直接构造出的网络，源码还证明了整个外延算子相等。 [正文定义](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/source.md:1050) · [正文命题](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/source.md:1097)",
+      "utf8_start": 0,
+      "utf8_end": 569
+    },
+    {
+      "quote": "### 定义与构造逐项核对",
+      "utf8_start": 571,
+      "utf8_end": 602
+    },
+    {
+      "quote": "1. **分划与子节点算子。** `NodePartitionData` 用 `Fin count` 表示有限分划，要求块数为正、每块非空、两两不交，且并集恰为被拆节点的**完整定义域** \\(U_\\beta\\)。`local_domain` 和 `local_eq` 对应正文的定义域等式和块上局部等价。`local_op_eq_restrict` 进一步证明整个子节点算子就是限制算子，因为块内逐点相同，块外都取 \\(\\bot\\)。正文允许一块分划，源码也允许。 [分划与限制算子](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12)",
+      "utf8_start": 604,
+      "utf8_end": 1253
+    },
+    {
+      "quote": "2. **入口与边域。** 记 \\(\\pi(v)\\) 为新节点 \\(v\\) 所对应的原节点。`entry_domain_eq` 给出新入口片 \\(U_{\\pi(v)}^{\\mathrm{in}}\\cap U'_v\\)。`edge_domain_eq` 对任意两个保留节点 \\(v,w\\) 给出\n   \\[\n   D'_{v\\to w}\n   =D_{\\pi(v)\\to\\pi(w)}\\cap f'_v(U'_v)\\cap U'_w.\n   \\]\n   原边域已经包含于原源节点的像及原目标节点的域，所以未拆端的交集可消去。于是入边只按目标子域取交，出边只按源子节点的像取交，原自环同时取这两个交集，两端均未拆的边沿用原边域。公式覆盖**完整局域像**，也约束从未被入口轨迹使用的保留边。空入口片和空边域通过空集编码。 [入口交集](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:283) · [构造的边域等式](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)",
+      "utf8_start": 1255,
+      "utf8_end": 2291
+    },
+    {
+      "quote": "3. **统一终止与删点。** `colour_path` 按每次发生时的**当前输入**选子块。同一个原节点被反复访问时，各次可以进入不同子节点。`coloured_terminal` 证明所得序列是合法的终止路径，`colour_path_length` 证明长度相同，因此构造沿用原统一长度界。随后 `prune` 删除所有未访问节点及其关联边。`old_label_reached` 证明未拆节点全部保留，`piece_label_reached_iff` 证明子节点恰在某条原轨迹以该块中的点进入被拆节点时保留。`network_refinement` 将这些性质连同精确边域公式装入 `NodeDomainRefinement`。 [逐次重标与终止](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:168) · [保留条件与加细见证](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:296)",
+      "utf8_start": 2293,
+      "utf8_end": 3299
+    },
+    {
+      "quote": "### 终止域与外延等价",
+      "utf8_start": 3301,
+      "utf8_end": 3329
+    },
+    {
+      "quote": "正文的终止域公式是在**删点前**使用的。对完整局域像中的输出，`NodePartitionData.choice` 在原选择为 `stop` 时仍取 `stop`。原选择为 `next` 时，目标是未拆节点或由输出唯一确定的子节点。因此，删点前所有出边域的并恰为原出边域的并在新源节点像上的限制。取像内补集即得 \\(T_v^{\\mathrm{pre}}=f'_v(U'_v)\\cap T_{\\pi(v)}\\)。附件把终止域定义为这个补集，未为该删点前等式单列定理。 [删点前路由](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:111) · [终止域定义](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean:77)",
+      "utf8_start": 3331,
+      "utf8_end": 4166
+    },
+    {
+      "quote": "删点后，终止域可能扩大。例如，两节点 \\(\\gamma\\to\\beta\\) 的局域算子都在 \\(\\{a,b,c\\}\\) 上取恒等，唯一边域为 \\(\\{a,b,c\\}\\)，入口只让 \\(a\\) 进入 \\(\\gamma\\)。将 \\(\\beta\\) 拆为 \\(\\{a,b\\}\\) 和 \\(\\{c\\}\\) 两块，后者被删除。于是 \\(\\gamma\\) 的边域变成 \\(\\{a,b\\}\\)，终止域从空集变成 \\(\\{c\\}\\)，而入口轨迹仍经两步输出 \\(a\\)。其中 \\(b\\) 从未实际经过该边，但它仍须保留在边域内。这个例子说明 `choice_projection` 为什么只要求实际输出上的路由投影一致，也说明单用 `OperationalNodeDomainRefinement` 会漏掉未使用边的约束。正式的 `NodeDomainRefinement` 另有完整边域等式。 [删点路由](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35) · [正式加细关系](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:98)",
+      "utf8_start": 4168,
+      "utf8_end": 5210
+    },
+    {
+      "quote": "**源码已证明的结论。** 对任意 `NodeDomainRefinement N N'`，`path_projection` 从新网的终止轨迹出发，利用实际输出上的路由一致和原网终止路径的唯一性，证明逐项投影后恰为原路径。`eval_projected` 再沿轨迹逐步使用局域取值相等，得到终止输出相同。将该见证传给 `.node_domain` 分支，`refinement_preserves_local_equivalence` 就给出正文的 \\(\\phi_{\\mathcal N'}\\equiv_U\\phi_{\\mathcal N}\\)。对具体构造，`NodePartitionData.network_extensional_eq` 直接给出全域算子等式。 [路径与求值证明](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:209) · [一般局部等价定理](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:453) · [构造的全域等式](/private/tmp/math-gauge-sol62-xhigh-20261119/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:258)",
+      "utf8_start": 5212,
+      "utf8_end": 6316
+    },
+    {
+      "quote": "**可由源码推出的结论。** 对任意关系见证，`same_input_domain` 与局部等价合起来就是 `FiniteOperatorNetwork.ExtensionalEquivalent`。域外两侧同取 \\(\\bot\\)，故任意见证也给出全域算子相等。逐输入的路径长度相同，取最大值即得实际求值深度相同。这些结论在加细模块中未各自封装为独立定理。`choice_projection` 作为关系字段也没有缩小正文允许的范围。对固定分划，`source` 的单射性及恰好保留可达子块的条件，给出候选网络标签与构造结果保留标签之间的双射。两者的入口片、局域算子和全部保留边域逐项相同，因而实际路由相同，构造已证明的 `choice_projection` 随之成立。这个反向核对是数学推论，附件没有单列该刻画定理。",
+      "utf8_start": 6318,
+      "utf8_end": 7138
+    },
+    {
+      "quote": "用 Lean 4.29.1 重新编译了相关模块及其依赖，并额外核验了任意关系见证推出有限网络外延等价和全域算子相等的推导。关键声明的 `#print axioms` 仅列出 `propext`、`Classical.choice` 和 `Quot.sound`。",
+      "utf8_start": 7140,
+      "utf8_end": 7389
+    },
+    {
+      "quote": "审阅来源为 Zhe Li（Glen Li / glenzli）的 *The Operator Evolution Theory* 附件版本。 [ORCID](https://orcid.org/0009-0006-6536-3453) · [作品主页](https://glenzli.com/books/oet/) · [公开仓库](https://gitlab.com/glenzli/oet-public) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)",
+      "utf8_start": 7391,
+      "utf8_end": 7702
+    }
+  ]
+}

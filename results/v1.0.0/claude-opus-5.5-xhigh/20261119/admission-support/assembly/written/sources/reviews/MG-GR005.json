@@ -1,0 +1,1072 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-GR005",
+  "task_id": "MG-GR005:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/task.md",
+      "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+      "bytes": 2068
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/reference.md",
+      "sha256": "18fbc7990926deeb6ad54c4379fa1067076271f0819ac807a33f9ec20fc13da4",
+      "bytes": 7384
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/rubric.json",
+      "sha256": "751b8cc5a1ee70bbc11d7e7290d28031d719f12be21c0cdc81bb9eb7ae7b352e",
+      "bytes": 768
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+      "bytes": 13735,
+      "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/request.json",
+      "bytes": 3841,
+      "sha256": "23532e75338f3750089f647b1bf243c041dbe014850d7f7f45cc907aefacad98"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/case.json",
+      "sha256": "dff4f6fa1e867c3604a4eed7469abc16d2210d72aa855d392311401273cbca62"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json",
+      "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+      "bytes": 6591
+    },
+    "solver_files": [],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json",
+      "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+      "bytes": 6591
+    }
+  },
+  "criteria": [
+    {
+      "id": "S1",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "原始记录",
+        "kind": "prove",
+        "assumptions": [
+          "共同设定的非负真凸f",
+          "有限维F⊂K⊂E′"
+        ],
+        "expected": "true",
+        "depends_on": [],
+        "required_evidence": [
+          "全部扩展值情形",
+          "准确纤维分解公式",
+          "不借用取到性"
+        ],
+        "critical_errors": [
+          "把inf写成min而未证明"
+        ],
+        "id": "S1",
+        "points": 12,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 12,
+      "score": 12,
+      "strict_pass": true,
+      "reason": "ε近似极小点证明凸性，实际纤维分解给inf塔公式，未假定取到。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 80,
+          "end_utf8": 154,
+          "quote": "- S1、S2、S3：已证明。S1 的证明不需要纤维下确界取到。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "紧次水平集",
+        "kind": "prove",
+        "assumptions": [
+          "共同设定",
+          "f下半连续",
+          "每个有限c次水平集紧"
+        ],
+        "expected": "true",
+        "depends_on": [
+          "S1"
+        ],
+        "required_evidence": [
+          "紧性用于实际最优点",
+          "次水平集像的等式和闭性"
+        ],
+        "critical_errors": [
+          "无紧性地把连续像当闭集"
+        ],
+        "id": "S2",
+        "points": 16,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 16,
+      "score": 16,
+      "strict_pass": true,
+      "reason": "同一紧次水平集的嵌套闭集交给真实极小点，次水平像等式在有限维Hausdorff中闭。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 6196,
+          "end_utf8": 6397,
+          "quote": "这族集合按包含全序，所以有有限交性质，于是 $\\bigcap_cA_c\\ne\\varnothing$。任取其中一点 $x$，有 $q_Fx=y$ 且 $f(x)\\le m=g_F(y)\\le f(x)$。所以下确界在 $x$ 处取到。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "兼容成本记录的实现",
+        "kind": "construct",
+        "assumptions": [
+          "S2全部条件",
+          "所有有限维F的记录y_F相容",
+          "统一有限c≥0且所有g_F(y_F)≤c"
+        ],
+        "expected": "construction",
+        "depends_on": [
+          "S1",
+          "S2"
+        ],
+        "required_evidence": [
+          "同一个紧集中的有限交性质",
+          "全记录实现",
+          "对偶分离给唯一性"
+        ],
+        "critical_errors": [
+          "每个F各有界但无统一c仍套同一紧集",
+          "有限观测成功直接取原空间极限"
+        ],
+        "id": "S3",
+        "points": 18,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 18,
+      "score": 18,
+      "strict_pass": true,
+      "reason": "统一有限c给同一紧集的FIP，所有连续对偶分离点给唯一性。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 7656,
+          "end_utf8": 7802,
+          "quote": "$E$ 是 Hausdorff 局部凸空间，由 Hahn–Banach 定理 $E'$ 分离点，所以 $x=x'$。唯一性甚至不需要 $f(x)\\le c$ 这一条件。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "一般成本的恢复",
+        "kind": "decide",
+        "assumptions": [
+          "共同设定，不要求f下半连续或次水平集紧",
+          "全部竞争者h:E→[−∞,+∞]按实高度上图定义"
+        ],
+        "expected": "true",
+        "depends_on": [
+          "S1"
+        ],
+        "required_evidence": [
+          "有限闭记录构造G",
+          "对允许−∞的全部竞争者最大性",
+          "观测空间扩大关系"
+        ],
+        "critical_errors": [
+          "将proper-only定理套任意h",
+          "声称恢复原f而未查下半连续"
+        ],
+        "id": "S4",
+        "points": 24,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 24,
+      "score": 24,
+      "strict_pass": true,
+      "reason": "有限闭记录上确界构造G；直接严格分离任意允许竞争者的实高度上图，β=0/β>0分开，覆盖−∞而不套proper-only定理。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 9447,
+          "end_utf8": 9844,
+          "quote": "- **情形 $\\beta=0$.** 此时 $\\varphi(x_0)<\\alpha\\le\\varphi(x)$ 对所有 $x\\in\\operatorname{dom}h\\supset\\operatorname{dom}f$ 成立。于是在开半空间 $\\{y:y(\\varphi)<\\alpha\\}$ 上 $g_F=+\\infty$，即 $\\operatorname{epi}g_F\\subset\\{y(\\varphi)\\ge\\alpha\\}\\times\\mathbb R$，而后者是闭集。由引理 C(a)，$\\bar g_F(q_Fx_0)=+\\infty$，所以 $G(x_0)=+\\infty$，与 $G(x_0)<t$ 矛盾。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "闭成本的有限投影",
+        "kind": "decide",
+        "assumptions": [
+          "E=R²",
+          "f下半连续非负凸且至少一点有限",
+          "F任意有限维观测空间"
+        ],
+        "expected": "false",
+        "depends_on": [
+          "S2",
+          "S4"
+        ],
+        "required_evidence": [
+          "闭凸D核验",
+          "投影函数具体值与不连续点"
+        ],
+        "critical_errors": [
+          "闭凸集的线性像一律闭"
+        ],
+        "id": "S5",
+        "points": 15,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "双曲线闭凸集合指标函数投影为正半轴指标，在零点不下半连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 10914,
+          "end_utf8": 11020,
+          "quote": "$$C=\\{(a,b):a>0,\\ ab\\ge1\\},\\qquad f=\\delta_C\\ (\\text{在 }C\\text{ 上为 }0，\\text{其余为 }+\\infty).$$",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "恢复与投影的精确关系",
+        "kind": "synthesize",
+        "assumptions": [
+          "共同设定",
+          "F⊂K有限维",
+          "bar按非负凸函数闭上图包定义"
+        ],
+        "expected": "classification",
+        "depends_on": [
+          "S1",
+          "S4",
+          "S5"
+        ],
+        "required_evidence": [
+          "G=f充要性",
+          "两侧夹逼得闭化公式",
+          "不可省闭化的具体见证"
+        ],
+        "critical_errors": [
+          "将投影与闭化无条件交换",
+          "把局部不闭误作全局无法恢复"
+        ],
+        "id": "S6",
+        "points": 15,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "G=f与下半连续性等价；两侧夹逼得闭化投影公式，S5具体例说明外bar不可省。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 13245,
+          "end_utf8": 13511,
+          "quote": "具体地，$\\operatorname{epi}g_F=\\{y(\\varphi)>0\\}\\times[0,\\infty)$，其闭包为 $\\{y(\\varphi)\\ge0\\}\\times[0,\\infty)$。因此在 $y(\\varphi)=0$ 处，$\\bar m(y)=\\bar g_F(y)=0$，而 $m(y)=+\\infty$。所以 $\\bar g_F\\ne m$，最外层的 bar 一般不能省去。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 100,
+    "positive_mathematical_denominator": 100,
+    "removed_reliability_points": 0,
+    "removed_reliability_denominator": 0,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/task.md",
+        "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "explicit_text_present",
+    "verbatim_evidence": [
+      {
+        "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+        "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+        "start_utf8": 447,
+        "end_utf8": 501,
+        "quote": "全部阶段均已作答，没有未完成的部分。",
+        "offset_convention": "zero-based half-open UTF-8 bytes"
+      }
+    ],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "S1",
+      "label": "原始记录",
+      "delivery_weight": 12,
+      "claim_weight": 12,
+      "source_unit_id": "S1",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "原始记录",
+      "reason": "ε近似极小点证明凸性，实际纤维分解给inf塔公式，未假定取到。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 80,
+          "end_utf8": 154,
+          "quote": "- S1、S2、S3：已证明。S1 的证明不需要纤维下确界取到。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 12,
+      "asserted_denominator": 12,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S2",
+      "label": "紧次水平集",
+      "delivery_weight": 16,
+      "claim_weight": 16,
+      "source_unit_id": "S2",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "紧次水平集",
+      "reason": "同一紧次水平集的嵌套闭集交给真实极小点，次水平像等式在有限维Hausdorff中闭。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 6196,
+          "end_utf8": 6397,
+          "quote": "这族集合按包含全序，所以有有限交性质，于是 $\\bigcap_cA_c\\ne\\varnothing$。任取其中一点 $x$，有 $q_Fx=y$ 且 $f(x)\\le m=g_F(y)\\le f(x)$。所以下确界在 $x$ 处取到。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 16,
+      "asserted_denominator": 16,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S3",
+      "label": "兼容成本记录的实现",
+      "delivery_weight": 18,
+      "claim_weight": 18,
+      "source_unit_id": "S3",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "兼容成本记录的实现",
+      "reason": "统一有限c给同一紧集的FIP，所有连续对偶分离点给唯一性。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 7656,
+          "end_utf8": 7802,
+          "quote": "$E$ 是 Hausdorff 局部凸空间，由 Hahn–Banach 定理 $E'$ 分离点，所以 $x=x'$。唯一性甚至不需要 $f(x)\\le c$ 这一条件。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 18,
+      "asserted_denominator": 18,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S4",
+      "label": "一般成本的恢复",
+      "delivery_weight": 24,
+      "claim_weight": 24,
+      "source_unit_id": "S4",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "一般成本的恢复",
+      "reason": "有限闭记录上确界构造G；直接严格分离任意允许竞争者的实高度上图，β=0/β>0分开，覆盖−∞而不套proper-only定理。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 9447,
+          "end_utf8": 9844,
+          "quote": "- **情形 $\\beta=0$.** 此时 $\\varphi(x_0)<\\alpha\\le\\varphi(x)$ 对所有 $x\\in\\operatorname{dom}h\\supset\\operatorname{dom}f$ 成立。于是在开半空间 $\\{y:y(\\varphi)<\\alpha\\}$ 上 $g_F=+\\infty$，即 $\\operatorname{epi}g_F\\subset\\{y(\\varphi)\\ge\\alpha\\}\\times\\mathbb R$，而后者是闭集。由引理 C(a)，$\\bar g_F(q_Fx_0)=+\\infty$，所以 $G(x_0)=+\\infty$，与 $G(x_0)<t$ 矛盾。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 24,
+      "asserted_denominator": 24,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S5",
+      "label": "闭成本的有限投影",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S5",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "闭成本的有限投影",
+      "reason": "双曲线闭凸集合指标函数投影为正半轴指标，在零点不下半连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 10914,
+          "end_utf8": 11020,
+          "quote": "$$C=\\{(a,b):a>0,\\ ab\\ge1\\},\\qquad f=\\delta_C\\ (\\text{在 }C\\text{ 上为 }0，\\text{其余为 }+\\infty).$$",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S6",
+      "label": "恢复与投影的精确关系",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S6",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "恢复与投影的精确关系",
+      "reason": "G=f与下半连续性等价；两侧夹逼得闭化投影公式，S5具体例说明外bar不可省。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 13245,
+          "end_utf8": 13511,
+          "quote": "具体地，$\\operatorname{epi}g_F=\\{y(\\varphi)>0\\}\\times[0,\\infty)$，其闭包为 $\\{y(\\varphi)\\ge0\\}\\times[0,\\infty)$。因此在 $y(\\varphi)=0$ 处，$\\bar m(y)=\\bar g_F(y)=0$，而 $m(y)=+\\infty$。所以 $\\bar g_F\\ne m$，最外层的 bar 一般不能省去。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "S1",
+      "label": "原始记录",
+      "statement": "S1　原始记录\n\n证明g_F非负、凸且至少一点有限；证明g_F(y)=inf_{r_KFz=y}g_K(z)。说明证明是否需要纤维下确界取到。\n\n",
+      "scope": "# 凸成本记录、紧性与闭上图恢复\n\n版本 0.1.1。以下全部阶段均须作答。\n\nE为实Hausdorff局部凸空间，E′为连续对偶。f:E→[0,+∞]凸且至少一点有限。对有限维F⊂E′，F*取有限维拓扑，q_F(x)(φ)=φ(x)，g_F(y)=inf{f(x):q_Fx=y}，空纤维下确界为+∞。F⊂K时r_KF:K*→F*为限制。所有扩展实值函数u的下半连续和凸性均指实高度上图 epi_R(u)={(x,t):t∈R,u(x)≤t}闭和凸；竞争函数允许同时取−∞与+∞。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 12,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json\", \"pointer\": \"/stages/0/points\"}",
+      "acceptance_conditions": [
+        "全部扩展值情形",
+        "准确纤维分解公式",
+        "不借用取到性",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S1"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/task.md",
+          "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+          "pointer": "section:S1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/contract.json",
+          "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+          "pointer": "/stages/0"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR005:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "S1",
+      "passed": true,
+      "reason": "ε近似极小点证明凸性，实际纤维分解给inf塔公式，未假定取到。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 80,
+          "end_utf8": 154,
+          "quote": "- S1、S2、S3：已证明。S1 的证明不需要纤维下确界取到。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 12,
+      "denominator": 12
+    },
+    {
+      "id": "S2",
+      "label": "紧次水平集",
+      "statement": "S2　紧次水平集\n\n另假设f下半连续，且每个有限实数c的次水平集{f≤c}紧。证明各g_F下半连续，且g_F(y)<∞时纤维下确界取到。\n\n",
+      "scope": "# 凸成本记录、紧性与闭上图恢复\n\n版本 0.1.1。以下全部阶段均须作答。\n\nE为实Hausdorff局部凸空间，E′为连续对偶。f:E→[0,+∞]凸且至少一点有限。对有限维F⊂E′，F*取有限维拓扑，q_F(x)(φ)=φ(x)，g_F(y)=inf{f(x):q_Fx=y}，空纤维下确界为+∞。F⊂K时r_KF:K*→F*为限制。所有扩展实值函数u的下半连续和凸性均指实高度上图 epi_R(u)={(x,t):t∈R,u(x)≤t}闭和凸；竞争函数允许同时取−∞与+∞。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 16,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json\", \"pointer\": \"/stages/1/points\"}",
+      "acceptance_conditions": [
+        "紧性用于实际最优点",
+        "次水平集像的等式和闭性",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S2"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/task.md",
+          "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+          "pointer": "section:S2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/contract.json",
+          "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+          "pointer": "/stages/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR005:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "S2",
+      "passed": true,
+      "reason": "同一紧次水平集的嵌套闭集交给真实极小点，次水平像等式在有限维Hausdorff中闭。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 6196,
+          "end_utf8": 6397,
+          "quote": "这族集合按包含全序，所以有有限交性质，于是 $\\bigcap_cA_c\\ne\\varnothing$。任取其中一点 $x$，有 $q_Fx=y$ 且 $f(x)\\le m=g_F(y)\\le f(x)$。所以下确界在 $x$ 处取到。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 16,
+      "denominator": 16
+    },
+    {
+      "id": "S3",
+      "label": "兼容成本记录的实现",
+      "statement": "S3　兼容成本记录的实现\n\n在S2条件下，给定每个有限维F上的y_F∈F*，满足r_KFy_K=y_F；给定有限c≥0且g_F(y_F)≤c对所有F成立。构造唯一x∈E使q_Fx=y_F对所有F成立且f(x)≤c。\n\n",
+      "scope": "# 凸成本记录、紧性与闭上图恢复\n\n版本 0.1.1。以下全部阶段均须作答。\n\nE为实Hausdorff局部凸空间，E′为连续对偶。f:E→[0,+∞]凸且至少一点有限。对有限维F⊂E′，F*取有限维拓扑，q_F(x)(φ)=φ(x)，g_F(y)=inf{f(x):q_Fx=y}，空纤维下确界为+∞。F⊂K时r_KF:K*→F*为限制。所有扩展实值函数u的下半连续和凸性均指实高度上图 epi_R(u)={(x,t):t∈R,u(x)≤t}闭和凸；竞争函数允许同时取−∞与+∞。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 18,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json\", \"pointer\": \"/stages/2/points\"}",
+      "acceptance_conditions": [
+        "同一个紧集中的有限交性质",
+        "全记录实现",
+        "对偶分离给唯一性",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S3"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/task.md",
+          "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+          "pointer": "section:S3"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/contract.json",
+          "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+          "pointer": "/stages/2"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR005:A1/goals/2"
+        }
+      ],
+      "source_goal_id": "S3",
+      "passed": true,
+      "reason": "统一有限c给同一紧集的FIP，所有连续对偶分离点给唯一性。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 7656,
+          "end_utf8": 7802,
+          "quote": "$E$ 是 Hausdorff 局部凸空间，由 Hahn–Banach 定理 $E'$ 分离点，所以 $x=x'$。唯一性甚至不需要 $f(x)\\le c$ 这一条件。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 18,
+      "denominator": 18
+    },
+    {
+      "id": "S4",
+      "label": "一般成本的恢复",
+      "statement": "S4　一般成本的恢复\n\n只使用共同设定。判断能否由全部g_F构造G:E→[0,+∞]，使G下半连续、凸、G≤f，且每个h:E→[−∞,+∞]若下半连续、凸并满足h≤f，则h≤G。若成立，给构造并建立扩大观测空间时的关系。\n\n",
+      "scope": "# 凸成本记录、紧性与闭上图恢复\n\n版本 0.1.1。以下全部阶段均须作答。\n\nE为实Hausdorff局部凸空间，E′为连续对偶。f:E→[0,+∞]凸且至少一点有限。对有限维F⊂E′，F*取有限维拓扑，q_F(x)(φ)=φ(x)，g_F(y)=inf{f(x):q_Fx=y}，空纤维下确界为+∞。F⊂K时r_KF:K*→F*为限制。所有扩展实值函数u的下半连续和凸性均指实高度上图 epi_R(u)={(x,t):t∈R,u(x)≤t}闭和凸；竞争函数允许同时取−∞与+∞。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 24,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json\", \"pointer\": \"/stages/3/points\"}",
+      "acceptance_conditions": [
+        "有限闭记录构造G",
+        "对允许−∞的全部竞争者最大性",
+        "观测空间扩大关系",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S4"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/task.md",
+          "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+          "pointer": "section:S4"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/contract.json",
+          "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+          "pointer": "/stages/3"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR005:A1/goals/3"
+        }
+      ],
+      "source_goal_id": "S4",
+      "passed": true,
+      "reason": "有限闭记录上确界构造G；直接严格分离任意允许竞争者的实高度上图，β=0/β>0分开，覆盖−∞而不套proper-only定理。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 9447,
+          "end_utf8": 9844,
+          "quote": "- **情形 $\\beta=0$.** 此时 $\\varphi(x_0)<\\alpha\\le\\varphi(x)$ 对所有 $x\\in\\operatorname{dom}h\\supset\\operatorname{dom}f$ 成立。于是在开半空间 $\\{y:y(\\varphi)<\\alpha\\}$ 上 $g_F=+\\infty$，即 $\\operatorname{epi}g_F\\subset\\{y(\\varphi)\\ge\\alpha\\}\\times\\mathbb R$，而后者是闭集。由引理 C(a)，$\\bar g_F(q_Fx_0)=+\\infty$，所以 $G(x_0)=+\\infty$，与 $G(x_0)<t$ 矛盾。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 24,
+      "denominator": 24
+    },
+    {
+      "id": "S5",
+      "label": "闭成本的有限投影",
+      "statement": "S5　闭成本的有限投影\n\n设E=R²，f:E→[0,+∞]下半连续、凸且至少一点有限。判断每个有限维F的g_F是否必下半连续。\n\n",
+      "scope": "# 凸成本记录、紧性与闭上图恢复\n\n版本 0.1.1。以下全部阶段均须作答。\n\nE为实Hausdorff局部凸空间，E′为连续对偶。f:E→[0,+∞]凸且至少一点有限。对有限维F⊂E′，F*取有限维拓扑，q_F(x)(φ)=φ(x)，g_F(y)=inf{f(x):q_Fx=y}，空纤维下确界为+∞。F⊂K时r_KF:K*→F*为限制。所有扩展实值函数u的下半连续和凸性均指实高度上图 epi_R(u)={(x,t):t∈R,u(x)≤t}闭和凸；竞争函数允许同时取−∞与+∞。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json\", \"pointer\": \"/stages/4/points\"}",
+      "acceptance_conditions": [
+        "闭凸D核验",
+        "投影函数具体值与不连续点",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S5"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/task.md",
+          "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+          "pointer": "section:S5"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/contract.json",
+          "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+          "pointer": "/stages/4"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR005:A1/goals/4"
+        }
+      ],
+      "source_goal_id": "S5",
+      "passed": true,
+      "reason": "双曲线闭凸集合指标函数投影为正半轴指标，在零点不下半连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 10914,
+          "end_utf8": 11020,
+          "quote": "$$C=\\{(a,b):a>0,\\ ab\\ge1\\},\\qquad f=\\delta_C\\ (\\text{在 }C\\text{ 上为 }0，\\text{其余为 }+\\infty).$$",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S6",
+      "label": "恢复与投影的精确关系",
+      "statement": "S6　恢复与投影的精确关系\n\n在共同设定下，用bar u表示非负凸u的最大下半连续凸下界。证明G=f当且仅当f下半连续，并证明 bar(g_F)=bar(y↦inf_{r_KFz=y}bar(g_K)(z))。判断右式的最外层bar能否总省去。\n",
+      "scope": "# 凸成本记录、紧性与闭上图恢复\n\n版本 0.1.1。以下全部阶段均须作答。\n\nE为实Hausdorff局部凸空间，E′为连续对偶。f:E→[0,+∞]凸且至少一点有限。对有限维F⊂E′，F*取有限维拓扑，q_F(x)(φ)=φ(x)，g_F(y)=inf{f(x):q_Fx=y}，空纤维下确界为+∞。F⊂K时r_KF:K*→F*为限制。所有扩展实值函数u的下半连续和凸性均指实高度上图 epi_R(u)={(x,t):t∈R,u(x)≤t}闭和凸；竞争函数允许同时取−∞与+∞。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json\", \"pointer\": \"/stages/5/points\"}",
+      "acceptance_conditions": [
+        "G=f充要性",
+        "两侧夹逼得闭化公式",
+        "不可省闭化的具体见证",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S6"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/task.md",
+          "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+          "pointer": "section:S6"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR005/contract.json",
+          "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+          "pointer": "/stages/5"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR005:A1/goals/5"
+        }
+      ],
+      "source_goal_id": "S6",
+      "passed": true,
+      "reason": "G=f与下半连续性等价；两侧夹逼得闭化投影公式，S5具体例说明外bar不可省。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+          "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+          "start_utf8": 13245,
+          "end_utf8": 13511,
+          "quote": "具体地，$\\operatorname{epi}g_F=\\{y(\\varphi)>0\\}\\times[0,\\infty)$，其闭包为 $\\{y(\\varphi)\\ge0\\}\\times[0,\\infty)$。因此在 $y(\\varphi)=0$ 处，$\\bar m(y)=\\bar g_F(y)=0$，而 $m(y)=+\\infty$。所以 $\\bar g_F\\ne m$，最外层的 bar 一般不能省去。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-GR005:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/20",
+        "reason": "全部核心数学要求及其必要桥梁、边界已独立核查成立。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 80,
+            "end_utf8": 154,
+            "quote": "- S1、S2、S3：已证明。S1 的证明不需要纤维下确界取到。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 6196,
+            "end_utf8": 6397,
+            "quote": "这族集合按包含全序，所以有有限交性质，于是 $\\bigcap_cA_c\\ne\\varnothing$。任取其中一点 $x$，有 $q_Fx=y$ 且 $f(x)\\le m=g_F(y)\\le f(x)$。所以下确界在 $x$ 处取到。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 7656,
+            "end_utf8": 7802,
+            "quote": "$E$ 是 Hausdorff 局部凸空间，由 Hahn–Banach 定理 $E'$ 分离点，所以 $x=x'$。唯一性甚至不需要 $f(x)\\le c$ 这一条件。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 9447,
+            "end_utf8": 9844,
+            "quote": "- **情形 $\\beta=0$.** 此时 $\\varphi(x_0)<\\alpha\\le\\varphi(x)$ 对所有 $x\\in\\operatorname{dom}h\\supset\\operatorname{dom}f$ 成立。于是在开半空间 $\\{y:y(\\varphi)<\\alpha\\}$ 上 $g_F=+\\infty$，即 $\\operatorname{epi}g_F\\subset\\{y(\\varphi)\\ge\\alpha\\}\\times\\mathbb R$，而后者是闭集。由引理 C(a)，$\\bar g_F(q_Fx_0)=+\\infty$，所以 $G(x_0)=+\\infty$，与 $G(x_0)<t$ 矛盾。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 10914,
+            "end_utf8": 11020,
+            "quote": "$$C=\\{(a,b):a>0,\\ ab\\ge1\\},\\qquad f=\\delta_C\\ (\\text{在 }C\\text{ 上为 }0，\\text{其余为 }+\\infty).$$",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 13245,
+            "end_utf8": 13511,
+            "quote": "具体地，$\\operatorname{epi}g_F=\\{y(\\varphi)>0\\}\\times[0,\\infty)$，其闭包为 $\\{y(\\varphi)\\ge0\\}\\times[0,\\infty)$。因此在 $y(\\varphi)=0$ 处，$\\bar m(y)=\\bar g_F(y)=0$，而 $m(y)=+\\infty$。所以 $\\bar g_F\\ne m$，最外层的 bar 一般不能省去。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 80,
+            "end_utf8": 154,
+            "quote": "- S1、S2、S3：已证明。S1 的证明不需要纤维下确界取到。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 6196,
+            "end_utf8": 6397,
+            "quote": "这族集合按包含全序，所以有有限交性质，于是 $\\bigcap_cA_c\\ne\\varnothing$。任取其中一点 $x$，有 $q_Fx=y$ 且 $f(x)\\le m=g_F(y)\\le f(x)$。所以下确界在 $x$ 处取到。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 7656,
+            "end_utf8": 7802,
+            "quote": "$E$ 是 Hausdorff 局部凸空间，由 Hahn–Banach 定理 $E'$ 分离点，所以 $x=x'$。唯一性甚至不需要 $f(x)\\le c$ 这一条件。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 9447,
+            "end_utf8": 9844,
+            "quote": "- **情形 $\\beta=0$.** 此时 $\\varphi(x_0)<\\alpha\\le\\varphi(x)$ 对所有 $x\\in\\operatorname{dom}h\\supset\\operatorname{dom}f$ 成立。于是在开半空间 $\\{y:y(\\varphi)<\\alpha\\}$ 上 $g_F=+\\infty$，即 $\\operatorname{epi}g_F\\subset\\{y(\\varphi)\\ge\\alpha\\}\\times\\mathbb R$，而后者是闭集。由引理 C(a)，$\\bar g_F(q_Fx_0)=+\\infty$，所以 $G(x_0)=+\\infty$，与 $G(x_0)<t$ 矛盾。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 10914,
+            "end_utf8": 11020,
+            "quote": "$$C=\\{(a,b):a>0,\\ ab\\ge1\\},\\qquad f=\\delta_C\\ (\\text{在 }C\\text{ 上为 }0，\\text{其余为 }+\\infty).$$",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 13245,
+            "end_utf8": 13511,
+            "quote": "具体地，$\\operatorname{epi}g_F=\\{y(\\varphi)>0\\}\\times[0,\\infty)$，其闭包为 $\\{y(\\varphi)\\ge0\\}\\times[0,\\infty)$。因此在 $y(\\varphi)=0$ 处，$\\bar m(y)=\\bar g_F(y)=0$，而 $m(y)=+\\infty$。所以 $\\bar g_F\\ne m$，最外层的 bar 一般不能省去。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为100/100；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 80,
+            "end_utf8": 154,
+            "quote": "- S1、S2、S3：已证明。S1 的证明不需要纤维下确界取到。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 6196,
+            "end_utf8": 6397,
+            "quote": "这族集合按包含全序，所以有有限交性质，于是 $\\bigcap_cA_c\\ne\\varnothing$。任取其中一点 $x$，有 $q_Fx=y$ 且 $f(x)\\le m=g_F(y)\\le f(x)$。所以下确界在 $x$ 处取到。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 7656,
+            "end_utf8": 7802,
+            "quote": "$E$ 是 Hausdorff 局部凸空间，由 Hahn–Banach 定理 $E'$ 分离点，所以 $x=x'$。唯一性甚至不需要 $f(x)\\le c$ 这一条件。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 9447,
+            "end_utf8": 9844,
+            "quote": "- **情形 $\\beta=0$.** 此时 $\\varphi(x_0)<\\alpha\\le\\varphi(x)$ 对所有 $x\\in\\operatorname{dom}h\\supset\\operatorname{dom}f$ 成立。于是在开半空间 $\\{y:y(\\varphi)<\\alpha\\}$ 上 $g_F=+\\infty$，即 $\\operatorname{epi}g_F\\subset\\{y(\\varphi)\\ge\\alpha\\}\\times\\mathbb R$，而后者是闭集。由引理 C(a)，$\\bar g_F(q_Fx_0)=+\\infty$，所以 $G(x_0)=+\\infty$，与 $G(x_0)<t$ 矛盾。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 10914,
+            "end_utf8": 11020,
+            "quote": "$$C=\\{(a,b):a>0,\\ ab\\ge1\\},\\qquad f=\\delta_C\\ (\\text{在 }C\\text{ 上为 }0，\\text{其余为 }+\\infty).$$",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR005-A1/attempt-1/response.md",
+            "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+            "start_utf8": 13245,
+            "end_utf8": 13511,
+            "quote": "具体地，$\\operatorname{epi}g_F=\\{y(\\varphi)>0\\}\\times[0,\\infty)$，其闭包为 $\\{y(\\varphi)\\ge0\\}\\times[0,\\infty)$。因此在 $y(\\varphi)=0$ 处，$\\bar m(y)=\\bar g_F(y)=0$，而 $m(y)=+\\infty$。所以 $\\bar g_F\\ne m$，最外层的 bar 一般不能省去。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "060be9d04c616fd37760a5c032bda468ab8c4190185bcd2d69d2f950f5311c1b",
+    "mathematical_judgments_changed": false
+  }
+}

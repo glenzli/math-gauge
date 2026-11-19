@@ -2603,6 +2603,128 @@ def score_c003_continuation_overlay(base, policy, *, continuation, inputs, mode)
     return result
 
 
+def score_theorem_extension_calibration_overlay(base, policy, *, calibration, mode, condition):
+    """Reassess only source-bound TX R tiers after the full source selection chain.
+
+    A new tier is replayed through the original claim and submission judgments;
+    adding a delta to an old score would lose caps, unknowns and delivery gates.
+    Historical task inputs, all non-TX task objects and selfcheck stay intact.
+    """
+    from .theorem_extension_calibration import CalibrationInputs, TARGET, VERSION
+    policy = validate_assessment_policy(policy)
+    if not isinstance(calibration, CalibrationInputs) or policy['version'] != '0.9.0':
+        raise ValueError('TX reassessment requires its validated source calibration component')
+    selected = calibration.for_score(base, mode=mode, condition=condition)
+    if (base.get('schema') != 'math-gauge.assessment-score/v1'
+            or base.get('scoring_method_version') != policy['version']
+            or base.get('tx_calibration') is not None):
+        raise ValueError('TX calibration requires a current, unmodified effective base report')
+    child = next(c for c in policy['subcategories'] if c['id'] == 'theorem-extension')
+    if child['families'] != 6 or child['weight'] != 10 or child['aggregation'] != 'family':
+        raise ValueError('TX calibration cannot change its six-family denominator or weight')
+    result = deepcopy(base)
+    rows = {row['case_id']: row for row in selected['rows']}
+    tasks = {row['case_id']: row for row in result['tasks']
+             if row['subcategory'] == 'theorem-extension'}
+    if len(tasks) != 6 or set(tasks) != set(rows):
+        raise ValueError('TX calibration must cover exactly the six existing source tasks')
+    values, family_values = [], {}
+    for cid, task in tasks.items():
+        row = rows[cid]
+        baseline, old_R, new_R = row['baseline_B'], row['old_R'], row['new_R']
+        claim, submission = row['claim'], row['submission']
+        case = row.get('case', dict(case_id=cid, component='theorem-extension'))
+
+        def replay(level):
+            raw = ((UNKNOWN if mode == 'capability' else (Fraction(-2, 3), Fraction(1), None))
+                   if level is None else (Fraction(level, 3),) * 3)
+            passed = None if level is None else baseline == 2 and level == 3
+            deduction = (Fraction(0) if baseline is None else
+                Fraction(policy['theorem_extension']['baseline_penalty_points'][str(baseline)], 3))
+            raw, passed, detail = claim_penalties.assess(raw, passed, claim, mode=mode,
+                                                        baseline_deduction=deduction)
+            before_submission, prior_passed = raw, passed
+            raw, passed, source = _submission_task(raw, passed, 'source_bound_original_review',
+                submission, case=case, mode=mode, condition=condition, claim=claim)
+            return raw, passed, detail, before_submission, prior_passed, source
+
+        old, old_passed, old_detail, _, _, _ = replay(old_R)
+        expected_completion = {key: None if value is None else float(value)
+                               for key, value in zip(('lower', 'upper', 'exact'), old)}
+        if (task['completion'] != expected_completion or task['strict_pass'] != old_passed
+                or task.get('claim_assessment') != old_detail
+                or (task.get('submission_assessment') or {}).get('classification')
+                    != submission['classification']):
+            raise ValueError('TX calibration cannot replace an original claim, baseline or delivery judgment')
+        if submission['classification'] != 'active_final' and new_R != old_R:
+            raise ValueError('TX calibration cannot supplement a missing or forced submission')
+        value, passed, detail, prior, prior_passed, _ = replay(new_R)
+        task['completion'] = {key: None if v is None else float(v)
+                              for key, v in zip(('lower', 'upper', 'exact'), value)}
+        task['strict_pass'] = passed
+        task['claim_assessment'] = detail
+        if 'research' in task:
+            task['research']['research_R'] = new_R
+        if 'submission_assessment' in task:
+            task['submission_assessment']['prior_strict_pass'] = prior_passed
+            task['submission_assessment']['prior_completion'] = {
+                key: None if v is None else float(v)
+                for key, v in zip(('lower', 'upper', 'exact'), prior)}
+        task['tx_calibration'] = dict(source_review_sha256=task.get('review_sha256'),
+            review_sha256=row['review_sha256'], old_R=old_R, new_R=new_R)
+        if task.get('response_sha256') is not None:
+            task['review_sha256'] = row['review_sha256']
+            task['judgment_source'] = 'source_bound_theorem_extension_calibration'
+        interval = _boolean(passed) if mode == 'strict' else value
+        family_values.setdefault(task['family_id'], []).append(interval)
+    if len(family_values) != 6:
+        raise ValueError('TX calibration cannot split or duplicate a source mathematical family')
+    values = [_average(items) for items in family_values.values()]
+    value, adjudicated = _average(values), sum(v[2] is not None for v in values)
+    known = sum((v[2] if v[2] is not None else Fraction(0) for v in values), Fraction(0)) / 6
+    metrics, contributions = deepcopy(base['metrics']), deepcopy(base['contributions'])
+    metrics['theorem-extension'] = _assessment_metric(value, unit=child['aggregation'],
+                                                    planned=6, adjudicated=adjudicated)
+    metrics['theorem-extension']['confirmed'] = float(known * 100)
+    contribution = tuple(None if x is None else x * Fraction(child['weight'], 100) for x in value)
+    contributions['theorem-extension'] = _assessment_metric(contribution,
+        unit='points in full benchmark', planned=6, adjudicated=adjudicated)
+    contributions['theorem-extension']['confirmed'] = float(known * child['weight'])
+    intervals, confirmed = {}, {}
+    for component in policy['subcategories']:
+        key, metric = component['id'], metrics[component['id']]
+        intervals[key] = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
+                               for k in ('lower', 'upper', 'exact'))
+        confirmed[key] = Fraction(str(metric.get('confirmed', metric['exact'] or 0))) / 100
+    # Keep the exact newly computed fraction instead of a rounded metric readout.
+    intervals['theorem-extension'], confirmed['theorem-extension'] = value, known
+    metrics, contributions = _assessment_rollups(policy, intervals, confirmed, metrics, contributions)
+    same_research = (metrics['theorem-extension'] == base['metrics']['theorem-extension']
+                     and contributions['theorem-extension'] == base['contributions']['theorem-extension'])
+    for key in (() if same_research else ('theorem-extension', 'research', 'earned', 'overall')):
+        if key in metrics:
+            result['metrics'][key] = metrics[key]
+        if key in contributions:
+            result['contributions'][key] = contributions[key]
+    missing = max(0, policy['scope']['tasks'] - len(result['tasks']))
+    result['whole_task_counts'] = dict(planned=policy['scope']['tasks'],
+        passed=sum(t['strict_pass'] is True for t in result['tasks']),
+        failed=sum(t['strict_pass'] is False for t in result['tasks']),
+        unknown=sum(t['strict_pass'] is None for t in result['tasks']) + missing)
+    result['source_benchmark_version'] = selected['source_benchmark_version']
+    result['benchmark_version'] = TARGET
+    result['tx_calibration'] = dict(version=VERSION, benchmark_version=TARGET,
+        source_benchmark_version=selected['source_benchmark_version'],
+        source_score_benchmark_version=base['benchmark_version'], policy_sha256=selected['policy_sha256'],
+        inputs_sha256=selected['inputs_sha256'], base_report_sha256=selected['base_sha256'][mode][condition],
+        reviewed_cases=6, reviewer_kind='ai', human_review='pending', post_observation=True)
+    result['source_bindings'] = dict(base.get('source_bindings', {}),
+        theorem_extension_calibration_inputs_sha256=selected['inputs_sha256'],
+        theorem_extension_calibration_policy_sha256=selected['policy_sha256'],
+        theorem_extension_calibration_base_report_sha256=selected['base_sha256'][mode][condition])
+    return result
+
+
 def _assess_manuscript_fidelity(value, passed, fidelity, *, mode, completion, claim_detail, findings):
     """Apply the same source-bound fidelity adjustment to either harness type."""
     if any(e['root_cause'] == fidelity['root_cause'] for e in findings):
@@ -3536,3 +3658,97 @@ def summarize_manuscript_observations(review, source_policy, observation_policy)
             'families': rows, 'new_candidate_calls': 0, 'main_scores_modified': False,
             'reviewer_kind': 'ai', 'human_review': 'pending', 'post_observation': True,
             'formal_comparison_eligible': False}
+
+
+def score_mathematical_profile(inputs):
+    """Aggregate independently reviewed traits, preserving every fixed unknown.
+
+    Trait judgments have their own frozen family contracts. No MC/RMC/SMC value,
+    old R tier, claim deduction or candidate attempt participates in this math.
+    """
+    from .mathematical_profile import ProfileInputs, AXES, VERSION, LEGACY_VERSION, EDITION, CONDITION
+    if not isinstance(inputs, ProfileInputs):
+        raise ValueError('Mathematical traits require validated source-bound profile inputs')
+    review, contracts = inputs.review, inputs.contracts
+    version = review.get('version', getattr(inputs, 'policy', {}).get('version', LEGACY_VERSION))
+    rows = {r['id']:r for r in review['tasks']}
+    zero, four = Fraction(0), Fraction(4)
+    weighted, by_family, groups = {a:[] for a in AXES}, {a:{} for a in AXES}, {}
+    task_scores = []
+
+    def known(value):
+        return (zero, four, None) if value is None else (Fraction(value),) * 3
+
+    def goals(row, contract):
+        verdicts = {g['id']:g['passed'] for g in row['goals']}
+        if version == VERSION:
+            # Acceptance is an AND of the visible requirements, never a text
+            # fraction. One established failure settles the conjunction even
+            # when an independent requirement still has unavailable evidence.
+            if any(value is False for value in verdicts.values()):
+                return zero, zero, zero
+            return known(None if any(value is None for value in verdicts.values()) else 4)
+        total = sum((Fraction(str(g['weight'])) for g in contract['goals']), zero)
+        confirmed = sum((Fraction(str(g['weight'])) for g in contract['goals']
+                         if verdicts[g['id']] is True), zero) * four / total
+        unknown = sum((Fraction(str(g['weight'])) for g in contract['goals']
+                       if verdicts[g['id']] is None), zero) * four / total
+        return confirmed, confirmed + unknown, None if unknown else confirmed
+
+    trajectory = None
+    if version == VERSION:
+        round_values = [goals(rows[c['id']], c) for c in contracts['tasks'] if c['kind'] == 'selfcheck']
+        # All three prescribed deliveries and diagnoses form one acceptance
+        # unit with half of C003's fixed family mass. No best round or union.
+        trajectory = ((zero, zero, zero) if any(value[1] == zero for value in round_values)
+                      else known(None if any(value[2] is None for value in round_values) else 4))
+    for contract in contracts['tasks']:
+        row = rows[contract['id']]
+        accepted = trajectory if version == VERSION and contract['kind'] == 'selfcheck' else goals(row, contract)
+        values = {}
+        for axis, fraction in contract['axis_weights'].items():
+            if (axis == 'completion' or version == LEGACY_VERSION and axis == 'closure'
+                    and contract['subcategory'] == 'manuscript-completion'):
+                value = accepted
+            elif version == LEGACY_VERSION and axis == 'closure':
+                completed = row['research']['complete']
+                value = known(None if completed is None else 4 if completed else 0)
+            else:
+                value = known(row['axes'][axis]['grade'])
+            weight = Fraction(fraction)
+            weighted[axis].append((weight, value))
+            by_family[axis].setdefault(contract['family_id'], []).append(value)
+            if version == LEGACY_VERSION and axis in {'depth', 'closure'}:
+                groups.setdefault(axis, {}).setdefault(contract['subcategory'], []).append(
+                    (contract['family_id'], weight, value))
+            values[axis] = {k:None if v is None else float(v)
+                            for k,v in zip(('lower','upper','exact'),value)}
+        task_scores.append(dict(id=contract['id'], family_id=contract['family_id'], axes=values))
+
+    def aggregate(items, *, planned, reviewed):
+        denominator = sum((weight for weight, _ in items), zero)
+        low = sum((weight * value[0] for weight, value in items), zero) / denominator * 25
+        high = sum((weight * value[1] for weight, value in items), zero) / denominator * 25
+        return dict(exact=None if low != high else float(low), confirmed=float(low),
+                    lower=float(low), upper=float(high), unknown_weight=float(high-low),
+                    reviewed_families=reviewed, planned_families=planned)
+
+    metrics = {axis:aggregate(weighted[axis], planned=contracts['planned_families'][axis],
+                   reviewed=sum(all(value[2] is not None for value in variants)
+                                for variants in by_family[axis].values())) for axis in AXES}
+    group_metrics = {}
+    for axis, categories in groups.items():
+        group_metrics[axis] = {}
+        for category, items in categories.items():
+            families = {}
+            for family, _, value in items:
+                families.setdefault(family, []).append(value)
+            metric = aggregate([(weight,value) for _,weight,value in items], planned=len(families),
+                reviewed=sum(all(v[2] is not None for v in variants) for variants in families.values()))
+            metric.pop('unknown_weight')
+            group_metrics[axis][category] = metric
+    return dict(schema='math-gauge.mathematical-profile-score/v1', version=version,
+        benchmark_version=EDITION, model_id=review['model_id'], condition=CONDITION,
+        metrics=metrics, groups=group_metrics, tasks=task_scores,
+        reviewer_kind='ai', human_review='pending', formal_comparison_eligible=False,
+        new_candidate_calls=0, main_scores_modified=False)

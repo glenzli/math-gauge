@@ -1,0 +1,35 @@
+{
+  "schema": "math-gauge.theorem-extension-calibration-review/v1",
+  "version": "0.1.0",
+  "case_id": "MG-TX002",
+  "answer_sha256": "8304f17f6296e150e0eafd1c6a2d6e5ca6c9b91a3b7533c72d6607f098139698",
+  "source_review_sha256": "8cce46f6f4d4c0ef10dfe2ec53d036101c201b93e3a5d5b52c3ceaf390d8245e",
+  "baseline_B": 2,
+  "old_R": 3,
+  "new_R": 3,
+  "policy_sha256": "5c43272773477bceb43e1087c7f363e984300dc7d805f9ff946b0489e7ac76ab",
+  "standard_sha256": "8394afa8aa936ba4eb9cae937483fb3268a90ab52b9585a6ea977e17cbfa98d9",
+  "reviewer_kind": "ai",
+  "reviewer": [
+    "gpt-6.2-sol/max",
+    "Codex coordinator: source verification and cross-case adjudication"
+  ],
+  "human_review": "pending",
+  "post_observation": true,
+  "status": "reviewed",
+  "reason": "可逆的完整状态与点态移位规则统一决定每一步动力学，达到深入完整的 R3。轨道均值使用了这一已证结构。",
+  "attained": "行占用与列占用的补码完整表示反链，单步 R 使拼接字循环右移一位。\n范围：所有 a,b≥2 的矩形及其全部反链，含空反链。\n核验：用行长下降判定旧极大元与新极小元，坐标互换给列的内部移位。由新状态行列占用总数相同，与原总数相消直接得 y₁(RA)=1−xₐ(A)。递增行与递减列反向配对给逆。",
+  "not_attained": "R3 已达。计分依据是实际建立的完整移位结构。",
+  "citations": [
+    {
+      "quote": "x_{i+1}(R(A))&=x_i(A) &&(1\\le i<a),\\\\\ny_{j+1}(R(A))&=y_j(A) &&(1\\le j<b),\\\\\nx_1(R(A))&=1-y_b(A).\n\\end{aligned}",
+      "start_byte": 347,
+      "end_byte": 457
+    },
+    {
+      "quote": "|A|=\\sum_{i=1}^a x_i(A)=\\sum_{j=1}^b y_j(A).",
+      "start_byte": 1561,
+      "end_byte": 1605
+    }
+  ]
+}

@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Math Gauge 1.0.0 书面证明、Lean与数学研究三大类评测，数学能力、可靠数学能力及严格数学交付成绩与完整来源。">
+<meta name="description" content="Math Gauge @@MG_VERSION@@ 书面证明、Lean与数学研究三大类评测，数学能力、可靠数学能力及严格数学交付成绩与完整来源。">
 <title>Math Gauge — Benchmark Leaderboard</title>
 <link rel="stylesheet" href="assets/results.css">
+@@MG_PROFILE_CSS@@
 @@MG_TIMING_CSS@@
 @@MG_COST_CSS@@
 @@MG_ANOMALY_CSS@@
@@ -13,10 +14,10 @@
 <body class="leaderboard-page">
 <header class="topbar"><nav class="nav" aria-label="主导航">
   <a class="brand" data-context-link href="index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a>
-  <div class="navlinks"><a class="active" href="#leaderboard">排行榜</a><a class="optional" href="#category-leaderboards">分类榜</a><a class="optional" href="#capability-section">能力分项</a><a data-nav-method data-context-link href="method.html">方法与数据</a><a class="optional" href="../cases/README.md">题集<span class="external">↗</span></a></div>@@MG_LANGUAGE_SWITCH@@
+  <div class="navlinks"><a class="active" href="#leaderboard">排行榜</a><a class="optional" href="#category-leaderboards">分类榜</a>@@MG_PROFILE_NAV@@<a class="optional" href="#capability-section">能力分项</a><a data-nav-method data-context-link href="method.html">方法与数据</a><a class="optional" href="../cases/README.md">题集<span class="external">↗</span></a></div>@@MG_LANGUAGE_SWITCH@@
 </nav></header>
 <main>
-<div class="intro"><div><div class="eyebrow">MATHEMATICAL CAPABILITY BENCHMARK</div><h1>Math Gauge</h1><p class="subtitle">书面证明、Lean 与数学研究。考察数学论证、形式化交付，以及发现和修复问题的能力。</p></div><div class="edition"><span class="tag mono">v1.0.0</span><span class="tag">封版</span></div></div>
+<div class="intro"><div><div class="eyebrow">MATHEMATICAL CAPABILITY BENCHMARK</div><h1>Math Gauge</h1><p class="subtitle">书面证明、Lean 与数学研究。考察数学论证、形式化交付，以及发现和修复问题的能力。</p></div><div class="edition"><span class="tag mono">v<span data-edition-version>@@MG_VERSION@@</span></span></div></div>
 @@MG_REVIEW_STATUS@@
 <div class="statstrip" aria-label="当前评测范围"><div class="stat"><div class="stat-value" id="paper-count">@@MG_TASKS@@</div><div class="stat-name">公@@MG_PUBLIC@@题 · 私@@MG_PRIVATE@@题</div></div><div class="stat"><div class="stat-value" id="family-count">@@MG_FAMILIES@@</div><div class="stat-name">数学家族</div></div><div class="stat"><div class="stat-value" id="coverage-points">@@MG_CAPACITY@@<span class="score-unit">/100</span></div><div class="stat-name">权重覆盖</div></div><div class="stat"><div class="stat-value small">3轮</div><div class="stat-name">Lean 对齐自查 · 独立计分</div></div></div>
 <section class="panel view-board" data-board="overall" id="leaderboard" aria-labelledby="leaderboard-title">
@@ -33,6 +34,7 @@
 <details class="panel subboard gap-disclosure view-board" id="gap-diagnostics" data-board="gap"><summary><span><strong id="gap-heading">分数落差</strong><small>以MC为共同基准 · 可靠差与交付差</small></span><span class="subboard-expand" aria-hidden="true">＋</span></summary><div class="subboard-body">@@MG_GAP_CHART@@</div></details>
 @@MG_CONTENT_RATES@@
 @@MG_CATEGORY_RANKINGS@@
+@@MG_MATHEMATICAL_PROFILE@@
 <div class="section-title" id="capability-section"><h2 id="contributions-title">RMC · 分类贡献</h2><span class="section-context" id="active-condition">规则允许的最终成绩</span></div>
 <section class="panel contribution-panel"><div class="panel-head"><div><h2>大类贡献</h2><p class="panel-desc" id="coverage">点击大类表头展开子类 · 贡献分 / 该项满分</p></div><span class="label" id="contribution-mode">RMC</span></div><div class="table-wrap"><table id="capabilities" class="compact taxonomy"></table></div></section>
 <details class="panel score-structure"><summary>总分结构 · 书面证明35% · Lean35% · 数学研究30%</summary><div class="weights-body"><div class="weight-bar" aria-hidden="true"><span class="weight-segment" style="width:35%"></span><span class="weight-segment" style="width:35%"></span><span class="weight-segment" style="width:30%"></span></div><div class="weight-row"><span>书面证明</span><span class="weight-value">35%</span></div><div class="weight-row"><span>Lean</span><span class="weight-value">35%</span></div><div class="weight-row"><span>数学研究</span><span class="weight-value">30%</span></div><p class="weight-explain">分类贡献与下载使用当前总榜口径。<br><a data-context-link href="method.html">方法与数据 →</a></p></div></details>
@@ -40,10 +42,11 @@
 @@MG_TIMING_REFERENCE@@
 @@MG_COST_REFERENCE@@
 @@MG_EXECUTION_ANOMALIES@@
-<footer class="footer"><span>Math Gauge</span><span><a href="../releases/v0.6.1/README.md">0.6.1 分发说明</a> · <a href="../docs/harness-guide.md">其他 Harness 运行指南</a></span></footer>
+<footer class="footer"><span>Math Gauge</span><span><a data-assessment-only="1.1.0" href="../docs/theorem-extension-reassessment.md">1.1 · TX</a> · <a href="../releases/v1.0.0/README.md">1.0.0 分发说明</a> · <a href="../docs/harness-guide.md">其他 Harness 运行指南</a></span></footer>
 </main>
 <script type="application/json" id="data">@@MG_DATA@@</script>
 <script src="assets/results-i18n.js"></script><script src="assets/results-core.js"></script><script src="assets/board-controls.js"></script><script src="assets/home-results.js"></script>
+@@MG_PROFILE_JS@@
 @@MG_TIMING_JS@@
 @@MG_COST_JS@@
 </body>

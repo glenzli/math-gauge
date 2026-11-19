@@ -16,6 +16,7 @@ import tempfile
 from . import agy_evidence
 from .benchmarks import identity
 from .catalog import validate_alignment_manifest
+from .editions import source_edition
 
 VERSION = '0.1.0'
 COMPONENT = 'c003-sealed-continuation/' + VERSION
@@ -724,7 +725,7 @@ def load_selected_public(root, model_id, folder, *, effective_scores=None, recor
     """
     from .records import project_assessment_score
     root, folder = Path(root), Path(folder)
-    edition = json.loads((root / 'benchmark.json').read_bytes())
+    edition = source_edition(root)
     selected = edition.get('c003_continuations', {}).get(model_id)
     if selected is None:
         return None

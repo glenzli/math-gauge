@@ -1,0 +1,1065 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-GP002",
+  "task_id": "MG-GP002:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/task.md",
+      "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+      "bytes": 3282
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/reference.md",
+      "sha256": "d596100198c6476d2f27ee4329818a3aaf2a0f986fa38e345eed152b44809f87",
+      "bytes": 13594
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/rubric.json",
+      "sha256": "d6f22ac86200aae587a66a85ef3ffa90d0d14ded3a1445be6bf2cee8bd4baf89",
+      "bytes": 768
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+      "bytes": 15657,
+      "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/request.json",
+      "bytes": 5185,
+      "sha256": "1328c5f05d756349672f78a353e9a77a3d91ac90f1941a6d917351d59cddd79c"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/case.json",
+      "sha256": "c07dc510c0d6297c13ed32ba4d49323dabc5284c2946ff986d59b5a1c59afbbb"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json",
+      "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+      "bytes": 9432
+    },
+    "solver_files": [],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json",
+      "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+      "bytes": 9432
+    }
+  },
+  "criteria": [
+    {
+      "id": "S1",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "有限频带上的逆",
+        "kind": "construct",
+        "assumptions": [
+          "无理 α",
+          "固定有限 N",
+          "零模排除"
+        ],
+        "required_evidence": [
+          "实际逆与单频最优常数",
+          "固定 N 的有限性"
+        ],
+        "critical_errors": [
+          "有限频率非零推出全频率统一下界"
+        ],
+        "depends_on": [],
+        "points": 15,
+        "expected": "construction",
+        "id": "S1",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "有限非零频率逐项除法得到逆，H^r权重相消且单频取到最优常数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 276,
+          "end_utf8": 527,
+          "quote": "- S4：所列目标全部成立。唯一光滑可解当且仅当 $\\alpha$ 是 Diophantine 数（等价地，不是 Liouville 数）。对 $\\alpha_*=\\sqrt2-1$，最小允许损失 $s=1$，并且取到。$C^m$ 估计成立，实际上只需 $C^{m+3}$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "有算术界的截断误差",
+        "kind": "prove",
+        "assumptions": [
+          "统一全频率 c,s 下界",
+          "F 光滑零均值",
+          "r 实、q≥0"
+        ],
+        "required_evidence": [
+          "光滑级数真正收敛",
+          "尾范数定量"
+        ],
+        "critical_errors": [
+          "只形式除法不证正则性"
+        ],
+        "depends_on": [
+          "S1"
+        ],
+        "points": 15,
+        "expected": "true",
+        "id": "S2",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "多项式逆乘子保持快速衰减，尾部比较给所有实r及q≥0估计。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 6346,
+          "end_utf8": 6528,
+          "quote": "**截断误差估计。** $u-u_N$ 只含频率 $|k|>N$。对这些 $k$ 有 $\\langle k\\rangle^2=1+|k|^2>1+N^2$，所以当 $q\\ge0$ 时 $\\langle k\\rangle^{-2q}\\le(1+N^2)^{-q}$。于是",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "固定频带内改变方向",
+        "kind": "prove",
+        "assumptions": [
+          "固定有限频带",
+          "两个方向都满足同一 δ 下界"
+        ],
+        "required_evidence": [
+          "逐模差的正确分母",
+          "与 r 无关的估计"
+        ],
+        "critical_errors": [
+          "不核验新方向的小除数"
+        ],
+        "depends_on": [
+          "S1",
+          "S2"
+        ],
+        "points": 15,
+        "expected": "true",
+        "id": "S3",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "乘子差为(β−α)k1除以两小除数，频带及δ条件给正确统一范数界。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 6866,
+          "end_utf8": 6899,
+          "quote": "## S3 固定频带内改变方向",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "整体对象与全部恢复目标",
+        "kind": "decide",
+        "assumptions": [
+          "令 $\\mathbb T^2=\\mathbb R^2/\\mathbb Z^2$，配备归一化 Haar 测度，记\n\n$$C^\\infty_0(\\mathbb T^2)=\\left\\{u\\in C^\\infty(\\mathbb T^2;\\mathbb C):\\int_{\\mathbb T^2}u=0\\right\\}.$$\n\n对无理数 $\\alpha\\in\\mathbb R\\setminus\\mathbb Q$，定义\n\n$$N_\\alpha u=\\alpha\\,\\partial_{y_1}u+\\partial_{y_2}u.$$\n\n对 $k\\in\\mathbb Z^2$，令 $\\langle k\\rangle=(1+|k|^2)^{1/2}$，其中 $|k|$ 为 Euclidean 范数。对 $r\\in\\mathbb R$ 和光滑函数 $u$，采用范数\n\n$$\\|u\\|_{H^r}^2=\\sum_{k\\in\\mathbb Z^2}\\langle k\\rangle^{2r}|\\widehat u(k)|^2,\n\\qquad\n\\widehat u(k)=\\int_{\\mathbb T^2}u(y)e^{-2\\pi i k\\cdot y}\\,dy,$$\n\n以及\n\n$$\\|u\\|_{C^m}=\\max_{a,b\\ge0,\\ a+b\\le m}\\sup_{y\\in\\mathbb T^2}|\\partial_{y_1}^a\\partial_{y_2}^b u(y)|\n\\qquad(m\\in\\mathbb N_0).$$",
+          "专门方向定义为 α*=√2−1；C^m 指标 m 为非负整数，所有算子与范数沿用题面。"
+        ],
+        "required_evidence": [
+          "Characterize exactly which irrational alpha make N_alpha surjective on smooth complex zero-mean functions, and justify uniqueness and both directions of the characterization. A finite polynomial small-divisor lower bound, the equivalent rational-approximation condition, or an equivalent correctly proved formulation is sufficient.",
+          "Determine all nonnegative Sobolev losses s under the stated quantifiers, including an exact criterion at the endpoint. Establish both sufficiency and necessity; a one-sided sufficient bound is incomplete.",
+          "For alpha=sqrt(2)-1, prove that the smallest Sobolev loss is 1 and is attained, with a valid obstruction for every smaller nonnegative loss.",
+          "Prove the requested C^(m+4)-to-C^m estimate for every nonnegative integer m, with a finite constant independent of the smooth forcing. A stronger valid estimate that implies this bound is also accepted."
+        ],
+        "critical_errors": [
+          "Treat irrationality and nonzero Fourier divisors as sufficient for a smooth inverse on every smooth forcing without controlling the growth of their reciprocals.",
+          "Replace the claim that every smooth forcing has a smooth solution by a separate bad frequency for each proposed norm bound without bridging the quantifiers; a valid closed-graph argument is an accepted bridge.",
+          "Infer an endpoint estimate from estimates for every strictly larger loss, or assert the endpoint is always attained without its uniform arithmetic bound.",
+          "Silently remove the zero-mean condition or assert uniqueness without controlling the constant Fourier coefficient.",
+          "Use only a C^(m+5)-to-C^m estimate and report the C^(m+4)-to-C^m target completed, reversing the inequality between the input norms.",
+          "Conflate the optimal one-derivative Sobolev loss with an unsupported one-derivative C^m estimate, or assert four is the optimal C^m loss without proof.",
+          "Claim that a weaker formal estimate, or this extracted task, refutes the original Navier-Stokes theorem."
+        ],
+        "depends_on": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "points": 25,
+        "expected": "true",
+        "id": "S4",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 25,
+      "score": 25,
+      "strict_pass": true,
+      "reason": "给全部允许损失的严格正下确界判据、非Diophantine时固定光滑坏右端、共轭整数范数下界及Dirichlet尖锐性；α*=sqrt2−1端点1取到，Cm估计有效。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 12134,
+          "end_utf8": 12332,
+          "quote": "2. **最小损失。** 由此 $\\alpha_*$ 满足 (D)，$N_{\\alpha_*}$ 在 $C^\\infty_0$ 上可逆。结合引理 D，$S_{\\alpha_*}=[1,\\infty)$。所以**最小允许损失是 $s=1$，并且取到**：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "邻近方向的一致估计",
+        "kind": "decide",
+        "assumptions": [
+          "J 含固定二次无理方向",
+          "全 J 无理参数同一 s,C"
+        ],
+        "required_evidence": [
+          "对任意候选 J、s、C 反驳统一估计；接受任何有效反例",
+          "精确量词反驳"
+        ],
+        "critical_errors": [
+          "把参数连续误作全频率逆有界"
+        ],
+        "depends_on": [
+          "S3",
+          "S4"
+        ],
+        "points": 15,
+        "expected": "false",
+        "id": "S5",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "在区间内任取有理斜率再取邻近无理方向，单频违反任何候选一致常数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 13494,
+          "end_utf8": 13522,
+          "quote": " 与所设不等式矛盾。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "一个具体方向的不可解数据",
+        "kind": "construct",
+        "assumptions": [
+          "指定 Liouville 方向",
+          "一个固定光滑右端"
+        ],
+        "required_evidence": [
+          "无理性和超多项式逼近",
+          "全部导数收敛",
+          "同一右端的不可解性"
+        ],
+        "critical_errors": [
+          "每阶一个坏频率代替一个不可解 F"
+        ],
+        "depends_on": [
+          "S1",
+          "S2",
+          "S4",
+          "S5"
+        ],
+        "points": 15,
+        "expected": "construction",
+        "id": "S6",
+        "mandatory": true,
+        "lean_required": false
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "实际阶乘截断给无理性，同一个实光滑零均值Fourier级数迫使解系数超多项式增长。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 15122,
+          "end_utf8": 15178,
+          "quote": "与 (P5) 矛盾。这对同一个固定的 $F$ 成立。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 100,
+    "positive_mathematical_denominator": 100,
+    "removed_reliability_points": 0,
+    "removed_reliability_denominator": 0,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/task.md",
+        "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "not_supplied_as_separate_self_assessment",
+    "verbatim_evidence": [],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "S1",
+      "label": "有限频带上的逆",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S1",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "有限频带上的逆",
+      "reason": "有限非零频率逐项除法得到逆，H^r权重相消且单频取到最优常数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 276,
+          "end_utf8": 527,
+          "quote": "- S4：所列目标全部成立。唯一光滑可解当且仅当 $\\alpha$ 是 Diophantine 数（等价地，不是 Liouville 数）。对 $\\alpha_*=\\sqrt2-1$，最小允许损失 $s=1$，并且取到。$C^m$ 估计成立，实际上只需 $C^{m+3}$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S2",
+      "label": "有算术界的截断误差",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S2",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "有算术界的截断误差",
+      "reason": "多项式逆乘子保持快速衰减，尾部比较给所有实r及q≥0估计。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 6346,
+          "end_utf8": 6528,
+          "quote": "**截断误差估计。** $u-u_N$ 只含频率 $|k|>N$。对这些 $k$ 有 $\\langle k\\rangle^2=1+|k|^2>1+N^2$，所以当 $q\\ge0$ 时 $\\langle k\\rangle^{-2q}\\le(1+N^2)^{-q}$。于是",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S3",
+      "label": "固定频带内改变方向",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S3",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "固定频带内改变方向",
+      "reason": "乘子差为(β−α)k1除以两小除数，频带及δ条件给正确统一范数界。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 6866,
+          "end_utf8": 6899,
+          "quote": "## S3 固定频带内改变方向",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S4",
+      "label": "整体对象与全部恢复目标",
+      "delivery_weight": 25,
+      "claim_weight": 25,
+      "source_unit_id": "S4",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "整体对象与全部恢复目标",
+      "reason": "给全部允许损失的严格正下确界判据、非Diophantine时固定光滑坏右端、共轭整数范数下界及Dirichlet尖锐性；α*=sqrt2−1端点1取到，Cm估计有效。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 12134,
+          "end_utf8": 12332,
+          "quote": "2. **最小损失。** 由此 $\\alpha_*$ 满足 (D)，$N_{\\alpha_*}$ 在 $C^\\infty_0$ 上可逆。结合引理 D，$S_{\\alpha_*}=[1,\\infty)$。所以**最小允许损失是 $s=1$，并且取到**：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 25,
+      "asserted_denominator": 25,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S5",
+      "label": "邻近方向的一致估计",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S5",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "邻近方向的一致估计",
+      "reason": "在区间内任取有理斜率再取邻近无理方向，单频违反任何候选一致常数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 13494,
+          "end_utf8": 13522,
+          "quote": " 与所设不等式矛盾。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S6",
+      "label": "一个具体方向的不可解数据",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S6",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "一个具体方向的不可解数据",
+      "reason": "实际阶乘截断给无理性，同一个实光滑零均值Fourier级数迫使解系数超多项式增长。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 15122,
+          "end_utf8": 15178,
+          "quote": "与 (P5) 矛盾。这对同一个固定的 $F$ 成立。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "S1",
+      "label": "有限频带上的逆",
+      "statement": "S1 有限频带上的逆\n\n在归一化环面 T² 上令 N_α=α∂_1+∂_2，α 无理。设 H_N 为仅含 0<|k|≤N 整频率的复三角多项式空间（N≥1）。构造 N_α 在 H_N 上的逆；对任意实 r 给出 H^r→H^r 逆范数精确式。\n\n",
+      "scope": "# Fourier 逆、截断误差与参数边界\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json\", \"pointer\": \"/stages/0/points\"}",
+      "acceptance_conditions": [
+        "实际逆与单频最优常数",
+        "固定 N 的有限性",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S1"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/task.md",
+          "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+          "pointer": "section:S1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/contract.json",
+          "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+          "pointer": "/stages/0"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP002:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "S1",
+      "passed": true,
+      "reason": "有限非零频率逐项除法得到逆，H^r权重相消且单频取到最优常数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 276,
+          "end_utf8": 527,
+          "quote": "- S4：所列目标全部成立。唯一光滑可解当且仅当 $\\alpha$ 是 Diophantine 数（等价地，不是 Liouville 数）。对 $\\alpha_*=\\sqrt2-1$，最小允许损失 $s=1$，并且取到。$C^m$ 估计成立，实际上只需 $C^{m+3}$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S2",
+      "label": "有算术界的截断误差",
+      "statement": "S2 有算术界的截断误差\n\n设 |αk_1+k_2|≥c⟨k⟩^{−s} 对全部 k≠0，c>0、s≥0。对光滑零均值 F 令 u_N 为 S1 中对频带截断 F_N 的解。构造光滑解 u，并对任意 r∈R、q≥0 证明 ||u−u_N||_{H^r}≤(2πc)^{-1}(1+N²)^{−q/2}||F||_{H^{r+s+q}}。\n\n",
+      "scope": "# Fourier 逆、截断误差与参数边界\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json\", \"pointer\": \"/stages/1/points\"}",
+      "acceptance_conditions": [
+        "光滑级数真正收敛",
+        "尾范数定量",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S2"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/task.md",
+          "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+          "pointer": "section:S2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/contract.json",
+          "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+          "pointer": "/stages/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP002:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "S2",
+      "passed": true,
+      "reason": "多项式逆乘子保持快速衰减，尾部比较给所有实r及q≥0估计。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 6346,
+          "end_utf8": 6528,
+          "quote": "**截断误差估计。** $u-u_N$ 只含频率 $|k|>N$。对这些 $k$ 有 $\\langle k\\rangle^2=1+|k|^2>1+N^2$，所以当 $q\\ge0$ 时 $\\langle k\\rangle^{-2q}\\le(1+N^2)^{-q}$。于是",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S3",
+      "label": "固定频带内改变方向",
+      "statement": "S3 固定频带内改变方向\n\n给两个无理方向 α,β，设其在 0<|k|≤N 上的小除数绝对值都至少 δ>0。对同一 F∈H_N，证明对应解满足 ||u_α−u_β||_{H^r}≤|α−β|N(2πδ²)^{-1}||F||_{H^r}。\n\n",
+      "scope": "# Fourier 逆、截断误差与参数边界\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json\", \"pointer\": \"/stages/2/points\"}",
+      "acceptance_conditions": [
+        "逐模差的正确分母",
+        "与 r 无关的估计",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S3"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/task.md",
+          "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+          "pointer": "section:S3"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/contract.json",
+          "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+          "pointer": "/stages/2"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP002:A1/goals/2"
+        }
+      ],
+      "source_goal_id": "S3",
+      "passed": true,
+      "reason": "乘子差为(β−α)k1除以两小除数，频带及δ条件给正确统一范数界。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 6866,
+          "end_utf8": 6899,
+          "quote": "## S3 固定频带内改变方向",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S4",
+      "label": "整体对象与全部恢复目标",
+      "statement": "S4 整体对象与全部恢复目标\n\n判定下面所列目标在给定条件下是否成立。若成立，完成全部构造、分类与性质的证明；若不成立，给出满足全部给定条件的反例。\n\n令 $\\mathbb T^2=\\mathbb R^2/\\mathbb Z^2$，配备归一化 Haar 测度，记\n\n$$C^\\infty_0(\\mathbb T^2)=\\left\\{u\\in C^\\infty(\\mathbb T^2;\\mathbb C):\\int_{\\mathbb T^2}u=0\\right\\}.$$\n\n对无理数 $\\alpha\\in\\mathbb R\\setminus\\mathbb Q$，定义\n\n$$N_\\alpha u=\\alpha\\,\\partial_{y_1}u+\\partial_{y_2}u.$$\n\n对 $k\\in\\mathbb Z^2$，令 $\\langle k\\rangle=(1+|k|^2)^{1/2}$，其中 $|k|$ 为 Euclidean 范数。对 $r\\in\\mathbb R$ 和光滑函数 $u$，采用范数\n\n$$\\|u\\|_{H^r}^2=\\sum_{k\\in\\mathbb Z^2}\\langle k\\rangle^{2r}|\\widehat u(k)|^2,\n\\qquad\n\\widehat u(k)=\\int_{\\mathbb T^2}u(y)e^{-2\\pi i k\\cdot y}\\,dy,$$\n\n以及\n\n$$\\|u\\|_{C^m}=\\max_{a,b\\ge0,\\ a+b\\le m}\\sup_{y\\in\\mathbb T^2}|\\partial_{y_1}^a\\partial_{y_2}^b u(y)|\n\\qquad(m\\in\\mathbb N_0).$$\n\n建立 $N_\\alpha:C^\\infty_0(\\mathbb T^2)\\to C^\\infty_0(\\mathbb T^2)$ 的可逆性与正则性理论：刻画哪些 $\\alpha$ 使每个 $F\\in C^\\infty_0(\\mathbb T^2)$ 都有唯一的光滑零均值解 $N_\\alpha u=F$；同时确定全部 $s\\ge0$，使对每个 $r\\in\\mathbb R$ 存在与 $u$ 无关的有限常数 $C_{\\alpha,r,s}$，满足\n\n$$\\|u\\|_{H^r}\\le C_{\\alpha,r,s}\\|N_\\alpha u\\|_{H^{r+s}}\n\\qquad\\text{对所有 }u\\in C^\\infty_0(\\mathbb T^2).$$\n\n在 $\\alpha_* =\\sqrt2-1$ 时，明确最小的允许损失 $s$ 及其是否取到，并判断是否对每个 $m\\in\\mathbb N_0$ 都存在与 $F$ 无关的有限常数 $C_m$，使零均值解满足\n\n$$\\|N_{\\alpha_*}^{-1}F\\|_{C^m}\\le C_m\\|F\\|_{C^{m+4}}\n\\qquad(F\\in C^\\infty_0(\\mathbb T^2)).$$\n\n请给出完整的定理、构造与论证。\n\n",
+      "scope": "# Fourier 逆、截断误差与参数边界\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 25,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json\", \"pointer\": \"/stages/3/points\"}",
+      "acceptance_conditions": [
+        "Characterize exactly which irrational alpha make N_alpha surjective on smooth complex zero-mean functions, and justify uniqueness and both directions of the characterization. A finite polynomial small-divisor lower bound, the equivalent rational-approximation condition, or an equivalent correctly proved formulation is sufficient.",
+        "Determine all nonnegative Sobolev losses s under the stated quantifiers, including an exact criterion at the endpoint. Establish both sufficiency and necessity; a one-sided sufficient bound is incomplete.",
+        "For alpha=sqrt(2)-1, prove that the smallest Sobolev loss is 1 and is attained, with a valid obstruction for every smaller nonnegative loss.",
+        "Prove the requested C^(m+4)-to-C^m estimate for every nonnegative integer m, with a finite constant independent of the smooth forcing. A stronger valid estimate that implies this bound is also accepted.",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S4"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/task.md",
+          "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+          "pointer": "section:S4"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/contract.json",
+          "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+          "pointer": "/stages/3"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP002:A1/goals/3"
+        }
+      ],
+      "source_goal_id": "S4",
+      "passed": true,
+      "reason": "给全部允许损失的严格正下确界判据、非Diophantine时固定光滑坏右端、共轭整数范数下界及Dirichlet尖锐性；α*=sqrt2−1端点1取到，Cm估计有效。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 12134,
+          "end_utf8": 12332,
+          "quote": "2. **最小损失。** 由此 $\\alpha_*$ 满足 (D)，$N_{\\alpha_*}$ 在 $C^\\infty_0$ 上可逆。结合引理 D，$S_{\\alpha_*}=[1,\\infty)$。所以**最小允许损失是 $s=1$，并且取到**：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 25,
+      "denominator": 25
+    },
+    {
+      "id": "S5",
+      "label": "邻近方向的一致估计",
+      "statement": "S5 邻近方向的一致估计\n\n令 α_*=√2−1。判定是否存在开区间 J∋α_*、有限 s≥0、C<∞，使每个无理 α∈J 及每个光滑零均值 u 都满足 ||u||_{L²}≤C||N_αu||_{H^s}。\n\n",
+      "scope": "# Fourier 逆、截断误差与参数边界\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json\", \"pointer\": \"/stages/4/points\"}",
+      "acceptance_conditions": [
+        "对任意候选 J、s、C 反驳统一估计；接受任何有效反例",
+        "精确量词反驳",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S5"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/task.md",
+          "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+          "pointer": "section:S5"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/contract.json",
+          "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+          "pointer": "/stages/4"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP002:A1/goals/4"
+        }
+      ],
+      "source_goal_id": "S5",
+      "passed": true,
+      "reason": "在区间内任取有理斜率再取邻近无理方向，单频违反任何候选一致常数。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 13494,
+          "end_utf8": 13522,
+          "quote": " 与所设不等式矛盾。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S6",
+      "label": "一个具体方向的不可解数据",
+      "statement": "S6 一个具体方向的不可解数据\n\n取 α=Σ_{n=1}^∞10^{−n!}。证明 α 无理，并构造一个光滑零均值 F 使 N_αu=F 没有光滑零均值解。要求给出同一个 F，而不是对每个估计分别给一个频率。\n",
+      "scope": "# Fourier 逆、截断误差与参数边界\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GP002/contract.json\", \"pointer\": \"/stages/5/points\"}",
+      "acceptance_conditions": [
+        "无理性和超多项式逼近",
+        "全部导数收敛",
+        "同一右端的不可解性",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S6"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/task.md",
+          "sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+          "pointer": "section:S6"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GP002/contract.json",
+          "sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+          "pointer": "/stages/5"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GP002:A1/goals/5"
+        }
+      ],
+      "source_goal_id": "S6",
+      "passed": true,
+      "reason": "实际阶乘截断给无理性，同一个实光滑零均值Fourier级数迫使解系数超多项式增长。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+          "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+          "start_utf8": 15122,
+          "end_utf8": 15178,
+          "quote": "与 (P5) 矛盾。这对同一个固定的 $F$ 成立。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-GP002:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/20",
+        "reason": "全部核心数学要求及其必要桥梁、边界已独立核查成立。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 276,
+            "end_utf8": 527,
+            "quote": "- S4：所列目标全部成立。唯一光滑可解当且仅当 $\\alpha$ 是 Diophantine 数（等价地，不是 Liouville 数）。对 $\\alpha_*=\\sqrt2-1$，最小允许损失 $s=1$，并且取到。$C^m$ 估计成立，实际上只需 $C^{m+3}$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 6346,
+            "end_utf8": 6528,
+            "quote": "**截断误差估计。** $u-u_N$ 只含频率 $|k|>N$。对这些 $k$ 有 $\\langle k\\rangle^2=1+|k|^2>1+N^2$，所以当 $q\\ge0$ 时 $\\langle k\\rangle^{-2q}\\le(1+N^2)^{-q}$。于是",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 6866,
+            "end_utf8": 6899,
+            "quote": "## S3 固定频带内改变方向",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 12134,
+            "end_utf8": 12332,
+            "quote": "2. **最小损失。** 由此 $\\alpha_*$ 满足 (D)，$N_{\\alpha_*}$ 在 $C^\\infty_0$ 上可逆。结合引理 D，$S_{\\alpha_*}=[1,\\infty)$。所以**最小允许损失是 $s=1$，并且取到**：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 13494,
+            "end_utf8": 13522,
+            "quote": " 与所设不等式矛盾。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 15122,
+            "end_utf8": 15178,
+            "quote": "与 (P5) 矛盾。这对同一个固定的 $F$ 成立。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 276,
+            "end_utf8": 527,
+            "quote": "- S4：所列目标全部成立。唯一光滑可解当且仅当 $\\alpha$ 是 Diophantine 数（等价地，不是 Liouville 数）。对 $\\alpha_*=\\sqrt2-1$，最小允许损失 $s=1$，并且取到。$C^m$ 估计成立，实际上只需 $C^{m+3}$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 6346,
+            "end_utf8": 6528,
+            "quote": "**截断误差估计。** $u-u_N$ 只含频率 $|k|>N$。对这些 $k$ 有 $\\langle k\\rangle^2=1+|k|^2>1+N^2$，所以当 $q\\ge0$ 时 $\\langle k\\rangle^{-2q}\\le(1+N^2)^{-q}$。于是",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 6866,
+            "end_utf8": 6899,
+            "quote": "## S3 固定频带内改变方向",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 12134,
+            "end_utf8": 12332,
+            "quote": "2. **最小损失。** 由此 $\\alpha_*$ 满足 (D)，$N_{\\alpha_*}$ 在 $C^\\infty_0$ 上可逆。结合引理 D，$S_{\\alpha_*}=[1,\\infty)$。所以**最小允许损失是 $s=1$，并且取到**：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 13494,
+            "end_utf8": 13522,
+            "quote": " 与所设不等式矛盾。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 15122,
+            "end_utf8": 15178,
+            "quote": "与 (P5) 矛盾。这对同一个固定的 $F$ 成立。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为100/100；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 276,
+            "end_utf8": 527,
+            "quote": "- S4：所列目标全部成立。唯一光滑可解当且仅当 $\\alpha$ 是 Diophantine 数（等价地，不是 Liouville 数）。对 $\\alpha_*=\\sqrt2-1$，最小允许损失 $s=1$，并且取到。$C^m$ 估计成立，实际上只需 $C^{m+3}$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 6346,
+            "end_utf8": 6528,
+            "quote": "**截断误差估计。** $u-u_N$ 只含频率 $|k|>N$。对这些 $k$ 有 $\\langle k\\rangle^2=1+|k|^2>1+N^2$，所以当 $q\\ge0$ 时 $\\langle k\\rangle^{-2q}\\le(1+N^2)^{-q}$。于是",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 6866,
+            "end_utf8": 6899,
+            "quote": "## S3 固定频带内改变方向",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 12134,
+            "end_utf8": 12332,
+            "quote": "2. **最小损失。** 由此 $\\alpha_*$ 满足 (D)，$N_{\\alpha_*}$ 在 $C^\\infty_0$ 上可逆。结合引理 D，$S_{\\alpha_*}=[1,\\infty)$。所以**最小允许损失是 $s=1$，并且取到**：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 13494,
+            "end_utf8": 13522,
+            "quote": " 与所设不等式矛盾。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GP002-A1/attempt-1/response.md",
+            "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+            "start_utf8": 15122,
+            "end_utf8": 15178,
+            "quote": "与 (P5) 矛盾。这对同一个固定的 $F$ 成立。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "473819b9b9857e5b9c7760389a82a221594b52b26593e54c96e877637d318f7d",
+    "mathematical_judgments_changed": false
+  }
+}

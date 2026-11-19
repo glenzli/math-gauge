@@ -25,6 +25,22 @@ class Links(HTMLParser):
             self.resources.append(a.get('src') or a['href'])
 
 
+class RelativeEvidenceCitationTests(unittest.TestCase):
+    def test_workspace_citations_are_text_but_documents_and_delivered_files_stay_linked(self):
+        renderer=EvidenceRenderer()
+        local=['../work/source.md','formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520','original-task.md','original-answer.md']
+        valid=['https://example.com/theorem','../docs/method.md','../../results/v1.0.0/model/run/artifacts/Main.lean','attachment.lean','#statement']
+        text='\n\n'.join(f'[Reference {i}]({target})' for i,target in enumerate(local+valid))
+        page=renderer.finish({'fixture':renderer.add(text)})['fixture']
+        links=Links(page).links
+        for target in local:
+            self.assertNotIn(target,links)
+            self.assertIn('title="'+target+'"',page)
+        for i in range(len(local+valid)):
+            self.assertIn('Reference '+str(i),page)
+        self.assertEqual(links,valid)
+
+
 class SourceLinkTests(unittest.TestCase):
     def test_cold_or_alias_link_uses_original_git_location(self):
         with tempfile.TemporaryDirectory() as name:

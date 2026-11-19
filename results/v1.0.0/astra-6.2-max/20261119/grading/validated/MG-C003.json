@@ -1,0 +1,2452 @@
+{
+  "schema": "math-gauge.explicit-engineering-group-review/v1",
+  "case_id": "MG-C003",
+  "shared_group_validation": "passed",
+  "reviewer": "gpt-6-astra; independent AI review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "native_final_sha256": "ed40b3371f1730cb20a3a92462d736508845ca51deebe56cd6ffa3968cf9c350",
+  "explicit_engineering_attachment_sha256": "18746082828b3d914e58dcecc002135c095aebb5b02954d27a2d21c524b2baf3",
+  "source_repaired": false,
+  "validation_method": "Shared _validate_group_review against exact named original attachment and hash-bound independent compilation; native final and runner record remain unchanged.",
+  "diagnostic": {
+    "stage_count": 92,
+    "stage_passes": 92,
+    "completed_weight": 92,
+    "total_weight": 92,
+    "root_failures": [],
+    "problem_defect_flags": [],
+    "stages": [
+      {
+        "stage_id": "CH03-D01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.Const"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.Ident"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.Active"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.constSet"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.identSet"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.activeSet"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.componentSets"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.partition"
+          }
+        ],
+        "notes": "Const has priority; Ident explicitly excludes Const, and Active is the complement, giving a disjoint exhaustive partition."
+      },
+      {
+        "stage_id": "CH03-D02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiber"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.subdist"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.subzero"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.subdistMaximum"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.blocks"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.fiberEmpty"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberEnds"
+          }
+        ],
+        "notes": "Arbitrary target fibers use the actual output family; finite sup is bridged to a maximum and zero iff every selected distance vanishes, including empty-family behavior."
+      },
+      {
+        "stage_id": "CH03-D03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.atImage"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.ontoImage"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.pairs"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.eqRel"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.zeroRel"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.relationFiber"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.imageSetoid"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.ImageQuot"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.atClass"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.classEq"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.finer"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.finerFibers"
+          }
+        ],
+        "notes": "Actual image and surjective image map precede point and zero relations; the quotient uses the image zero setoid, with refinement equivalent to fiber inclusion."
+      },
+      {
+        "stage_id": "CH03-D04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.legal"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.radius"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.legalBall"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.radiusEmpty"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.radiusSingle"
+          }
+        ],
+        "notes": "Legal radii are strictly positive and finite; radius is their ENNReal supremum, including empty and singleton endpoint lemmas."
+      },
+      {
+        "stage_id": "CH03-D05",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.uniform"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.matrix"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.radiusNotation"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.uniform_le"
+          }
+        ],
+        "notes": "Uniform radius is the infimum over the independently specified anchor set; matrix indexing is output j, input i, with evaluation on U retained."
+      },
+      {
+        "stage_id": "CH03-D06",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.Region"
+          },
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.Scale"
+          },
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.diam"
+          },
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.diamScale"
+          },
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.bits"
+          },
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.channel"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.channelTable"
+          }
+        ],
+        "notes": "Region is nonempty; Scale is arbitrary monotone scale, diameter is a concrete instance, and both strict/nonstrict Boolean comparisons are represented."
+      },
+      {
+        "stage_id": "CH03-D07",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.cover"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.entropy"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.Net"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.netBalls"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.boundedAtAll"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.boundedNets"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.covering_number_attained"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.covering_number_empty"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.log2_ereal"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy_nonneg"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy_empty"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy"
+          },
+          {
+            "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+            "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy_eq_metric_entropy"
+          }
+        ],
+        "notes": "Internal centers remain in U; the aliases and frozen declarations supply attainment, infinity, empty and entropy endpoints without substituting external covers."
+      },
+      {
+        "stage_id": "CH03-D08",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.good"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.delta"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.mapDelta"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.mapDelta_formula"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.singletonDelta"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.deltaBranches"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.deltaSigns"
+          }
+        ],
+        "notes": "Good subtraction requires at least one finite operand; mapDelta retains nonempty sets/families and positive finite scale, avoiding infinity minus infinity."
+      },
+      {
+        "stage_id": "CH03-P01-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.zeroRow"
+          }
+        ],
+        "notes": "Constant outputs give a zero row on every input pair."
+      },
+      {
+        "stage_id": "CH03-P01-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.zeroEntry"
+          }
+        ],
+        "notes": "A constant output forces the corresponding co-Lipschitz entry K j i to zero when input component j has a positive-distance pair in U."
+      },
+      {
+        "stage_id": "CH03-P01-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.identDist"
+          }
+        ],
+        "notes": "Identity output preserves the corresponding input distance and nonconstancy is retained."
+      },
+      {
+        "stage_id": "CH03-P02-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.compActive"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.compSets"
+          }
+        ],
+        "notes": "Composition evaluates the outer operator on the actual inner image; active-set inclusion follows pointwise."
+      },
+      {
+        "stage_id": "CH03-P02-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.chain"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.stepActive"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.chain_order"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.chain_domain"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.emptyActive"
+          },
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.chainActive"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.prefixOp"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.prefixDomains"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.finiteActive"
+          }
+        ],
+        "notes": "Both list-chain and arbitrary natural finite-prefix operators are provided, including zero length and exact prefix domains."
+      },
+      {
+        "stage_id": "CH03-P02-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.compIdent"
+          }
+        ],
+        "notes": "Identity composition includes the needed nonconstant condition; it does not silently reclassify a constant as Ident."
+      },
+      {
+        "stage_id": "CH03-P03-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.d"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.f"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.U"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.model"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.domain"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.image_eq"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.components"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Swap.classifications"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.strictInclusions"
+          }
+        ],
+        "notes": "Option Bool supplies exactly two nonabsorbing points and an absorbing failure point; the swap realizes both strict active-set inclusions."
+      },
+      {
+        "stage_id": "CH03-P04-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.outerConst"
+          }
+        ],
+        "notes": "Constancy propagates through the outer map on its actual evaluation image."
+      },
+      {
+        "stage_id": "CH03-P04-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.P"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.cardinality"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.key"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.d"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.first"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.lastOp"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.U"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.model"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Seven.exampleData"
+          }
+        ],
+        "notes": "Option of six ordinary points gives seven total points; the pseudometric merges only p and q and the actual partial maps establish the countermodel."
+      },
+      {
+        "stage_id": "CH03-P05-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.diagConst"
+          }
+        ],
+        "notes": "Diagonal zero implies constant on the evaluation set by the pseudometric triangle relation."
+      },
+      {
+        "stage_id": "CH03-P06-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberTarget"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.subfamilyTarget"
+          }
+        ],
+        "notes": "Fibers depend only on the target zero class, for single and selected output subfamilies."
+      },
+      {
+        "stage_id": "CH03-P06-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberCover"
+          }
+        ],
+        "notes": "Every input lies in a fiber over its actual image."
+      },
+      {
+        "stage_id": "CH03-P06-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberPartition"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.blockPartition"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.subfamilyPartition"
+          }
+        ],
+        "notes": "Nonempty actual-image blocks are deduplicated as a set; overlap entails equality, yielding a partition."
+      },
+      {
+        "stage_id": "CH03-P06-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberInter"
+          }
+        ],
+        "notes": "Selected-family fibers are intersections of individual fibers."
+      },
+      {
+        "stage_id": "CH03-P06-05",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberAnti"
+          }
+        ],
+        "notes": "Enlarging a selected family shrinks its fibers."
+      },
+      {
+        "stage_id": "CH03-P06-06",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.fiberEnds"
+          }
+        ],
+        "notes": "Empty-family and singleton-family formulas are explicit."
+      },
+      {
+        "stage_id": "CH03-P06-07",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.identFiber"
+          }
+        ],
+        "notes": "Identity fibers agree with the relevant input zero classes."
+      },
+      {
+        "stage_id": "CH03-P06-08",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Components.lean",
+            "name": "MG.constFiber"
+          }
+        ],
+        "notes": "Constant components have the whole-domain or empty target fiber as appropriate."
+      },
+      {
+        "stage_id": "CH03-P07-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.transforms"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.pointFactor"
+          }
+        ],
+        "notes": "The point relation equivalence is proved through the full transform equation."
+      },
+      {
+        "stage_id": "CH03-P07-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.atImage"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.ontoImage"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.descend"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.pointFactor"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.emptyTransform"
+          }
+        ],
+        "notes": "Surjectivity onto the actual image constructs the descent map; the empty image is handled separately."
+      },
+      {
+        "stage_id": "CH03-P07-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.bothPoint"
+          }
+        ],
+        "notes": "Two point factorizations are equivalent to equality of induced point relations."
+      },
+      {
+        "stage_id": "CH03-P07-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.factorLip"
+          }
+        ],
+        "notes": "Positive finite K and finite L imply factor Lipschitz L/K on the actual image; no ambient separation or finite-distance restriction is imposed."
+      },
+      {
+        "stage_id": "CH03-P08-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.atClass"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.ontoClass"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.classEq"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.quotTransforms"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.quotFactor"
+          }
+        ],
+        "notes": "The actual-image quotient is surjected onto by atClass; equality of classes and the full factor formula establish descent."
+      },
+      {
+        "stage_id": "CH03-P08-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.bothQuot"
+          }
+        ],
+        "notes": "Mutual quotient factorizations are equivalent to equality of zero relations."
+      },
+      {
+        "stage_id": "CH03-P08-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.separatesOn"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.sepRel"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.separatedFactors"
+          }
+        ],
+        "notes": "Separation is required only on actual images; it identifies point and zero relations and gives the claimed comparison."
+      },
+      {
+        "stage_id": "CH03-P09-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.finerRefl"
+          },
+          {
+            "file": "Ch3/Factor.lean",
+            "name": "MG.finerTrans"
+          }
+        ],
+        "notes": "Refinement is reflexive and transitive as relation inclusion."
+      },
+      {
+        "stage_id": "CH03-P09-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.finiteFiner"
+          }
+        ],
+        "notes": "Finite chains use Fin(n+1), retaining the natural endpoint relation."
+      },
+      {
+        "stage_id": "CH03-P09-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.strictFiniteFiner"
+          }
+        ],
+        "notes": "The explicit finite witness proves strict refinement, rather than only inclusion."
+      },
+      {
+        "stage_id": "CH03-P10-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.extend"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.extended"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readDist"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readMetric"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.read_points"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.W"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.U"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.v"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.f"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.domain"
+          }
+        ],
+        "notes": "Option Real and an absorbing extension realize the usual metric readout and the two-sided punctured interval domain."
+      },
+      {
+        "stage_id": "CH03-P10-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.across"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.legal_iff"
+          },
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.pointValue"
+          }
+        ],
+        "notes": "For every nonzero y in that domain, legal radii are exactly 0<r<=abs y and the point radius is abs y."
+      },
+      {
+        "stage_id": "CH03-P10-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.uniformZero"
+          }
+        ],
+        "notes": "Anchors approaching zero give uniform radius zero despite each positive point radius."
+      },
+      {
+        "stage_id": "CH03-P11-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.constSub"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.constSubFiber"
+          }
+        ],
+        "notes": "Constant selected outputs give whole-domain fibers."
+      },
+      {
+        "stage_id": "CH03-P11-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.constRadii"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.subfamilyConstant"
+          }
+        ],
+        "notes": "Constancy yields infinite point/uniform radii for the specified family."
+      },
+      {
+        "stage_id": "CH03-P11-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.channels"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.channelsMetric"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Swap.inputAndOutput"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.Swap.infiniteInput"
+          }
+        ],
+        "notes": "The finite swap model shows the requested converse failure with explicit input/output channels, including infinite input threshold."
+      },
+      {
+        "stage_id": "CH03-P12-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.identBase"
+          }
+        ],
+        "notes": "Identity zero balls reproduce the base pseudometric zero behavior."
+      },
+      {
+        "stage_id": "CH03-P12-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.identRadius"
+          }
+        ],
+        "notes": "The identity-radius statement keeps the exact zero-neighborhood condition; it does not assume a separated metric."
+      },
+      {
+        "stage_id": "CH03-P13-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.radiusInf"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.finiteMin"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.pointMinimum"
+          }
+        ],
+        "notes": "Finite nonempty output families yield the infimum formula and an attained finite-family minimum via the radius criterion."
+      },
+      {
+        "stage_id": "CH03-P13-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.uniformInf"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.matrixMinimum"
+          }
+        ],
+        "notes": "The uniform/matrix formula follows by commuting infima with the anchor domain retained."
+      },
+      {
+        "stage_id": "CH03-P13-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.uniformAnti"
+          }
+        ],
+        "notes": "Increasing the family weakens the legal condition in the correct direction and decreases uniform radius."
+      },
+      {
+        "stage_id": "CH03-P14-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.cutFiber"
+          }
+        ],
+        "notes": "A zero fiber is characterized by the open radius cut."
+      },
+      {
+        "stage_id": "CH03-P14-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.extractRadius"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.cutPoint"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.cutSymm"
+          }
+        ],
+        "notes": "The radius extraction equivalence handles both 0 and top, not merely attained finite radii."
+      },
+      {
+        "stage_id": "CH03-P14-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.cutComp"
+          }
+        ],
+        "notes": "The cut characterization composes through the actual image."
+      },
+      {
+        "stage_id": "CH03-P15-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.compZeroRadius"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.compositeBounds"
+          }
+        ],
+        "notes": "Zero-preserving outer maps give the composite radius lower bound on the actual intermediate image."
+      },
+      {
+        "stage_id": "CH03-P15-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.compLipRadius"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.pullbackEndpoints"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.compositeBounds"
+          }
+        ],
+        "notes": "Positive finite Lipschitz K gives the divided radius bound; zero and top endpoint cases are explicitly supplied."
+      },
+      {
+        "stage_id": "CH03-P16-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.fourTypes"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.channelTable"
+          }
+        ],
+        "notes": "All four strict/nonstrict scale/radius Boolean channel combinations are exhaustively classified."
+      },
+      {
+        "stage_id": "CH03-P16-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.scaleChannels"
+          }
+        ],
+        "notes": "The scale monotonicity implications follow the actual comparison inequalities."
+      },
+      {
+        "stage_id": "CH03-P16-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.radiusChannels"
+          }
+        ],
+        "notes": "The radius monotonicity implications preserve strict versus nonstrict comparisons."
+      },
+      {
+        "stage_id": "CH03-P17-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.scaleRestrict"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.restrictScaleRadius"
+          }
+        ],
+        "notes": "Restriction decreases arbitrary monotone scale by its stated axiom."
+      },
+      {
+        "stage_id": "CH03-P17-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.restrictRadius"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.restrictScaleRadius"
+          }
+        ],
+        "notes": "Restricting the evaluation region weakens legal-ball demands, hence increases point radius."
+      },
+      {
+        "stage_id": "CH03-P17-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.restrictUniform"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.restrictScaleRadius"
+          }
+        ],
+        "notes": "Restricting evaluation and anchor regions gives the claimed uniform-radius comparison."
+      },
+      {
+        "stage_id": "CH03-P17-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/RealTools.lean",
+            "name": "MG.realDiam"
+          },
+          {
+            "file": "Ch3/RealTools.lean",
+            "name": "MG.pairDiam"
+          },
+          {
+            "file": "Ch3/RealTools.lean",
+            "name": "MG.scaleCounter"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readMetric"
+          }
+        ],
+        "notes": "A concrete real diameter example witnesses the requested failure; the scale is not treated as automatically arbitrary-domain invariant."
+      },
+      {
+        "stage_id": "CH03-P18-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.uniform_le"
+          },
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.cutUniform"
+          }
+        ],
+        "notes": "The uniform infimum bounds each anchor radius, giving the uniform cut implication."
+      },
+      {
+        "stage_id": "CH03-P18-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.separation"
+          }
+        ],
+        "notes": "The uniform threshold forces separation at every allowed anchor/pair."
+      },
+      {
+        "stage_id": "CH03-P18-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.separationWitness"
+          }
+        ],
+        "notes": "An explicit witness establishes the sharp obstruction to the stronger separation statement."
+      },
+      {
+        "stage_id": "CH03-P19-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.thresholdBall"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.coverConstraint"
+          }
+        ],
+        "notes": "A threshold ball maps inside an output zero fiber."
+      },
+      {
+        "stage_id": "CH03-P19-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.pushNet"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.pushCover"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.thresholdCover"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.coverConstraint"
+          }
+        ],
+        "notes": "Finite internal centers are pushed through f to actual output centers, yielding the cover-number bound."
+      },
+      {
+        "stage_id": "CH03-P19-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.logStrict"
+          },
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.entropyOrder"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.thresholdEntropy"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.coverConstraint"
+          }
+        ],
+        "notes": "Strict logarithmic monotonicity includes zero/top endpoints and converts the cover estimate to the required entropy statement."
+      },
+      {
+        "stage_id": "CH03-P20-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Step.lean",
+            "name": "MG.Step.noUniformCover"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Step.pointwiseCoverFails"
+          }
+        ],
+        "notes": "The punctured-step example defeats any proposed positive uniform cover scale, with a=min(1,tau.toReal/4) controlling the witness."
+      },
+      {
+        "stage_id": "CH03-P21-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Scale.lean",
+            "name": "MG.smallDomain"
+          }
+        ],
+        "notes": "A small-domain threshold puts all evaluated points into the required zero fiber."
+      },
+      {
+        "stage_id": "CH03-P21-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.smallCover"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.constCover"
+          }
+        ],
+        "notes": "The small-domain image has an internal one-center cover; the constant case is also explicit."
+      },
+      {
+        "stage_id": "CH03-P22-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.finiteCover"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.finiteLog"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.finiteData"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.subfamilyData"
+          }
+        ],
+        "notes": "FiniteCover/finiteLog and finiteData prove the nonempty finite-set results; subfamilyData gives the stated subfamily transfer."
+      },
+      {
+        "stage_id": "CH03-P23-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.constDelta"
+          }
+        ],
+        "notes": "Constant-image entropy is zero and delta equals the input entropy, including infinite input entropy."
+      },
+      {
+        "stage_id": "CH03-P23-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.pushNet"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.pullNet"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.identCover"
+          }
+        ],
+        "notes": "Internal nets are pushed and pulled on the actual image for equality of covering numbers."
+      },
+      {
+        "stage_id": "CH03-P23-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.identDelta"
+          }
+        ],
+        "notes": "Identity entropy increment is zero under the explicit good-subtraction domain."
+      },
+      {
+        "stage_id": "CH03-P24-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.lipCenters"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.lipCover"
+          }
+        ],
+        "notes": "Actual-image internal centers and the Lipschitz inequality give the scaled cover estimate."
+      },
+      {
+        "stage_id": "CH03-P24-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.divScale"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.lipDelta"
+          }
+        ],
+        "notes": "The divided-scale entropy increment estimate uses total boundedness to justify finite operands."
+      },
+      {
+        "stage_id": "CH03-P25-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Correspondence.lean",
+            "name": "MG.coCenters"
+          },
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.coCover"
+          }
+        ],
+        "notes": "Co-Lipschitz pullback centers remain in the source and give the reverse cover inequality."
+      },
+      {
+        "stage_id": "CH03-P25-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Entropy.lean",
+            "name": "MG.coDelta"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.coEntropyBound"
+          }
+        ],
+        "notes": "The entropy comparison permits infinite output entropy and delta=-infinity, with the subtraction domain checked."
+      },
+      {
+        "stage_id": "CH03-P26-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readMetric"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.read_points"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.f"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.U"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.domain"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.firstStep"
+          }
+        ],
+        "notes": "The affine 2x-1 operator is extended by bottom and evaluated on {0,1}; the first readout/fiber step is exact."
+      },
+      {
+        "stage_id": "CH03-P26-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.domain"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.secondStep"
+          }
+        ],
+        "notes": "The second iterate and its precise effective domain are verified."
+      },
+      {
+        "stage_id": "CH03-P26-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Affine.sameValue"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Affine.commonFiber"
+          }
+        ],
+        "notes": "The common fiber calculation uses the actual affine values and preserves the shared bottom boundary."
+      },
+      {
+        "stage_id": "CH03-P27-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.pointGap"
+          }
+        ],
+        "notes": "A positive co-Lipschitz entry reflects output zero distance; no positive input distance can lie strictly below the point radius."
+      },
+      {
+        "stage_id": "CH03-P27-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Radius.lean",
+            "name": "MG.uniformGap"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.gapDisjoint"
+          }
+        ],
+        "notes": "The uniform gap yields a uniform bound and the required disjointness statement."
+      },
+      {
+        "stage_id": "CH03-P28-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readMetric"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.f"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.U"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.domain"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.translated"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.partitionId"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.partitionShift"
+          }
+        ],
+        "notes": "Translation on the specified finite domain yields two explicitly different fiber partitions."
+      },
+      {
+        "stage_id": "CH03-P28-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.inputCount"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.outputCount"
+          },
+          {
+            "file": "Ch3/Readout.lean",
+            "name": "MG.Translation.entropyChange"
+          }
+        ],
+        "notes": "At epsilon=3/2 the internal cover changes from two to one and the entropy change is exactly one."
+      },
+      {
+        "stage_id": "CH03-P29-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.f"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.domain"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Floor.fourDomains"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.channel_eq"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.firstInterval"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readMetric"
+          }
+        ],
+        "notes": "The first floor interval has the stated diameter and infinite radius, giving channel 11."
+      },
+      {
+        "stage_id": "CH03-P29-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.crosses"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.jumpInterval"
+          }
+        ],
+        "notes": "The jump interval crosses an integer and has zero uniform radius, giving channel 10."
+      },
+      {
+        "stage_id": "CH03-P29-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.pairValue"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.pairType"
+          }
+        ],
+        "notes": "The two-point domain has positive input gap, exact radius two and channel 01."
+      },
+      {
+        "stage_id": "CH03-P29-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.crosses"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.wholeInterval"
+          }
+        ],
+        "notes": "The whole interval has diameter two and zero uniform radius, giving channel 00."
+      },
+      {
+        "stage_id": "CH03-P29-05",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.counterexample"
+          },
+          {
+            "file": "Ch3/Floor.lean",
+            "name": "MG.Floor.pairValue"
+          }
+        ],
+        "notes": "The explicit pair/crossing examples establish the claimed converse failure with their precise domains."
+      },
+      {
+        "stage_id": "CH03-P30-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.S"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.U"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.carrier"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.size"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.countSmall"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.countMiddle"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.countLarge"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.counts"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.midpoint"
+          },
+          {
+            "file": "Ch3/Models.lean",
+            "name": "MG.readMetric"
+          }
+        ],
+        "notes": "The four-point carrier has exact internal cover pieces 4/2/1 with endpoints 1 and 2; an external midpoint is explicitly excluded."
+      },
+      {
+        "stage_id": "CH03-P30-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.f"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.g"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.outside"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Rearrange.table"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.domain"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.imageF"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.imageG"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.sameCounts"
+          }
+        ],
+        "notes": "Both partial rearrangement operators have domain and image equal to the specified four-point set, so the image counts agree."
+      },
+      {
+        "stage_id": "CH03-P30-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.scalar"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.optimalF"
+          },
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.optimalG"
+          }
+        ],
+        "notes": "The two optimal Lipschitz constants are respectively 1 for f and 3 for g, with the actual input pair 0,1 establishing both lower bounds."
+      },
+      {
+        "stage_id": "CH03-P30-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Ch3/Rearrange.lean",
+            "name": "MG.Rearrange.numericalBounds"
+          },
+          {
+            "file": "Ch3/Chapter.lean",
+            "name": "MG.Rearrange.scales"
+          }
+        ],
+        "notes": "At scale 7/4 the two theoretical bounds are 2 versus 4 while the true count is 2; all required numerical scales are exact."
+      }
+    ]
+  },
+  "lean_report_sha256": "fe920862fc1e90cab1caa380a1f4fd341335be02da930365f633a3a8b5493152",
+  "created_utc": "2026-11-19T08:16:03.313995+00:00"
+}

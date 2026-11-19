@@ -1,0 +1,335 @@
+{
+  "complete_goals": [
+    {
+      "id": "S1",
+      "attained": true,
+      "reason": "按 Fourier 模逐系数除以非零乘子，有限非空频带的最小小除数给确切算子范数，达到最小值的单模实际取等。",
+      "evidence": [
+        {
+          "line_start": 3,
+          "line_end": 11,
+          "utf8_start": 29,
+          "utf8_end": 463,
+          "quote": "记 \\(e_k(y)=e^{2\\pi i k\\cdot y}\\)，\\(d_\\alpha(k)=\\alpha k_1+k_2\\)，以及 \\(K_N=\\{k\\in\\mathbb Z^2:0<|k|\\le N\\}\\)。在归一化环面上，\\(e_k\\) 构成 Fourier 正交归一基，且\n\\[\nN_\\alpha e_k=2\\pi i\\,d_\\alpha(k)e_k.\n\\]\n由 \\(\\alpha\\) 无理，\\(d_\\alpha(k)\\) 仅在 \\(k=0\\) 时为零。因此 \\(N_\\alpha\\) 在 \\(H_N\\) 上的逆为\n\\[\n(N_\\alpha|_{H_N})^{-1}F\n=\\sum_{k\\in K_N}\\frac{\\widehat F(k)}{2\\pi i\\,d_\\alpha(k)}e_k.\n\\]\n"
+        },
+        {
+          "line_start": 13,
+          "line_end": 19,
+          "utf8_start": 464,
+          "utf8_end": 838,
+          "quote": "对每个 \\(r\\in\\mathbb R\\)，精确范数为\n\\[\n\\boxed{\\displaystyle\n\\big\\|(N_\\alpha|_{H_N})^{-1}\\big\\|_{H^r\\to H^r}\n=\\frac{1}{2\\pi\\min_{k\\in K_N}|d_\\alpha(k)|}.}\n\\]\n在 \\(H^r\\) 范数的平方和中，每一项至多乘以右端的平方，故得到上界。因 \\(N\\ge1\\)，\\(K_N\\) 有限且非空。取达到最小值的 \\(k\\)，单个模式 \\(F=e_k\\) 即取得等号。\n"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "attained": true,
+      "reason": "分部积分及二维导数级数绝对一致收敛给实际光滑解，实 r 与 q≥0 的截断估计按模平方求和，常数和幂次准确。",
+      "evidence": [
+        {
+          "line_start": 29,
+          "line_end": 35,
+          "utf8_start": 988,
+          "utf8_end": 1752,
+          "quote": "对任意光滑 \\(g\\) 和整数 \\(\\ell\\ge0\\)，有\n\\[\n|\\widehat g(k)|\\le A_\\ell\\|g\\|_{C^\\ell}\\langle k\\rangle^{-\\ell}. \\tag{2}\n\\]\n事实上，对 \\(k\\ne0\\) 选取满足 \\(|k_j|\\ge |k|/\\sqrt2\\) 的坐标，沿该坐标分部积分 \\(\\ell\\) 次即可。反过来，若一个系数列对每个 \\(\\ell\\) 都是 \\(O(\\langle k\\rangle^{-\\ell})\\)，则其 Fourier 级数定义光滑函数。对任意 \\(m\\) 阶导数取 \\(\\ell=m+3\\)，导数级数即由 \\(\\sum_{k\\in\\mathbb Z^2}\\langle k\\rangle^{-3}<\\infty\\) 绝对一致控制。\n\n题设给出 \\(|d_\\alpha(k)|^{-1}\\le c^{-1}\\langle k\\rangle^s\\)，故 (1) 中的系数仍快速衰减，定义了光滑零均值函数 \\(u\\)。逐项作用 \\(N_\\alpha\\) 得 \\(N_\\alpha u=F\\)，而每个非零模式都由 (1) 唯一确定。\n"
+        },
+        {
+          "line_start": 37,
+          "line_end": 50,
+          "utf8_start": 1753,
+          "utf8_end": 2244,
+          "quote": "由 S1，\\(u_N\\) 正是 \\(u\\) 在 \\(K_N\\) 上的截断。对任意 \\(r\\in\\mathbb R\\)、\\(q\\ge0\\)，\n\\[\n\\begin{aligned}\n\\|u-u_N\\|_{H^r}^2\n&=\\sum_{|k|>N}\n  \\frac{\\langle k\\rangle^{2r}|\\widehat F(k)|^2}\n       {4\\pi^2|d_\\alpha(k)|^2}\\\\\n&\\le (2\\pi c)^{-2}\\sum_{|k|>N}\n  \\langle k\\rangle^{-2q}\\langle k\\rangle^{2(r+s+q)}\n  |\\widehat F(k)|^2\\\\\n&\\le (2\\pi c)^{-2}(1+N^2)^{-q}\\|F\\|_{H^{r+s+q}}^2.\n\\end{aligned}\n\\]\n最后一步使用了 \\(|k|>N\\) 和 \\(q\\ge0\\)。开平方即得所要求的估计。\n"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "attained": true,
+      "reason": "由两个逆乘子的差得到正确乘积分母，使用固定频带及两边共同 δ，把逐模界直接转成 H^r 范数界。",
+      "evidence": [
+        {
+          "line_start": 54,
+          "line_end": 66,
+          "utf8_start": 2280,
+          "utf8_end": 2717,
+          "quote": "对 \\(k\\in K_N\\)，由 S1 的逆公式，\n\\[\n\\big|\\widehat{u_\\alpha-u_\\beta}(k)\\big|\n=\\frac{|\\alpha-\\beta|\\,|k_1|}\n       {2\\pi|d_\\alpha(k)d_\\beta(k)|}\\,|\\widehat F(k)|\n\\le \\frac{|\\alpha-\\beta|N}{2\\pi\\delta^2}|\\widehat F(k)|.\n\\]\n频带外两解的系数都为零。乘以 \\(\\langle k\\rangle^r\\) 后取 \\(\\ell^2\\) 范数，得到\n\\[\n\\boxed{\\displaystyle\n\\|u_\\alpha-u_\\beta\\|_{H^r}\n\\le \\frac{|\\alpha-\\beta|N}{2\\pi\\delta^2}\\|F\\|_{H^r}.}\n\\]\n"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "attained": true,
+      "reason": "用单模与逐模和证明全部允许损失的充要判据，再用一个光滑坏右端证无多项式界时不满射。连分数的相邻基及误差比较证明端点刻画；二次方向的 q 递推给一阶恰取到，保留二维可和性证明 C^(m+4)→C^m。",
+      "evidence": [
+        {
+          "line_start": 79,
+          "line_end": 107,
+          "utf8_start": 3142,
+          "utf8_end": 4747,
+          "quote": "令\n\\[\nD_s(\\alpha)=\\inf_{k\\ne0}\\langle k\\rangle^s|d_\\alpha(k)|.\n\\]\n若题中的 Sobolev 估计对某个 \\(r\\) 成立，代入 \\(u=e_k\\) 并约去 \\(\\langle k\\rangle^r\\)，得到\n\\[\n1\\le 2\\pi C_{\\alpha,r,s}\\langle k\\rangle^s|d_\\alpha(k)|\n\\qquad(k\\ne0).\n\\]\n故 \\(D_s(\\alpha)>0\\)。反之，若 \\(D_s(\\alpha)>0\\)，逐模式估计并求和即得\n\\[\n\\|u\\|_{H^r}\\le \\frac{1}{2\\pi D_s(\\alpha)}\n                  \\|N_\\alpha u\\|_{H^{r+s}}\n\\qquad(r\\in\\mathbb R).\n\\]\n单模式检验也说明，此处的常数对每个 \\(r\\) 都是最优的。\n\n周期性保证 \\(N_\\alpha u\\) 的均值为零。无理性保证零均值解的唯一性，因为所有非零模式都必须满足 (1)。只要某个有限 \\(s\\) 满足 \\(D_s(\\alpha)>0\\)，S2 就以 \\(c=D_s(\\alpha)\\) 对每个光滑零均值右端构造出解。\n\n若所有有限 \\(s\\) 都有 \\(D_s(\\alpha)=0\\)，则可选取 \\(|k_j|\\) 严格递增的频率，使\n\\[\n0<|d_\\alpha(k_j)|\\le\\langle k_j\\rangle^{-j}\\qquad(j\\ge1).\n\\]\n这是因为 \\(D_j(\\alpha)=0\\)，而任何有限个非零频率上 \\(\\langle k\\rangle^j|d_\\alpha(k)|\\) 的最小值都为正。定义一个 \\(F\\)，令\n\\[\n\\widehat F(k_j)=2\\pi i\\,d_\\alpha(k_j),\\qquad\n\\widehat F(k)=0\\quad\\bigl(k\\notin\\{k_j:j\\ge1\\}\\bigr).\n\\]\n对每个固定的 \\(\\ell\\)，从 \\(j\\ge\\ell\\) 起有 \\(\\langle k_j\\rangle^\\ell|\\widehat F(k_j)|\\le2\\pi\\)。故该系数列快速衰减，\\(F\\) 光滑且零均值。任何光滑解却都须满足 \\(\\widehat u(k_j)=1\\) 对所有 \\(j\\) 成立，这与 \\(u\\in L^2\\) 的 Fourier 系数平方可和矛盾。这就证明了整体可逆性等价于存在有限 \\(s\\) 使 \\(D_s(\\alpha)>0\\)。\n"
+        },
+        {
+          "line_start": 130,
+          "line_end": 149,
+          "utf8_start": 5830,
+          "utf8_end": 7064,
+          "quote": "为证明全部损失的判据 (3)，记 \\(\\varepsilon_j=q_j\\alpha-p_j\\)。实无理数的简单连分数收敛分数满足\n\\[\n\\frac{1}{q_{j+1}+q_j}<|\\varepsilon_j|<\\frac{1}{q_{j+1}},\n\\qquad\n|Q\\alpha-P|\\ge|\\varepsilon_j|\n\\quad(P\\in\\mathbb Z,\\ 0<Q<q_{j+1}). \\tag{5}\n\\]\n具体地，若 \\(t=[a_{j+1};a_{j+2},\\ldots]\\) 为连分数尾数，则递推公式给出\n\\(\\varepsilon_j=(-1)^j/(q_jt+q_{j-1})\\)，其中 \\(q_{-1}=0\\)。由 \\(a_{j+1}<t<a_{j+1}+1\\) 及 \\(q_{j+1}=a_{j+1}q_j+q_{j-1}\\) 即得两侧误差界。再由相邻收敛分数的行列式为 \\(\\pm1\\)，可写\n\\[\n(Q,P)=A(q_j,p_j)+B(q_{j+1},p_{j+1}),\\qquad A,B\\in\\mathbb Z.\n\\]\n当 \\(0<Q<q_{j+1}\\) 时，若 \\(B=0\\) 则 \\(A\\ge1\\)。若 \\(B\\ne0\\) 则 \\(A,B\\) 异号，又因 \\(\\varepsilon_j,\\varepsilon_{j+1}\\) 异号，\\(A\\varepsilon_j\\) 与 \\(B\\varepsilon_{j+1}\\) 同号。两种情形都有 \\(|Q\\alpha-P|\\ge|\\varepsilon_j|\\)。\n\n若 (4) 成立，取 \\(Q=q_j,\\ P=p_j\\)，由 (5) 得 \\(c q_j^{-s}\\le|\\varepsilon_j|<1/q_{j+1}\\)，从而 (3) 中的上确界有限。反之，设该上确界为 \\(K<\\infty\\)。对任意 \\(Q\\ge1\\) 取 \\(q_j\\le Q<q_{j+1}\\)，由 (5) 得\n\\[\n\\|Q\\alpha\\|_{\\mathbb R/\\mathbb Z}\n>\\frac1{2q_{j+1}}\\ge\\frac1{2Kq_j^s}\\ge\\frac1{2KQ^s}.\n\\]\n这证明了 (3)。\n"
+        },
+        {
+          "line_start": 151,
+          "line_end": 181,
+          "utf8_start": 7065,
+          "utf8_end": 8539,
+          "quote": "特别地，令\n\\[\n\\tau=\\limsup_{j\\to\\infty}\\frac{\\log q_{j+1}}{\\log q_j}\\in[1,\\infty],\n\\]\n其中只需取 \\(q_j>1\\) 的尾部。则\n\\[\n\\mathcal S(\\alpha)=\n\\begin{cases}\n\\varnothing,&\\tau=\\infty,\\\\\n[\\tau,\\infty),&\\tau<\\infty,\\quad \\sup_j q_{j+1}/q_j^\\tau<\\infty,\\\\\n(\\tau,\\infty),&\\tau<\\infty,\\quad \\sup_j q_{j+1}/q_j^\\tau=\\infty .\n\\end{cases}\n\\]\n事实上，\\(s>\\tau\\) 时最终有 \\(q_{j+1}\\le q_j^s\\)。若 \\(s<\\tau\\)，则存在 \\(\\eta>0\\) 使 \\(q_{j+1}\\ge q_j^{s+\\eta}\\) 无穷多次，而 \\(q_j\\to\\infty\\)。在端点 \\(s=\\tau<\\infty\\) 直接应用 (3)。\n\n### 方向 \\(\\alpha_*=\\sqrt2-1\\)\n\n由 \\(1/\\alpha_*=2+\\alpha_*\\)，其连分数为 \\([0;2,2,\\ldots]\\)。故 \\(q_{j+1}=2q_j+q_{j-1}\\le3q_j\\)，按 (3)，\\(s=1\\) 允许。对 \\(s<1\\)，有 \\(q_{j+1}/q_j^s\\ge q_j^{1-s}\\to\\infty\\)。所以**最小损失为 \\(1\\)，且端点取到**。\n\n所问的 \\(C^m\\) 估计对每个 \\(m\\ge0\\) 都成立。一般地，若 \\(D_s(\\alpha)>0\\)，对整数 \\(L>m+s+2\\)，由 (1)、(2) 有\n\\[\n\\begin{aligned}\n\\|N_\\alpha^{-1}F\\|_{C^m}\n&\\le (2\\pi)^m\\sum_{k\\ne0}\\langle k\\rangle^m|\\widehat u(k)|\\\\\n&\\le \\frac{(2\\pi)^m A_L}{2\\pi D_s(\\alpha)}\n \\|F\\|_{C^L}\\sum_{k\\ne0}\\langle k\\rangle^{m+s-L}.\n\\end{aligned}\n\\]\n最后的级数因 \\(L-m-s>2\\) 在二维收敛，这也给出可逆情形下逆算子在光滑拓扑中的连续性。取 \\(\\alpha=\\alpha_*,\\,s=1,\\,L=m+4\\)，级数即为 \\(\\sum_{k\\ne0}\\langle k\\rangle^{-3}\\)，得到\n\\[\n\\boxed{\\|N_{\\alpha_*}^{-1}F\\|_{C^m}\\le C_m\\|F\\|_{C^{m+4}}.}\n"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "attained": true,
+      "reason": "任意给定邻域取有理共振点及收敛到它的无理参数列，固定实际单模令右范数趋零，严格否定统一 s、C。",
+      "evidence": [
+        {
+          "line_start": 186,
+          "line_end": 193,
+          "utf8_start": 8578,
+          "utf8_end": 9104,
+          "quote": "**不存在这样的 \\(J,s,C\\)。** 任取含 \\(\\alpha_*\\) 的开区间 \\(J\\)，在其中取一个有理数 \\(p/q\\)，其中 \\(q\\ge1\\)。固定 \\(k=(q,-p)\\) 和光滑零均值函数 \\(u=e_k\\)。令 \\(\\alpha_n=p/q+\\sqrt2/n\\)，则每个 \\(\\alpha_n\\) 无理，且充分大时 \\(\\alpha_n\\in J\\)。此时\n\\[\n\\|u\\|_{L^2}=1,\\qquad\n\\|N_{\\alpha_n}u\\|_{H^s}\n=2\\pi\\langle k\\rangle^s\\,|q\\alpha_n-p|\n=2\\pi\\langle k\\rangle^s\\frac{q\\sqrt2}{n}\\longrightarrow0.\n\\]\n因此任意固定的有限 \\(s,C\\) 都会在同一模式 \\(u\\) 上失效。\n"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "attained": true,
+      "reason": "阶乘截断的正误差趋零否定有理性；用同一列频率把小除数本身作为系数构造一个光滑零均值 F，任何解被迫有无限多 Fourier 系数为1，故连 L² 解也不存在。",
+      "evidence": [
+        {
+          "line_start": 197,
+          "line_end": 210,
+          "utf8_start": 9149,
+          "utf8_end": 9614,
+          "quote": "取小数截断\n\\[\nQ_n=10^{n!},\\qquad\nP_n=Q_n\\sum_{\\ell=1}^n10^{-\\ell!}\\in\\mathbb Z,\\qquad\n\\epsilon_n=Q_n\\alpha-P_n.\n\\]\n因尾项的十进制指数从 \\((n+1)!\\) 开始且严格递增，\n\\[\n0<\\alpha-\\frac{P_n}{Q_n}\n\\le\\frac{10}{9}\\,10^{-(n+1)!},\n\\qquad\n0<\\epsilon_n\\le\\frac{10}{9}\\,Q_n^{-n}. \\tag{6}\n\\]\n若 \\(\\alpha=A/B\\) 为有理数，\\(B\\ge1\\)，则 \\(B\\epsilon_n=AQ_n-BP_n\\) 是正整数。但 (6) 给出 \\(B\\epsilon_n\\to0\\)，矛盾。故 \\(\\alpha\\) 无理。\n"
+        },
+        {
+          "line_start": 212,
+          "line_end": 224,
+          "utf8_start": 9615,
+          "utf8_end": 10419,
+          "quote": "令 \\(k_n=(Q_n,-P_n)\\)，构造单个右端\n\\[\n\\boxed{\\displaystyle\nF(y)=2\\pi i\\sum_{n=1}^{\\infty}\\epsilon_n e^{2\\pi i k_n\\cdot y}.}\n\\]\n这些频率互异且非零。由 \\(0<P_n/Q_n<\\alpha\\) 得 \\(|k_n|\\le C Q_n\\)，所以对每个固定的 \\(m\\)，级数第 \\(n\\) 项的任意 \\(m\\) 阶导数都由 \\(C_m Q_n^{m-n}\\) 控制。当 \\(n\\ge m+1\\) 时，该界至多为 \\(C_m Q_n^{-1}\\)，而 \\(\\sum_n Q_n^{-1}<\\infty\\)。因此各阶导数级数绝对一致收敛，且 \\(F\\) 的均值为零。\n\n由于 \\(d_\\alpha(k_n)=\\epsilon_n>0\\)，任何光滑解在每个 \\(k_n\\) 上都必须满足\n\\[\n2\\pi i\\epsilon_n\\,\\widehat u(k_n)=\\widehat F(k_n)=2\\pi i\\epsilon_n,\n\\qquad\\text{故}\\qquad \\widehat u(k_n)=1.\n\\]\n这与光滑函数的 Fourier 系数平方可和矛盾。因此这个 \\(F\\) 没有光滑零均值解。"
+        }
+      ]
+    }
+  ],
+  "content_claims": [
+    {
+      "label": "有限频带最优逆范数",
+      "verdict": "correct",
+      "reason": "达到最小值的非零 Fourier 频率给精确范数，实数阶同向权重相消。",
+      "evidence": [
+        {
+          "line_start": 3,
+          "line_end": 19,
+          "utf8_start": 29,
+          "utf8_end": 838,
+          "quote": "记 \\(e_k(y)=e^{2\\pi i k\\cdot y}\\)，\\(d_\\alpha(k)=\\alpha k_1+k_2\\)，以及 \\(K_N=\\{k\\in\\mathbb Z^2:0<|k|\\le N\\}\\)。在归一化环面上，\\(e_k\\) 构成 Fourier 正交归一基，且\n\\[\nN_\\alpha e_k=2\\pi i\\,d_\\alpha(k)e_k.\n\\]\n由 \\(\\alpha\\) 无理，\\(d_\\alpha(k)\\) 仅在 \\(k=0\\) 时为零。因此 \\(N_\\alpha\\) 在 \\(H_N\\) 上的逆为\n\\[\n(N_\\alpha|_{H_N})^{-1}F\n=\\sum_{k\\in K_N}\\frac{\\widehat F(k)}{2\\pi i\\,d_\\alpha(k)}e_k.\n\\]\n\n对每个 \\(r\\in\\mathbb R\\)，精确范数为\n\\[\n\\boxed{\\displaystyle\n\\big\\|(N_\\alpha|_{H_N})^{-1}\\big\\|_{H^r\\to H^r}\n=\\frac{1}{2\\pi\\min_{k\\in K_N}|d_\\alpha(k)|}.}\n\\]\n在 \\(H^r\\) 范数的平方和中，每一项至多乘以右端的平方，故得到上界。因 \\(N\\ge1\\)，\\(K_N\\) 有限且非空。取达到最小值的 \\(k\\)，单个模式 \\(F=e_k\\) 即取得等号。\n"
+        }
+      ]
+    },
+    {
+      "label": "光滑解及逐阶尾估计",
+      "verdict": "correct",
+      "reason": "快速衰减与小除数界配合，二维 ⟨k⟩⁻³ 可和，尾权重准确。",
+      "evidence": [
+        {
+          "line_start": 29,
+          "line_end": 50,
+          "utf8_start": 988,
+          "utf8_end": 2244,
+          "quote": "对任意光滑 \\(g\\) 和整数 \\(\\ell\\ge0\\)，有\n\\[\n|\\widehat g(k)|\\le A_\\ell\\|g\\|_{C^\\ell}\\langle k\\rangle^{-\\ell}. \\tag{2}\n\\]\n事实上，对 \\(k\\ne0\\) 选取满足 \\(|k_j|\\ge |k|/\\sqrt2\\) 的坐标，沿该坐标分部积分 \\(\\ell\\) 次即可。反过来，若一个系数列对每个 \\(\\ell\\) 都是 \\(O(\\langle k\\rangle^{-\\ell})\\)，则其 Fourier 级数定义光滑函数。对任意 \\(m\\) 阶导数取 \\(\\ell=m+3\\)，导数级数即由 \\(\\sum_{k\\in\\mathbb Z^2}\\langle k\\rangle^{-3}<\\infty\\) 绝对一致控制。\n\n题设给出 \\(|d_\\alpha(k)|^{-1}\\le c^{-1}\\langle k\\rangle^s\\)，故 (1) 中的系数仍快速衰减，定义了光滑零均值函数 \\(u\\)。逐项作用 \\(N_\\alpha\\) 得 \\(N_\\alpha u=F\\)，而每个非零模式都由 (1) 唯一确定。\n\n由 S1，\\(u_N\\) 正是 \\(u\\) 在 \\(K_N\\) 上的截断。对任意 \\(r\\in\\mathbb R\\)、\\(q\\ge0\\)，\n\\[\n\\begin{aligned}\n\\|u-u_N\\|_{H^r}^2\n&=\\sum_{|k|>N}\n  \\frac{\\langle k\\rangle^{2r}|\\widehat F(k)|^2}\n       {4\\pi^2|d_\\alpha(k)|^2}\\\\\n&\\le (2\\pi c)^{-2}\\sum_{|k|>N}\n  \\langle k\\rangle^{-2q}\\langle k\\rangle^{2(r+s+q)}\n  |\\widehat F(k)|^2\\\\\n&\\le (2\\pi c)^{-2}(1+N^2)^{-q}\\|F\\|_{H^{r+s+q}}^2.\n\\end{aligned}\n\\]\n最后一步使用了 \\(|k|>N\\) 和 \\(q\\ge0\\)。开平方即得所要求的估计。\n"
+        }
+      ]
+    },
+    {
+      "label": "邻方向的固定频带稳定性",
+      "verdict": "correct",
+      "reason": "逐模分母含两边小除数并均非零。",
+      "evidence": [
+        {
+          "line_start": 54,
+          "line_end": 66,
+          "utf8_start": 2280,
+          "utf8_end": 2717,
+          "quote": "对 \\(k\\in K_N\\)，由 S1 的逆公式，\n\\[\n\\big|\\widehat{u_\\alpha-u_\\beta}(k)\\big|\n=\\frac{|\\alpha-\\beta|\\,|k_1|}\n       {2\\pi|d_\\alpha(k)d_\\beta(k)|}\\,|\\widehat F(k)|\n\\le \\frac{|\\alpha-\\beta|N}{2\\pi\\delta^2}|\\widehat F(k)|.\n\\]\n频带外两解的系数都为零。乘以 \\(\\langle k\\rangle^r\\) 后取 \\(\\ell^2\\) 范数，得到\n\\[\n\\boxed{\\displaystyle\n\\|u_\\alpha-u_\\beta\\|_{H^r}\n\\le \\frac{|\\alpha-\\beta|N}{2\\pi\\delta^2}\\|F\\|_{H^r}.}\n\\]\n"
+        }
+      ]
+    },
+    {
+      "label": "每个允许损失的单模充要条件",
+      "verdict": "correct",
+      "reason": "结论对所有实 r，且追加的最优常数也由单模上确界给出。",
+      "evidence": [
+        {
+          "line_start": 79,
+          "line_end": 94,
+          "utf8_start": 3142,
+          "utf8_end": 3676,
+          "quote": "令\n\\[\nD_s(\\alpha)=\\inf_{k\\ne0}\\langle k\\rangle^s|d_\\alpha(k)|.\n\\]\n若题中的 Sobolev 估计对某个 \\(r\\) 成立，代入 \\(u=e_k\\) 并约去 \\(\\langle k\\rangle^r\\)，得到\n\\[\n1\\le 2\\pi C_{\\alpha,r,s}\\langle k\\rangle^s|d_\\alpha(k)|\n\\qquad(k\\ne0).\n\\]\n故 \\(D_s(\\alpha)>0\\)。反之，若 \\(D_s(\\alpha)>0\\)，逐模式估计并求和即得\n\\[\n\\|u\\|_{H^r}\\le \\frac{1}{2\\pi D_s(\\alpha)}\n                  \\|N_\\alpha u\\|_{H^{r+s}}\n\\qquad(r\\in\\mathbb R).\n\\]\n单模式检验也说明，此处的常数对每个 \\(r\\) 都是最优的。\n"
+        }
+      ]
+    },
+    {
+      "label": "非 Liouville 光滑可逆与逆向单个坏右端",
+      "verdict": "correct",
+      "reason": "有限指数是充分方向。全部指数失败可取严格递增频率，用其小除数造快速衰减但势不在 ℓ² 的唯一强制系数。",
+      "evidence": [
+        {
+          "line_start": 96,
+          "line_end": 107,
+          "utf8_start": 3677,
+          "utf8_end": 4747,
+          "quote": "周期性保证 \\(N_\\alpha u\\) 的均值为零。无理性保证零均值解的唯一性，因为所有非零模式都必须满足 (1)。只要某个有限 \\(s\\) 满足 \\(D_s(\\alpha)>0\\)，S2 就以 \\(c=D_s(\\alpha)\\) 对每个光滑零均值右端构造出解。\n\n若所有有限 \\(s\\) 都有 \\(D_s(\\alpha)=0\\)，则可选取 \\(|k_j|\\) 严格递增的频率，使\n\\[\n0<|d_\\alpha(k_j)|\\le\\langle k_j\\rangle^{-j}\\qquad(j\\ge1).\n\\]\n这是因为 \\(D_j(\\alpha)=0\\)，而任何有限个非零频率上 \\(\\langle k\\rangle^j|d_\\alpha(k)|\\) 的最小值都为正。定义一个 \\(F\\)，令\n\\[\n\\widehat F(k_j)=2\\pi i\\,d_\\alpha(k_j),\\qquad\n\\widehat F(k)=0\\quad\\bigl(k\\notin\\{k_j:j\\ge1\\}\\bigr).\n\\]\n对每个固定的 \\(\\ell\\)，从 \\(j\\ge\\ell\\) 起有 \\(\\langle k_j\\rangle^\\ell|\\widehat F(k_j)|\\le2\\pi\\)。故该系数列快速衰减，\\(F\\) 光滑且零均值。任何光滑解却都须满足 \\(\\widehat u(k_j)=1\\) 对所有 \\(j\\) 成立，这与 \\(u\\in L^2\\) 的 Fourier 系数平方可和矛盾。这就证明了整体可逆性等价于存在有限 \\(s\\) 使 \\(D_s(\\alpha)>0\\)。\n"
+        },
+        {
+          "line_start": 111,
+          "line_end": 128,
+          "utf8_start": 4781,
+          "utf8_end": 5829,
+          "quote": "记 \\(\\|x\\|_{\\mathbb R/\\mathbb Z}=\\min_{P\\in\\mathbb Z}|x-P|\\)。则\n\\[\nD_s(\\alpha)>0\n\\quad\\Longleftrightarrow\\quad\n\\inf_{Q\\in\\mathbb N,\\ Q\\ge1} Q^s\\|Q\\alpha\\|_{\\mathbb R/\\mathbb Z}>0. \\tag{4}\n\\]\n正向取 \\(P\\) 为离 \\(Q\\alpha\\) 最近的整数，并取 \\(k=(Q,-P)\\)。此时 \\(\\langle k\\rangle\\le C_\\alpha Q\\)，故得到右边的下界。反向对 \\(k_1\\ne0\\) 取 \\(Q=|k_1|\\)，使用\n\\[\n|d_\\alpha(k)|\\ge\\|Q\\alpha\\|_{\\mathbb R/\\mathbb Z},\n\\qquad Q^{-s}\\ge\\langle k\\rangle^{-s}.\n\\]\n对 \\(k_1=0,\\ k\\ne0\\)，直接有 \\(|d_\\alpha(k)|=|k_2|\\ge1\\)。\n\n式 (4) 也等价于存在 \\(c>0\\)，使一切 \\(P\\in\\mathbb Z,\\ Q\\ge1\\) 都满足\n\\[\n\\left|\\alpha-\\frac P Q\\right|\\ge c Q^{-(s+1)}.\n\\]\n若所有有限 \\(s\\) 都失效，则对每个整数 \\(M\\ge1\\)，在 (4) 中取 \\(s=M-1\\)，就有任意大的 \\(Q\\) 和相应的 \\(P\\) 满足 \\(|\\alpha-P/Q|<Q^{-M}\\)。这正是 Liouville 性质。反过来，具有该性质时，对每个固定 \\(s\\) 取整数 \\(M>s+1\\)，这些逼近便使 (4) 的下确界为零。这证明了开头的可逆方向分类。\n"
+        }
+      ]
+    },
+    {
+      "label": "相邻收敛分数的具体损失及端点",
+      "verdict": "correct",
+      "reason": "相邻收敛分数给整格基。分母小于 q_(j+1) 时异号系数与交替误差消除潜在抵消。有限极端项不改变端点上确界判据。",
+      "evidence": [
+        {
+          "line_start": 130,
+          "line_end": 164,
+          "utf8_start": 5830,
+          "utf8_end": 7626,
+          "quote": "为证明全部损失的判据 (3)，记 \\(\\varepsilon_j=q_j\\alpha-p_j\\)。实无理数的简单连分数收敛分数满足\n\\[\n\\frac{1}{q_{j+1}+q_j}<|\\varepsilon_j|<\\frac{1}{q_{j+1}},\n\\qquad\n|Q\\alpha-P|\\ge|\\varepsilon_j|\n\\quad(P\\in\\mathbb Z,\\ 0<Q<q_{j+1}). \\tag{5}\n\\]\n具体地，若 \\(t=[a_{j+1};a_{j+2},\\ldots]\\) 为连分数尾数，则递推公式给出\n\\(\\varepsilon_j=(-1)^j/(q_jt+q_{j-1})\\)，其中 \\(q_{-1}=0\\)。由 \\(a_{j+1}<t<a_{j+1}+1\\) 及 \\(q_{j+1}=a_{j+1}q_j+q_{j-1}\\) 即得两侧误差界。再由相邻收敛分数的行列式为 \\(\\pm1\\)，可写\n\\[\n(Q,P)=A(q_j,p_j)+B(q_{j+1},p_{j+1}),\\qquad A,B\\in\\mathbb Z.\n\\]\n当 \\(0<Q<q_{j+1}\\) 时，若 \\(B=0\\) 则 \\(A\\ge1\\)。若 \\(B\\ne0\\) 则 \\(A,B\\) 异号，又因 \\(\\varepsilon_j,\\varepsilon_{j+1}\\) 异号，\\(A\\varepsilon_j\\) 与 \\(B\\varepsilon_{j+1}\\) 同号。两种情形都有 \\(|Q\\alpha-P|\\ge|\\varepsilon_j|\\)。\n\n若 (4) 成立，取 \\(Q=q_j,\\ P=p_j\\)，由 (5) 得 \\(c q_j^{-s}\\le|\\varepsilon_j|<1/q_{j+1}\\)，从而 (3) 中的上确界有限。反之，设该上确界为 \\(K<\\infty\\)。对任意 \\(Q\\ge1\\) 取 \\(q_j\\le Q<q_{j+1}\\)，由 (5) 得\n\\[\n\\|Q\\alpha\\|_{\\mathbb R/\\mathbb Z}\n>\\frac1{2q_{j+1}}\\ge\\frac1{2Kq_j^s}\\ge\\frac1{2KQ^s}.\n\\]\n这证明了 (3)。\n\n特别地，令\n\\[\n\\tau=\\limsup_{j\\to\\infty}\\frac{\\log q_{j+1}}{\\log q_j}\\in[1,\\infty],\n\\]\n其中只需取 \\(q_j>1\\) 的尾部。则\n\\[\n\\mathcal S(\\alpha)=\n\\begin{cases}\n\\varnothing,&\\tau=\\infty,\\\\\n[\\tau,\\infty),&\\tau<\\infty,\\quad \\sup_j q_{j+1}/q_j^\\tau<\\infty,\\\\\n(\\tau,\\infty),&\\tau<\\infty,\\quad \\sup_j q_{j+1}/q_j^\\tau=\\infty .\n\\end{cases}\n\\]\n事实上，\\(s>\\tau\\) 时最终有 \\(q_{j+1}\\le q_j^s\\)。若 \\(s<\\tau\\)，则存在 \\(\\eta>0\\) 使 \\(q_{j+1}\\ge q_j^{s+\\eta}\\) 无穷多次，而 \\(q_j\\to\\infty\\)。在端点 \\(s=\\tau<\\infty\\) 直接应用 (3)。\n"
+        }
+      ]
+    },
+    {
+      "label": "二次方向最小一阶并有 C^m 界",
+      "verdict": "correct",
+      "reason": "二次无理数的周期连分数给上下级数比，L=m+4 时导数项可和。",
+      "evidence": [
+        {
+          "line_start": 168,
+          "line_end": 181,
+          "utf8_start": 7661,
+          "utf8_end": 8539,
+          "quote": "由 \\(1/\\alpha_*=2+\\alpha_*\\)，其连分数为 \\([0;2,2,\\ldots]\\)。故 \\(q_{j+1}=2q_j+q_{j-1}\\le3q_j\\)，按 (3)，\\(s=1\\) 允许。对 \\(s<1\\)，有 \\(q_{j+1}/q_j^s\\ge q_j^{1-s}\\to\\infty\\)。所以**最小损失为 \\(1\\)，且端点取到**。\n\n所问的 \\(C^m\\) 估计对每个 \\(m\\ge0\\) 都成立。一般地，若 \\(D_s(\\alpha)>0\\)，对整数 \\(L>m+s+2\\)，由 (1)、(2) 有\n\\[\n\\begin{aligned}\n\\|N_\\alpha^{-1}F\\|_{C^m}\n&\\le (2\\pi)^m\\sum_{k\\ne0}\\langle k\\rangle^m|\\widehat u(k)|\\\\\n&\\le \\frac{(2\\pi)^m A_L}{2\\pi D_s(\\alpha)}\n \\|F\\|_{C^L}\\sum_{k\\ne0}\\langle k\\rangle^{m+s-L}.\n\\end{aligned}\n\\]\n最后的级数因 \\(L-m-s>2\\) 在二维收敛，这也给出可逆情形下逆算子在光滑拓扑中的连续性。取 \\(\\alpha=\\alpha_*,\\,s=1,\\,L=m+4\\)，级数即为 \\(\\sum_{k\\ne0}\\langle k\\rangle^{-3}\\)，得到\n\\[\n\\boxed{\\|N_{\\alpha_*}^{-1}F\\|_{C^m}\\le C_m\\|F\\|_{C^{m+4}}.}\n"
+        }
+      ]
+    },
+    {
+      "label": "参数邻域不存在共同逆估计",
+      "verdict": "correct",
+      "reason": "采用固定 (q,-p) 且各 α_n 全程无理的实际反例。",
+      "evidence": [
+        {
+          "line_start": 186,
+          "line_end": 193,
+          "utf8_start": 8578,
+          "utf8_end": 9104,
+          "quote": "**不存在这样的 \\(J,s,C\\)。** 任取含 \\(\\alpha_*\\) 的开区间 \\(J\\)，在其中取一个有理数 \\(p/q\\)，其中 \\(q\\ge1\\)。固定 \\(k=(q,-p)\\) 和光滑零均值函数 \\(u=e_k\\)。令 \\(\\alpha_n=p/q+\\sqrt2/n\\)，则每个 \\(\\alpha_n\\) 无理，且充分大时 \\(\\alpha_n\\in J\\)。此时\n\\[\n\\|u\\|_{L^2}=1,\\qquad\n\\|N_{\\alpha_n}u\\|_{H^s}\n=2\\pi\\langle k\\rangle^s\\,|q\\alpha_n-p|\n=2\\pi\\langle k\\rangle^s\\frac{q\\sqrt2}{n}\\longrightarrow0.\n\\]\n因此任意固定的有限 \\(s,C\\) 都会在同一模式 \\(u\\) 上失效。\n"
+        }
+      ]
+    },
+    {
+      "label": "指定阶乘小数的同一不可解数据",
+      "verdict": "correct",
+      "reason": "有理性会违反正整数 Bε_n 的下界，所造右端各阶光滑，强制单位系数违背 L²。",
+      "evidence": [
+        {
+          "line_start": 197,
+          "line_end": 224,
+          "utf8_start": 9149,
+          "utf8_end": 10419,
+          "quote": "取小数截断\n\\[\nQ_n=10^{n!},\\qquad\nP_n=Q_n\\sum_{\\ell=1}^n10^{-\\ell!}\\in\\mathbb Z,\\qquad\n\\epsilon_n=Q_n\\alpha-P_n.\n\\]\n因尾项的十进制指数从 \\((n+1)!\\) 开始且严格递增，\n\\[\n0<\\alpha-\\frac{P_n}{Q_n}\n\\le\\frac{10}{9}\\,10^{-(n+1)!},\n\\qquad\n0<\\epsilon_n\\le\\frac{10}{9}\\,Q_n^{-n}. \\tag{6}\n\\]\n若 \\(\\alpha=A/B\\) 为有理数，\\(B\\ge1\\)，则 \\(B\\epsilon_n=AQ_n-BP_n\\) 是正整数。但 (6) 给出 \\(B\\epsilon_n\\to0\\)，矛盾。故 \\(\\alpha\\) 无理。\n\n令 \\(k_n=(Q_n,-P_n)\\)，构造单个右端\n\\[\n\\boxed{\\displaystyle\nF(y)=2\\pi i\\sum_{n=1}^{\\infty}\\epsilon_n e^{2\\pi i k_n\\cdot y}.}\n\\]\n这些频率互异且非零。由 \\(0<P_n/Q_n<\\alpha\\) 得 \\(|k_n|\\le C Q_n\\)，所以对每个固定的 \\(m\\)，级数第 \\(n\\) 项的任意 \\(m\\) 阶导数都由 \\(C_m Q_n^{m-n}\\) 控制。当 \\(n\\ge m+1\\) 时，该界至多为 \\(C_m Q_n^{-1}\\)，而 \\(\\sum_n Q_n^{-1}<\\infty\\)。因此各阶导数级数绝对一致收敛，且 \\(F\\) 的均值为零。\n\n由于 \\(d_\\alpha(k_n)=\\epsilon_n>0\\)，任何光滑解在每个 \\(k_n\\) 上都必须满足\n\\[\n2\\pi i\\epsilon_n\\,\\widehat u(k_n)=\\widehat F(k_n)=2\\pi i\\epsilon_n,\n\\qquad\\text{故}\\qquad \\widehat u(k_n)=1.\n\\]\n这与光滑函数的 Fourier 系数平方可和矛盾。因此这个 \\(F\\) 没有光滑零均值解。"
+        }
+      ]
+    }
+  ],
+  "claim_findings": [],
+  "extra_findings": [],
+  "profile_observations": {
+    "proof": "有限模对角化，逐项 Fourier 估计及造坏右端前后闭合；自行由相邻收敛分数基证明所用的最佳逼近。所有六段都有承重依据。",
+    "fidelity": "保持复值、零均值、欧氏频率与指定 Fourier 归一化，未把固定频带/方向的正界迁移到全参数。坏右端适用原光滑函数类。",
+    "discernment": "明确区分固定参数、有限频带与全频率全参数的量词，且为不可解构造同一个右端。画像的书面论证家族不单独计算审辨轴。"
+  },
+  "schema": "math-gauge.written-response-support/v1",
+  "case_id": "MG-GP002",
+  "response_sha256": "4eafc8c4cba35689ebf71c38686caeffde27005c111727fea451a9dd91bbbe8b",
+  "reviewer": "GPT-6.2 Sol Max; independent Math Gauge AI reviewer",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "original_contract_kind": "progressive",
+  "receipt_binding": {
+    "physical_attempt": 1,
+    "selection": "first_qualified_normal_native_final_by_physical_attempt",
+    "native_final": {
+      "path": "sessions/MG-GP002/physical-1/output/response.md",
+      "bytes": 10419,
+      "sha256": "4eafc8c4cba35689ebf71c38686caeffde27005c111727fea451a9dd91bbbe8b"
+    },
+    "runner_response": {
+      "path": "runner-runs/MG-GP002/physical-1/MG-GP002/response.md",
+      "bytes": 10419,
+      "sha256": "4eafc8c4cba35689ebf71c38686caeffde27005c111727fea451a9dd91bbbe8b"
+    },
+    "source_seal": {
+      "path": "sessions/MG-GP002/physical-1/runtime/seal.json",
+      "bytes": 850,
+      "sha256": "28d6881edbd3fa30012ced9ab567f46b2877553672370b6a72d27103aec46f2b"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-GP002/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 831,
+      "sha256": "5f433f88bba31386090da72bdc7dce3277e7ca6c32ae10c6bd137b2c8922149c"
+    },
+    "native_command_probe": {
+      "path": "sessions/MG-GP002/physical-1/runtime/native-command-probe.json",
+      "bytes": 2541,
+      "sha256": "9776051434b033d0838368c73f2c56d00fbba1cf75b2b818c155dd5ec5c412ea"
+    },
+    "execution": {
+      "path": "sessions/MG-GP002/physical-1/runtime/execution.json",
+      "bytes": 6899,
+      "sha256": "fdd702afb7282d11ed9a94816cf465fdcebc5858879574dafcdaf7bc7ba4ddd0"
+    },
+    "native_events": {
+      "path": "sessions/MG-GP002/physical-1/output/events.ndjson",
+      "bytes": 12694,
+      "sha256": "114b932bb0ac89abe50280a23ff1fbc847f581b23455ef36eb7569533ec43426"
+    },
+    "collection": {
+      "path": "sessions/MG-GP002/physical-1/runtime/collection.json",
+      "bytes": 9144,
+      "sha256": "8209967a5c1c95153774a0f166fdbb9b4b130af1144ea92df5a7e13fb7ab5cbd"
+    },
+    "first_terminal_index_one_based": 7,
+    "terminal_prefix_bytes": 12694,
+    "terminal_prefix_sha256": "114b932bb0ac89abe50280a23ff1fbc847f581b23455ef36eb7569533ec43426",
+    "native_final_item": "item_3",
+    "observed_backend_model": null,
+    "observed_backend_effort": null,
+    "normal_delivery_and_seal_verified": true
+  },
+  "source_bindings": {
+    "acquisition_plan_sha256": "407f693583a2806fd80aaf98dc0135f7f90b9c961332f4c1b5274a54ba54f35b",
+    "native_final_sha256": "4eafc8c4cba35689ebf71c38686caeffde27005c111727fea451a9dd91bbbe8b",
+    "collection_sha256": "8209967a5c1c95153774a0f166fdbb9b4b130af1144ea92df5a7e13fb7ab5cbd",
+    "physical_attempt": 1,
+    "task_sha256": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+    "rubric_sha256": "d6f22ac86200aae587a66a85ef3ffa90d0d14ded3a1445be6bf2cee8bd4baf89",
+    "reference_sha256": "d596100198c6476d2f27ee4329818a3aaf2a0f986fa38e345eed152b44809f87",
+    "terminal_source_observation_sha256": "5f433f88bba31386090da72bdc7dce3277e7ca6c32ae10c6bd137b2c8922149c",
+    "source_seal_sha256": "28d6881edbd3fa30012ced9ab567f46b2877553672370b6a72d27103aec46f2b"
+  }
+}

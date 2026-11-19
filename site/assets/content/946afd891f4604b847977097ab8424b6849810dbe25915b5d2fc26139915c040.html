@@ -1,0 +1,451 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>审阅结论</h2>
+<p><strong>对象</strong>：<code>source.md</code> 推论 #h-93b9c20ea18b4e59（路径保证域的全局拟合含义）。Lean 实现是 <code>formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean</code> 中带该锚点的三条定理，全库只有这三处引用该锚点：</p>
+<ul>
+<li><strong>T1</strong> <code>path_component_guarantee_union_subset_proxy_error</code>（:520）对应第一式（单分量）。</li>
+<li><strong>T2</strong> <code>path_joint_guarantee_union_subset_proxy_error</code>（:552）对应第二式（联合）。</li>
+<li><strong>T3</strong> <code>path_guarantee_union_subset_proxy_error_text</code>（:588）是 T1∧T2，并带上正文的&quot;有限阈值 / J 非空 / J ⊆ I_res&quot;前提。这些前提在证明里未被使用（<code>have _ := …</code>）。</li>
+</ul>
+<p><strong>方法</strong>：逐项对读定义、前提和结论，重新编译，<code>#print axioms</code>。我另写了审计文件，放在 <code>$TMPDIR</code>，未改动附件。环境为 Lean 4.29.1、Mathlib 5e932f97。</p>
+<h3>1. 总评</h3>
+<ol>
+<li><strong>数学内容准确，两条包含式都被完整覆盖。</strong>
+<ul>
+<li><code>lake build formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains</code> 成功（3341 jobs）。</li>
+<li>T1–T3 的 <code>#print axioms</code> 只有 <code>propext / Classical.choice / Quot.sound</code>。</li>
+<li>全库没有 <code>sorry</code>、<code>admit</code>、自定义 <code>axiom</code>。</li>
+<li>定义、不等号方向、<code>(proxy, target)</code> 的参数次序、并集指标、结论集合 <code>{x ∈ U | …}</code> 与正文逐项一致。</li>
+</ul>
+</li>
+<li><strong>有一处严格意义上的偏差，也是唯一需要补齐的点。</strong> T1–T3 的 <code>hLq</code> 要求<strong>所有</strong>可达路径都有 Lip 证书。正文只对 I_res(q)≠∅ 的路径取证书，证明也只用到并集指标内的路径。因此 Lean 定理在适用范围上比正文窄，数学内容不变。
+<ul>
+<li>我给了经 Lean 编译检验的反例模型：<code>hLq</code> 不可满足，而正文前提和结论都成立。</li>
+<li>我也给了缩窄量词的补齐版本，已编译通过。</li>
+<li>该偏差只在规范族<strong>非分离</strong>时实质存在（§4.3）。</li>
+</ul>
+</li>
+<li>其余差异是无害推广或等价改写：不设采样结构前提、阈值不要求有限、J 不要求非空、<code>hpathV</code> 逐路径表述（§3.1）。</li>
+</ol>
+<h3>2. 对应关系</h3>
+<table>
+<thead>
+<tr>
+<th>正文</th>
+<th>Lean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>扩展规范空间、有限 I</td>
+<td><code>d : I → X → X → ENNReal</code>，<code>hd : ∀ j, ExtendedPseudoMetric X bot (d j)</code>，<code>[Fintype I]</code></td>
+</tr>
+<tr>
+<td>目标 φ†、代理 φ</td>
+<td><code>target proxy : Operator X bot</code></td>
+</tr>
+<tr>
+<td>网络 𝒩（输入域 U），φ_𝒩 ≡_U φ</td>
+<td><code>N : FiniteOperatorNetwork X bot V</code>，<code>N.U</code>，<code>hrep : N.represents proxy</code>（operator_network.lean:814）</td>
+</tr>
+<tr>
+<td>𝒫、U_q、c_q</td>
+<td><code>N.ReachablePath</code>，<code>N.path_domain q.nodes</code>，<code>N.path_chain q.nodes</code></td>
+</tr>
+<tr>
+<td>(V*, <strong>L</strong>*)</td>
+<td><code>Vstar Lstar</code>，<code>hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar</code>（= <code>IsLipMatrix d target Vstar Lstar</code>）</td>
+</tr>
+<tr>
+<td>U ⊆ dom φ ∩ V*</td>
+<td><code>hpathV</code>（⇔ <code>N.U ⊆ Vstar</code>）加上 <code>hrep</code>（⇒ <code>N.U ⊆ dom proxy</code>）</td>
+</tr>
+<tr>
+<td>S_j、δ_{o,j}</td>
+<td><code>sample : I → Set X</code>，<code>delta_o</code>（不设采样结构前提）</td>
+</tr>
+<tr>
+<td>S_{q,j}=S_j∩U_q，I_res(q)</td>
+<td><code>path_component_sample</code>（path_sampling:27），<code>path_evaluable_components</code>（:48）</td>
+</tr>
+<tr>
+<td>ε̂_{q,j}</td>
+<td><code>path_empirical_residual_upper</code>（:136）= <code>⨆_{x∈S_{q,j}} d j (c_q x) (φ† x) + delta_o j</code></td>
+</tr>
+<tr>
+<td><strong>L</strong>_q，<strong>A</strong>_q=<strong>L</strong>_q+<strong>L</strong>*</td>
+<td><code>Lq q</code>，<code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+</tr>
+<tr>
+<td>D_{<strong>A</strong>,j}(x;E)</td>
+<td><code>weighted_anchor_distance</code>（empirical_residuals:206）= <code>⨅ y∈E, ∑ i, A i j * d i x y</code></td>
+</tr>
+<tr>
+<td>U_{q,j}(τ_j)</td>
+<td><code>path_component_empirical_guarantee_domain</code>（:26）</td>
+</tr>
+<tr>
+<td>U_{q,J}(<strong>τ</strong>)=⋂<em>{j∈J}U</em>{q,j}(τ_j)</td>
+<td><code>path_joint_empirical_guarantee_domain</code>（:39）</td>
+</tr>
+<tr>
+<td>第一式 / 第二式 / 整条推论</td>
+<td>T1 / T2 / T3</td>
+</tr>
+</tbody>
+</table>
+<h3>3. 逐项核对</h3>
+<h4>3.1 前提</h4>
+<ul>
+<li><strong>U ⊆ dom φ ∩ V*</strong>：Lean 用 <code>N.U</code> 作 U。逐路径的 <code>hpathV</code> 与 <code>N.U ⊆ Vstar</code> 等价，依据是路径域覆盖 <code>reachable_path_domains_cover</code>（:778）。U ⊆ dom φ 由 <code>hrep</code> 加 <code>dom_extensional_operator_eq</code>（:344）推出。这两条我都在 Lean 里证了（<code>hpathV_iff</code>、<code>represents_dom</code>），没有损失。</li>
+<li><strong>采样结构</strong> S_j ⊆ S∩U∩dom φ† 未设，这是推广。证明只用 S_{q,j}=S_j∩U_q ⊆ U，而它自动成立。若采样点落在 dom φ† 之外，<code>isolate_bot</code> 使 ε̂=⊤，对有限阈值保证域为空，不破坏包含式。</li>
+<li><strong>有限阈值、J 非空</strong>：T1/T2 不需要。τ=⊤ 时结论平凡。J=∅ 时两侧都是 <code>N.U</code>。T3 保留这些前提但未使用。</li>
+<li><strong>hLstar</strong>：包含 <code>Vstar ⊆ dom target</code>，与 Lip 矩阵的定义一致。</li>
+<li><strong>hLq</strong>：见 §4。</li>
+</ul>
+<h4>3.2 定义</h4>
+<ul>
+<li>共同锚点距离的矩阵朝向与 <code>IsLipMatrix</code> 一致：<code>matrix_vector_bound M v j = ∑ i, M i j * v i</code>。</li>
+<li>保证域用 <code>≤</code>（不是 <code>&lt;</code>），集合为 <code>{x ∈ U_q | D + ε̂ ≤ τ}</code>。</li>
+<li>J 非空时，联合域恰等于 ⋂_{j∈J} 分量域，我已证（<code>path_joint_eq_biInter</code>）。</li>
+</ul>
+<h4>3.3 结论与证明</h4>
+<ul>
+<li>T1 的结论是 <code>{x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau}</code>。T2 是对 <code>j ∈ J</code> 的同类集合。两者都与正文一致，参数次序为 (proxy, target)。</li>
+<li>证明路径与正文一致：
+<ol>
+<li>通过 <code>path_chain_eq_represented_proxy_on_path</code>（path_sampling:220）把 c_q(x) 换成 φ(x)。</li>
+<li>调用 <code>proxy_path_component_guarantee_error_bound</code>（:152）和 <code>proxy_path_joint_guarantee_error_bound</code>（:244）。</li>
+<li>它们的核心是 <code>path_local_empirical_upper</code>（:54），即 #h-4b5219aa3a3bbdad 的 Lean 形式。</li>
+</ol>
+</li>
+<li>我手工复核了该局部界：三项三角不等式，分别用 c_q 在 U_q 上和 φ† 在 V* 上的 Lip 界，再用对称性，最后对锚点取下确界。ENNReal 的 <code>iInf_add</code> 不需要非空。结论与 Lean 一致。</li>
+<li>命题只给出包含，没有等号。我另在模型里验证了包含是严格的：τ=0 时点 2 在真实容限区域，却不在任何路径保证域里。</li>
+</ul>
+<h3>4. 不足：Lip 证书的量化范围</h3>
+<h4>4.1 偏差是什么</h4>
+<ul>
+<li>T1–T3 的 <code>hLq</code>（path_guarantee_domains.lean:530–531、562–563、604–605）是 <code>∀ q : N.ReachablePath, IsLipMatrix …</code>。它要求每条可达路径，包括没有采样点（I_res(q)=∅）的路径，都有 Lip 证书。</li>
+<li>正文说&quot;设 q∈𝒫，j∈I_res(q)，取路径链的受限 Lip 证书 <strong>L</strong>_q&quot;，只对 I_res(q)≠∅ 的路径取证书。</li>
+<li>支撑引理 <code>proxy_path_*_guarantee_error_bound</code> 也只需要单条路径的证书。所以 T1–T3 比证明实际给出的结论弱。</li>
+</ul>
+<h4>4.2 反例模型（Lean 已检验，代码见附录 B）</h4>
+<ul>
+<li><strong>空间与度量</strong>：<code>Fin 5</code>，⊥=0。等价类为 {0}、{1}、{2,3}、{4}。单分量 d 同类为 0，异类为 ⊤。这是非分离的扩展伪度量，d(2,3)=0。</li>
+<li><strong>网络</strong>：两个节点。<code>false ↦ op1</code>（1↦1，其余↦⊥），<code>true ↦ op2</code>（2↦2，3↦4，其余↦⊥）。输入域 U={1,2,3}。两条可达路径是 <code>[false]</code>（U_q={1}）和 <code>[true]</code>（U_q={2,3}）。</li>
+<li><strong>代理与目标</strong>：代理是网络的外延算子（<code>hrep</code> 平凡成立）。目标是 U 上的恒等，V*=U，<strong>L</strong>*=1。采样 S={1}。因此 I_res([false])={*}，I_res([true])=∅。</li>
+<li><strong>关键事实</strong>：路径 <code>[true]</code> 满足 d(2,3)=0，但 d(c(2),c(3))=d(2,4)=⊤。ENNReal 里 ⊤·0=0，所以任何矩阵（含 ⊤ 项）都不是它的 Lip 证书。</li>
+<li><strong>Lean 结果</strong>（均无 <code>sorry</code>，只用标准公理）：
+<ul>
+<li><code>no_lip_second_path</code> 和 <code>hLq_all_unsat</code>：T1–T3 的 <code>hLq</code> 在此模型里不可满足，T1–T3 无法实例化。</li>
+<li><code>corollary_in_model</code>：正文第一式在此模型成立（用缩窄版本得到）。</li>
+<li>另已编译、未附代码：
+<ul>
+<li>并集非空（点 1，τ=0 时在并集中）。</li>
+<li>模型满足 S ⊆ U∩dom φ† 与 U ⊆ dom φ。</li>
+<li>包含严格。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>4.3 严重程度</h4>
+<ul>
+<li>我归为轻到中等。它不影响数学内容，只影响适用范围。</li>
+<li>若规范族可分离，则全 ⊤ 矩阵总是任意 U ⊆ dom φ 上的合法 Lip 证书。给非指标路径取全 ⊤ 矩阵，偏差就消失。这是 <code>top_matrix_lip_of_separating</code>，已证。</li>
+<li>只有非分离族（本书有 <code>IsNonSeparating</code>）下，才会出现无采样路径恰好没有 Lip 证书的情形。</li>
+<li>若读者把&quot;证书族对所有 q 给定&quot;理解为正文的标准设定，则 Lean 与正文无偏差。我认为字面上更自然的读法是只对指标内路径取证书。</li>
+</ul>
+<h4>4.4 补齐</h4>
+<p>把 <code>hLq</code> 缩窄到指标内路径，并把 <code>hpathV</code> 换成等价的 <code>hUV : N.U ⊆ Vstar</code>：</p>
+<ul>
+<li>单分量版本：<code>hLq : ∀ q, j ∈ path_evaluable_components N sample q → IsLipMatrix …</code>。</li>
+<li>联合版本：<code>hLq : ∀ q, J ⊆ path_evaluable_components N sample q → IsLipMatrix …</code>。</li>
+<li>T3 同理，作用域取 <code>j ∈ I_res(q) ∨ J ⊆ I_res(q)</code>。</li>
+</ul>
+<p>我的版本是 <code>component_union_scoped</code> 和 <code>joint_union_scoped</code>，各自的证明体是 <code>rintro</code> 加一个 <code>exact</code>，直接调用源码已有的逐路径引理。它们蕴含 T1/T2，因此是严格改进。</p>
+<h3>5. 源码已证明 vs. 需自行补充</h3>
+<p><strong>源码已证明（无 <code>sorry</code>）</strong></p>
+<ul>
+<li>T1、T2、T3，以及支撑引理 <code>path_local_empirical_upper</code>、<code>proxy_path_component_guarantee_error_bound</code>、<code>proxy_path_joint_guarantee_error_bound</code>、<code>path_chain_eq_represented_proxy_on_path</code>。</li>
+<li>这些结论是在 <code>hLq</code>（全路径）等 Lean 假设下的两条包含式。</li>
+</ul>
+<p><strong>需自行补充（我已在本地补充并编译，不属于源码）</strong></p>
+<ol>
+<li>量词缩窄版本（§4.4），这是与正文字面等价所必需的。</li>
+<li>等价与蕴含：<code>hpathV ⇔ N.U ⊆ Vstar</code>，<code>hrep ⇒ N.U ⊆ dom proxy</code>，J 非空时联合域 = ⋂ 分量域。</li>
+<li>把&quot;拟合含义&quot;读成拟合球成员时：T2 的并集 W 满足 <code>InFittingBall d target proxy W J τ</code>。
+<ul>
+<li>这需要 τ 在 J 上有限，T2 本身不要求。</li>
+<li><code>InFittingBall.error</code> 用 (target, proxy) 次序，与 T1/T2 的 (proxy, target) 次序靠对称性互换。</li>
+<li>本地已编译，未附代码。</li>
+</ul>
+</li>
+<li>反例模型及其非空性、严格性（§4.2）。</li>
+</ol>
+<p><strong>不在本推论范围内</strong></p>
+<ul>
+<li>&quot;注（与全局保证域的比较）&quot;是非形式评注，没有专门的 Lean 定理。我只核对了方向：同一矩阵下 S_{q,j} ⊆ S_j 推出 D_q ≥ D_global，支撑引理是 <code>weighted_anchor_distance_mono_of_subset</code>。</li>
+<li>Lip 证书的存在性、并集的非空性，正文都未断言。</li>
+<li>@h-6f9e054ce01ccfef、@h-9655cbb9401e5c90、@h-48bb46f7ef1c3c2e 的正文原文未提供，我以其 Lean 定义为准。</li>
+</ul>
+<h3>6. 复核方式</h3>
+<pre><code>lake build formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains   # 成功
+lake env lean &lt;附录文件&gt;                                                              # 无报错
+</code></pre>
+<ul>
+<li>对 T1–T3 和附录各定理执行 <code>#print axioms</code>，只出现 <code>propext / Classical.choice / Quot.sound</code>。</li>
+<li>全库 grep <code>sorry|admit|axiom|native_decide|unsafe|implemented_by</code>，无命中。</li>
+</ul>
+<h3>附录：审计用 Lean 代码（全文已编译通过）</h3>
+<pre><code class="language-lean">import formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open formal_oet.vol_01.ch_04_operator_chain_calculus
+open formal_oet.vol_01.ch_05_operator_networks
+open formal_oet.vol_02.ch_07_fitting_foundations
+open formal_oet.vol_03.ch_12_residuals_and_substitution
+open formal_oet.vol_03.ch_14_empirical_network_fitting
+
+namespace Audit
+section PartA
+variable {X I V : Type} {bot : X} [Fintype I]
+
+/-- 第一式；Lip 证书只要求在并集指标内的路径上。 -/
+theorem component_union_scoped
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal)
+    (Vstar : Set X) (Lq : N.ReachablePath → I → I → ENNReal)
+    (Lstar : I → I → ENNReal) (j : I) (tau : ENNReal)
+    (hrep : N.represents proxy) (hUV : N.U ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath, j ∈ path_evaluable_components N sample q →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    {x | ∃ q : N.ReachablePath, j ∈ path_evaluable_components N sample q ∧
+      x ∈ path_component_empirical_guarantee_domain d
+        (fun i j =&gt; Lq q i j + Lstar i j) N sample q j
+        (path_empirical_residual_upper d target N sample delta_o q j) tau}
+      ⊆ {x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau} := by
+  rintro x ⟨q, hj, hxq⟩
+  exact ⟨N.path_domain_subset_source hxq.1,
+    proxy_path_component_guarantee_error_bound d hd target proxy N sample delta_o q
+      Vstar (Lq q) Lstar j tau hrep
+      (fun y hy =&gt; hUV (N.path_domain_subset_source hy)) (hLq q hj) hLstar hj hxq⟩
+
+/-- 第二式；同上。 -/
+theorem joint_union_scoped
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal)
+    (Vstar : Set X) (Lq : N.ReachablePath → I → I → ENNReal)
+    (Lstar : I → I → ENNReal) (J : Set I) (tau : I → ENNReal)
+    (hrep : N.represents proxy) (hUV : N.U ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    {x | ∃ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q ∧
+      x ∈ path_joint_empirical_guarantee_domain d
+        (fun i j =&gt; Lq q i j + Lstar i j) N sample q J
+        (path_empirical_residual_upper d target N sample delta_o q) tau}
+      ⊆ {x | x ∈ N.U ∧ ∀ j : I, j ∈ J → d j (proxy.func x) (target.func x) ≤ tau j} := by
+  rintro x ⟨q, hJ, hxq⟩
+  exact ⟨N.path_domain_subset_source hxq.1,
+    proxy_path_joint_guarantee_error_bound d hd target proxy N sample delta_o q
+      Vstar (Lq q) Lstar J tau hrep
+      (fun y hy =&gt; hUV (N.path_domain_subset_source hy)) (hLq q hJ) hLstar hJ hxq⟩
+
+theorem hpathV_iff (N : FiniteOperatorNetwork X bot V) (Vstar : Set X) :
+    (∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar) ↔ N.U ⊆ Vstar := by
+  constructor
+  · intro h x hx
+    have hx' : x ∈ ⋃ p : N.ReachablePath, N.path_domain p.nodes := by
+      rw [N.reachable_path_domains_cover]; exact hx
+    rcases Set.mem_iUnion.mp hx' with ⟨q, hq⟩
+    exact h q hq
+  · intro h q x hx
+    exact h (N.path_domain_subset_source hx)
+
+theorem represents_dom (N : FiniteOperatorNetwork X bot V) (proxy : Operator X bot)
+    (hrep : N.represents proxy) : N.U ⊆ dom proxy := by
+  intro x hx
+  have h1 : x ∈ dom N.extensional_operator := by
+    rw [N.dom_extensional_operator_eq]; exact hx
+  have h2 : N.extensional_operator.func x = proxy.func x := hrep x hx
+  have h1' : N.extensional_operator.func x ≠ bot := h1
+  intro h3
+  exact h1' (h2.trans h3)
+
+theorem path_joint_eq_biInter
+    (d : I → X → X → ENNReal) (A : I → I → ENNReal)
+    (N : FiniteOperatorNetwork X bot V) (sample : I → Set X)
+    (q : N.ReachablePath) (J : Set I) (hJ : J.Nonempty) (eps tau : I → ENNReal) :
+    path_joint_empirical_guarantee_domain d A N sample q J eps tau =
+      ⋂ j ∈ J, path_component_empirical_guarantee_domain d A N sample q j (eps j) (tau j) := by
+  ext x
+  simp only [Set.mem_iInter]
+  constructor
+  · intro hx j hj
+    exact ⟨hx.1, hx.2 j hj⟩
+  · intro h
+    obtain ⟨j₀, hj₀⟩ := hJ
+    exact ⟨(h j₀ hj₀).1, fun j hj =&gt; (h j hj).2⟩
+
+/-- 可分离规范族下，全 ⊤ 矩阵是任意 U ⊆ dom φ 上的 Lip 证书。 -/
+theorem top_matrix_lip_of_separating
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (hsep : IsSeparating d) (φ : Operator X bot) (U : Set X) (hU : U ⊆ dom φ) :
+    IsLipMatrix d φ U (fun _ _ =&gt; ⊤) := by
+  refine ⟨hU, ?_⟩
+  intro x _ y _ j
+  by_cases hxy : x = y
+  · subst hxy
+    rw [(hd j).dist_self]
+    exact zero_le _
+  · have hnz : ∃ i, d i x y ≠ 0 := by
+      by_contra h
+      push Not at h
+      exact hxy (hsep x y (fun i =&gt; h i))
+    obtain ⟨i, hi⟩ := hnz
+    have : (⊤ : ENNReal) ≤ ∑ k : I, (⊤ : ENNReal) * d k x y := by
+      calc (⊤ : ENNReal) = ⊤ * d i x y := (ENNReal.top_mul hi).symm
+        _ ≤ ∑ k : I, (⊤ : ENNReal) * d k x y :=
+          Finset.single_le_sum (f := fun k : I =&gt; (⊤ : ENNReal) * d k x y)
+            (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+    exact le_trans le_top this
+
+end PartA
+
+/-! 附录 B：两条路径的网络，正文前提成立而 `hLq`（全路径）不成立 -/
+namespace Model
+
+abbrev Pt := Fin 5
+
+def cls (x : Pt) : Nat := if x = 3 then 2 else x.val          -- 类 {0},{1},{2,3},{4}
+noncomputable def dd (x y : Pt) : ENNReal := if cls x = cls y then 0 else ⊤
+noncomputable def dI : Unit → Pt → Pt → ENNReal := fun _ =&gt; dd
+
+theorem dI_ext : ∀ i : Unit, ExtendedPseudoMetric Pt (0 : Pt) (dI i) := by
+  intro i
+  refine ⟨⟨1, by decide⟩, ?_, ?_, ?_, ?_⟩
+  · intro x; simp [dI, dd]
+  · intro x y
+    unfold dI dd
+    by_cases h : cls x = cls y
+    · rw [if_pos h, if_pos h.symm]
+    · have h' : cls y ≠ cls x := fun e =&gt; h e.symm
+      rw [if_neg h, if_neg h']
+  · intro x y z
+    unfold dI dd
+    by_cases hxz : cls x = cls z
+    · simp [hxz]
+    · by_cases hxy : cls x = cls y
+      · have hyz : cls y ≠ cls z := fun h =&gt; hxz (hxy.trans h)
+        simp [hxy, hyz]
+      · simp [hxz, hxy]
+  · intro x hx
+    unfold dI dd
+    fin_cases x &lt;;&gt; simp_all [cls]
+
+def op1 : Operator Pt 0 := ⟨fun x =&gt; if x = 1 then 1 else 0, by decide⟩
+def op2 : Operator Pt 0 := ⟨fun x =&gt; if x = 2 then 2 else if x = 3 then 4 else 0, by decide⟩
+def tgt : Operator Pt 0 := ⟨fun x =&gt; if x = 1 ∨ x = 2 ∨ x = 3 then x else 0, by decide⟩
+def U0 : Set Pt := {x | x = 1 ∨ x = 2 ∨ x = 3}
+def entryB (x : Pt) : Bool := decide (x ≠ 1)
+
+noncomputable def Net : FiniteOperatorNetwork Pt 0 Bool where
+  U := U0
+  bot_not_mem := by simp [U0]
+  node_fintype := inferInstance
+  node_op := fun b =&gt; if b then op2 else op1
+  node_dom_nonempty := by
+    intro b
+    cases b
+    · exact ⟨1, by simp [dom, op1]⟩
+    · exact ⟨2, by simp [dom, op2]⟩
+  entry := fun x =&gt; entryB x.1
+  entry_mem := by
+    rintro ⟨x, hx⟩
+    rcases hx with rfl | rfl | rfl &lt;;&gt; simp [dom, entryB, op1, op2]
+  choice := fun _ _ =&gt; OutputChoice.stop
+  choice_next_mem := by intro β γ y _ h; cases h
+  depth_bound := 1
+  path_of := fun x =&gt; [entryB x.1]
+  path_terminal := fun x =&gt; TerminalPathFrom.stop rfl
+  path_length_le_depth := by intro x; simp
+  node_reachable := by
+    intro β
+    cases β
+    · exact ⟨⟨1, Or.inl rfl⟩, by simp [entryB]⟩
+    · exact ⟨⟨2, Or.inr (Or.inl rfl)⟩, by simp [entryB]⟩
+
+theorem two_mem : (2 : Pt) ∈ Net.path_domain [true] :=
+  ⟨Or.inr (Or.inl rfl), by simp [Net, entryB]⟩
+theorem three_mem : (3 : Pt) ∈ Net.path_domain [true] :=
+  ⟨Or.inr (Or.inr rfl), by simp [Net, entryB]⟩
+
+/-- 路径 `[true]` 的路径链在其路径域上没有任何 Lip 矩阵：d 2 3 = 0，d (op2 2) (op2 3) = d 2 4 = ⊤。 -/
+theorem no_lip_second_path :
+    ¬ ∃ L : Unit → Unit → ENNReal,
+      IsLipMatrix dI (Net.path_chain [true]) (Net.path_domain [true]) L := by
+  rintro ⟨L, hL⟩
+  have h := hL.2 2 two_mem 3 three_mem ()
+  simp [dI, dd, cls, FiniteOperatorNetwork.path_chain, Net, OperatorChain, op2] at h
+
+/-- 故源码 T1–T3 的 `hLq`（对每条可达路径都有证书）在此模型中不可满足。 -/
+theorem hLq_all_unsat :
+    ¬ ∃ Lq : Net.ReachablePath → Unit → Unit → ENNReal,
+      ∀ q : Net.ReachablePath,
+        IsLipMatrix dI (Net.path_chain q.nodes) (Net.path_domain q.nodes) (Lq q) := by
+  rintro ⟨Lq, hLq⟩
+  let q₂ : Net.ReachablePath := ⟨[true], ⟨2, two_mem⟩⟩
+  exact no_lip_second_path ⟨Lq q₂, hLq q₂⟩
+
+def sampleC : Unit → Set Pt := fun _ =&gt; {1}
+
+/-- 零矩阵是每条带采样点的路径上的合法 Lip 证书。 -/
+theorem hLq_index_ok (q : Net.ReachablePath)
+    (hq : () ∈ path_evaluable_components Net sampleC q) :
+    IsLipMatrix dI (Net.path_chain q.nodes) (Net.path_domain q.nodes)
+      (fun _ _ =&gt; (0 : ENNReal)) := by
+  rcases hq with ⟨x, hx1, hxq⟩
+  have hx1' : x = 1 := by simpa [sampleC] using hx1
+  subst hx1'
+  rcases hxq with ⟨hU, hpath⟩
+  refine ⟨Net.path_domain_subset_path_chain_dom q, ?_⟩
+  intro a ha b hb j
+  have key : ∀ y ∈ Net.path_domain q.nodes, y = 1 := by
+    intro y hy
+    rcases hy with ⟨hyU, hyp⟩
+    have h1 : Net.path_of ⟨y, hyU⟩ = Net.path_of ⟨1, hU⟩ := hyp.trans hpath.symm
+    simp [Net, entryB] at h1
+    exact h1
+  rw [key a ha, key b hb]
+  simp [dI, dd]
+
+theorem tgt_cert :
+    TargetLipEnvelopeCertificate dI tgt U0 (fun _ _ =&gt; (1 : ENNReal)) := by
+  refine ⟨⟨?_, ?_⟩⟩
+  · intro x hx
+    rcases hx with rfl | rfl | rfl &lt;;&gt; simp [dom, tgt]
+  · intro x hx y hy j
+    have hx' : tgt.func x = x := if_pos (show x = 1 ∨ x = 2 ∨ x = 3 from hx)
+    have hy' : tgt.func y = y := if_pos (show y = 1 ∨ y = 2 ∨ y = 3 from hy)
+    simp [hx', hy', dI]
+
+/-- 正文第一式在该模型中成立（经缩窄版本）。 -/
+theorem corollary_in_model (tau : ENNReal) :
+    {x | ∃ q : Net.ReachablePath,
+      () ∈ path_evaluable_components Net sampleC q ∧
+      x ∈ path_component_empirical_guarantee_domain dI
+        (fun i j =&gt; (fun (_ _ : Unit) =&gt; (0 : ENNReal)) i j
+                  + (fun (_ _ : Unit) =&gt; (1 : ENNReal)) i j) Net sampleC q ()
+        (path_empirical_residual_upper dI tgt Net sampleC (fun _ =&gt; 0) q ()) tau}
+      ⊆ {x | x ∈ Net.U ∧ dI () (Net.extensional_operator.func x) (tgt.func x) ≤ tau} :=
+  component_union_scoped dI dI_ext tgt Net.extensional_operator Net sampleC (fun _ =&gt; 0) U0
+    (fun _ _ _ =&gt; 0) (fun _ _ =&gt; 1) () tau (fun _ _ =&gt; rfl) (fun _ hx =&gt; hx)
+    (fun q hq =&gt; hLq_index_ok q hq) tgt_cert
+
+end Model
+end Audit
+</code></pre>
+</div>

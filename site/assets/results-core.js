@@ -29,7 +29,7 @@ window.MG = (() => {
   const value=knownValue(v);
   return value==null?'—':f(value)+'/'+weight;
  }
- function href(path){const u=new URL(path,document.baseURI),current=new URLSearchParams(location.search);u.searchParams.set('score',state.score);u.searchParams.set('condition',state.condition);u.searchParams.set('lang',state.lang);[...u.searchParams.keys()].filter(key=>key==='complete'||key.startsWith('complete-')).forEach(key=>u.searchParams.delete(key));const keys=new Set(['show','category','sort-written','sort-lean','sort-research','sort-gap','sort-rates',...current.keys(),...u.searchParams.keys()]);keys.forEach(key=>{if(!/^(show(?:-|$)|category$|sort-|view-)/.test(key))return;if(current.has(key))u.searchParams.set(key,current.get(key));else u.searchParams.delete(key)});if(u.pathname.endsWith('/method.html'))['review-process','content-rate-method'].forEach(id=>{if(u.hash==='#'+id||u.hash==='#'+id+'-en')u.hash='#'+id+(state.lang==='en'?'-en':'')});return u.href}
+ function href(path){const u=new URL(path,document.baseURI),current=new URLSearchParams(location.search);u.searchParams.set('score',state.score);u.searchParams.set('condition',state.condition);u.searchParams.set('lang',state.lang);if(window.MGEdition)u.searchParams.set('edition',window.MGEdition.selected);[...u.searchParams.keys()].filter(key=>key==='complete'||key.startsWith('complete-')).forEach(key=>u.searchParams.delete(key));const keys=new Set(['show','category','sort-written','sort-lean','sort-research','sort-gap','sort-rates','cost-axis','cost-score','profile-models',...current.keys(),...u.searchParams.keys()]);keys.forEach(key=>{if(!/^(show(?:-|$)|category$|sort-|view-|cost-(?:axis|score)$|profile-models$)/.test(key))return;if(current.has(key))u.searchParams.set(key,current.get(key));else u.searchParams.delete(key)});if(u.pathname.endsWith('/method.html'))['review-process','content-rate-method'].forEach(id=>{if(u.hash==='#'+id||u.hash==='#'+id+'-en')u.hash='#'+id+(state.lang==='en'?'-en':'')});return u.href}
  function refreshModelLinks(){
   document.querySelectorAll('a[href]').forEach(link=>{
    const before=new URL(link.href,document.baseURI);
@@ -40,7 +40,7 @@ window.MG = (() => {
    if(link.href!==after.href)link.href=after.href;
   });
  }
- function download(m,prefix=''){return prefix+'downloads/'+m.id+'-combined'+(state.score==='strict'?'-strict':state.score==='capability'?'-capability':'')+(state.condition==='single_attempt'?'':'-retry')+'.json'}
+ function download(m,prefix=''){return prefix+(d.edition_paths?.download_prefix||'')+'downloads/'+m.id+'-combined'+(state.score==='strict'?'-strict':state.score==='capability'?'-capability':'')+(state.condition==='single_attempt'?'':'-retry')+'.json'}
  function taskValue(task){return state.score==='strict'?(task.strict_pass==null?'未知':task.strict_pass?'通过':'未通过'):(task.completion.exact==null?'未知':f(task.completion.exact*100)+'/100')}
  function start(render){let renderKey;
   const signature=()=>JSON.stringify([state.score,state.condition,
@@ -50,6 +50,7 @@ window.MG = (() => {
    document.querySelectorAll('[data-condition][aria-pressed]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.condition===state.condition)));
    document.querySelectorAll('.context-label').forEach(n=>n.textContent=modes[state.score].name+'（'+modes[state.score].abbreviation+'） · '+conditionLabel());
    document.querySelectorAll('[data-context-link]').forEach(a=>a.href=href(a.getAttribute('href')));
+   document.querySelectorAll('[data-edition-data-link]').forEach(a=>a.href=(d.edition_paths?.download_prefix||'')+'data.json');
    try{history.replaceState(null,'',href(location.href))}catch{}
    const nextKey=signature();
    const rendered=nextKey!==renderKey;

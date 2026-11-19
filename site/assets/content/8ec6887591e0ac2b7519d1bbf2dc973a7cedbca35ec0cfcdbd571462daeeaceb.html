@@ -1,0 +1,130 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h1>审阅结论</h1>
+<p><strong>总体判定：答卷正确，结构上基本完整。</strong> S1–S6 的结论都成立，主要证明没有影响结论的数学错误。有两类问题需要指出：</p>
+<ol>
+<li>S4 第 5 节的分类表只给了结论，没有给证明。题目要求&quot;给出分类、对应构造和完整论证&quot;，所以这是完整性上的缺口，不是错误，补上即可（补证见下文）。</li>
+<li><code>current-check.md</code> 里的三条论证在数学上都成立，但其中有措辞不准确和过度断言的地方。</li>
+</ol>
+<p>另外，我用 Python 在 F₂、F₃ 上随机生成了 600 个小规模系统（|I|≤4，|J|≤4），用穷举逐一核对了 S1 的可延拓判据、S2 的三个计数公式，以及分类表中&quot;单射 ⇔ dim(W+U_A)=|I|&quot;&quot;满射 ⇔ W∩U_A=0&quot;两条（各 600 例）。结果全部吻合，没有反例。</p>
+<hr>
+<h2>逐项核查</h2>
+<h3>S1：正确</h3>
+<ul>
+<li><strong>解集维数</strong>：齐次解空间是 W^⊥，由非退化性得 dim W^⊥ = |I| − dim W，正确。</li>
+<li><strong>纤维维数</strong>：x|_A = 0 当且仅当 x ∈ U_A^⊥，所以纤维的方向空间是 W^⊥ ∩ U_A^⊥ = (W+U_A)^⊥，维数为 |I| − dim(W+U_A)。备注里的另一写法 |I| − |A| − dim W + dim(W∩U_A) 由 dim U_A = |A| 得到，也正确。</li>
+<li><strong>可延拓判据的必要性</strong>：直接计算即可，正确。</li>
+<li><strong>充分性</strong>：设 T: W^⊥→k^A 为限制映射。对 v∈W^⊥，有 (T*u)(v) = Σ_{i∈A} u_i v_i = ι_A(u)·v。在有限维下 (W^⊥)* ≅ k^I/W^{⊥⊥} = k^I/W，所以 T*(u) = ι_A(u)+W，ker T* ≅ W∩U_A。再由 Im T = (ker T*)^⊥ 推出判据。z·u 的计算利用了 supp w ⊆ A，正确。</li>
+<li><strong>β 的良定义</strong>：β 只依赖 w 而不依赖系数 c_j 的选取，这一点由相容性保证，答卷说明正确。</li>
+</ul>
+<h3>S2：正确</h3>
+<ul>
+<li>解数 q^{|I|−dim W}。</li>
+<li>每个可实现坐标的完成数 q^{|I|−dim(W+U_A)}。</li>
+<li>可实现坐标数用&quot;总数 ÷ 纤维大小&quot;得到 q^{dim(W+U_A)−dim W}。由于所有非空纤维大小相同，这个除法成立。</li>
+<li>公式只用到题目允许的四个量。上面的穷举也确认了这些公式。</li>
+</ul>
+<h3>S3：正确</h3>
+<ul>
+<li><strong>紧性与非空</strong>：Tychonoff 给出 k^I 紧且 Hausdorff。f_j 只涉及有限个坐标，所以连续，S_j = f_j^{-1}(b_j) 是闭集。题设给出有限交性质，所以 S 非空；S 是紧空间的闭子集，因而紧。</li>
+<li><strong>全不连通</strong>：连通子集在每个坐标上的投影都是 k 中的连通集，只能是单点，所以乘积全不连通，子空间继承这一性质，论证成立。</li>
+<li><strong>π_A(S) 闭</strong>：紧集在 Hausdorff 空间中的连续像是紧集，因而闭，正确。</li>
+<li><strong>元素刻画</strong>：闭集族 {S_j} ∪ {K_i = π_i^{-1}(y_i)} 的有限交性质恰好就是&quot;有限行加有限 A 坐标同时可实现&quot;，再用紧性得到全交非空，正确。</li>
+</ul>
+<h3>S4：判定和证明都正确，分类表缺证明</h3>
+<ul>
+<li><strong>β 的良定义</strong>：有限关系 Σc_j a_j = 0 与有限子系统的解 x^{(F)} 配对，得到 Σc_j b_j = 0。这里 a_j 有限支撑，所以配对是有限和，论证有效。</li>
+<li><strong>整体解</strong>：把 W 的基扩充为 k^{(I)} 的基（Zorn 引理），在补充的基向量上取 0，得到 β̃。由 a_j = Σ a_j(i)e_i（有限和）可得 Σ a_j(i)x*_i = β̃(a_j) = b_j，正确。</li>
+<li><strong>S 的描述</strong>：S = x* + W° = {x : ⟨w,x⟩ = β(w), ∀w∈W}。两种写法的等价性由线性立即得到，答卷没写出来，但无碍。</li>
+<li><strong>像的定理</strong>：在 W+U_A 上定义 ψ(w+u) = β(w)+γ_y(u)；β 与 γ_y 在 W∩U_A 上一致保证 ψ 良定义。把 ψ 延拓到全空间后取 x_i = Φ(e_i)。两个方向都正确。这里所用的数据 (W, β) 以及 W∩U_A 上的 β 都只由 a_j、b_j 决定，符合题目要求。</li>
+<li><strong>纤维</strong>：纤维是 x + W°∩U_A° = x + (W+U_A)°，正确。</li>
+</ul>
+<p><strong>缺口：分类表（S4 第 5 节）只有断言。</strong> 三条结论都是对的，但无限维情形下&quot;单射 ⇔ W+U_A = k^{(I)}&quot;需要一个答卷没有写出的引理。补证如下：</p>
+<ul>
+<li><strong>单射</strong>：S 非空，纤维是 (W+U_A)° 的陪集，所以单射等价于 (W+U_A)° = 0。若 M := W+U_A ≠ V（V = k^{(I)}），取 v∉M，把 M 的基并上 v 扩充成 V 的基，令泛函 φ 在 v 上取 1、在其余基向量上取 0。再令 x_i = φ(e_i)，就得到 (W+U_A)° 中的非零元。反方向显然。</li>
+<li><strong>满射</strong>：若 W∩U_A = 0，由像的定理，所有 y 都可实现。若存在非零 w ∈ W∩U_A，取某个 i₀∈A 使 w_{i₀} ≠ 0，调整 y_{i₀} 使 Σ w_i y_i ≠ β(w)，这样的 y 不可实现。</li>
+<li><strong>双射</strong>：就是上面两条同时成立。</li>
+</ul>
+<h3>S5：正确</h3>
+<p>反例取 x₁ = 1，x_{j−1} − x_j = 0（j≥2）。</p>
+<ul>
+<li>每行有限支撑。</li>
+<li>有限子集 F 的解可取 x = 1_{[1,max F]}，它有限支撑，逐行验证无误。</li>
+<li>全系统的唯一解是全 1 序列，不是有限支撑。</li>
+<li>对任意域成立。</li>
+</ul>
+<h3>S6：正确</h3>
+<ul>
+<li><strong>闭性</strong>：w ∈ W∩U_A ⊆ k^{(I)}，所以 supp w 有限。每个 C_w 是有限坐标上的线性条件，在离散拓扑下是 clopen 柱集。π_A(S) = ⋂C_w 是闭集的交，因而闭。论证不依赖 |k|。</li>
+<li><strong>&quot;互不冗余&quot;的说法也成立</strong>：若 w_{λ₀} 不在其余基向量的张成里，可以在 W∩U_A 上改动 β 在 w_{λ₀} 处的取值，延拓到 U_A = k^{(A)}，得到一个满足其余方程但不满足第 λ₀ 个方程的 y。答卷没有证明这一点，但它不影响 S6 的结论。</li>
+</ul>
+<hr>
+<h2>对 <code>current-check.md</code> 的核查</h2>
+<ol>
+<li><strong>论据 1（扩充系统）</strong>：正确。若 y* 属于闭包，则每个有限 B ⊆ A 的邻域都与 π_A(S) 相交。因此扩充系统（原行加上单点支撑行 e_i，i∈A）每行有限支撑，且所有有限子系统相容。S4 第 1 节已对任意域证明了&quot;有限相容 ⇒ 有整体解&quot;，所以扩充系统有整体解，引用有效。这条论证不依赖 S4 的像定理，可以作为独立的第二证明。</li>
+<li><strong>论据 2</strong>：就是答卷 S6 的原论证，正确。</li>
+<li><strong>论据 3（线性紧性）</strong>：数学内容正确。依据是 Lefschetz 的理论：离散有限维空间线性紧，线性紧空间的乘积线性紧，闭线性簇线性紧，连续线性像保持线性紧，Hausdorff 线性拓扑空间中的线性紧簇是闭的。但所引 Bourbaki《Algèbre》Chap. II §7 的具体位置无法在本地核实。</li>
+<li><strong>措辞问题</strong>：
+<ul>
+<li>&quot;基扩充公理&quot;不准确。基扩充是由 Zorn 引理推出的定理，不是公理。称其为&quot;Hahn-Banach&quot;也只是类比。</li>
+<li>&quot;拓扑拓扑性质&quot;是笔误。</li>
+</ul>
+</li>
+<li><strong>过度断言</strong>：核查称 S1–S6 的&quot;所有构造、分类与定理证明……均无任何漏洞&quot;，这一说法不成立，因为 S4 的分类表没有论证（见上）。&quot;无可辩驳的数学确定性&quot;之类是修辞，不是数学依据。</li>
+</ol>
+<hr>
+<h2>结论</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>结论</th>
+<th>问题</th>
+<th>对结论的影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>正确</td>
+<td>无</td>
+<td>—</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>正确</td>
+<td>无</td>
+<td>—</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>正确</td>
+<td>无</td>
+<td>—</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>正确</td>
+<td>分类表缺证明；无限维单射方向需要&quot;真子空间零化子非零&quot;引理</td>
+<td>不影响结论，影响完整性</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>正确</td>
+<td>无</td>
+<td>—</td>
+</tr>
+<tr>
+<td>S6</td>
+<td>正确</td>
+<td>&quot;互不冗余&quot;未证明（成立）</td>
+<td>不影响</td>
+</tr>
+<tr>
+<td>本轮核查</td>
+<td>论据成立</td>
+<td>&quot;无任何漏洞&quot;的断言过强；文献位置无法核实；措辞不严谨</td>
+<td>不影响结论</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最终意见</strong>：保留 <code>KEEP</code> 的数学结论是合理的。若要达到题目要求的&quot;完整论证&quot;，应在 S4 分类表处补上上文给出的三条证明。</p>
+</div>

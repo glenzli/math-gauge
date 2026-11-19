@@ -1,0 +1,878 @@
+{
+  "schema": "math-gauge.independent-lean-case-review/v1",
+  "reviewer_kind": "ai",
+  "review_model": "gpt-6.1-sol",
+  "review_reasoning_effort": "max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "new_candidate_calls": 0,
+  "candidate_source_repaired": false,
+  "canonical_repositories_modified": false,
+  "case_id": "LCH01",
+  "slot_id": "LCH01",
+  "source_bindings": {
+    "identity": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/source-identity.json",
+      "bytes": 2457,
+      "sha256": "6e980f0a32d5c686c0debc16eb12663b770f44e77df5ff01529705eb38bf6ae4"
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/LCH01-A1/attempt-1/response.md",
+      "bytes": 35322,
+      "sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/LCH01-A1/attempt-1/request.json",
+      "bytes": 65016,
+      "sha256": "bd25db0c4e310dcf804fe6cbe5909a7a1e87eb175c55ddfac759fed96aa7a3b3"
+    }
+  },
+  "self_assessment": {
+    "original_prose": "8 项义务已全部完成，均为 complete，放在一个文件 `Main.lean` 里。用 `lake env lean Main.lean` 编译通过，没有错误也没有警告。对全部 35 个定理跑过 `#print axioms`，依赖的只有 `propext`、`Classical.choice`、`Quot.sound`。文件里没有 `sorry`、`admit`，也没有新增公理。\n\n几点说明：\n\n- **单文件**：所有内容放在 `Main.lean` 一个文件里。它只导入固定版本 mathlib 和冻结的 `formal_oet` 模块，所以用现有 lakefile 就能编译，不需要另建 Lean 库。冻结模块没有改动。\n- **前提比原文弱，结论不变**：主定理只要求 `[Fintype I]` 和任意一族 `d : I → X → X → ENNReal`，不需要伪度量公理，也不需要 `I` 非空，因此比原文更强。另外附了 `*_textbook` 版本，把原文的完整前提补回来：`[Nonempty I]`、`∀ i, ExtendedPseudoMetric X bot (d i)`，以及 `U ⊆ dom ϕ`（如原文有此前提）。\n- **定义域条件写进谓词**：受限 Lip 谓词包含 `U ⊆ dom ϕ`；受限 co-Lip 谓词同时包含 `U ⊆ dom ϕ` 和 `U.Nonempty`。所以 `U` 为空时 co-Lip 证书族是空集。\n- **CH02-P21 附加了一个反例（不在义务清单内）**：在非分离空间里，命题 2.8(ii) 的结论不能加强为点相等。构造是 `Option Bool`，恒等算子取单位矩阵 `1` 作 co-Lip 证书，两个不同的点距离为零。",
+    "claims_complete": true
+  },
+  "claim_findings": [],
+  "extra_assertion_review": {
+    "scope": "Entire original delivered prose, code comments, mathematical side claims and self-assessment, separately from kernel success.",
+    "findings": [],
+    "checks": [
+      "Prose self-assessment and explicit completion/verification statements reviewed with the mathematical source, not keyword confidence.",
+      "Original numeric exercise claims independently checked against the actual defined maps and gauges.",
+      "Generalized definitions are read only in the original admissible mathematical context; no new source obligation is imposed for optional wrappers."
+    ]
+  },
+  "kind": "formalization",
+  "judgment": "complete",
+  "obligations": [
+    {
+      "id": "CH02-D01",
+      "title": "全域/受限Lip矩阵谓词与证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Restricted membership includes U⊆dom; the global/restricted-dom equality is proved. ENNReal zero-times-infinity and positive-times-infinity cases are explicitly checked.",
+      "candidate_representation": "对象：X 为带吸收元 bot 的类型，算子 ϕ : Operator X bot（冻结模块），dom ϕ 为冻结模块的定义域，规范族 {d_i} 为 d : I → X → X → ENNReal，有限指标集为 [Fintype I]，矩阵 L : BoundMatrix I = Matrix I I ENNReal（条目在 [0,+∞]，自动非负，允许 +∞），条目 L_{i→j} = entry L i j。全域 Lip 谓词 IsLipMatrix d ϕ L：∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j, d j (ϕ x) (ϕ y) ≤ ∑ i, entry L i j * d i x y，与正文量词与不等式一致；证书族 𝓛(ϕ) = lipMatrices d ϕ（集合）。受限谓词 IsRestrictedLipMatrix d ϕ U L：正文前提 U ⊆ dom(ϕ)（字段 subset_dom）且 ∀ x y ∈ U, ∀ j 同一不等式（字段 le）；证书族 𝓛(ϕ)|_U = restrictedLipMatrices d ϕ U（U ⊄ dom ϕ 时为空集，属全函数化处理）。mem_*_iff 给出展开形式；restrictedLipMatrices_dom 证明 𝓛(ϕ)|_{dom ϕ} = 𝓛(ϕ)。广义 Lip 约定（0·(+∞)=0；L_{i→j}=+∞ 且 d_i>0 时不等式平凡成立）由 lip_term_eq_zero_of_dist_eq_zero、lip_ineq_of_entry_eq_top 形式化。这里只定义集合，不预设存在实现下确界的指定矩阵。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.IsLipMatrix",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 118,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def IsLipMatrix (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : BoundMatrix I) : Prop :=\n  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,\n    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, entry L i j * d i x y",
+          "response_byte_start": 6628,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lipMatrices",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 123,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def lipMatrices (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (BoundMatrix I) :=\n  {L | IsLipMatrix d ϕ L}",
+          "response_byte_start": 6908,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.IsRestrictedLipMatrix",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 131,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "structure IsRestrictedLipMatrix (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (L : BoundMatrix I) : Prop where\n  subset_dom : U ⊆ dom ϕ\n  le : ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, entry L i j * d i x y",
+          "response_byte_start": 7307,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.restrictedLipMatrices",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 138,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def restrictedLipMatrices (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :\n    Set (BoundMatrix I) :=\n  {L | IsRestrictedLipMatrix d ϕ U L}",
+          "response_byte_start": 7648,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.mem_lipMatrices_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 142,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_lipMatrices_iff (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : BoundMatrix I) :\n    L ∈ lipMatrices d ϕ ↔\n      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,\n        d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, entry L i j * d i x y :=\n  Iff.rfl",
+          "response_byte_start": 7809,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.mem_restrictedLipMatrices_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 148,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_restrictedLipMatrices_iff (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (L : BoundMatrix I) :\n    L ∈ restrictedLipMatrices d ϕ U ↔\n      U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n        d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, entry L i j * d i x y :=\n  ⟨fun h => ⟨h.subset_dom, h.le⟩, fun h => ⟨h.1, h.2⟩⟩",
+          "response_byte_start": 8080,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.restrictedLipMatrices_dom",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 156,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem restrictedLipMatrices_dom (d : I → X → X → ENNReal) (ϕ : Operator X bot) :\n    restrictedLipMatrices d ϕ (dom ϕ) = lipMatrices d ϕ := by\n  ext L\n  exact ⟨fun h => h.le, fun h => ⟨subset_rfl, h⟩⟩",
+          "response_byte_start": 8521,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lip_term_eq_zero_of_dist_eq_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 165,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_term_eq_zero_of_dist_eq_zero (d : I → X → X → ENNReal) (L : BoundMatrix I)\n    {i : I} (j : I) {x y : X} (h : d i x y = 0) :\n    entry L i j * d i x y = 0 := by\n  rw [h, mul_zero]",
+          "response_byte_start": 8887,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lip_ineq_of_entry_eq_top",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 174,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_ineq_of_entry_eq_top (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (L : BoundMatrix I) {i j : I} {x y : X} (hL : entry L i j = ⊤) (hd : 0 < d i x y) :\n    d j (ϕ.func x) (ϕ.func y) ≤ ∑ k, entry L k j * d k x y := by\n  have hterm : entry L i j * d i x y = ⊤ := by\n    rw [hL]\n    exact ENNReal.top_mul hd.ne'\n  have hsum : ∑ k, entry L k j * d k x y = ⊤ := by\n    apply top_le_iff.mp\n    rw [← hterm]\n    exact Finset.single_le_sum (f := fun k => entry L k j * d k x y)\n      (fun _ _ => zero_le _) (Finset.mem_univ i)\n  rw [hsum]\n  exact le_top",
+          "response_byte_start": 9235,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/0"
+      },
+      "source_anchor": "oet-af85899693cc8750",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D02",
+      "title": "含非空条件的受限co-Lip矩阵及证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The co-Lip predicate contains both U.Nonempty and U⊆dom, with the lower inequality on every pair and output. The empty-domain family is proved empty.",
+      "candidate_representation": "受限 co-Lip 谓词 IsRestrictedCoLipMatrix d ϕ U K 有三个字段：subset_dom : U ⊆ dom ϕ；nonempty : U.Nonempty（即正文的 U ≠ ∅）；ge : ∀ x ∈ U, ∀ y ∈ U, ∀ j, ∑ i, entry K i j * d i x y ≤ d j (ϕ x) (ϕ y)（即 d_j(ϕx,ϕy) ≥ ∑_i K_{i→j} d_i(x,y)）。下界证书族 𝓚(ϕ)|_U = restrictedCoLipMatrices d ϕ U。正文要求凡出现 𝓚(ϕ)|_U 均含非空条件：由 nonempty_of_mem_restrictedCoLipMatrices 体现，restrictedCoLipMatrices_empty 证明 𝓚(ϕ)|_∅ = ∅。mem_restrictedCoLipMatrices_iff 给出展开的合取形式。不预设存在实现上确界的指定矩阵。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.IsRestrictedCoLipMatrix",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 196,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "structure IsRestrictedCoLipMatrix (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (K : BoundMatrix I) : Prop where\n  subset_dom : U ⊆ dom ϕ\n  nonempty : U.Nonempty\n  ge : ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n    ∑ i, entry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)",
+          "response_byte_start": 10271,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.restrictedCoLipMatrices",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 204,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def restrictedCoLipMatrices (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :\n    Set (BoundMatrix I) :=\n  {K | IsRestrictedCoLipMatrix d ϕ U K}",
+          "response_byte_start": 10647,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.mem_restrictedCoLipMatrices_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 208,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem mem_restrictedCoLipMatrices_iff (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (K : BoundMatrix I) :\n    K ∈ restrictedCoLipMatrices d ϕ U ↔\n      U ⊆ dom ϕ ∧ U.Nonempty ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n        ∑ i, entry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) :=\n  ⟨fun h => ⟨h.subset_dom, h.nonempty, h.ge⟩, fun h => ⟨h.1, h.2.1, h.2.2⟩⟩",
+          "response_byte_start": 10812,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.nonempty_of_mem_restrictedCoLipMatrices",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 216,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem nonempty_of_mem_restrictedCoLipMatrices {d : I → X → X → ENNReal}\n    {ϕ : Operator X bot} {U : Set X} {K : BoundMatrix I}\n    (hK : K ∈ restrictedCoLipMatrices d ϕ U) : U.Nonempty :=\n  hK.nonempty",
+          "response_byte_start": 11295,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.restrictedCoLipMatrices_empty",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 222,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem restrictedCoLipMatrices_empty (d : I → X → X → ENNReal) (ϕ : Operator X bot) :\n    restrictedCoLipMatrices d ϕ ∅ = (∅ : Set (BoundMatrix I)) := by\n  ext K\n  simp only [Set.mem_empty_iff_false, iff_false]\n  intro hK\n  exact Set.not_nonempty_empty (nonempty_of_mem_restrictedCoLipMatrices hK)",
+          "response_byte_start": 11564,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/1"
+      },
+      "source_anchor": "oet-af85899693cc8750",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D03",
+      "title": "输入/输出矩阵指标约定与乘法",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "entry M i j is M j i; both the display example and multiplication expansion preserve input/output orientation and application order.",
+      "candidate_representation": "以输出分量为行、输入分量为列：BoundMatrix I = Matrix I I ENNReal，entry M i j := M j i，即 (𝐋)_{ji} = L_{i→j}（entry_apply）。第 j 行汇集指向输出 d_j 的系数（row_eq_entries），第 i 列汇集来自输入 d_i 的系数（col_eq_entries）。I={1,2,3} 的行列排布示例用 Fin 3（0,1,2 对应 d_1,d_2,d_3）给出：fin_three_layout 是 3×3 排布，fin_three_entry_two_to_one 说明 L_{2→1} 位于第一行第二列。乘法取 mathlib 矩阵乘法 M₂ * M₁，entry_mul 证明 (𝐋^{(2)}·𝐋^{(1)})_{i→j} = ∑_k L^{(2)}_{k→j} L^{(1)}_{i→k}；entry_one 给出单位矩阵条目；sum_entry_mul_sum 证明先用 𝐋^{(1)} 再用 𝐋^{(2)} 作用于向量 v，等于乘积矩阵直接作用（在 [0,+∞] 中交换有限和）。ennreal_conventions 记录 [0,+∞] 算术约定：0·∞=0，a>0 时 a·∞=∞，a+∞=∞。",
+      "candidate_dependencies": [],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.BoundMatrix",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 45,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "abbrev BoundMatrix (I : Type) := Matrix I I ENNReal",
+          "response_byte_start": 3235,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.entry",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 48,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def entry {I : Type} (M : BoundMatrix I) (i j : I) : ENNReal := M j i",
+          "response_byte_start": 3407,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.entry_apply",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 51,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem entry_apply {I : Type} (M : BoundMatrix I) (i j : I) :\n    entry M i j = M j i := rfl",
+          "response_byte_start": 3537,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.row_eq_entries",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 55,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem row_eq_entries {I : Type} (M : BoundMatrix I) (j : I) :\n    M j = fun i => entry M i j := rfl",
+          "response_byte_start": 3718,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.col_eq_entries",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 59,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem col_eq_entries {I : Type} (M : BoundMatrix I) (i : I) :\n    (fun j => M j i) = fun j => entry M i j := rfl",
+          "response_byte_start": 3910,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.fin_three_layout",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 67,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem fin_three_layout (M : BoundMatrix (Fin 3)) :\n    M = !![entry M 0 0, entry M 1 0, entry M 2 0;\n           entry M 0 1, entry M 1 1, entry M 2 1;\n           entry M 0 2, entry M 1 2, entry M 2 2] := by\n  ext j i\n  fin_cases j <;> fin_cases i <;> rfl",
+          "response_byte_start": 4252,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.fin_three_entry_two_to_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 75,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem fin_three_entry_two_to_one (a₁₁ a₂₁ a₃₁ a₁₂ a₂₂ a₃₂ a₁₃ a₂₃ a₃₃ : ENNReal) :\n    entry !![a₁₁, a₂₁, a₃₁; a₁₂, a₂₂, a₃₂; a₁₃, a₂₃, a₃₃] 1 0 = a₂₁ := rfl",
+          "response_byte_start": 4569,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.entry_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 83,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem entry_mul {I : Type} [Fintype I] (M₂ M₁ : BoundMatrix I) (i j : I) :\n    entry (M₂ * M₁) i j = ∑ k, entry M₂ k j * entry M₁ i k := by\n  simp [entry, Matrix.mul_apply]",
+          "response_byte_start": 4984,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.entry_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 88,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem entry_one {I : Type} [DecidableEq I] (i j : I) :\n    entry (1 : BoundMatrix I) i j = if i = j then 1 else 0 := by\n  simp [entry, Matrix.one_apply, eq_comm]",
+          "response_byte_start": 5276,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.sum_entry_mul_sum",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 97,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem sum_entry_mul_sum {I : Type} [Fintype I] (M₂ M₁ : BoundMatrix I)\n    (v : I → ENNReal) (j : I) :\n    ∑ k, entry M₂ k j * (∑ i, entry M₁ i k * v i) =\n      ∑ i, entry (M₂ * M₁) i j * v i := by\n  simp only [entry_mul, Finset.mul_sum, Finset.sum_mul, mul_assoc]\n  exact Finset.sum_comm",
+          "response_byte_start": 5700,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ennreal_conventions",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 105,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem ennreal_conventions (a : ENNReal) :\n    (0 : ENNReal) * ⊤ = 0 ∧ (a ≠ 0 → a * ⊤ = ⊤) ∧ a + ⊤ = ⊤ :=\n  ⟨zero_mul _, fun ha => ENNReal.mul_top ha, add_top a⟩",
+          "response_byte_start": 6128,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/2"
+      },
+      "source_anchor": "oet-af85899693cc8750",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D07",
+      "title": "单输入通道、单行稀疏与对角特例",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Channels are ordered pairs. The row predicate permits any single input, and the displayed diagonal equivalence is proved; zero coefficients are removed only from this certificate sum.",
+      "candidate_representation": "分量通道 (i,j) 表示为有序对 ComponentChannel I := I × I，input 取第一分量 i（输入 d_i），output 取第二分量 j（输出 d_j）。通道系数 channelCoeff M (i,j) = L_{i→j}（channelCoeff_mk）。正文“系数为零时相应项不参与该上界”由 bound_sum_eq_sum_erase_of_channelCoeff_eq_zero 形式化：∑_k L_{k→j} d_k = ∑_{k≠i} L_{k→j} d_k。单行稀疏“第 j 行除 L_{i→j} 外均为零”为 RowSingleInput M i j := ∀ k ≠ i, entry M k j = 0。对角矩阵取 mathlib 的 Matrix.IsDiag（Pairwise，非对角条目为 0）；isDiag_iff_forall_rowSingleInput 证明它等价于每个输出 j 的行只保留同分量通道 (j,j)。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ComponentChannel",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 232,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "abbrev ComponentChannel (I : Type) := I × I",
+          "response_byte_start": 12050,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ComponentChannel.input",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 235,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ComponentChannel.input {I : Type} (c : ComponentChannel I) : I := c.1",
+          "response_byte_start": 12138,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ComponentChannel.output",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 238,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ComponentChannel.output {I : Type} (c : ComponentChannel I) : I := c.2",
+          "response_byte_start": 12255,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.channelCoeff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 241,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def channelCoeff {I : Type} (M : BoundMatrix I) (c : ComponentChannel I) : ENNReal :=\n  entry M c.input c.output",
+          "response_byte_start": 12391,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.channelCoeff_mk",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 244,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem channelCoeff_mk {I : Type} (M : BoundMatrix I) (i j : I) :\n    channelCoeff M (i, j) = entry M i j := rfl",
+          "response_byte_start": 12513,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.bound_sum_eq_sum_erase_of_channelCoeff_eq_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 251,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem bound_sum_eq_sum_erase_of_channelCoeff_eq_zero [DecidableEq I]\n    (d : I → X → X → ENNReal) (M : BoundMatrix I) {i j : I}\n    (h : channelCoeff M (i, j) = 0) (x y : X) :\n    ∑ k, entry M k j * d k x y = ∑ k ∈ Finset.univ.erase i, entry M k j * d k x y := by\n  symm\n  apply Finset.sum_erase\n  rw [← channelCoeff_mk, h, zero_mul]",
+          "response_byte_start": 12781,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.RowSingleInput",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 260,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def RowSingleInput {I : Type} (M : BoundMatrix I) (i j : I) : Prop :=\n  ∀ k : I, k ≠ i → entry M k j = 0",
+          "response_byte_start": 13243,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.isDiag_iff_forall_rowSingleInput",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 267,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem isDiag_iff_forall_rowSingleInput {I : Type} (M : BoundMatrix I) :\n    M.IsDiag ↔ ∀ j : I, RowSingleInput M j j := by\n  constructor\n  · intro h j k hk\n    exact h (Ne.symm hk)\n  · intro h j k hjk\n    exact h j k (Ne.symm hjk)",
+          "response_byte_start": 13520,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/3"
+      },
+      "source_anchor": "oet-7fa97eb6e24d5527",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P19",
+      "title": "单一输入项行化简；包含对角特例",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The finite sum is proved equal to its selected input term, then the original Lip inequality is transported; the diagonal case is included.",
+      "candidate_representation": "前提：L ∈ restrictedLipMatrices d ϕ U（即 𝓛(ϕ)|_U，已含 U ⊆ dom ϕ），以及 RowSingleInput L i j（第 j 行除 L_{i→j} 外为零）。结论（lip_row_single_input）：∀ x ∈ U, ∀ y ∈ U, d_j(ϕx,ϕy) ≤ ∑_k L_{k→j} d_k(x,y) 且 ∑_k L_{k→j} d_k(x,y) = L_{i→j} d_i(x,y)，与正文的不等式-等式链一致；lip_row_single_input_le 是合并后的 d_j(ϕx,ϕy) ≤ L_{i→j} d_i(x,y)。代数核心为 row_sum_eq_single。对角特例 lip_diagonal：若 L.IsDiag，则对每个 i 和所有 x,y ∈ U，链式结论对通道 (i,i) 成立。主定理对任意分量族 d 成立，不需要伪度量公理；lip_row_single_input_textbook 补回原文完整语境（[Nonempty I]、∀ i, ExtendedPseudoMetric X bot (d i)、U ⊆ dom ϕ），并同时给出一般行化简与对角特例。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D07"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.row_sum_eq_single",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 278,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem row_sum_eq_single {M : BoundMatrix I} {i j : I} (hrow : RowSingleInput M i j)\n    (v : I → ENNReal) :\n    ∑ k, entry M k j * v k = entry M i j * v i := by\n  apply Finset.sum_eq_single i\n  · intro k _ hk\n    rw [hrow k hk, zero_mul]\n  · intro hi\n    exact absurd (Finset.mem_univ i) hi",
+          "response_byte_start": 13939,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lip_row_single_input",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 292,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_row_single_input {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {L : BoundMatrix I} (hL : L ∈ restrictedLipMatrices d ϕ U) {i j : I}\n    (hrow : RowSingleInput L i j) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      d j (ϕ.func x) (ϕ.func y) ≤ ∑ k, entry L k j * d k x y ∧\n        ∑ k, entry L k j * d k x y = entry L i j * d i x y := by\n  intro x hx y hy\n  exact ⟨hL.le x hx y hy j, row_sum_eq_single hrow (fun k => d k x y)⟩",
+          "response_byte_start": 14484,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lip_row_single_input_le",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 302,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_row_single_input_le {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {L : BoundMatrix I} (hL : L ∈ restrictedLipMatrices d ϕ U) {i j : I}\n    (hrow : RowSingleInput L i j) :\n    ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ entry L i j * d i x y := by\n  intro x hx y hy\n  obtain ⟨hle, heq⟩ := lip_row_single_input hL hrow x hx y hy\n  exact heq ▸ hle",
+          "response_byte_start": 15049,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lip_diagonal",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 314,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_diagonal {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {L : BoundMatrix I} (hL : L ∈ restrictedLipMatrices d ϕ U) (hdiag : L.IsDiag) :\n    ∀ i : I, ∀ x ∈ U, ∀ y ∈ U,\n      d i (ϕ.func x) (ϕ.func y) ≤ ∑ k, entry L k i * d k x y ∧\n        ∑ k, entry L k i * d k x y = entry L i i * d i x y := by\n  intro i\n  exact lip_row_single_input hL ((isDiag_iff_forall_rowSingleInput L).mp hdiag i)",
+          "response_byte_start": 15663,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.lip_row_single_input_textbook",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 324,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_row_single_input_textbook [Nonempty I] (d : I → X → X → ENNReal)\n    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i)) (ϕ : Operator X bot) (U : Set X)\n    (hU : U ⊆ dom ϕ) (L : BoundMatrix I) (hL : L ∈ restrictedLipMatrices d ϕ U) :\n    (∀ i j : I, RowSingleInput L i j → ∀ x ∈ U, ∀ y ∈ U,\n      d j (ϕ.func x) (ϕ.func y) ≤ ∑ k, entry L k j * d k x y ∧\n        ∑ k, entry L k j * d k x y = entry L i j * d i x y) ∧\n    (L.IsDiag → ∀ i : I, ∀ x ∈ U, ∀ y ∈ U,\n      d i (ϕ.func x) (ϕ.func y) ≤ ∑ k, entry L k i * d k x y ∧\n        ∑ k, entry L k i * d k x y = entry L i i * d i x y) :=\n  ⟨fun _ _ hrow => lip_row_single_input hL hrow, fun hdiag => lip_diagonal hL hdiag⟩",
+          "response_byte_start": 16274,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/4"
+      },
+      "source_anchor": "oet-7fa97eb6e24d5527",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P20",
+      "title": "正co-Lip通道保持正距离",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "A single nonnegative summand is bounded by the whole co-Lip sum; positivity in ENNReal covers infinite coefficients and distances without an unjustified finiteness assumption.",
+      "candidate_representation": "命题 2.8(i)。前提：K ∈ restrictedCoLipMatrices d ϕ U（即 𝓚(ϕ)|_U，含 U ⊆ dom ϕ 与 U 非空），以及 0 < entry K i j（K_{i→j} > 0）。结论：∀ x ∈ U, ∀ y ∈ U, 0 < d i x y → 0 < d j (ϕ x) (ϕ y)。证明路线与原文一致：coLip_single_term_le 给出 K_{i→j} d_i(x,y) ≤ ∑_k K_{k→j} d_k(x,y) ≤ d_j(ϕx,ϕy)（co-Lip 不等式加非负性），再由 ENNReal.mul_pos 得到严格正。主定理对任意分量族成立；coLip_pos_channel_textbook 补回规范空间语境（[Nonempty I] 与伪度量公理）。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.coLip_single_term_le",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 338,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_single_term_le {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {K : BoundMatrix I} (hK : K ∈ restrictedCoLipMatrices d ϕ U) (i j : I) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      entry K i j * d i x y ≤ ∑ k, entry K k j * d k x y ∧\n        ∑ k, entry K k j * d k x y ≤ d j (ϕ.func x) (ϕ.func y) := by\n  intro x hx y hy\n  refine ⟨?_, hK.ge x hx y hy j⟩\n  exact Finset.single_le_sum (f := fun k => entry K k j * d k x y)\n    (fun _ _ => zero_le _) (Finset.mem_univ i)",
+          "response_byte_start": 17188,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.coLip_pos_channel",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 352,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_pos_channel {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {K : BoundMatrix I} (hK : K ∈ restrictedCoLipMatrices d ϕ U) {i j : I}\n    (hij : 0 < entry K i j) :\n    ∀ x ∈ U, ∀ y ∈ U, 0 < d i x y → 0 < d j (ϕ.func x) (ϕ.func y) := by\n  intro x hx y hy hxy\n  obtain ⟨h₁, h₂⟩ := coLip_single_term_le hK i j x hx y hy\n  exact lt_of_lt_of_le (ENNReal.mul_pos hij.ne' hxy.ne') (h₁.trans h₂)",
+          "response_byte_start": 17851,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.coLip_pos_channel_textbook",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 362,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_pos_channel_textbook [Nonempty I] (d : I → X → X → ENNReal)\n    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i)) (ϕ : Operator X bot) (U : Set X)\n    (K : BoundMatrix I) (hK : K ∈ restrictedCoLipMatrices d ϕ U) (i j : I)\n    (hij : 0 < entry K i j) :\n    ∀ x ∈ U, ∀ y ∈ U, 0 < d i x y → 0 < d j (ϕ.func x) (ϕ.func y) :=\n  coLip_pos_channel hK hij",
+          "response_byte_start": 18426,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/5"
+      },
+      "source_anchor": "oet-f82672ec0dd48f28",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P21",
+      "title": "全对角正co-Lip反射族零距；不加强为点相等",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The proof concludes GaugeZeroRelated, never point equality. The optional nonseparating Option Bool example satisfies all metric/domain/co-Lip premises and refutes point-equality strengthening.",
+      "candidate_representation": "命题 2.8(ii)。前提：K ∈ 𝓚(ϕ)|_U，且 ∀ j, 0 < entry K j j（全部对角条目 K_{j→j} > 0）。结论（coLip_reflects_gaugeZeroRelated）：∀ x ∈ U, ∀ y ∈ U, GaugeZeroRelated d (ϕ x) (ϕ y) → GaugeZeroRelated d x y，即 ϕ(x) ∼_𝒢 ϕ(y) ⇒ x ∼_𝒢 y。族零距关系使用冻结模块的 GaugeZeroRelated。结论只到族零距关系，没有加强为 x = y。证明同原文：固定 j，若 d_j(x,y) > 0，则由 P20 用通道 (j,j) 得到矛盾。附加的反例 coLip_reflects_not_point_eq 说明点相等确实不成立：非分离空间 Option Bool（bot = none，ceDist 满足 ExtendedPseudoMetric），ceOp 为恒等算子，ceDom = {some false, some true} ⊆ dom，单位矩阵 1 ∈ 𝓚(ceOp)|_{ceDom} 且对角为正，但 some false ∼ some true 且两点不同。textbook 版本补回规范空间语境。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-P20"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.coLip_reflects_gaugeZeroRelated",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 375,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_reflects_gaugeZeroRelated {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {K : BoundMatrix I} (hK : K ∈ restrictedCoLipMatrices d ϕ U)\n    (hdiag : ∀ j : I, 0 < entry K j j) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y := by\n  intro x hx y hy hrel j\n  by_contra hj\n  have hpos : 0 < d j (ϕ.func x) (ϕ.func y) :=\n    coLip_pos_channel hK (hdiag j) x hx y hy (pos_iff_ne_zero.mpr hj)\n  exact hpos.ne' (hrel j)",
+          "response_byte_start": 19136,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.coLip_reflects_gaugeZeroRelated_textbook",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 388,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_reflects_gaugeZeroRelated_textbook [Nonempty I] (d : I → X → X → ENNReal)\n    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i)) (ϕ : Operator X bot) (U : Set X)\n    (K : BoundMatrix I) (hK : K ∈ restrictedCoLipMatrices d ϕ U)\n    (hdiag : ∀ j : I, 0 < entry K j j) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y :=\n  coLip_reflects_gaugeZeroRelated hK hdiag",
+          "response_byte_start": 19778,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ceDist",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 399,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ceDist : Unit → Option Bool → Option Bool → ENNReal\n  | _, none, none => 0\n  | _, some _, some _ => 0\n  | _, _, _ => ⊤",
+          "response_byte_start": 20397,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ceDist_isExtendedPseudoMetric",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 404,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem ceDist_isExtendedPseudoMetric (i : Unit) :\n    ExtendedPseudoMetric (Option Bool) none (ceDist i) where\n  nonabsorbing := ⟨some true, by simp⟩\n  dist_self x := by cases x <;> rfl\n  symm x y := by cases x <;> cases y <;> rfl\n  triangle x y z := by cases x <;> cases y <;> cases z <;> simp [ceDist]\n  isolate_bot x hx := by\n    cases x with\n    | none => exact absurd rfl hx\n    | some _ => rfl",
+          "response_byte_start": 20529,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ceOp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 416,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ceOp : Operator (Option Bool) none := ⟨id, rfl⟩",
+          "response_byte_start": 20973,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ceDom",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 419,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def ceDom : Set (Option Bool) := {some false, some true}",
+          "response_byte_start": 21095,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.ce_one_mem_restrictedCoLipMatrices",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 422,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem ce_one_mem_restrictedCoLipMatrices :\n    (1 : BoundMatrix Unit) ∈ restrictedCoLipMatrices ceDist ceOp ceDom := by\n  refine ⟨?_, ⟨some false, Or.inl rfl⟩, ?_⟩\n  · rintro x (rfl | rfl) <;> simp [dom, ceOp]\n  · intro x _ y _ j\n    simp [entry, ceOp]",
+          "response_byte_start": 21235,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.coLip_reflects_not_point_eq",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 433,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_reflects_not_point_eq :\n    (∀ i : Unit, ExtendedPseudoMetric (Option Bool) none (ceDist i)) ∧\n    (1 : BoundMatrix Unit) ∈ restrictedCoLipMatrices ceDist ceOp ceDom ∧\n    (∀ j : Unit, 0 < entry (1 : BoundMatrix Unit) j j) ∧\n    ∃ x ∈ ceDom, ∃ y ∈ ceDom,\n      GaugeZeroRelated ceDist (ceOp.func x) (ceOp.func y) ∧ x ≠ y := by\n  refine ⟨ceDist_isExtendedPseudoMetric, ce_one_mem_restrictedCoLipMatrices, ?_, ?_⟩\n  · intro j\n    simp [entry]\n  · refine ⟨some false, Or.inl rfl, some true, Or.inr rfl, ?_, by simp⟩\n    intro i\n    rfl",
+          "response_byte_start": 21726,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/6"
+      },
+      "source_anchor": "oet-f82672ec0dd48f28",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P25",
+      "title": "习题2.2：标量双侧界",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The lower bound uses only the selected co-Lip summand, and the upper bound uses Lip row sparsity. No co-Lip sparsity has been added.",
+      "candidate_representation": "习题 2.2。对象：ϕ : Operator X bot，U : Set X，j : I，L ∈ restrictedLipMatrices d ϕ U（𝓛(ϕ)|_U），K ∈ restrictedCoLipMatrices d ϕ U（𝓚(ϕ)|_U）。前提：∀ k ≠ j, entry L k j = 0（L_{k→j} = 0，定义上等于 RowSingleInput L j j）。正文的 U ⊆ dom(ϕ) 已包含在两个证书族的成员关系中；textbook 版本另外把它和规范空间公理作为显式前提列出。结论：∀ x ∈ U, ∀ y ∈ U, K_{j→j}·d_j(x,y) ≤ d_j(ϕx,ϕy) ∧ d_j(ϕx,ϕy) ≤ L_{j→j}·d_j(x,y)。证明：上界取 P19 中 i = j 的单行化简（lip_row_single_input_le）；下界用 P20 中的 coLip_single_term_le（单项 ≤ 和 ≤ 像距）。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D07",
+        "CH02-P19",
+        "CH02-P20"
+      ],
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "LCH01.scalar_two_sided_bound",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 453,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem scalar_two_sided_bound {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X}\n    {L K : BoundMatrix I} (hL : L ∈ restrictedLipMatrices d ϕ U)\n    (hK : K ∈ restrictedCoLipMatrices d ϕ U) (j : I)\n    (hrow : ∀ k : I, k ≠ j → entry L k j = 0) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      entry K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧\n        d j (ϕ.func x) (ϕ.func y) ≤ entry L j j * d j x y := by\n  intro x hx y hy\n  obtain ⟨h₁, h₂⟩ := coLip_single_term_le hK j j x hx y hy\n  exact ⟨h₁.trans h₂, lip_row_single_input_le hL hrow x hx y hy⟩",
+          "response_byte_start": 22646,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        },
+        {
+          "file": "Main.lean",
+          "name": "LCH01.scalar_two_sided_bound_textbook",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+          "bytes": 22516,
+          "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f",
+          "line": 466,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem scalar_two_sided_bound_textbook [Nonempty I] (d : I → X → X → ENNReal)\n    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i)) (ϕ : Operator X bot) (U : Set X)\n    (hU : U ⊆ dom ϕ) (j : I) (L K : BoundMatrix I) (hL : L ∈ restrictedLipMatrices d ϕ U)\n    (hK : K ∈ restrictedCoLipMatrices d ϕ U) (hrow : ∀ k : I, k ≠ j → entry L k j = 0) :\n    ∀ x ∈ U, ∀ y ∈ U,\n      entry K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧\n        d j (ϕ.func x) (ϕ.func y) ≤ entry L j j * d j x y :=\n  scalar_two_sided_bound hL hK j hrow",
+          "response_byte_start": 23380,
+          "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH01/contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "pointer": "/stages/7"
+      },
+      "source_anchor": "oet-6a98a58b5bc95360",
+      "source_lines": null
+    }
+  ],
+  "required_obligations": 8,
+  "completed_obligations": 8,
+  "engineering_strict_pass": true,
+  "strict_pass": true,
+  "compilation": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/compilation.json",
+    "bytes": 3984,
+    "sha256": "3d55a2c971e2baa24365ea182be0361342de0f9a4e9237480023bafb670eb89d"
+  },
+  "effective_delivered_source": {
+    "slot_id": "LCH01",
+    "source_files": [
+      {
+        "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/Main.lean",
+        "bytes": 22516,
+        "sha256": "1f0f3b66307782a93eaa3186fcdfeeaad207587e2ede0a61c6cc8c15f7b1798f"
+      }
+    ],
+    "alignment": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH01/delivered/alignment.json",
+      "bytes": 11326,
+      "sha256": "0fd94be37a2fd1e8850da17a810ff76386365b085ea38de0df2853d3d763a211"
+    },
+    "parent_byte_inheritance": false
+  }
+}

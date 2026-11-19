@@ -67,6 +67,38 @@ class CurrentSiteTests(unittest.TestCase):
     def setUpClass(cls):
         cls.data = SITE.build_data()
 
+    def selected_layer_score(self, model, mode, condition, original):
+        """Assert against the selected artifact, preserving the older source view."""
+        initial = model.get('initial_assessment')
+        if initial is not None:
+            from math_gauge.records import evidence_bytes
+            manifest = json.loads(evidence_bytes(ROOT, initial['manifest']))
+            self.assertEqual(manifest['record']['path'], model['source_record'])
+            self.assertEqual(manifest['model_id'], model['id'])
+            self.assertEqual(manifest['assessment_kind'], 'initial')
+            self.assertNotIn('base_reports', manifest)
+            self.assertNotIn('source_assessment_version', manifest)
+            expected = dict(original, benchmark_version='1.1.0',
+                source_score_contract_version=original['benchmark_version'],
+                source_task_version='1.0.0', assessment_kind='initial')
+            bound = json.loads(evidence_bytes(ROOT, manifest['scores'][mode][condition]))
+            self.assertIn(bound, (original, expected))
+            return expected
+        metadata = model.get('tx_calibration')
+        if metadata is None:
+            return original
+        from math_gauge.records import evidence_bytes
+        manifest = json.loads(evidence_bytes(ROOT, metadata['manifest']))
+        self.assertEqual(manifest['source_record']['path'], model['source_record'])
+        self.assertEqual(manifest['model_id'], model['id'])
+        self.assertEqual(manifest['benchmark_version'], self.data['benchmark_version'])
+        current = json.loads(evidence_bytes(ROOT, manifest['scores'][mode][condition]))
+        base = json.loads(evidence_bytes(ROOT, manifest['base_reports'][mode][condition]))
+        self.assertEqual(base, original)
+        self.assertEqual(current['metrics']['written'], base['metrics']['written'])
+        self.assertEqual(current['metrics']['lean'], base['metrics']['lean'])
+        return current
+
     def test_progress_tracks_pending_built_tasks_not_failures_or_unbuilt_weight(self):
         result = {"whole_task_counts": {"planned": 3, "passed": 1, "failed": 2, "unknown": 0},
                   "capacity": {"active": 90, "under_construction": 10},
@@ -83,13 +115,17 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data["publication_scope"], "combined")
         from math_gauge.records import selected_cli_records, selected_paper_records
         selected = {model for model, folder in selected_cli_records(ROOT) + selected_paper_records(ROOT)}
+        current = json.loads((ROOT/'benchmark.json').read_bytes()).get('current_assessment_admissions', {})
+        self.assertFalse(selected.intersection(current), 'Initial admission cannot replace a historical model')
+        selected.update(current)
         displayed = {model['id'] for model in self.data['models']
                      if model.get('record_kind') != 'native_harness'}
         self.assertEqual(displayed, selected)
         for model in self.data["models"]:
             path = ROOT / Path(model["source_record"]).parent
             original = json.loads((path / "combined-aggregate.json").read_bytes())
-            self.assertEqual(model["combined"], original)
+            self.assertEqual(model["combined"], self.selected_layer_score(
+                model, 'partial', 'single_attempt', original))
             self.assertNotIn("public", model)
             self.assertNotIn("public", model["retry"])
             self.assertFalse(model["combined"]["formal_comparison_eligible"])
@@ -136,7 +172,10 @@ class CurrentSiteTests(unittest.TestCase):
             SITE.write_site(root)
             before = {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()}
             SITE.write_site(root)
-            self.assertEqual(before, {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()})
+            after = {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+            self.assertEqual(set(before), set(after))
+            self.assertEqual([name for name in before if before[name] != after[name]], [],
+                             'Deterministic publication changed these file bytes')
             downloads = {
                 "downloads/" + model["id"] + "-" + scope + suffix + ".json"
                 for model in self.data["models"] for scope in ["combined"]
@@ -364,7 +403,20 @@ class CurrentSiteTests(unittest.TestCase):
             summary = model['retry']['combined'].get('retry_summary', {})
             reruns = summary.get('slots_with_reruns', summary.get('admitted_initial_reruns', 0))
             if reruns:
-                if summary.get('selection'):
+                if model.get('initial_assessment'):
+                    # A new batch binds its own first assessment, rather than a
+                    # legacy retry-migration component. Physical system restarts
+                    # remain visible without inventing effective model retries.
+                    from math_gauge.records import evidence_bytes
+                    folder = ROOT / Path(model['source_record']).parent
+                    record = json.loads((folder / 'record.json').read_bytes())
+                    for condition, displayed in [('single_attempt', model['combined']),
+                                                  ('nonlogical_retry_3', model['retry']['combined'])]:
+                        original = json.loads(evidence_bytes(folder, record['assessment_results'][condition]))
+                        self.assertEqual(displayed, self.selected_layer_score(model, 'partial', condition, original))
+                    if summary.get('effective_model_attempt_retries') == 0:
+                        self.assertEqual(model['combined']['metrics'], model['retry']['combined']['metrics'])
+                elif summary.get('selection'):
                     self.assertIn(summary['selection'],
                                   {'first_completed_delivery', 'first_normal_native_delivery'})
                 else:
@@ -424,7 +476,8 @@ class CurrentSiteTests(unittest.TestCase):
                     from math_gauge.records import evidence_bytes
                     manifest = json.loads(evidence_bytes(ROOT, model['c003_continuation']['manifest']))
                     filename = manifest['scores']['strict']['path']
-                self.assertEqual(result, json.loads((folder / filename).read_bytes()))
+                self.assertEqual(result, self.selected_layer_score(model, 'strict', condition,
+                    json.loads((folder / filename).read_bytes())))
                 self.assertEqual(result["attempt_condition"], condition)
                 reliable = model['combined'] if condition == 'single_attempt' else model['retry']['combined']
                 self.assertEqual(result['coverage'], reliable['coverage'])
@@ -435,7 +488,7 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertNotIn("tasks", result)
         chart = ChartBars(SITE.render(self.data), "strict")
         self.assertEqual(chart.values, [f"{SITE.earned_value(m['strict']['nonlogical_retry_3']):.2f}"
-                                        for m in sorted(self.data['models'], key=lambda m: SITE.earned_value(SITE.selected_result(m)), reverse=True)])
+                                        for m in sorted(self.data['models'], key=SITE.overall_key)])
         self.assertEqual(len(chart.bars), len(self.data["models"]))
         self.assertEqual(chart.tooltips, [])
         self.assertEqual(len(chart.images), len(self.data["models"]))
@@ -457,7 +510,8 @@ class CurrentSiteTests(unittest.TestCase):
                     manifest = json.loads(evidence_bytes(ROOT, model['c003_continuation']['manifest']))
                     filename = manifest['scores']['capability']['path']
                 current = model["capability"][condition]
-                self.assertEqual(current, json.loads((folder / filename).read_bytes()))
+                self.assertEqual(current, self.selected_layer_score(model, 'capability', condition,
+                    json.loads((folder / filename).read_bytes())))
                 reliable = model["combined"] if condition == "single_attempt" else model["retry"]["combined"]
                 self.assertGreaterEqual(SITE.earned_value(current), SITE.earned_value(reliable))
                 self.assertEqual(current["capacity"], reliable["capacity"])

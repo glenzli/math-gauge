@@ -9,6 +9,7 @@ import shutil
 import tempfile
 import unittest
 
+from math_gauge.editions import source_edition
 from math_gauge.result_corrections import _field, load_selected, verify_native_recovery
 
 
@@ -99,7 +100,7 @@ class SelectedCorrectionTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         source_root = Path(__file__).resolve().parents[1]
-        edition = json.loads((source_root / 'benchmark.json').read_bytes())
+        edition = source_edition(source_root)
         self.selection = edition['result_corrections']['gemini-4-argon']
         manifest_source = source_root / self.selection['path']
         self.manifest = json.loads(manifest_source.read_bytes())
@@ -117,7 +118,7 @@ class SelectedCorrectionTests(unittest.TestCase):
             target = self.folder / descriptor['path']
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source_folder / descriptor['path'], target)
-        self.edition = {'version': edition['version'],
+        self.edition = {'version': '1.0.0',
                         'result_corrections': {'gemini-4-argon': self.selection}}
         self.select()
 

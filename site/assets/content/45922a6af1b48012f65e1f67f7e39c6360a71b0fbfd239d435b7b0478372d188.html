@@ -1,0 +1,63 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>KEEP</p>
+<p>本轮没有发现需要修复的缺陷。上一版答卷原样保留：<code>Main.lean</code> 和 <code>alignment.json</code> 都与上一版逐字节相同，本轮没有改动任何源码、对齐表或结论。</p>
+<h2>本轮核查依据</h2>
+<p>本轮重新做了以下检查：</p>
+<ol>
+<li>
+<p><strong>文件一致性</strong>：工作区里的 <code>Main.lean</code> 有 2890 行，MD5 为 <code>6a0a72a9f372f88dfc6a7baa0c022008</code>，与上两轮记录的源码相同。</p>
+</li>
+<li>
+<p><strong>编译</strong>：在 Lean 4.29.1 / mathlib <code>5e932f97…</code> 下重新运行 <code>lake env lean Main.lean</code>，没有任何错误或警告输出。</p>
+</li>
+<li>
+<p><strong>公理审计</strong>：重新生成 olean 后，对 <code>OET3</code> 下全部 377 个声明调用 <code>collectAxioms</code>。除 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code> 外没有其他公理。</p>
+</li>
+<li>
+<p><strong>禁用设施</strong>：扫描源码，没有 <code>sorry</code>、<code>admit</code>、<code>axiom</code>、<code>native_decide</code>、<code>implemented_by</code>、<code>@[extern]</code>、<code>unsafe</code>，也没有跳过内核检查的选项。</p>
+</li>
+<li>
+<p><strong>对齐表</strong>：</p>
+<ul>
+<li>用脚本把 <code>alignment.json</code> 与 <code>obligations.json</code> 比对：<code>case_id</code> 为 MG-C003，<code>version</code> 为 0.1.1。</li>
+<li>92 个 ID 与清单顺序一致，没有重复，全部为 complete；dependencies 都在清单内，每项 representation 都非空。</li>
+<li>去重后共引用 255 个声明，逐一用 <code>#check</code> 检查，没有一个报 unknown。</li>
+<li>引用的文件只有 <code>Main.lean</code>，以及 D07 明确允许的冻结文件 <code>metric_entropy.lean</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>冻结背景</strong>：<code>formal_oet/</code> 下 6 个文件仍为只读，时间戳仍是初始值，答卷没有提交或覆盖它们。</p>
+</li>
+<li>
+<p><strong>逐项对照原文</strong>：重点复核了以下几处：</p>
+<ul>
+<li>命题 3.12(ii)：零化矩阵下标方向，右端为 0 或 ⊤ 的情形。</li>
+<li>命题 3.15(iii)：输出距离为 ⊤ 时的 ε 取法。</li>
+<li>命题 3.16 后反例：对所有满足条件的 <code>a</code> 都成立的全称形式。</li>
+<li>推论 3.17：两个方向，以及覆盖数恰为 1。</li>
+<li>习题数值：
+<ul>
+<li>3.1：φ 为常值分量，φ² 为有效分量，φ² 的纤维为 {0}。</li>
+<li>3.3：覆盖数为 2 和 1，熵差为 1。</li>
+<li>3.4：四个域的类型依次为 (1,1)、(1,0)、(0,1)、(0,0)。</li>
+<li>3.5：覆盖数分段为 4/2/1；g 的最优 Lip 常数为 3；在 7/12 尺度下的覆盖数为 4。</li>
+</ul>
+</li>
+</ul>
+<p>这些都与 Lean 中的陈述一致。</p>
+</li>
+</ol>
+<h2>仍有的不确定性</h2>
+<ul>
+<li><strong>表示方式</strong>：有几处写法与原文不同，评审未必都接受：
+<ul>
+<li>映射熵差用 <code>Option EReal</code> 表示，不良定时取 <code>none</code>。</li>
+<li>有限链用 <code>ℕ → Operator</code> 从 0 编号。</li>
+<li><code>nullMatrix d ϕ U i j</code> 对应 [N]_{ji}。</li>
+<li>输入尺度主用扩展到全体子集的 <code>InputScale</code>，正文同形的 <code>InputScaleNE</code> 及其双向转换作为对应证明。</li>
+<li>阈值分类的定义本身不要求阈值有限且为正，需要时在定理前提中给出。</li>
+</ul>
+</li>
+<li><strong>比原文更一般的陈述</strong>：部分定理去掉了原文的非空或有限条件，结论更强；另有部分定理保留了用不到的前提（如 <code>hU : U ⊆ dom ϕ</code>），只为与原文前提一一对应。</li>
+<li><strong>证明步骤的显式程度</strong>：命题 3.11 中&quot;取出合法有限正半径&quot;一步写在证明内部（<code>lt_sSup_iff</code>），没有单独陈述为定理。</li>
+</ul>
+<p><a href="../../../results/v1.0.0/claude-opus-5.5-xhigh/20261119/answers/C003-R3.md">原答文件 ↗</a></p></div>

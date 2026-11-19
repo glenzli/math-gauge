@@ -1,0 +1,121 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h3>HC02-D01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 拟定的全域/受限Lip不等式与Set证书族保留ENNReal系数、全体点对和输出指标；受限定义含U⊆dom。实际代码却用不存在的ϕ.dom字段（背景定义是独立dom ϕ），造成定义本身编译错误，不是定义所表达的矩阵界在数学上为假。</p>
+<h3>HC02-D02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> CoLipMatrix写明U.Nonempty、域包含与各输出求和下界，0/∞系数均允许，静态范围忠实。相同.dom错误阻断真实定义编译。</p>
+<h3>HC02-D03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> BoundMatrix、matrixEntry M row col=M col row和mul的输入/输出方向正确。实际mul漏noncomputable，matrix_mul_assoc的ext/有限和证明也未通过；不能从正确公式推称原样Lean已证明结合律。</p>
+<h3>HC02-D04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> chainMatrix []为单位、cons按后续乘积乘首矩阵，执行顺序正确。singleton却exact mul_idMatrix M，而展开目标是mul idMatrix M=M；方向错配且idMatrix两侧恒等证明本身也有错误。数学目标正确，Lean交付不完整。</p>
+<h3>HC02-D05</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 本卷确有evalChain、完整intermediateSets、chain_image_eq和额外each_step_dom（任意m、外置U⊆全复合域）以及单步数据构造，不继承旧专项的任意步域缺口。它们的静态范围合适、没有把最终复合界存字段；但实际image归纳、dom字段、preserves_bot字段不匹配，以及两StepChain把变化U置为固定参数产生kernel递归错误，故并未交付可核验构造。</p>
+<h3>HC02-D06</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 直接Fin(n−1)→I表示所有无约束中间序列，fullPath补两端，全正/含零另作谓词；n=1为空中间序列，表示路线数学上可行，不要求另造双射或固定参考路线。实际Ms先绑定隐含n、后又显式绑定n，导致Fin n/Fin n✝类型冲突；pathWeight/Sum又漏noncomputable，未形成合法全部路径定义。</p>
+<h3>HC02-D07</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> RowSparse固定输出j但唯一输入i_j任意；ColSparse固定输入i但唯一输出j_i任意，Diagonal非对角为零，未强制交叉位置等于对角。IsRow/ColDecoupled是全矩阵逐行/逐列聚合；原固定一行/列的存在条件已在其内层及基础谓词直接表达，不因缺作者同名包装另扣。矩阵支撑和原算子关于指定分量的∃合法证书性质应区别使用，不能把聚合谓词当算子的精确依赖刻画。整体模块仍未编译/审计。</p>
+<h3>HC02-D08</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> S_channel定义全体点对标量证书，single_channel_lip取其ENNReal sInf，允许空集inf∞；在原合法U上忠实。该对象并不是所有合法多输入矩阵的单条目取值下确界，P04发生的替换不能回过来把本定义说成错误。</p>
+<h3>HC02-P01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> Unique I把有限和化为单项，拟定结论是原单分量退化。其hL与.dom因前置定义错误未成功应用；没有因此证明数学命题假。</p>
+<h3>HC02-P02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 静态直接以U⊆dom送入全域界得到受限界，范围正确；实际.dom及未形成的LipMatrix定义阻断该声明。</p>
+<h3>HC02-P03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 静态把U⊆V与V合法性合成，点对限制方向正确，提供矩阵证书族包含的核心内容；没有原样完整模块/公理审计。</p>
+<h3>HC02-P04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 真实声明只证明single_channel_lip(U)≤single_channel_lip(V)，即S_channel标量最优常数单调，未定义/证明冻结目标inf{M i j | M∈LipCertFamilyDom U}的单调。两对象一般不同（两个相同输入度量时可把矩阵上界转给另一输入，从而该矩阵条目inf=0，而identity单通道最优常数=1）。P03提供可继续证明原目标的基础，但本条当前表示明确换对象，没有已交等价桥。</p>
+<h3>HC02-P05</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 两步复合保留源U、真实像ϕ1(U)、两个单步证书和外置完整复合域，拟以乘非负系数/换有限和证明，范围正确。实际comp使用错误map_bot字段、.dom字段、ENNReal.mul_sum等未知名和求和整理未通过。</p>
+<h3>HC02-P06</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 声明额外假设hd_in_top:d i0 x y≠∞，alignment也明确写成非零有限输入距离，冻结目标只要求正输入距离并允许∞。虽该binder在证明体未使用，当前定理类型仍不能覆盖∞见证；它只是被弱化的真结论，不是原完整目标。还有真实single_le_sum类型错误。</p>
+<h3>HC02-P07</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> CoLip复合保留h1.Nonempty、源U与真实像域，数学求和路线符合原目标，未附K稀疏或有限性。comp/域接口与有限和改写失败，未得原样Lean证明。</p>
+<h3>HC02-P08</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 一般三角扰动不等式足以在给定两点δ界后直接得到原δ+δ结论，无需额外作者同名wrapper；但实际h1/h2三角点顺序反了，h1左端为d(ϕx,ψy)，不能作为目标d(ϕx,ϕy)的上界，line333明确失败。属于真实证明缺口，非目标命题假。</p>
+<h3>HC02-P09</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 拟用交换ϕ/ψ及对称性得到反向扰动，原δ界可直接实例化，表示忠实；依赖P08未证的三角扰动，未形成可验Lean交付。</p>
+<h3>HC02-P10</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 保留另一算子合法域、单步Lip证书和统一点态δ界，结论明确为+2*δ（two_mul按δ+δ处理），静态目标忠实；.dom接口及P08失败阻断，无隐藏要求再证明2δ包装。</p>
+<h3>HC02-P11</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> coLip加性界的前提和不等式方向正确，未把差值解释成必须可减；实际P09依赖不成立，且line408的add_le_add_left左右结合顺序不能匹配目标。</p>
+<h3>HC02-P12</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 拟对逐步实际像域的LipStepChain作完整列表归纳，乘积按真实顺序；零步作基例，覆盖正长度链，不是只交两步。StepChain归纳定义本身被kernel拒绝，且mul_sum未知名等使证明无法完成，不能计为已交链定理。</p>
+<h3>HC02-P13</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 拟作全列表coLip归纳，每个非空cons的头证书含U非空，故原正长度链的非空性有实际数据来源，未要求零步也无条件coLip合法。CoLipStepChain的kernel错误和求和改写失败阻断原样证明。</p>
+<h3>HC02-P14</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> id_operator配单位矩阵的全域Lip界可经P02直接限制到原合法非空U；不需要新增具名受限包装。实际id_operator字段错误、前置定义/单位和证明错误导致交付未通过。</p>
+<h3>HC02-P15</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> hU.Nonempty及bot∉U与恒等算子的原合法U条件对应；目标正确。实际hU_bot.symm不是合法字段，单位和证明也错，故并未证明原coLip证书。</p>
+<h3>HC02-P16</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> lip_chainMatrix_zero_iff的左端实际是pathWeightSum，不是chainMatrix。全文只有长度1的pathWeightSum=M和chainMatrix[M]=M，未对任意n证明路径和等于实际有序矩阵乘积；缺的是全量表示桥，不能靠定理名含chainMatrix当作已完成。还存在D06非法定义/错误恢复问题，原目标未交付。</p>
+<h3>HC02-P17</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> colip_chainMatrix_pos_iff同样只针对另定义的pathWeightSum；任意完整矩阵证书序列与chainMatrix之间的路径展开桥缺失。全正路径正性判据数学上正确，但不是已证原矩阵乘积条目的判据，n=1两条特例不能补任意n。</p>
+<h3>HC02-P18</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 空族结论的静态论证正确：λ*0=0，包括λ=∞；再由single_channel_lip定义和sInf_empty即原a=∞，不因缺额外命名wrapper扣范围。实际Set.eq_empty_iff_forall_not_mem未知，空族证明未完成。</p>
+<h3>HC02-P19</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 定理声明保留0&lt;a&lt;∞、全体点对，目标范围正确；证明非零输入距离支路把(a+ε)*B=aB+εB误用le_rfl变成≤aB+ε，B一般可&gt;1或∞，并有NNReal/ENNReal正性类型错。需实质处理有限正B/∞边界，目前不是可核验证明，未指称原取到定理为假。</p>
+<h3>HC02-P20</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 由c1≤c2乘非负输入距离及原证书得向上封闭，0/∞边界兼容。该局部数学论证有效，但整体原Main失败、无通过的完整产物/声明审计，不能计完整形式化通过。</p>
+<h3>HC02-P21</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> sInf&lt;c提取实际c′&lt;c的可行常数，再用向上封闭得到c可行；所述较强结论对∞也正确，无需非空族另假设（空族时前提不成立）。局部数学路线有效，未取得整体原样核验。</p>
+<h3>HC02-P22</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> a=0和c&gt;0直接实例化P21，甚至允许c=∞，覆盖原有限正c；不错误声称c=0可行。仍无整模块原样通过与审计。</p>
+<h3>HC02-P23</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> Unit分量、三点（含bot）不同点距离∞、identity与两个非bot点U，是合法且简洁的0下确界不取到路线：任意ε&gt;0有ε∞=∞，0∞=0不满足输出∞。不是必须复刻参考的两分量例。实际d_ce三角/对称证明、Operator字段、U合法性和inf/零不可行的tactic均出错，合法性与反例未成Lean证书。</p>
+<h3>HC02-P24</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 零下确界取c=1，正有限下确界调用取到，再用sInf≤c证反向，静态完整覆盖有限iff有限证书。依赖尚未成立的P19等与整模块失败，不能算实际交付通过。</p>
+<h3>HC02-P25</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 系数0的该项由0*b=0，允许b=∞，并用erase求和表达移除，目标忠实。实际Finset.not_mem_erase未知等导致求和证明失败。</p>
+<h3>HC02-P26</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> RowSparse的唯一输入i_j任意，点对标量上界正确，不强制i_j=j；alignment中的依赖说法应理解为所选上界证书，非算子的精确独立性。实际sum_eq_single生成子目标顺序与proof脚本不匹配，不能计已证。</p>
+<h3>HC02-P27</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> ColSparse直接推出非支撑输出项条目0；再乘任意d即0（0∞=0），原证书贡献范围直接跟随，不要求新乘零wrapper。没有声称算子真实不受输入影响；模块未通过仍非完整形式化交付。</p>
+<h3>HC02-P28</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 对角条件实例化RowSparse j j，再用单行界，未加矩阵条目有限条件；实际依赖未成功证明的row_sparse_lip_bound。</p>
+<h3>HC02-P29</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 声明甚至对任意单行输入i_j给双侧界，取i_j=j便是原目标；仅L行稀疏，K完全任意，未给K另加稀疏条件。实际single_le_sum类型错误，且上界依赖未证。</p>
+<h3>HC02-P30</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 第一合取对任意j给完整双侧界；在另给Ljj、Kjj有限假设时，可直接保留同一不等式和这两个已给系数事实，不因未另建具名有限系数wrapper扣分。第二合取只重复L有限条件下的上界，不证明K自动有限，也不推出距离有限。实际single_le_sum/上界依赖失败，形式化未完成。</p>
+<h3>HC02-P31</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 单项≤coLip和、正K与正输入乘积&gt;0推出正输出，K和输入可∞；没有加有限逆等错误要求。实际single_le_sum类型错误，尚未形成Lean证明。</p>
+<h3>HC02-P32</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 用任意对角通道正性把非零输入距导成正输出，与全族输出零距矛盾；声明保留全指标，不默认分离。依赖P31未通过，无法计为已核验反射结论。</p>
+</div>

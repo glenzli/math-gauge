@@ -1,0 +1,1 @@
+window.MGEditionData("deeec7105944fc1c4bceea88783d7b0d2f15d56d5e3e86ae5da26c81d7ea7d47",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/sol-6.2-xhigh/cases/MG-GR005.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"sol-6.2-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

@@ -8,24 +8,27 @@
 
 | 模型 | 已核实额外成果组 | 已审手稿 |
 |---|---:|---:|
-| Gemini 4 Hydrogen (xhigh) | 11 | 5/5 |
-| Gemini 4 Carbon (medium) | 7 | 4/5 |
-| Claude Opus 5.5 (max) | 6 | 5/5 |
+| Claude Opus 5.5 (xHigh) | 13 | 5/5 |
+| Gemini 4 Hydrogen (xhigh) | 12 | 5/5 |
+| Sol 6.1 (max) | 12 | 5/5 |
+| Claude Opus 5.5 (max) | 10 | 5/5 |
+| Gemini 4 Carbon (medium) | 10 | 4/5 |
+| Sol 6.1 (xhigh) | 10 | 5/5 |
+| Sol 6.2 (max) | 10 | 5/5 |
+| Gemini 4 Carbon (high) | 8 | 4/5 |
+| Sol 6.2 (xhigh) | 8 | 5/5 |
+| Astra 6 (xhigh) | 6 | 5/5 |
 | Claude Sonnet 5.5 (max) | 6 | 5/5 |
-| Sol 6.2 (max) | 5 | 5/5 |
-| Gemini 4 Carbon (high) | 3 | 4/5 |
-| Sol 6.1 (max) | 2 | 5/5 |
-| Astra 6 (xhigh) | 1 | 5/5 |
-| Sol 6.1 (xhigh) | 1 | 5/5 |
-| Terra 6.1 (max) | 1 | 5/5 |
-| Astra 6 (max) | 0 | 5/5 |
+| Terra 6.1 (max) | 6 | 5/5 |
+| Astra 6 (max) | 4 | 5/5 |
+| Astra 6.2 (max) | 4 | 5/5 |
+| Dot Underlying (2026-11-08) | 4 | 5/5 |
+| Terra 6.1 (xhigh) | 3 | 5/5 |
+| Gemini 4 Argon (high) | 2 | 5/5 |
+| Gemini 3.8 Flash (high) | 1 | 5/5 |
 | DeepSeek v4.1 Flash (max) | 0 | 5/5 |
-| Dot Underlying (2026-11-08) | 0 | 5/5 |
-| Gemini 3.8 Flash (high) | 0 | 5/5 |
-| Gemini 4 Argon (high) | 0 | 5/5 |
 | GLM 5.3 (max) | 0 | 2/5 |
 | Kimi 3.1 Pro (max) | 0 | 5/5 |
-| Terra 6.1 (xhigh) | 0 | 5/5 |
 
 * 尚未测完。所列为已核实组数，全部答卷的总组数未知；不按已审覆盖放大，不推算剩余题目可能产生多少组。排列只便于浏览，不列优劣名次。0表示这批已审原答中没有核实到符合门槛的成果组，不表示能力为零。
 

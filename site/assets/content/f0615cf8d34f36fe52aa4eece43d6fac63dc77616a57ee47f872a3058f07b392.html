@@ -1,0 +1,194 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>结论</h2>
+<p>在题目限定的范围内，即正文 (i) 节点域加细的定义，以及命题 #h-012f4ba72aeb3f20 的节点域加细情形，<strong>这份 Lean 实现准确且完整，没有发现数学上的缺口</strong>。</p>
+<p>具体有三点：</p>
+<ul>
+<li><strong>定义：</strong> 有两种编码，与正文逐项一致。一种是构造型的 <code>NodePartitionData</code>，另一种是关系型的 <code>NodeDomainRefinement</code>。</li>
+<li><strong>命题：</strong> 有两条相互独立的证明，都已完成：
+<ul>
+<li>实际构造出的网络（含剪枝）外延算子<strong>全等</strong>。这比正文要求的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>≡</mo><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\equiv_U</annotation></semantics></math></span> 更强。</li>
+<li>任何满足 <code>NodeDomainRefinement</code> 的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 上与原网络局部等价。</li>
+</ul>
+</li>
+<li><strong>编译：</strong> 模块 <code>lake build</code> 成功。关键定理用 <code>#print axioms</code> 检查，只依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。全库检索没有 <code>sorry</code>、<code>admit</code> 或自定义 <code>axiom</code>。</li>
+</ul>
+<p>不足之处都在形式化层面：有一个冗余字段、&quot;精确性&quot;没有写成定理、缺少最终打包。详见第五节。</p>
+<hr>
+<h2>一、定义逐项对照（正文 (i)）</h2>
+<table>
+<thead>
+<tr>
+<th>正文条款</th>
+<th>Lean 中的对应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>被细分的节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span></td>
+<td>构造里是 <code>target</code> 参数；关系里是 <code>target</code> 字段</td>
+</tr>
+<tr>
+<td>有限非空分划 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><msub><mo>⨆</mo><mi>a</mi></msub><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">U_\beta=\bigsqcup_a U_{\beta,a}</annotation></semantics></math></span></td>
+<td><code>count</code>、<code>count_pos</code>、<code>piece : Fin count → Set X</code>、<code>nonempty</code>、<code>disjoint</code>、<code>cover : ⋃ piece = N.node_dom target</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">f_{\beta,a}</annotation></semantics></math></span> 满足 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mo>=</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mathrm{dom}=U_{\beta,a}</annotation></semantics></math></span> 且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><msub><mo>≡</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></msub><msub><mi>f</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">f_{\beta,a}\equiv_{U_{\beta,a}}f_\beta</annotation></semantics></math></span></td>
+<td><code>local_op</code>、<code>local_domain</code>、<code>local_eq</code>；正文附注&quot;$f_{\beta,a}=f_\beta</td>
+</tr>
+<tr>
+<td>用子节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\beta_a</annotation></semantics></math></span> 替换 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span></td>
+<td>标签 <code>Label = {v // v ≠ target} ⊕ Fin count</code>；关系侧为单射的 <code>source</code>，加上 <code>old_node_op_compat</code> / <code>piece_node_op_compat</code></td>
+</tr>
+<tr>
+<td>子节点入口片取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>U</mi><mi>β</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">U^{\rm in}_\beta\cap U_{\beta,a}</annotation></semantics></math></span>，其余入口片不变</td>
+<td>构造里 <code>entry := lift_label (N.entry x) x</code>；关系侧由 <code>entry_projection</code> 推出 <code>NodeDomainRefinement.entry_domain_eq</code>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">y</mi></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">y</mi></mrow><mo stretchy="false">(</mo><mi>π</mi><mi>v</mi><mo stretchy="false">)</mo><mo>∩</mo><msubsup><mi>U</mi><mi>v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">\mathrm{entry}&#x27;(v)=\mathrm{entry}(\pi v)\cap U&#x27;_v</annotation></semantics></math></span>。对旧节点这就是&quot;不变&quot;，对子节点就是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>U</mi><mi>β</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">U^{\rm in}_\beta\cap U_{\beta,a}</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td>入边、出边、自环的新边域，其余边不变</td>
+<td>构造的 <code>choice</code> 写作 <code>map_output_choice (lift_label · z) (N.choice (π v) z)</code>。剪枝前的自环双交由 <code>self_loop_choice_iff</code> 给出，剪枝后的统一公式由 <code>network_edge_domain_eq</code> 给出；关系侧是字段 <code>edge_domain_eq</code></td>
+</tr>
+<tr>
+<td>空入口片、空边省略；终止域取出边域的补集</td>
+<td>Lean 里边就是非空的 <code>edge_domain</code>，入口节点就是 <code>entry_domain</code> 非空的节点，<code>terminal_domain</code> 本身定义为补集，因此自动成立</td>
+</tr>
+<tr>
+<td>按 #h-ced8c7236326e104 删除冗余子节点</td>
+<td><code>presentation.prune</code>、<code>prune_choice</code>；<code>old_label_reached</code> 证明旧节点全部保留，<code>piece_label_reached_iff</code> 证明子节点保留当且仅当 <code>NodePieceReached</code></td>
+</tr>
+</tbody>
+</table>
+<p>统一边域公式是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>D</mi><mrow><mi>v</mi><mo>→</mo><mi>w</mi></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><mo stretchy="false">(</mo><msub><mi>D</mi><mrow><mi>π</mi><mi>v</mi><mo>→</mo><mi>π</mi><mi>w</mi></mrow></msub><mo>∩</mo><msubsup><mi>f</mi><mi>v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">(</mo><msubsup><mi>U</mi><mi>v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>∩</mo><msubsup><mi>U</mi><mi>w</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">D&#x27;_{v\to w}=(D_{\pi v\to\pi w}\cap f&#x27;_v(U&#x27;_v))\cap U&#x27;_w</annotation></semantics></math></span>。利用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>⊆</mo><mi>f</mi><mo stretchy="false">(</mo><mi>U</mi><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>U</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D\subseteq f(U)\cap U_{\rm tgt}</annotation></semantics></math></span>，它对四类边分别化简为：</p>
+<ul>
+<li>旧节点 → 旧节点：保持不变。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>→</mo><msub><mi>β</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\gamma\to\beta_a</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>γ</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\gamma\to\beta}\cap U_{\beta,a}</annotation></semantics></math></span>。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mi>a</mi></msub><mo>→</mo><mi>γ</mi></mrow><annotation encoding="application/x-tex">\beta_a\to\gamma</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>γ</mi></mrow></msub><mo>∩</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D_{\beta\to\gamma}\cap f_{\beta,a}(U_{\beta,a})</annotation></semantics></math></span>。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mi>a</mi></msub><mo>→</mo><msub><mi>β</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">\beta_a\to\beta_b</annotation></semantics></math></span>：正文的双交 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>∩</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>b</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\beta\to\beta}\cap f_{\beta,a}(U_{\beta,a})\cap U_{\beta,b}</annotation></semantics></math></span>。</li>
+</ul>
+<p>因此正文的全部边域规则都被准确编码。</p>
+<h2>二、命题对照</h2>
+<p><strong>正文：</strong> 若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 由 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span> 经一次节点域加细（含剪枝）得到，则 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><msub><mo>≡</mo><mi>U</mi></msub><msub><mi>ϕ</mi><mi mathvariant="script">N</mi></msub></mrow><annotation encoding="application/x-tex">\phi_{\mathcal N&#x27;}\equiv_U\phi_{\mathcal N}</annotation></semantics></math></span>。</p>
+<p><strong>Lean 中有两条证明：</strong></p>
+<ul>
+<li><strong>构造层：</strong> <code>NodePartitionData.network_extensional_eq : P.network.extensional_operator = N.extensional_operator</code>。前提恰好是正文的加细数据，结论比 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>≡</mo><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\equiv_U</annotation></semantics></math></span> 更强。</li>
+<li><strong>关系层：</strong> <code>refinement_preserves_local_equivalence (h : NetworkRefinement N N')</code> 的 <code>.node_domain</code> 分支，结论是 <code>LocalEquivalent N'.ext N.ext N.U</code>，其中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 相同由 <code>same_input_domain</code> 给出。两层之间由 <code>network_refinement : NodeDomainRefinement N P.network</code> 和 <code>allowed_network_refinement</code> 连接，所以关系层的前提是可满足的，不是空真。</li>
+</ul>
+<p>正文默认 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">U\neq\emptyset</annotation></semantics></math></span>；Lean 不需要这个前提。若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">U=\emptyset</annotation></semantics></math></span>，网络没有节点，也就不存在可加细的节点，结论平凡。</p>
+<h2>三、证明结构对照</h2>
+<table>
+<thead>
+<tr>
+<th>正文证明步骤</th>
+<th>Lean 中的对应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每次经过 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span> 时，按当前输入唯一选出 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">a_s</annotation></semantics></math></span></td>
+<td><code>colour_path</code>，借助 <code>piece_at</code> / <code>piece_at_unique</code>；<code>colour_path_get</code> 证明第 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span> 位使用的正是原路径在该位的当前输入</td>
+</tr>
+<tr>
+<td>新轨迹合法且在末节点终止，输出不变</td>
+<td><code>coloured_terminal</code>、<code>coloured_eval</code></td>
+</tr>
+<tr>
+<td>轨迹长度不变</td>
+<td><code>colour_path_length</code>、<code>network_path_projection</code></td>
+</tr>
+<tr>
+<td>入口唯一、出边互斥、边域落入目标定义域、节点域非空、统一长度界</td>
+<td>入口唯一和出边互斥由函数型的 <code>entry</code> / <code>choice</code> 自动保证；其余由 <code>choice_next_mem</code>、<code>node_dom_nonempty</code>、<code>depth_bound := N.depth_bound</code> 给出</td>
+</tr>
+<tr>
+<td>剪枝后求值不变</td>
+<td><code>prune_path_labels</code>、<code>prune_eval</code></td>
+</tr>
+<tr>
+<td>关系层</td>
+<td><code>node_eval_eq</code>、<code>terminal_projection</code>、<code>path_projection</code>、<code>eval_projected</code>、<code>path_eval_eq</code></td>
+</tr>
+</tbody>
+</table>
+<h2>四、边界情形核查</h2>
+<ol>
+<li>
+<p><strong>分块非空。</strong> Lean 要求每块非空（<code>nonempty</code>）。正文的转移图要求节点定义域非空，所以两者一致。即使允许空块，空块对应的子节点不可达，剪枝后结果相同，只差标签。<code>count_pos</code> 可由 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">U_\beta\neq\emptyset</annotation></semantics></math></span> 和覆盖条件推出，冗余但无害。</p>
+</li>
+<li>
+<p><strong>输出像之外的 <code>choice</code> 值。</strong> <code>piece_at</code> 在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">U_\beta</annotation></semantics></math></span> 外的默认值只会出现在输出像之外。进入 <code>target</code> 的输出由 <code>choice_next_mem</code> 保证落在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">U_\beta</annotation></semantics></math></span> 内。这些值不属于 <code>PresentationData</code>，不影响网络对象。</p>
+</li>
+<li>
+<p><strong>自环。</strong> 不同次经过 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span> 可以选中不同的子节点，<code>self_loop_choice_iff</code> 和 <code>colour_path</code> 正确处理了这一点。入口节点同时带入边的情形也正确，因为入口与后继是相互独立的数据。</p>
+</li>
+<li>
+<p><strong>剪枝会扩大旧节点的终止域。</strong> Lean 与正文一致。例子：</p>
+<ul>
+<li>底空间 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathcal X=\{\bot,a,b,1,2\}</annotation></semantics></math></span>，入口片 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U=\{a\}</annotation></semantics></math></span>。</li>
+<li>节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>：入口片 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>γ</mi></msub><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">f_\gamma(a)=1</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>γ</mi></msub><mo stretchy="false">(</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">f_\gamma(b)=2</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>γ</mi></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_\gamma=\{a,b\}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>γ</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>=</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">D_{\gamma\to\beta}=\{1,2\}</annotation></semantics></math></span>。</li>
+<li>节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>β</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mrow></mrow><annotation encoding="application/x-tex">f_\beta=\mathrm{id}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_\beta=\{1,2\}</annotation></semantics></math></span>，无出边。</li>
+</ul>
+<p>把 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">U_\beta</annotation></semantics></math></span> 分为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo><mo separator="true">,</mo><mo stretchy="false">{</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{1\},\{2\}</annotation></semantics></math></span> 后，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\beta_2</annotation></semantics></math></span> 不可达而被删除，于是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>T</mi><mi>γ</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><mo stretchy="false">{</mo><mn>2</mn><mo stretchy="false">}</mo><mo>⊋</mo><msub><mi>T</mi><mi>γ</mi></msub><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">T&#x27;_\gamma=\{2\}\supsetneq T_\gamma=\emptyset</annotation></semantics></math></span>，但外延不变。Lean 用 <code>prune_choice</code> 把指向已删节点的 <code>next</code> 改为 <code>stop</code>，<code>edge_domain_eq</code> 也只约束保留下来的节点对。这与 #h-ced8c7236326e104 中的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>T</mi><msub><mi mathvariant="script">T</mi><mi>R</mi></msub></msup><mo>⊇</mo><msup><mi>T</mi><mi mathvariant="script">T</mi></msup></mrow><annotation encoding="application/x-tex">T^{\mathcal T_R}\supseteq T^{\mathcal T}</annotation></semantics></math></span> 一致；正文从未声称旧节点的终止域不变。</p>
+</li>
+<li>
+<p><strong><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q=1</annotation></semantics></math></span>。</strong> 正文和 Lean 都允许，此时加细只是重编号。这只与不可约性有关，不在本题范围内。</p>
+</li>
+</ol>
+<h2>五、已证明的结论与需要补充的内容</h2>
+<p><strong>源码已证明：</strong></p>
+<ul>
+<li>构造本身：<code>presentation</code>、<code>network</code>。</li>
+<li>外延全等：<code>network_extensional_eq</code>。</li>
+<li>路径重着色与投影：<code>network_path_labels</code>、<code>network_path_projection</code>。</li>
+<li>节点保留情况：<code>old_label_reached</code>、<code>piece_label_reached_iff</code>。</li>
+<li>边域与自环公式：剪枝后的 <code>network_edge_domain_eq</code>，剪枝前的 <code>self_loop_choice_iff</code>。</li>
+<li>实际路由兼容：<code>network_choice_projection</code>。</li>
+<li>构造满足关系：<code>network_refinement</code>；入口片交集公式：<code>entry_domain_eq</code>。</li>
+<li>关系层保持定理：<code>refinement_preserves_local_equivalence</code>、<code>refinement_preserves_representation</code>。</li>
+</ul>
+<p><strong>需要补充（都不构成数学缺口）：</strong></p>
+<p><strong>(S1) 冗余字段 <code>choice_projection</code>。</strong> 这个字段不在正文定义里，关系层的证明却依赖它，而完全没有用到正文意义上的 <code>edge_domain_eq</code>。数学上它是冗余的，可以从正文字段推出：</p>
+<ul>
+<li>
+<p>对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">x\in U</annotation></semantics></math></span>，沿原路径 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>β</mi><mi>k</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\beta_k,y_k)</annotation></semantics></math></span> 归纳。设 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 中的状态 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>v</mi><mi>k</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(v_k,y_k)</annotation></semantics></math></span> 满足 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><msub><mi>v</mi><mi>k</mi></msub><mo>=</mo><msub><mi>β</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\pi v_k=\beta_k</annotation></semantics></math></span> 且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>k</mi></msub><mo>∈</mo><msubsup><mi>U</mi><msub><mi>v</mi><mi>k</mi></msub><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">y_k\in U&#x27;_{v_k}</annotation></semantics></math></span>。</p>
+</li>
+<li>
+<p>由 <code>node_eval_eq</code>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msubsup><mi>f</mi><msub><mi>v</mi><mi>k</mi></msub><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">(</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mi>f</mi><msub><mi>β</mi><mi>k</mi></msub></msub><mo stretchy="false">(</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z=f&#x27;_{v_k}(y_k)=f_{\beta_k}(y_k)</annotation></semantics></math></span>。</p>
+</li>
+<li>
+<p><strong>原网络在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span> 终止时：</strong> 若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 有某条边 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mi>k</mi></msub><mo>→</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">v_k\to w</annotation></semantics></math></span> 含 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span>，由 <code>edge_domain_eq</code> 得 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msub><mi>D</mi><mrow><msub><mi>β</mi><mi>k</mi></msub><mo>→</mo><mi>π</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">z\in D_{\beta_k\to\pi w}</annotation></semantics></math></span>，矛盾。所以 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 也终止。</p>
+</li>
+<li>
+<p><strong>原网络进入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> 时：</strong> 先取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 中投影为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> 的节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span>：</p>
+<ul>
+<li>若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo mathvariant="normal">≠</mo><mi>β</mi></mrow><annotation encoding="application/x-tex">\gamma\neq\beta</annotation></semantics></math></span>，用 <code>old_node_present</code> 取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span>。</li>
+<li>若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mi>β</mi></mrow><annotation encoding="application/x-tex">\gamma=\beta</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span> 属于唯一的块 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span>；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x,k+1)</annotation></semantics></math></span> 见证了 <code>NodePieceReached a</code>，再由 <code>piece_node_present_iff_reached</code> 取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span>。</li>
+</ul>
+<p>于是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msubsup><mi>f</mi><msub><mi>v</mi><mi>k</mi></msub><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">(</mo><msubsup><mi>U</mi><msub><mi>v</mi><mi>k</mi></msub><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">)</mo><mo>∩</mo><msubsup><mi>U</mi><mi>w</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">z\in f&#x27;_{v_k}(U&#x27;_{v_k})\cap U&#x27;_w</annotation></semantics></math></span>，由 <code>edge_domain_eq</code> 得 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msubsup><mi>D</mi><mrow><msub><mi>v</mi><mi>k</mi></msub><mo>→</mo><mi>w</mi></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mrow><annotation encoding="application/x-tex">z\in D&#x27;_{v_k\to w}</annotation></semantics></math></span>，即 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 的 <code>choice</code> 为 <code>next w</code>。</p>
+</li>
+<li>
+<p><strong>起点：</strong> 由 <code>entry_projection</code> 和 <code>entry_mem</code> 给出。</p>
+</li>
+<li>
+<p><strong>收尾：</strong> 由终止路径的唯一性，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 的路径投影后就是原路径，<code>choice_projection</code> 随之成立。</p>
+</li>
+</ul>
+<p>我在临时目录写了一份草稿验证这一推导，没有改动附件：<code>lift_path_aux</code>、<code>path_projection_textbook</code>、<code>extensional_eq_textbook</code> 全程不使用 <code>choice_projection</code>，编译通过，只依赖三个标准公理。</p>
+<p><strong>影响：</strong> 若有人独立构造出满足正文条款的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span>，现有关系层定理在使用前要先补证 <code>choice_projection</code>。
+<strong>修复：</strong> 把上述引理加入库中，把 <code>choice_projection</code> 改成由它导出的定理，或从 <code>NodeDomainRefinement</code> 中移除这个字段。</p>
+<p><strong>(S2) 关系的&quot;精确性&quot;没有写成定理。</strong> 文档字符串称 <code>NodeDomainRefinement</code> 为 &quot;exact relation&quot;。从数学上看确实如此：各字段决定了节点集（旧节点加上可达的块）、局域算子、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span>、入口和全部边域，因而在重编号意义下决定了 <code>PresentationData</code>。但库里没有一条定理断言&quot;满足该关系的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\mathcal N&#x27;</annotation></semantics></math></span> 经某个双射 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>V</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>≃</mo></mrow><annotation encoding="application/x-tex">V&#x27;\simeq</annotation></semantics></math></span> 可达标签后，与 <code>P.network</code> 的表示数据相同&quot;。证明命题本身不需要它；若要把这个关系视为&quot;加细的结果&quot;，就需要补上。</p>
+<p><strong>(S3) 缺少最终打包。</strong> 两个推论都是一两行的事，但源码里都没有：</p>
+<ul>
+<li><code>ExtensionalEquivalent N N'</code>：由 <code>same_input_domain</code> 加局部等价即得，我在草稿中已验证。</li>
+<li>对象层的等价：经 <code>encode</code> 后得到 <code>NetworkObject.ExtensionalEquivalent</code>，由 <code>encode_extensional_operator</code> 加 <code>network_extensional_eq</code> 即得。</li>
+</ul>
+<p><strong>(S4) 正文证明里的中间结论没有形式化。</strong> 这两条不是命题的结论：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><msup><mi mathvariant="script">N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi mathvariant="script">N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\ell(\mathcal N&#x27;)=\ell(\mathcal N)</annotation></semantics></math></span>：可由 <code>network_path_projection</code> 配合 <code>evaluation_depth_le_of_input_lengths</code> 推出。</li>
+<li>剪枝前的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>T</mi><msub><mi>β</mi><mi>a</mi></msub><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>T</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">T&#x27;_{\beta_a}=f_{\beta,a}(U_{\beta,a})\cap T_\beta</annotation></semantics></math></span>：Lean 通过 <code>choice</code> 绕开了这一步。</li>
+</ul>
+<p><strong>(S5) 范围之外。</strong> <code>RefinementRule (NetworkObject X bot)</code> 没有用 <code>NetworkRefinement</code> 实例化，不可约代表与加细关系之间也没有连接。</p>
+<h2>六、复核方法</h2>
+<ul>
+<li>执行 <code>lake build formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction</code>，应构建成功。</li>
+<li>对 <code>network_extensional_eq</code>、<code>network_refinement</code>、<code>refinement_preserves_local_equivalence</code>、<code>entry_domain_eq</code>、<code>network_edge_domain_eq</code> 执行 <code>#print axioms</code>，应只出现 <code>[propext, Classical.choice, Quot.sound]</code>。</li>
+<li>全库检索 <code>sorry</code>、<code>admit</code>、<code>axiom</code>，应无结果。</li>
+</ul>
+</div>

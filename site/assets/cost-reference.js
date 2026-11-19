@@ -35,7 +35,7 @@
  const amount=m=>m.total_usd??(m.status==='partial'?m.known_usd:null);
  const costText=m=>amount(m)==null?'—':(m.status==='estimated'?'≈ ':m.status==='partial'?'≥ ':'')+money(amount(m));
  const brand=m=>m.theme.color||m.theme.ink||'#556f98';
- function link(m){const a=node('a',m.label);a.title=m.label;a.href='models/'+encodeURIComponent(m.model_id)+'/index.html?lang='+lang+'&score='+mode;return a}
+ function link(m){const a=node('a',m.label);a.title=m.label;const target='models/'+encodeURIComponent(m.model_id)+'/index.html?lang='+lang+'&score='+mode;const url=new URL(window.MG?MG.href(target):target,document.baseURI);url.searchParams.set('score',mode);a.href=url.href;return a}
  function icon(m){const img=node('img');img.src=m.logo.data_url;img.alt='';return img}
  function renderBoard(){
   const ranked=data.models.filter(m=>m.total_usd!=null).sort((a,b)=>a.total_usd-b.total_usd||a.model_id.localeCompare(b.model_id));

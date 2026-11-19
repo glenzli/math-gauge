@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>{}
+KEEP</p>
+<h3>本轮核查依据</h3>
+<p>本轮完整读取了 [index.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/.visible-history/R2/index.json) 所列全部可见历史附件并校验其字节数与 SHA-256 完整性，在不改动工作区任何源码、冻结背景模块及历史附件原字节的前提下，对紧邻上一版封卷工程完成了独立复核，未发现任何数学或工程缺陷：</p>
+<ol>
+<li>
+<p><strong>固定环境全量编译与模块完整性验证</strong></p>
+<ul>
+<li>加载 [LEAN_ENV.sh](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/LEAN_ENV.sh) 指定的冻结工具链（Lean 4.29.1 + 固定 mathlib），在独立临时构建目录中依次编译全部冻结背景文件（<code>formal_oet/</code> 下 6 个模块）及本答卷全部自建文件：[Defs.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Defs.lean)、[Sec01.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec01.lean)、[Sec02.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec02.lean)、[Sec03.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec03.lean)、[Sec04_05.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec04_05.lean)、[Sec06.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec06.lean)、[Sec07_Ex1_3.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec07_Ex1_3.lean)、[Sec07_Ex4_5.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec07_Ex4_5.lean) 与入口 [Main.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Main.lean)，全部 0 错误、0 警告通过，随后清理临时构建产物，保持工作区原字节不变。</li>
+<li>[Main.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Main.lean) 已完整导入全部目标模块，未修改或同名覆盖任何冻结依赖。</li>
+</ul>
+</li>
+<li>
+<p><strong>公理闭包与内核检查合规性审计</strong></p>
+<ul>
+<li>扫描全部自建 Lean 源码，确认不含 <code>sorry</code>、<code>admit</code>、<code>axiom</code>、<code>unsafe</code>、<code>partial</code>、<code>native_decide</code>、<code>implemented_by</code>、<code>extern</code> 等受禁设施，亦不存在将待证结论混入结构字段、前提假设或类型类实例的做法。</li>
+<li>使用 Lean 元编程对 [alignment.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/alignment.json) 中列出的全部 210 个去重声明逐一校验模块归属（<code>env.getModuleIdxFor?</code> 与 <code>file</code> 精确一致），并对上述 210 个声明及 <code>Ch03</code> 命名空间下全部 518 个常元执行 <code>Lean.collectAxioms</code>，确认公理闭包严格包含于 <code>{propext, Classical.choice, Quot.sound}</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>92 项义务与原文语义逐项对齐核查</strong></p>
+<ul>
+<li>对照 [obligations.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/obligations.json) 与 [03-operator-local-degeneracy.md](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/source/03-operator-local-degeneracy.md) 核验 [alignment.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/alignment.json)：<code>case_id</code>（<code>MG-C003</code>）、<code>version</code>（<code>0.1.1</code>）及 92 个义务 ID（<code>CH03-D01</code> 至 <code>CH03-P30-04</code>）一一对应、无重复无缺失，全部状态为 <code>complete</code>；仅在显式标记 <code>allow_background_declarations: true</code> 的 <code>CH03-D07</code> 中复用了 [metric_entropy.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean) 的内部覆盖数与度量熵定义，并给出了开球覆盖等价性与全有界接口证明。</li>
+<li>复核全部关键边界、量词与反例合法性：常值优先分划（<code>I_id</code> 排除 <code>I_const</code>）、有限复合链零步基例 <code>c₀ = id</code> 与实际中间像域递推、两点换位与七点双分量反例的扩展伪度量验证、推论 3.4 允许同分量条目取 <code>⊤</code>、命题 3.6(i) 涵盖 <code>U = ∅</code>、命题 3.7 仅要求两个实际像集各自分离（<code>IsSeparatingOn</code>）、零化矩阵行输出列输入下标 <code>nullMatrix d ϕ U j i</code>、阶跃反例 3.1 点态合法半径集 <code>(0, |y|]</code> 与同一 <code>U</code> 上统一半径为 <code>0</code>、命题 3.8(ii) 兼顾 <code>i = j</code> 与 <code>i ≠ j</code>、命题 3.12(ii) 兼容 <code>0</code> 与 <code>⊤</code>、命题 3.15(iii) 兼容输出距离 <code>⊤</code>、映射熵差严格以 <code>MappingEntropyDiffWellDefined</code> 排除 <code>∞ - ∞</code>，以及习题 3.1–3.5 的全部合法性证明、再次像落入 <code>⊥</code> 分支、无多余 <code>K_{i→j} &lt; ⊤</code> 限制、分段端点 <code>ε = 1, 2</code> 与外部中心 <code>3/2 ∉ U</code> 的非法性证明。</li>
+</ul>
+</li>
+</ol>
+<h3>仍有的不确定性说明</h3>
+<p>数学命题覆盖、边界条件与公理限制上无已知缺陷；仅保留以下符合题面“允许等价表示、合并声明、辅助引理”规定的形式化表示选择：</p>
+<ol>
+<li><strong>指标与有限链的编码约定</strong>：有限算子复合链 <code>chainCompSeq</code> 与中间像域序列 <code>chainDomainSeq</code> 使用 Lean 标准的 0 基索引（<code>m &lt; n</code>）对应原文的 <code>$m = 1, \dots, n$</code>；两项阈值分类 <code>channelType</code> 使用 <code>Fin 2 × Fin 2</code> 表示 <code>$\{0, 1\}^2$</code>，并在引理 3.13 中给出了与四类显式集合 <code>Regime11</code>..<code>Regime00</code> 的充要对应。</li>
+<li><strong>部分定义良定前提的参数化方式</strong>：映射熵差 <code>mappingEntropyDiff</code> 将原文“输入或输出覆盖数至少一个有限”的良定前提建模为显式证明参数 <code>hwf : MappingEntropyDiffWellDefined ...</code>，从定义层面避免给不定形 <code>∞ - ∞</code> 赋予任意默认值；所有涉及映射熵差的结论均显式构造并携载该良定性证明。</li>
+</ol>
+<p><a href="../../../results/v0.6.0/gemini-4-carbon-medium/20261115/originals/118e96f40ab1511450024897f27eba229d0481ffc6817affaea2c83a905762bc/answer.md">原答文件 ↗</a></p></div>

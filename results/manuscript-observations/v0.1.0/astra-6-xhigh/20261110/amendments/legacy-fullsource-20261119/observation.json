@@ -1,0 +1,162 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "astra-6-xhigh",
+  "record_id": "20261110",
+  "source_record": {
+    "path": "results/v0.6.0/astra-6-xhigh/20261110/record.json",
+    "bytes": 289780,
+    "sha256": "3322a6c4dc9002a2168bc374f37124e1f8abc4717b0872029496344a687df40d"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "9bd489e8fdbc7b53cdd531ccb7004811385b18a7d0c5537bfcfc9c2caa4d1a68",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 6,
+    "total_groups": 6,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "a9cde22c0e17843a7181fb0eeb841418f1f548cbe03ba171d9d447ec01a6f7be",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "完整重读本题最终正文。M1-M5所需矩阵定义、零距/无穷/端点边界不另计；非线性载体、联合阈值表达和混合传递合并1个中性组。旧高价值判断与中性观察分开。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "非线性控制包络、联合阈值及混合传递",
+          "statement": "对任意算子及固定比较域Y，构造单调非线性上包络Omega与下包络Lambda；二者对实际点对给双侧控制，并分别与全部线性矩阵上/下证书等价。联合闭阈值由Omega的零集刻画；XOR例显示单分量阈值不能表达的联合信息。若A控制前级、T是后级联合阈值，则S A^T<=T保证S为复合联合阈值。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "原M1-M5已由上/下矩阵和逐分量消隐半径完成；不要求统一非线性载体、XOR联合表达能力或混合传递。",
+          "proof_review": "Omega取输入距离<=r的输出上确界，Lambda取输入距离>=r的输出下确界，空集约定0/∞合法。扩大r使前一集合增大、后一集合缩小，均单调不减；实际点对属于r=d(x,y)的两个集合，故夹住输出。对任意r，利用非负扩展矩阵的单调性再取sup/inf得到(9)(10)，反向取实际距离。Omega_i(t_i)=0等价于联合阈值。(12)的行列为(S A^T)_{ij}=sum_k a_{jk}s_{ik}，恰控制中间每一分量；题设0∞=0下仍成立。XOR例中单分量零距可伴另一分量为1，而两分量<=1/2强制输入相同。所有结论保持原Y及phi(Y)域。",
+          "nontrivial_step": "由存在性可能失败的齐次矩阵控制，转为所有算子均有定义的非线性控制载体；再给出零集表示及实际联合信息/混合传递接口。证明短不使该新载体退化成原矩阵的换名。",
+          "value_rationale": "本轮以正确闭合、额外范围和独立结构为计组门槛；价值仅描述用途。该构造提供可复用的接口或精确刻画。",
+          "reason": "接受1个中性额外组。包络、联合阈值、零集式(11)和传递式(12)属于同一统一控制体系，不按三个公式拆组；旧审因非高价值/短证明排除的理由不能代替当前四门槛。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "a9cde22c0e17843a7181fb0eeb841418f1f548cbe03ba171d9d447ec01a6f7be",
+              "start_byte": 8060,
+              "end_byte": 11284,
+              "quote": "不过，逐分量半径表达的是“**某一个**输入分量足够小就足够”。有些算子需要**多个分量同时受限**。为此，可以进一步定义**联合闭阈值矩阵** \\(T=(t_{ij})\\)：\n\\[\n\\boxed{\\quad\n\\forall i,\\ \\forall x,y\\in Y,\\qquad\n\\bigl[\\forall j,\\ d_j(x,y)\\le t_{ij}\\bigr]\n\\Longrightarrow d_i(\\phi(x),\\phi(y))=0.\n\\quad} \\tag{8}\n\\]\n每一行指定一个输入距离范围，用来保证一个输出分量不可分辨。\n\n例如在非吸收部分 \\(\\{0,1\\}^2\\) 上取\n\\[\nd_j(x,y)=|x_j-y_j|,\n\\qquad\n\\phi(x_1,x_2)=(x_1\\mathbin{\\oplus}x_2,0),\n\\]\n并按 CH1 加入吸收元。对输出第一分量，单独令任一输入分量距离为零都不足以保证消隐，所以 \\(R_{11}=R_{12}=0\\)；但两个输入距离同时不超过 \\(1/2\\) 时，输出第一分量必然不可分辨。因此联合阈值可以记录逐分量半径遗漏的性质。\n\n若希望**对所有算子都有统一的定量表达**，可以用非线性控制函数作为基础，再把上述矩阵视为特殊形式。对 \\(\\mathbf r\\in[0,\\infty]^n\\)，定义\n\\[\n\\Omega_i^{\\phi,Y}(\\mathbf r)\n:=\n\\sup\\left\\{\nd_i(\\phi(x),\\phi(y)):\nx,y\\in Y,\\ \\mathbf d(x,y)\\le\\mathbf r\n\\right\\},\n\\]\n\\[\n\\Lambda_i^{\\phi,Y}(\\mathbf r)\n:=\n\\inf\\left\\{\nd_i(\\phi(x),\\phi(y)):\nx,y\\in Y,\\ \\mathbf d(x,y)\\ge\\mathbf r\n\\right\\},\n\\]\n其中 \\(\\sup\\varnothing=0\\)、\\(\\inf\\varnothing=\\infty\\)。\n\n这两个函数始终有定义，且都随 \\(\\mathbf r\\) 单调不减。因为输入对本身参与对应的上、下确界，所以\n\\[\n\\Lambda_i^{\\phi,Y}(\\mathbf d(x,y))\n\\le d_i(\\phi(x),\\phi(y))\n\\le\\Omega_i^{\\phi,Y}(\\mathbf d(x,y)).\n\\]\n\n它们准确统一了前面的定义：\n\\[\n\\boxed{\nA\\in\\mathsf U_Y(\\phi)\n\\iff\n\\forall\\mathbf r,\\quad\n\\boldsymbol\\Omega^{\\phi,Y}(\\mathbf r)\\le A\\mathbf r,\n} \\tag{9}\n\\]\n\\[\n\\boxed{\nB\\in\\mathsf L_Y(\\phi)\n\\iff\n\\forall\\mathbf r,\\quad\nB\\mathbf r\\le\\boldsymbol\\Lambda^{\\phi,Y}(\\mathbf r).\n} \\tag{10}\n\\]\n例如，若 (1) 成立且 \\(\\mathbf d(x,y)\\le\\mathbf r\\)，则输出距离至多为 \\(A\\mathbf r\\)，取上确界得到 (9)；反方向取 \\(\\mathbf r=\\mathbf d(x,y)\\) 即可。(10) 同理。\n\n联合闭阈值矩阵则恰好满足\n\\[\n\\boxed{\\quad\n\\Omega_i^{\\phi,Y}(t_{i1},\\ldots,t_{in})=0\n\\qquad(\\forall i).\n\\quad} \\tag{11}\n\\]\n因此，矩阵上界是对 \\(\\boldsymbol\\Omega\\) 的线性控制，矩阵下界是对 \\(\\boldsymbol\\Lambda\\) 的线性控制，而不可分辨范围由 \\(\\Omega_i\\) 的零值区域描述。即使算子将零距离输入分开，\\(\\Omega_i(\\mathbf0)>0\\) 仍能如实记录它，而不需要改变 \\(0\\cdot\\infty=0\\) 的约定。\n\n联合阈值还可以与上控制矩阵一起传递。若 \\(A\\) 是 \\(\\phi\\) 在 \\(Y\\) 上的上控制矩阵，\\(T\\) 是 \\(\\psi\\) 在 \\(\\phi(Y)\\) 上的联合闭阈值矩阵，那么任何满足\n\\[\n\\boxed{\\quad SA^{\\mathsf T}\\le T\\quad} \\tag{12}\n\\]\n的矩阵 \\(S\\)，都是 \\(\\psi\\circ\\phi\\) 在 \\(Y\\) 上的联合闭阈值矩阵。事实上，当原输入距离不超过 \\(S\\) 的第 \\(i\\) 行时，中间输出距离的第 \\(j\\) 分量至多为\n\\[\n\\sum_k a_{jk}s_{ik}=(SA^{\\mathsf T})_{ij}\\le t_{ij},\n\\]\n于是由 \\(T\\) 的定义，最终输出的第 \\(i\\) 分量距离为零。这个传递条件对零和无穷条目同样有效，无须引入含糊的无穷除法。"
+            },
+            {
+              "source_sha256": "a9cde22c0e17843a7181fb0eeb841418f1f548cbe03ba171d9d447ec01a6f7be",
+              "start_byte": 10614,
+              "end_byte": 11284,
+              "quote": "联合阈值还可以与上控制矩阵一起传递。若 \\(A\\) 是 \\(\\phi\\) 在 \\(Y\\) 上的上控制矩阵，\\(T\\) 是 \\(\\psi\\) 在 \\(\\phi(Y)\\) 上的联合闭阈值矩阵，那么任何满足\n\\[\n\\boxed{\\quad SA^{\\mathsf T}\\le T\\quad} \\tag{12}\n\\]\n的矩阵 \\(S\\)，都是 \\(\\psi\\circ\\phi\\) 在 \\(Y\\) 上的联合闭阈值矩阵。事实上，当原输入距离不超过 \\(S\\) 的第 \\(i\\) 行时，中间输出距离的第 \\(j\\) 分量至多为\n\\[\n\\sum_k a_{jk}s_{ik}=(SA^{\\mathsf T})_{ij}\\le t_{ij},\n\\]\n于是由 \\(T\\) 的定义，最终输出的第 \\(i\\) 分量距离为零。这个传递条件对零和无穷条目同样有效，无须引入含糊的无穷除法。"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "普通上/下控制矩阵链式复合",
+          "statement": "合法上界CA和下界DB可沿复合传播。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "原上下界的直接复合推论。",
+          "proof_review": "在Y和phi(Y)上逐层代入，利用非负矩阵保序性即可；有效域限制也已在原文交代。",
+          "nontrivial_step": "没有独立的新结构步骤，仅是已定义上/下控制的两次代入。",
+          "value_rationale": "本轮以正确闭合、额外范围和独立结构为计组门槛；价值仅描述用途。本项不另形成额外成果组。",
+          "reason": "数学正确，但按统一门槛不单独计组。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "a9cde22c0e17843a7181fb0eeb841418f1f548cbe03ba171d9d447ec01a6f7be",
+              "start_byte": 3511,
+              "end_byte": 4101,
+              "quote": "- **复合律。**\n\n  若\n  \\[\n  A\\in\\mathsf U_Y(\\phi),\\qquad\n  C\\in\\mathsf U_{\\phi(Y)}(\\psi),\n  \\]\n  则\n  \\[\n  CA\\in\\mathsf U_Y(\\psi\\circ\\phi).\n  \\]\n  同样，\n  \\[\n  B\\in\\mathsf L_Y(\\phi),\\qquad\n  D\\in\\mathsf L_{\\phi(Y)}(\\psi)\n  \\Longrightarrow\n  DB\\in\\mathsf L_Y(\\psi\\circ\\phi).\n  \\]\n  证明就是单调性，例如\n  \\[\n  \\mathbf d(\\psi\\phi(x),\\psi\\phi(y))\n  \\le C\\mathbf d(\\phi(x),\\phi(y))\n  \\le CA\\mathbf d(x,y).\n  \\]\n\n  若各算子的界原本只在各自有效定义域上成立，将比较范围限制到 \\(\\operatorname{dom}(\\psi\\circ\\phi)\\)，同样可以应用此结论。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S03",
+          "group_id": "G03",
+          "title": "零距离可行性、最优矩阵与开阈值端点",
+          "statement": "上控制存在恰等于零距保持；一般无逐项最优矩阵，标量inf可不取到；开消隐半径不能替代闭阈值。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "属于M1-M5明确要求的无穷值、零距和最优性边界。",
+          "proof_review": "全∞矩阵的充分性保留0∞=0；全局下界塌成零由正常输入与bot点对得出；相同分量的E/P矩阵和两点∞度量分别核证不存在最小/最大元及inf不取得；开阈值由坏点距离inf刻画。",
+          "nontrivial_step": "这些是所选定义的可行性、退化和端点核查。",
+          "value_rationale": "本轮以正确闭合、额外范围和独立结构为计组门槛；价值仅描述用途。本项不另形成额外成果组。",
+          "reason": "不把原题必需的正确边界分析另计为额外组。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "a9cde22c0e17843a7181fb0eeb841418f1f548cbe03ba171d9d447ec01a6f7be",
+              "start_byte": 1928,
+              "end_byte": 3511,
+              "quote": "- **上界存在的准确条件。**\n  \\[\n  \\boxed{\\quad\n  \\mathsf U_Y(\\phi)\\ne\\varnothing\n  \\iff\n  \\bigl[x,y\\in Y,\\ x\\sim y\\Longrightarrow \\phi(x)\\sim\\phi(y)\\bigr].\n  \\quad} \\tag{3}\n  \\]\n  必要性来自 \\(A\\mathbf0=\\mathbf0\\)，即使 \\(A\\) 含有无穷条目也如此。\n\n  反过来，若右侧成立，取所有条目均为 \\(\\infty\\) 的矩阵：输入距离向量为零时，输出距离向量也为零；否则输入至少有一个严格正的分量，每一行的上界便都是 \\(\\infty\\)。因此它是合法上界。\n\n  所以，扩展系数能够容纳“没有有限 Lipschitz 界”的情形，却不能容纳“把零距离输入分开”的情形。\n\n- **下界总是存在，但可能只有零矩阵。**\n\n  总有 \\(0\\in\\mathsf L_Y(\\phi)\\)。并且，上控制矩阵的集合向上封闭，下控制矩阵的集合向下封闭：\n  \\[\n  A'\\ge A\\in\\mathsf U_Y(\\phi)\\Longrightarrow A'\\in\\mathsf U_Y(\\phi),\n  \\]\n  \\[\n  0\\le B'\\le B\\in\\mathsf L_Y(\\phi)\\Longrightarrow B'\\in\\mathsf L_Y(\\phi).\n  \\]\n\n  对全局比较，有一个由吸收元引起的限制：\n  \\[\n  \\boxed{\\quad\n  \\operatorname{dom}(\\phi)\\ne\\mathcal X\\setminus\\{\\bot\\}\n  \\Longrightarrow\n  \\mathsf L_{\\mathcal X}(\\phi)=\\{0\\}.\n  \\quad} \\tag{4}\n  \\]\n  事实上，取 \\(x\\ne\\bot\\) 使 \\(\\phi(x)=\\bot\\)，并比较 \\(x,\\bot\\)。输入每个距离都是 \\(\\infty\\)，输出每个距离都是零；任何严格正的矩阵条目都会使相应下界成为 \\(\\infty\\)，导致矛盾。\n\n  这说明：若要研究部分算子的非平凡下界，通常应在有效定义域或其他指定区域内比较。\n\n"
+            },
+            {
+              "source_sha256": "a9cde22c0e17843a7181fb0eeb841418f1f548cbe03ba171d9d447ec01a6f7be",
+              "start_byte": 4564,
+              "end_byte": 7474,
+              "quote": "**一般应保留“所有合法控制矩阵”的集合，而不要预设存在唯一的最佳矩阵。**\n\n例如，令 \\(d_1=d_2=d\\)，且存在一对距离为 \\(1\\) 的点。对恒等算子，矩阵\n\\[\nE=\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix},\n\\qquad\nP=\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}\n\\]\n都同时是上、下控制矩阵。\n\n若存在按分量排序的最小上控制矩阵，它必须同时不超过 \\(E,P\\)，于是只能为零矩阵，矛盾。若存在最大下控制矩阵，它必须同时不小于 \\(E,P\\)，于是每个条目至少为 \\(1\\)；作用于距离向量 \\((1,1)^{\\mathsf T}\\) 时，下界至少为 \\((2,2)^{\\mathsf T}\\)，也产生矛盾。\n\n甚至在单分量情形，上界系数的下确界也未必可取。令\n\\[\n\\mathcal X=\\{\\bot,a\\},\\qquad d(a,\\bot)=\\infty,\\qquad \\phi=\\mathrm{id}.\n\\]\n每个 \\(c>0\\)，包括 \\(c=\\infty\\)，都满足\n\\[\nd(\\phi(x),\\phi(y))\\le c\\,d(x,y),\n\\]\n但 \\(c=0\\) 不满足。因此合法系数集合是 \\((0,\\infty]\\)，其下确界 \\(0\\) 并不是合法上界。\n\n接下来严格化“输入落入一定范围后，输出不再可区分”。\n\n最完整的对象首先是关系\n\\[\nK_i(\\phi;Y)\n:=\n\\{(x,y)\\in Y^2:d_i(\\phi(x),\\phi(y))=0\\}.\n\\]\n它是 \\(Y\\) 上的等价关系：反身性、对称性直接成立；传递性由三角不等式得到。所有分量都不可分辨对应\n\\[\nK(\\phi;Y):=\\bigcap_i K_i(\\phi;Y).\n\\]\n例如，“区域 \\(S\\subseteq Y\\) 内的输入经算子后都不可分辨”，准确地说就是\n\\[\nS\\times S\\subseteq K(\\phi;Y).\n\\]\n\n如果希望用输入距离阈值概括这种性质，可以定义**逐分量消隐半径矩阵**\n\\[\n\\boxed{\\quad\nR_{ij}^Y(\\phi)\n:=\n\\inf\\{d_j(x,y):x,y\\in Y,\\ d_i(\\phi(x),\\phi(y))>0\\},\n\\quad} \\tag{5}\n\\]\n约定 \\(\\inf\\varnothing=\\infty\\)。\n\n它具有准确的阈值解释：对任意 \\(r\\in[0,\\infty]\\)，\n\\[\n\\boxed{\n\\begin{aligned}\n&r\\le R_{ij}^Y(\\phi)\\\\\n&\\iff\n\\forall x,y\\in Y,\\quad\nd_j(x,y)<r\n\\Longrightarrow\nd_i(\\phi(x),\\phi(y))=0.\n\\end{aligned}\n} \\tag{6}\n\\]\n证明很直接：右侧恰好说明，所有输出第 \\(i\\) 分量仍可区分的输入对，其第 \\(j\\) 分量距离都至少为 \\(r\\)，也就是 \\(r\\) 是式 (5) 中集合的下界。\n\n因此 \\(R_{ij}\\) 是一个真正的、唯一确定的**最大开阈值**。这里有三个端点细节：\n\n- 一般只能保证 \\(d_j<R_{ij}\\)，不能自动改成 \\(d_j\\le R_{ij}\\)。例如恒等算子在两个距离为 \\(1\\) 的非吸收点上有消隐半径 \\(1\\)，但距离恰为 \\(1\\) 时并不消隐。\n- \\(R_{ij}=0\\) 不提供任何消隐保证，甚至不保证零距离输入被保持。\n- \\(R_{ij}=\\infty\\) 表示所有有限 \\(d_j\\)-距离的输入对均被消隐；它不涵盖 \\(d_j=\\infty\\) 的输入对。例如上述 \\(\\{\\bot,a\\}\\) 上的恒等算子，其消隐半径就是 \\(\\infty\\)。\n\n若希望使用闭阈值“\\(\\le r\\)”，必须另外检查端点是否成立。单独一个数 \\(R_{ij}\\) 不能记录这项信息。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

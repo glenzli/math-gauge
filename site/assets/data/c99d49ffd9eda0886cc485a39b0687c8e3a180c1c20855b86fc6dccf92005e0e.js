@@ -1,0 +1,1 @@
+window.MGEditionData("c99d49ffd9eda0886cc485a39b0687c8e3a180c1c20855b86fc6dccf92005e0e",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/claude-opus-5.5-xhigh/cases/AHR01.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"claude-opus-5.5-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

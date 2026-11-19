@@ -1,0 +1,239 @@
+{
+  "case_id": "LCH02",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.IsLipMatrix"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSet"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.IsLipMatrixOn"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSetOn"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSet_eq_lipSetOn_dom"}
+      ],
+      "representation": "对象：规范族 {d_i}_{i∈I} 为 d : I → X → X → ENNReal（[Fintype I]）；算子 ϕ ∈ 𝒳_op 为前置 Operator X bot；非负扩展矩阵 L 为 Matrix I I ENNReal（条目取值 [0,+∞]，0·∞=0 由 ENNReal 算术给出）。IsLipMatrix d ϕ L：∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j, d j (ϕ x)(ϕ y) ≤ ∑ i, L_{i→j} · d i x y；lipSet d ϕ = 𝓛(ϕ)。受限：IsLipMatrixOn d ϕ U L 把原文的前置条件 U ⊆ dom ϕ 作为合取项，再加上对 x,y ∈ U 的同一不等式；lipSetOn d ϕ U = 𝓛(ϕ)|_U。lipSet_eq_lipSetOn_dom 证明 𝓛(ϕ) = 𝓛(ϕ)|_{dom ϕ}。证书族是集合（Set），不预设存在极值矩阵。定义对任意距离族成立，因此特别适用于扩展规范空间。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.IsCoLipMatrixOn"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLipSetOn"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.nonempty_of_mem_coLipSetOn"}
+      ],
+      "representation": "IsCoLipMatrixOn d ϕ U K := U.Nonempty ∧ U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j, ∑ i, K_{i→j} · d i x y ≤ d j (ϕ x)(ϕ y)。原文的非空条件 U ≠ ∅ 和 U ⊆ dom ϕ 都写进了谓词。coLipSetOn d ϕ U = 𝒦(ϕ)|_U（下界证书族，不预设极值矩阵）。nonempty_of_mem_coLipSetOn 说明凡出现 𝒦(ϕ)|_U 的成员，U 必非空。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.arrowEntry"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.matrix_apply_eq_arrowEntry"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.arrowEntry_mul"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.arrowEntry_fin_three"}
+      ],
+      "representation": "arrowEntry M i j := M j i，即 L_{i→j} 位于第 j 行（输出分量）、第 i 列（输入分量），对应 (L)_{ji} = L_{i→j}。矩阵乘法用 Mathlib 的 Matrix 乘法；arrowEntry_mul：(A·B)_{i→j} = ∑_k A_{k→j} B_{i→k}，与原文的 (L^{(2)}·L^{(1)})_{i→j} = ∑_k L^{(2)}_{k→j} L^{(1)}_{i→k} 一致。arrowEntry_fin_three 在 I = Fin 3（对应 {1,2,3}，指标平移 1）上验证原文 3×3 示例的行列布局，例如 L_{2→1} 位于第一行第二列。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D04",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.arrowEntry_one"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.sum_arrowEntry_one_mul"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_zero"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_succ"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_one"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_succ'"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_eq_list_prod"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_matrix_zero"}
+      ],
+      "representation": "单位矩阵为 (1 : Matrix I I ENNReal)，arrowEntry_one 给出 𝐈_{i→j} = [i=j]。有序乘积 finOrderedProd 定义在任意幺半群上：对 M : Fin n → α，finOrderedProd M = M^{(n)}·⋯·M^{(1)}，其中 M^{(m)} = M (m−1)。n = 0 时为空乘积 1（finOrderedProd_zero；矩阵情形见 finOrderedProd_matrix_zero，即空乘积 = 𝐈）。非空乘积按 M^{(n+1)}·(M^{(n)}⋯M^{(1)}) 递推（finOrderedProd_succ），也有另一侧递推（finOrderedProd_succ'）；单项乘积为 M^{(1)}（finOrderedProd_one）。finOrderedProd_eq_list_prod 证明它等于列表 [M^{(n)},…,M^{(1)}] 的乘积。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D05",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain_zero"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain_succ"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain_init"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain_last"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain_eq_image_partial"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.chainDomain_subset_dom"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_operator_zero"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_operator_func_succ"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_eq_operatorChain"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.dom_mul_subset_right"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.image_subset_dom_of_subset_dom_mul"}
+      ],
+      "representation": "链 ϕ_1,…,ϕ_k 表示为 ϕ : Fin k → Operator X bot（ϕ_m = ϕ (m−1)）。c_k = ϕ_k∘⋯∘ϕ_1 表示为算子幺半群中的 finOrderedProd ϕ：c_0 = id（finOrderedProd_operator_zero），c_{k+1} = ϕ_{k+1}∘c_k（finOrderedProd_operator_func_succ），并且它等于前置模块的 OperatorChain [ϕ_k,…,ϕ_1]（finOrderedProd_eq_operatorChain，经 operator_chain_eq_prod）。实际中间像域 chainDomain ϕ U₁ : Fin (k+1) → Set X 按原文递推定义：U_1 = U₁（chainDomain_zero），U_{m+1} = ϕ_m(U_m)（chainDomain_succ）；chainDomain ϕ U₁ m 表示 U_{m+1}，第 m 步的输入域为 chainDomain ϕ U₁ m.castSucc。另外证明：U_{m+1} = c_m(U₁)（chainDomain_eq_image_partial），U_{k+1} = c_k(U₁)（chainDomain_last），截去最后一步不改变前面的像域（chainDomain_init），以及由 U₁ ⊆ dom c_k 逐步推出 U_m ⊆ dom ϕ_m（chainDomain_subset_dom）。",
+      "dependencies": ["CH02-D04"]
+    },
+    {
+      "id": "CH02-D06",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.indexPath"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.indexPath_zero"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.indexPath_last"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.indexPath_succ_castSucc"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.existsUnique_indexPath"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.pathFactor"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.IsAllPositivePath"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.HasZeroFactor"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.pathFactor_one"}
+      ],
+      "representation": "n ≥ 1 写作 n = N+1，矩阵族为 M : Fin (N+1) → Matrix I I ENNReal。中间指标序列 (k_1,…,k_{n−1}) 为 p : Fin N → I。indexPath i j p : Fin (N+2) → I 是完整路径 (k_0,…,k_n)，满足 k_0 = i、k_n = j、k_m = p(m−1)。existsUnique_indexPath 证明端点固定的完整路径与中间序列一一对应。pathFactor M i j p t = [M^{(t+1)}]_{k_t→k_{t+1}}。IsAllPositivePath：所有层级的因子 > 0；HasZeroFactor：存在某层因子 = 0。n = 1 时中间序列是唯一的空序列 Fin 0 → I，其因子为 [M^{(1)}]_{i→j}（pathFactor_one）。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSet_single_component"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSetOn_single_component"}
+      ],
+      "representation": "|I| = 1 且 I = {i} 表示为前提 i : I 与 hI : ∀ k : I, k = i。结论为等价式：L ∈ 𝓛(ϕ) ↔ ∀ x,y ∈ dom ϕ, d_i(ϕx,ϕy) ≤ L_{i→i}·d_i(x,y)。另给受限版本 lipSetOn_single_component（U ⊆ dom ϕ 的合取项保留）。证明用 Finset.sum_eq_single 把求和退化为单项。",
+      "dependencies": ["CH02-D01", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSetOn_antitone"}
+      ],
+      "representation": "前提 U ⊆ V（hUV）与 V ⊆ dom ϕ（hV），对应原文 U ⊆ V ⊆ dom(ϕ)；结论 lipSetOn d ϕ V ⊆ lipSetOn d ϕ U，即 𝓛(ϕ)|_V ⊆ 𝓛(ϕ)|_U，对任意 ϕ 与距离族成立。",
+      "dependencies": ["CH02-D01"]
+    },
+    {
+      "id": "CH02-P04",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lip_comp"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.dom_mul_subset_right"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.image_subset_dom_of_subset_dom_mul"}
+      ],
+      "representation": "复合 ϕ₂∘ϕ₁ 为 ϕ₂ * ϕ₁（前置幺半群，func = ϕ₂.func ∘ ϕ₁.func）。前提：hU₁ : U₁ ⊆ dom(ϕ₂*ϕ₁)；L₁ ∈ lipSetOn d ϕ₁ U₁；L₂ ∈ lipSetOn d ϕ₂ (operator_image ϕ₁ U₁)，即精确中间像域 U₂ = ϕ₁(U₁)。结论 L₂ * L₁ ∈ lipSetOn d (ϕ₂*ϕ₁) U₁，乘积次序为 𝐋^{(2)}·𝐋^{(1)}。dom_mul_subset_right（U₁ ⊆ dom ϕ₁）与 image_subset_dom_of_subset_dom_mul（U₂ ⊆ dom ϕ₂）形式化了“由复合定义直接保证”。证明按原文顺序：先用 L₂ 的不等式，再乘非负系数代入 L₁ 的不等式，最后交换有限和。",
+      "dependencies": ["CH02-D01", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P05",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLipSetOn_antitone"}
+      ],
+      "representation": "前提 hU : U.Nonempty、hUV : U ⊆ V、hV : V ⊆ dom ϕ，对应原文 ∅ ≠ U ⊆ V ⊆ dom(ϕ)；结论 coLipSetOn d ϕ V ⊆ coLipSetOn d ϕ U，即 𝒦(ϕ)|_V ⊆ 𝒦(ϕ)|_U。U 的非空性用于构造结论谓词中的非空合取项。",
+      "dependencies": ["CH02-D02"]
+    },
+    {
+      "id": "CH02-P07",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLip_entry_eq_zero"}
+      ],
+      "representation": "前提：∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d_j(ϕx,ϕy) = 0 ∧ 0 < d_i(x,y)。结论：∀ K ∈ coLipSetOn d ϕ (dom ϕ), K_{i→j} = 0（全域 co-Lip 矩阵即 𝒦(ϕ)|_{dom ϕ}）。证明：0 = d_j ≥ ∑_k K_{k→j} d_k ≥ K_{i→j} d_i，再由 ENNReal 无零因子以及 d_i > 0 推出 K_{i→j} = 0。",
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P08",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLip_comp"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.operator_image_nonempty"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.image_subset_dom_of_subset_dom_mul"}
+      ],
+      "representation": "前提：hU₁ : U₁ ⊆ dom(ϕ₂*ϕ₁)；K₁ ∈ coLipSetOn d ϕ₁ U₁（其中含 U₁ 非空）；K₂ ∈ coLipSetOn d ϕ₂ (operator_image ϕ₁ U₁)（精确中间像域 U₂ = ϕ₁(U₁)，含 U₂ 非空）。结论 K₂ * K₁ ∈ coLipSetOn d (ϕ₂*ϕ₁) U₁，结论中的非空性由 K₁ 的证书继承。operator_image_nonempty 说明 U₁ 非空时 U₂ 非空；image_subset_dom_of_subset_dom_mul 给出 U₂ ⊆ dom ϕ₂。证明按原文链式不等式展开并交换有限和。",
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P11",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.one_mem_lipSetOn_one"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.zero_step_certificate"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.dom_one"}
+      ],
+      "representation": "id_𝒳 为 (1 : Operator X bot)，即 c_0 = 零步有序复合；dom_one 给出 dom(id) = {x ≠ bot}。one_mem_lipSetOn_one：∀ U ⊆ dom(id)，𝐈 ∈ 𝓛(id)|_U。它不需要非空前提，因此比原文更强、蕴含原文。原文的合并形式 zero_step_certificate：对 ϕ : Fin 0 → Operator、M : Fin 0 → Matrix（空乘积 finOrderedProd M = 𝐈，c_0 = finOrderedProd ϕ = id）与非空 U ⊆ dom(c_0)，有 𝐈 ∈ 𝓛(c_0)|_U ∩ 𝒦(c_0)|_U。证明用 ∑_i 𝐈_{i→j} d_i = d_j（sum_arrowEntry_one_mul）。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D04", "CH02-P12"]
+    },
+    {
+      "id": "CH02-P12",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.one_mem_coLipSetOn_one"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.zero_step_certificate"}
+      ],
+      "representation": "one_mem_coLipSetOn_one：对任意非空 U ⊆ dom(id_𝒳)，(1 : Matrix) ∈ coLipSetOn d (1 : Operator X bot) U，即 𝐈 ∈ 𝒦(id)|_U，非空前提按原文保留。零步合并形式见 zero_step_certificate（与 P11 共用）。",
+      "dependencies": ["CH02-D02", "CH02-D04"]
+    },
+    {
+      "id": "CH02-P14",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_entry_pos_iff"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_entry_pos_iff_one"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.arrowEntry_finOrderedProd_eq_sum_paths"}
+      ],
+      "representation": "对任意 N 与 M : Fin (N+1) → Matrix I I ENNReal（即任意 n = N+1 ≥ 1 个扩展非负矩阵）及任意 i, j：0 < [M^{(n)}⋯M^{(1)}]_{i→j} ↔ ∃ p : Fin N → I, IsAllPositivePath M i j p，即存在至少一条中间指标序列，其所有单步条目严格正。n = 1 情形 finOrderedProd_entry_pos_iff_one 同时给出唯一空序列上的判据，以及它与 [M^{(1)}]_{i→j} > 0 的等价。证明经路径展开式 arrowEntry_finOrderedProd_eq_sum_paths（对 N 归纳、Fin.snocEquiv 重排求和），再由零值判据取否定得到。",
+      "dependencies": ["CH02-D03", "CH02-D04", "CH02-D06", "CH02-P13"]
+    },
+    {
+      "id": "CH02-P03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lipSet_subset_lipSetOn"}
+      ],
+      "representation": "前提 hU : U ⊆ dom ϕ；结论 lipSet d ϕ ⊆ lipSetOn d ϕ U，即 𝓛(ϕ) ⊆ 𝓛(ϕ)|_U。证明按原文：取 V = dom ϕ，用 lipSet_eq_lipSetOn_dom 与引理 2.1（lipSetOn_antitone）。",
+      "dependencies": ["CH02-D01", "CH02-P02"]
+    },
+    {
+      "id": "CH02-P06",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLipSetOn_dom_subset"}
+      ],
+      "representation": "前提 hU : U.Nonempty、hUdom : U ⊆ dom ϕ；结论 coLipSetOn d ϕ (dom ϕ) ⊆ coLipSetOn d ϕ U，即 𝒦(ϕ)|_{dom ϕ} ⊆ 𝒦(ϕ)|_U。证明按原文取 V = dom ϕ 并应用 coLipSetOn_antitone。",
+      "dependencies": ["CH02-D02", "CH02-P05"]
+    },
+    {
+      "id": "CH02-P09",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lip_chain_certificate"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.lip_chain_certificate_general"}
+      ],
+      "representation": "lip_chain_certificate：对任意 k，前提 1 ≤ k（保留原文 k ≥ 1，证明不需要）、ϕ : Fin k → Operator X bot、U₁ ⊆ dom(c_k)（c_k = finOrderedProd ϕ），以及逐步证书 ∀ m : Fin k, L m ∈ lipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)，即 𝐋^{(m)} ∈ 𝓛(ϕ_m)|_{U_m}，其中 U_m 是实际中间像域。结论 finOrderedProd L ∈ lipSetOn d (finOrderedProd ϕ) U₁，即 𝐋^{(k)}⋯𝐋^{(1)} ∈ 𝓛(c_k)|_{U₁}。lip_chain_certificate_general 是对所有 k ≥ 0 的归纳形式：k = 0 用单位矩阵证书（P11），归纳步对 c_{k+1} = ϕ_{k+1}∘c_k 应用两步复合律（P04），中间像域为 c_k(U₁) = U_{k+1}（chainDomain_last）。",
+      "dependencies": ["CH02-D01", "CH02-D04", "CH02-D05", "CH02-P04", "CH02-P11"]
+    },
+    {
+      "id": "CH02-P10",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLip_chain_certificate"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.coLip_chain_certificate_of_nonempty"}
+      ],
+      "representation": "coLip_chain_certificate：前提 1 ≤ k、ϕ : Fin k → Operator X bot、U₁ ⊆ dom(c_k)，以及逐步证书 ∀ m, K m ∈ coLipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)，即 𝐊^{(m)} ∈ 𝒦(ϕ_m)|_{U_m}（含每个 U_m 非空）。结论 finOrderedProd K ∈ coLipSetOn d (finOrderedProd ϕ) U₁，即 𝐊^{(k)}⋯𝐊^{(1)} ∈ 𝒦(c_k)|_{U₁}。k ≥ 1 在这里确实被使用：第 1 步证书给出 U₁ = U_1 非空。coLip_chain_certificate_of_nonempty 是在 U₁ 非空时对所有 k ≥ 0 的归纳形式：k = 0 用 P12，归纳步用两步 co-Lip 复合律（P08）。",
+      "dependencies": ["CH02-D02", "CH02-D04", "CH02-D05", "CH02-P08", "CH02-P12"]
+    },
+    {
+      "id": "CH02-P13",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_entry_eq_zero_iff"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.finOrderedProd_entry_eq_zero_iff_one"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.arrowEntry_finOrderedProd_eq_sum_paths"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.pathFactor_snoc_castSucc"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.pathFactor_snoc_last"},
+        {"file": "LCH02/OperatorBounds.lean", "name": "LCH02.indexPath_snoc_castSucc"}
+      ],
+      "representation": "对任意 N 与 M : Fin (N+1) → Matrix I I ENNReal（n = N+1 ≥ 1）及任意 i, j：[M^{(n)}⋯M^{(1)}]_{i→j} = 0 ↔ ∀ p : Fin N → I, HasZeroFactor M i j p，即每条中间指标序列上都存在某层 m 使 [M^{(m)}]_{k_{m−1}→k_m} = 0（k_0 = i, k_n = j）。n = 1 情形 finOrderedProd_entry_eq_zero_iff_one 同时给出唯一空序列上的判据，以及它与 [M^{(1)}]_{i→j} = 0 的等价。证明按原文：路径展开式 arrowEntry_finOrderedProd_eq_sum_paths 给出 ∑_p ∏_t 因子；非负项之和为 0 当且仅当每项为 0；ENNReal 中乘积为 0 当且仅当某因子为 0（含 0·∞ = 0）。",
+      "dependencies": ["CH02-D03", "CH02-D04", "CH02-D06"]
+    }
+  ]
+}

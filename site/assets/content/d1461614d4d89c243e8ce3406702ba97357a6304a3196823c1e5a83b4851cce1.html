@@ -1,0 +1,178 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p><strong>结论：具体构造已经给出了通用的节点域加细及外延保持证明；但 <code>NodeDomainRefinement</code> 关系比正文定义更宽，不能将整套实现判为准确、完整的对应。</strong> 主要不足是：它只约束实际使用的输出上的路由，允许修改正文要求保留的其他边域。这个问题不推翻已有的外延等价定理，但影响“什么算作一次节点域加细”的准确性。</p>
+<p>以下仅审阅附件的节点域加细部分。</p>
+<p><strong>1. 分划、局域算子和具体构造基本对应正确。</strong></p>
+<p>正文的<span class="local-source-citation" title="/private/tmp/math-gauge-astra-max-20261109/sessions/AHR01/physical-1/work/source.md:1048">节点域加细定义</span>，在 <span class="local-source-citation" title="/private/tmp/math-gauge-astra-max-20261109/sessions/AHR01/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12">NodePartitionData 及其构造</span> 中有以下对应：</p>
+<table>
+<thead>
+<tr>
+<th>数学要求</th>
+<th>实现与判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>将整个节点定义域作有限非空分划</td>
+<td><code>count_pos</code>、<code>Fin count</code>、<code>nonempty</code>、<code>disjoint</code>、<code>cover</code> 完整表达；分划的是 <code>node_dom target</code>，并未误换成实际输入域。</td>
+</tr>
+<tr>
+<td>子算子定义域恰为分片，且在片内与原算子相同</td>
+<td><code>local_domain</code>、<code>local_eq</code> 准确表达。<code>local_op_eq_restrict</code> 进一步证明子算子就是原算子的域限制。</td>
+</tr>
+<tr>
+<td>入口片按当前输入所属分片细分</td>
+<td><code>presentation.entry</code> 使用 <code>lift_label (N.entry x) x.val</code>；<code>mem_piece_at</code> 与 <code>piece_at_unique</code> 保证选中唯一正确分片。</td>
+</tr>
+<tr>
+<td>入边、出边及自环按交集公式细分</td>
+<td><code>choice</code> 对原后继使用当前输出 <code>z</code> 重新选择目标标签，符合这些公式。自环另有 <code>self_loop_choice_iff</code>。</td>
+</tr>
+<tr>
+<td>同一节点可反复经过，每次可能进入不同分片</td>
+<td><code>colour_path</code> 每一步按当时的输入重新选片；没有无环或节点不重复假设。</td>
+</tr>
+<tr>
+<td>新数据仍统一有限终止</td>
+<td><code>coloured_terminal</code> 证明重标记路径仍合法终止；<code>colour_path_length</code> 证明长度不变；<code>presentation</code> 使用原来的 <code>depth_bound</code>。</td>
+</tr>
+<tr>
+<td>删除不可达子节点</td>
+<td><code>network := presentation.prune</code> 按实际轨迹删除节点，并保留剩余局域算子。</td>
+</tr>
+<tr>
+<td>外延保持</td>
+<td><code>network_extensional_eq</code> 直接证明删冗余后的<strong>全域算子相等</strong>，强于仅在共同输入域上的局部等价。</td>
+</tr>
+</tbody>
+</table>
+<p>这里不需要额外的 Lip、co-Lip 或规范族分离假设：正文的局部等价和这里的 <code>LocalEquivalent</code> 都是逐点相等，相关结论是结构性的。</p>
+<p>为核对路由，记删冗余前的新标签投影为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi></mrow><annotation encoding="application/x-tex">\pi</annotation></semantics></math></span>，新节点域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">A_v</annotation></semantics></math></span>，输出像为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>B</mi><mi>v</mi></msub><mo>=</mo><msubsup><mi>f</mi><mi>v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">(</mo><msub><mi>A</mi><mi>v</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">B_v=f&#x27;_v(A_v)</annotation></semantics></math></span>。展开构造的 <code>choice</code>，可得统一公式</p>
+<h1>[
+D^{\mathrm{pre}}_{v\to w}</h1>
+<p>D_{\pi(v)\to\pi(w)}\cap B_v\cap A_w.
+]</p>
+<p>它分别化为正文的入边、出边、自环公式；两个端点均未替换时，额外两个交集由原边域的包含条件消去。自环定理中的前提
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z\in f_{\beta,a}(U_{\beta,a})</annotation></semantics></math></span>，正好提供公式中的源输出像条件，没有漏掉这一项。</p>
+<p>同样，删冗余前有</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>U</mi><mi>v</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mo separator="true">,</mo><mi mathvariant="normal">p</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></msubsup><mo>=</mo><msubsup><mi>U</mi><mrow><mi>π</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><mo>∩</mo><msub><mi>A</mi><mi>v</mi></msub><mo separator="true">,</mo><mspace width="2em"/><msubsup><mi>T</mi><mi>v</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></msubsup><mo>=</mo><msub><mi>B</mi><mi>v</mi></msub><mo>∩</mo><msub><mi>T</mi><mrow><mi>π</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo></mrow></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+U^{\mathrm{in,pre}}_v=U^{\mathrm{in}}_{\pi(v)}\cap A_v,
+\qquad
+T^{\mathrm{pre}}_v=B_v\cap T_{\pi(v)}.
+</annotation></semantics></math></span></p>
+<p>这些是对源码定义展开后的数学核对；附件没有把所有集合等式统一封装成对应的 Lean 定理，不能把它们全部列为源码中已有的命名结论。</p>
+<p><strong>2. 实质性不足在 <code>NodeDomainRefinement.choice_projection</code>：它未完整表达正文的边域规则。</strong></p>
+<p><span class="local-source-citation" title="/private/tmp/math-gauge-astra-max-20261109/sessions/AHR01/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:108">该字段</span> 仅要求</p>
+<h1>[
+\pi_*(\operatorname{choice}'(v,z))</h1>
+<p>\operatorname{choice}(\pi(v),z)
+\quad
+\text{当 }z\in f'_v(U_v^{\mathrm{eff}\prime}).
+]</p>
+<p>这里是<strong>实际输入域的输出像</strong>，可能严格小于整个局域输出像 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>v</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo stretchy="false">(</mo><msub><mi>A</mi><mi>v</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f&#x27;_v(A_v)</annotation></semantics></math></span>。</p>
+<p>正文却规定完整边域，包括从入口求值时没有使用的部分。节点都可达，并不意味着每个局域输入或每条边都被使用。因此，这个字段允许在未实际使用的局域输出上新增、删除或改接边。</p>
+<p>下面的四点反例可以逐项复核，而且不涉及删冗余。</p>
+<p>取
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="2em"/><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+X=\{\bot,a,b,c\},\qquad U=\{a,b\},
+</annotation></semantics></math></span>
+四点互异。原网络只有节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span>，局域算子为恒等算子，入口片为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span>，没有边。两个输入均一步终止。</p>
+<p>将其节点域分为
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="2em"/><msub><mi>A</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+A_0=\{a,c\},\qquad A_1=\{b\},
+</annotation></semantics></math></span>
+子算子取恒等算子在各片上的限制。构造候选新网络：</p>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>节点</td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>β</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0,\beta_1</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td>入口</td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 进入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span> 进入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td>唯一边</td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub><mo>→</mo><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0\to\beta_0</annotation></semantics></math></span>，边域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>c</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{c\}</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td>其他输出选择</td>
+<td>全部终止</td>
+</tr>
+</tbody>
+</table>
+<p>它满足当前 <code>NodeDomainRefinement</code> 的全部条件：</p>
+<ul>
+<li>分划与局域算子条件成立；令 <code>source βₐ = Sum.inr a</code>，得到单射。原网没有其他节点，相关旧节点条件为空。</li>
+<li>两个分片都满足 <code>NodePieceReached</code>，分别由原输入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a,b</annotation></semantics></math></span> 见证；两个新节点也都实际可达。</li>
+<li>新网实际输入域分别为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{b\}</annotation></semantics></math></span>，对应输出选择均为 <code>stop</code>，所以 <code>choice_projection</code> 成立。</li>
+<li>新增自环的输出 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 属于目标节点域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a,c\}</annotation></semantics></math></span>，满足转移合法性。</li>
+<li>两条入口轨迹仍分别只有一个节点，统一长度界为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span>。从 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>β</mi><mn>0</mn></msub><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\beta_0,c)</annotation></semantics></math></span> 出发可以循环，但 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo mathvariant="normal">∉</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">c\notin U</annotation></semantics></math></span>，不违反有限网络对入口输入的终止要求。</li>
+</ul>
+<p>然而正文要求</p>
+<h1>[
+D'_{\beta_0\to\beta_0}</h1>
+<h1>D_{\beta\to\beta}\cap A_0\cap A_0</h1>
+<p>\varnothing,
+]
+候选新网却取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>c</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{c\}</annotation></semantics></math></span>。所以它<strong>满足 Lean 的加细关系，却不是正文允许的节点域加细结果</strong>。两个子节点都可达，不能用删冗余解释这一差异。</p>
+<p>两网的外延算子仍相同：在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a,b</annotation></semantics></math></span> 上恒等，在其余点上取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span>。因此反例针对的是定义的准确性，而非外延保持结论。它也说明当前关系可以把无边图变成含自环的图，超出了正文规定的表示变换。</p>
+<p>若需附加规范背景，可取正常点间的离散距离、正常点到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 的距离为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">+\infty</annotation></semantics></math></span>。</p>
+<p><strong>3. 已有外延保持证明是真正的推导，不是把结论当作前提。</strong></p>
+<p><code>NodeDomainRefinement</code> 中没有存储外延相等或完整路径相等。源码的证明顺序是：</p>
+<ol>
+<li><code>node_eval_eq</code>：合法新节点输入上的输出等于对应原节点输出。</li>
+<li><code>terminal_projection</code>：利用实际输出上的路由相容性，将新终止路径投影为原终止路径。</li>
+<li><code>path_projection</code>：利用 <code>terminal_path_unique</code>，证明该投影恰为同一输入的原路径。</li>
+<li><code>eval_projected</code>、<code>NetworkRefinement.path_eval_eq</code>：证明路径求值相等。</li>
+<li><span class="local-source-citation" title="/private/tmp/math-gauge-astra-max-20261109/sessions/AHR01/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:377">refinement_preserves_local_equivalence</span>：得到共同输入域上的局部等价；随后 <code>refinement_preserves_representation</code> 保持网络表示。</li>
+</ol>
+<p>所以，对当前较宽关系，外延保持定理有充分依据。它证明的是一个范围更广的充分条件；证明成立并不能反过来保证该关系精确刻画正文定义。</p>
+<p>还应区分两种接口：</p>
+<ul>
+<li>关系型定理以已经合法的 <code>N</code>、<code>N' : FiniteOperatorNetwork</code> 为参数，本身不负责构造 <code>N'</code>。</li>
+<li><code>NodePartitionData.presentation</code> 和 <code>network</code> 确实从分划及局域算子数据构造新网络，并证明其合法性与外延相等。</li>
+</ul>
+<p>因此，不能将附件评价为“只假设加细结果存在，没有实际构造”。</p>
+<p><strong>4. 删冗余处理正确，但修复关系时不能简单扩大 <code>choice_projection</code> 的量词。</strong></p>
+<p><span class="local-source-citation" title="/private/tmp/math-gauge-astra-max-20261109/sessions/AHR01/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:76">prune 的实现</span> 保留可达节点的整个局域算子，只将指向已删除节点的选择改为 <code>stop</code>。它证明了路径标签及求值保持。</p>
+<p>这意味着：</p>
+<ul>
+<li>两个保留节点之间的边域应完全保持删前数据；</li>
+<li>指向被删除节点的边消失；</li>
+<li>保留节点的终止域可能扩大。</li>
+</ul>
+<p>故正文中的
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>T</mi><msub><mi>β</mi><mi>a</mi></msub><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></msubsup><mo>=</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>A</mi><mi>a</mi></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>T</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">
+T^{\mathrm{pre}}_{\beta_a}
+=f_{\beta,a}(A_a)\cap T_\beta
+</annotation></semantics></math></span>
+是<strong>删冗余前</strong>的公式，不能无条件套用到删后网络。正文证明已经明确作了这个阶段区分。</p>
+<p>也因此，直接要求整个 <code>N'.node_image</code> 上的选择投影都与原选择相等，会错误排除合法剪枝：原选择可能指向已经删除的子节点。当前字段的放宽有合理动机，但放宽到了允许任意改动其他未使用边的程度。</p>
+<p><strong>5. 修复方向与尚需补充的内容。</strong></p>
+<p>建议将准确的节点域加细关系建立在<strong>保留端点的完整边域等式</strong>上。沿用当前节点对应及局域算子条件，要求对所有保留节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo separator="true">,</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">v,w</annotation></semantics></math></span>：</p>
+<h1>[
+\boxed{
+D'_{v\to w}</h1>
+<p>D_{\pi(v)\to\pi(w)}
+\cap f'_v(\operatorname{dom}f'_v)
+\cap\operatorname{dom}f'_w
+}
+]</p>
+<p>这既覆盖三类交集公式及不关联边不变，也兼容删除不可达节点。当前的实际输出路由相容性可以作为由此推出的辅助结论。</p>
+<p>另外，附件尚未给出将 <code>NodePartitionData.network</code> 接入 <code>NodeDomainRefinement</code> 的桥接定理。应补充：</p>
+<ul>
+<li>构造结果满足修正后的精确加细关系；</li>
+<li>保留子节点恰好对应 <code>NodePieceReached</code>，其他旧节点全部保留；</li>
+<li>入口、完整边域及删前／删后终止域的对应公式。</li>
+</ul>
+<p>也可以把精确关系定义为：经过标签重命名后，结果的原始 <code>presentation_data</code> 与规范构造相同。比较原始数据比要求整个 Lean 结构相等更合适，因为终止界、证明见证及局域输出像外的选择不属于正文网络数据。</p>
+<p>这些属于定义和接口的补充。<strong>具体构造已经证明的 <code>network_extensional_eq</code> 不需要被否定或重新解释为未完成。</strong></p>
+<p>本次采用源码静态审阅，并对上述四点反例作了有限枚举核验；未重新运行 Lean 编译，未修改附件或新增 Lean 源码。</p>
+<p>材料来源：Zhe Li（Glen Li / glenzli），<a href="https://glenzli.com/books/oet/">The Operator Evolution Theory</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。判断仅针对所附版本。</p>
+</div>

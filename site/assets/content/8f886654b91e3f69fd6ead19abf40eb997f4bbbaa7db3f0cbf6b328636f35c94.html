@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>KEEP</p>
+<p>本轮复核未发现需要修复的缺陷，未修改任何交付源码、<code>alignment.json</code>、原始规格或冻结背景。</p>
+<p>核查依据：</p>
+<ul>
+<li>当前环境确认为 Lean <code>4.29.1</code>，编译器提交 <code>f72c35b3f637c8c6571d353742168ab66cc22c00</code>；Lake 清单中的 mathlib 提交为 <code>5e932f97dd25535344f80f9dd8da3aab83df0fe6</code>。</li>
+<li><code>lake build Main</code> 成功，完成全部 3305 个构建任务；另行直接执行 <code>lake env lean Main.lean</code> 也通过。</li>
+<li><code>alignment.json</code> 恰好包含全部 92 个义务 ID，无缺失、重复或额外项；全部为 <code>complete</code>，表示说明均非空，依赖 ID 均有效，声明文件均存在。</li>
+<li>对齐表共有 177 次声明引用、169 个不同声明。通过 <code>import Main</code> 对这 169 个声明逐一重新执行公理审计，全部成功，未发现允许的 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code> 之外的公理。</li>
+<li>交付源码中未检出 <code>sorry</code>、<code>admit</code>、新增 <code>axiom</code>、<code>unsafe</code> 或 <code>native_decide</code>。</li>
+<li>复核了各反例的合法域与基数、有限链零步基例和实际像域、商映射的代表元无关性、无穷半径及无穷熵分支、覆盖数端点和全部习题结论，未发现遗漏或弱化。</li>
+</ul>
+<p>剩余不确定性仅限于信任边界和非形式语义判断：冻结背景与固定 mathlib 按题意作为受信任依赖，未独立重证其全部内容；原文自然语言与 Lean 表示的对应关系虽经逐项复核，仍不属于内核能够机械判定的性质。现有风格及未使用变量警告不影响上述构建和公理检查结论。</p>
+<p><a href="../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/native-source/c003-rounds/R3/attempt-2/response.md">原答文件 ↗</a></p></div>

@@ -1,0 +1,284 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>结论</h2>
+<p>核心数学内容上的判断是：<strong>路径保证域的局部上界、分量并集包含式和联合并集包含式，Lean 实现基本正确，并且这些包含关系在附件源码中已经作为定理证明出来；但它不是对正文的完全逐字形式化，有两处接口/记号层面的不足需要说明。</strong></p>
+<p>具体说：</p>
+<ul>
+<li>
+<p>分量形式<br>
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>⋃</mo><mrow><mi>q</mi><mo>:</mo><mtext> </mtext><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo>⊆</mo><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>U</mi><mo>:</mo><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">
+\bigcup_{q:\,j\in I_{\rm res}(q)}U_{q,j}(\tau_j)
+\subseteq
+\{x\in U:d_j(\phi(x),\phi^\natural(x))\le \tau_j\}
+</annotation></semantics></math></span>
+对应 Lean 的<br>
+<code>path_component_guarantee_union_subset_proxy_error</code>。</p>
+</li>
+<li>
+<p>联合形式<br>
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>⋃</mo><mrow><mi>q</mi><mo>:</mo><mtext> </mtext><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo><mo>⊆</mo><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>U</mi><mo>:</mo><mi mathvariant="normal">∀</mi><mi>j</mi><mo>∈</mo><mi>J</mi><mo separator="true">,</mo><mtext> </mtext><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">
+\bigcup_{q:\,J\subseteq I_{\rm res}(q)}U_{q,J}(\tau)
+\subseteq
+\{x\in U:\forall j\in J,\ d_j(\phi(x),\phi^\natural(x))\le \tau_j\}
+</annotation></semantics></math></span>
+对应 Lean 的<br>
+<code>path_joint_guarantee_union_subset_proxy_error</code>。</p>
+</li>
+<li>
+<p>两个形式再由<br>
+<code>path_guarantee_union_subset_proxy_error_text</code><br>
+打包，并补入有限阈值、非空分量族等正文前提；不过这些前提在这条打包定理中实际上没有被证明使用，因为核心包含式在更强、更一般的条件下已经成立。</p>
+</li>
+</ul>
+<p>因此：<strong>数学命题的实质内容和证明链条是闭合的，不是只写了陈述而未证明</strong>。没有在相关声明中看到 <code>sorry</code>/<code>admit</code>。这是一个静态审阅结论；是否能在具体 Mathlib 版本下完整 <code>lake build</code> 还需要另行编译确认。</p>
+<hr>
+<h2>1. 定义与正文的对应关系</h2>
+<table>
+<thead>
+<tr>
+<th>正文对象</th>
+<th>Lean 对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络输入域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span></td>
+<td><code>N.U</code></td>
+</tr>
+<tr>
+<td>路径 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span></td>
+<td><code>q : N.ReachablePath</code></td>
+</tr>
+<tr>
+<td>路径域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">U_q</annotation></semantics></math></span></td>
+<td><code>N.path_domain q.nodes</code></td>
+</tr>
+<tr>
+<td>路径链 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span></td>
+<td><code>N.path_chain q.nodes</code></td>
+</tr>
+<tr>
+<td>路径采样集 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span></td>
+<td><code>path_component_sample N sample q j</code></td>
+</tr>
+<tr>
+<td>路径可评估分量集 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{\rm res}(q)</annotation></semantics></math></span></td>
+<td><code>path_evaluable_components N sample q</code></td>
+</tr>
+<tr>
+<td>路径残差 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q,j}</annotation></semantics></math></span></td>
+<td><code>path_empirical_residual_upper d target N sample delta_o q j</code></td>
+</tr>
+<tr>
+<td>代理网络表示 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi mathvariant="script">N</mi></msub><msub><mo>≡</mo><mi>U</mi></msub><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi_{\mathcal N}\equiv_U\phi</annotation></semantics></math></span></td>
+<td><code>N.represents proxy</code></td>
+</tr>
+<tr>
+<td>目标 Lip 包络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>TargetLipEnvelopeCertificate d target Vstar Lstar</code></td>
+</tr>
+<tr>
+<td>路径 Lip 证书 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span></td>
+<td><code>IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)</code></td>
+</tr>
+<tr>
+<td>矩阵 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo>=</mo><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>+</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf A_q=\mathbf L_q+\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+</tr>
+<tr>
+<td>共同锚点距离 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\mathbf A,j}</annotation></semantics></math></span></td>
+<td><code>weighted_anchor_distance</code></td>
+</tr>
+<tr>
+<td>路径分量保证域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_component_empirical_guarantee_domain</code></td>
+</tr>
+<tr>
+<td>路径联合保证域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\tau)</annotation></semantics></math></span></td>
+<td><code>path_joint_empirical_guarantee_domain</code></td>
+</tr>
+</tbody>
+</table>
+<p>其中：</p>
+<ul>
+<li><code>path_component_empirical_guarantee_domain</code> 定义为
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>:</mo><msub><mi>D</mi><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+\{x\in U_q:
+D_{\mathbf A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}\le \tau_j\},
+</annotation></semantics></math></span>
+与正文一致。</li>
+<li><code>path_joint_empirical_guarantee_domain</code> 定义为路径域上对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span> 同时满足
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>D</mi><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+D_{\mathbf A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}\le \tau_j,
+</annotation></semantics></math></span>
+对非空 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 来说就是正文中各个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span> 的交集。源码没有单独列出
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo><mo>=</mo><munder><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">
+U_{q,J}(\tau)=\bigcap_{j\in J}U_{q,j}(\tau_j)
+</annotation></semantics></math></span>
+这条集合等式，但这是定义层面立即可以补出的桥接引理；最终包含式的证明并不依赖把它单独命名。</li>
+</ul>
+<hr>
+<h2>2. 源码已经证明的证明链</h2>
+<p>正文的局部上界是：</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>D</mi><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+d_j(\phi(x),\phi^\natural(x))
+\le
+D_{\mathbf A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}.
+</annotation></semantics></math></span></p>
+<p>Lean 中对应的链条是：</p>
+<ol>
+<li><code>path_local_empirical_upper</code>：证明路径链 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span> 与目标之间的局部经验上界。</li>
+<li><code>proxy_path_local_empirical_upper</code>：利用 <code>N.represents proxy</code>，把路径链 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span> 替换为代理 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span>，得到
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>D</mi><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+d_j(\phi(x),\phi^\natural(x))
+\le D_{\mathbf A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}.
+</annotation></semantics></math></span></li>
+<li><code>path_component_guarantee_error_bound</code> / <code>proxy_path_component_guarantee_error_bound</code>：从
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">
+x\in U_{q,j}(\tau_j)
+</annotation></semantics></math></span>
+即
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>D</mi><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">
+D_{\mathbf A_q,j}(x;S_{q,j})+\hat\varepsilon_{q,j}\le\tau_j
+</annotation></semantics></math></span>
+推出
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+d_j(\phi(x),\phi^\natural(x))\le\tau_j.
+</annotation></semantics></math></span></li>
+<li><code>path_joint_guarantee_error_bound</code> / <code>proxy_path_joint_guarantee_error_bound</code>：对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 中所有分量同时应用上一步。</li>
+<li><code>path_component_guarantee_union_subset_proxy_error</code> 和 <code>path_joint_guarantee_union_subset_proxy_error</code>：对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span> 取存在量词，得到正文的两个并集包含式。</li>
+</ol>
+<p>证明本质上正是正文的三角不等式加两条 Lip 证书：</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>≤</mo><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>s</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>+</mo><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>s</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><msub><mi>x</mi><mi>s</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mspace width="1em"/><mo>+</mo><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><msub><mi>x</mi><mi>s</mi></msub><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>≤</mo><munder><mo>∑</mo><mi>i</mi></munder><mo stretchy="false">[</mo><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><msub><mo stretchy="false">]</mo><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>x</mi><mi>s</mi></msub><mo stretchy="false">)</mo><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mi mathvariant="normal">.</mi></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+d_j(\phi(x),\phi^\natural(x))
+&amp;\le d_j(c_q(x),c_q(x_s))
+  +d_j(c_q(x_s),\phi^\natural(x_s))\\
+&amp;\quad +d_j(\phi^\natural(x_s),\phi^\natural(x)),\\
+&amp;\le
+\sum_i [\mathbf A_q]_{i\to j}d_i(x,x_s)
++\hat\varepsilon_{q,j}.
+\end{aligned}
+</annotation></semantics></math></span></p>
+<p>随后对所有锚点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>s</mi></msub><mo>∈</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">x_s\in S_{q,j}</annotation></semantics></math></span> 取下确界，得到共同锚点距离。Lean 中对应地使用了 <code>weighted_anchor_distance</code> 的下确界估计。因此局部上界和最终包含式都有实质证明，不是仅形式上声明。</p>
+<hr>
+<h2>3. 正文中的定义域和采样前提是如何被容纳的</h2>
+<p>正文一开始假设</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>U</mi><mo>⊆</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">)</mo><mo>∩</mo><msup><mi>V</mi><mo>∗</mo></msup><mo separator="true">,</mo><mspace width="2em"/><msub><mi>S</mi><mi>j</mi></msub><mo>⊆</mo><mi>S</mi><mo>∩</mo><mi>U</mi><mo>∩</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mo stretchy="false">(</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+U\subseteq \operatorname{dom}(\phi)\cap V^*,
+\qquad
+S_j\subseteq S\cap U\cap\operatorname{dom}(\phi^\natural).
+</annotation></semantics></math></span></p>
+<p>Lean 的最终定理没有逐项显式列出这些假设，但都由已有假设推出或不需要额外使用：</p>
+<ul>
+<li><code>N.represents proxy</code> 表示
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>N</mi><mi mathvariant="normal">.</mi><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">x</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi></mrow><msub><mo>≡</mo><mrow><mi>N</mi><mi mathvariant="normal">.</mi><mi>U</mi></mrow></msub><mi>ϕ</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+N.\mathrm{extensionalOperator}\equiv_{N.U}\phi.
+</annotation></semantics></math></span>
+由于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi mathvariant="normal">.</mi><mi>U</mi><mo>=</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>N</mi><mi mathvariant="normal">.</mi><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">x</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi></mrow><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">N.U=\operatorname{dom}(N.\mathrm{extensionalOperator})</annotation></semantics></math></span>，可推出
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>N</mi><mi mathvariant="normal">.</mi><mi>U</mi><mo>⊆</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mi>ϕ</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+N.U\subseteq \operatorname{dom}\phi.
+</annotation></semantics></math></span></li>
+<li><code>hpathV : ∀q, N.path_domain q.nodes ⊆ Vstar</code>，而路径域覆盖网络输入域，故 <code>N.U ⊆ Vstar</code>；再由 <code>hLstar.lip_matrix</code> 中的定义域条件得到
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>N</mi><mi mathvariant="normal">.</mi><mi>U</mi><mo>⊆</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+N.U\subseteq \operatorname{dom}\phi^\natural.
+</annotation></semantics></math></span></li>
+<li>路径采样点属于 <code>N.path_domain q.nodes</code>，因而也落在目标 Lip 证书的定义域中。</li>
+<li>正文还要求全局采样只取在目标定义域内；Lean 的 <code>sample : I → Set X</code> 可以包含额外点，但这些额外点不会进入 <code>path_component_sample</code>，因此不影响包含式。若要与正文完全同形，可以另加 <code>hsample_subset</code> 和 <code>SamplingStructure</code> 一类接口假设，但数学上不是必要补充。</li>
+</ul>
+<hr>
+<h2>4. 需要指出或补齐的地方</h2>
+<h3>4.1 正文的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J_q</annotation></semantics></math></span> 记号有歧义，Lean 采用了 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub><mo>=</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">J_q=J</annotation></semantics></math></span></h3>
+<p>正文一般形式写的是</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>⋃</mo><mrow><mi>q</mi><mo>:</mo><mtext> </mtext><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><msub><mi>J</mi><mi>q</mi></msub></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo><mo>⊆</mo><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>U</mi><mo>:</mo><mi mathvariant="normal">∀</mi><mi>j</mi><mo>∈</mo><mi>J</mi><mo separator="true">,</mo><mtext> </mtext><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\bigcup_{q:\,J\subseteq I_{\rm res}(q)}
+U_{q,J_q}(\boldsymbol\tau)
+\subseteq
+\{x\in U:\forall j\in J,\ d_j(\phi(x),\phi^\natural(x))\le\tau_j\}.
+</annotation></semantics></math></span></p>
+<p>但前文定义的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><msub><mi>J</mi><mi>q</mi></msub></mrow></msub></mrow><annotation encoding="application/x-tex">U_{q,J_q}</annotation></semantics></math></span> 只保证 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">j\in J_q</annotation></semantics></math></span> 的分量。因此，如果严格按照“任取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J_q</annotation></semantics></math></span>”理解，而不同时假设</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">
+J\subseteq J_q
+</annotation></semantics></math></span></p>
+<p>则结论并不成立。例如取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">J=\{1,2\}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub><mo>=</mo><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">J_q=\{1\}</annotation></semantics></math></span>，在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mo stretchy="false">{</mo><mn>1</mn><mo stretchy="false">}</mo></mrow></msub></mrow><annotation encoding="application/x-tex">U_{q,\{1\}}</annotation></semantics></math></span> 中只验证了第 1 分量，完全可以有一个点在第 2 分量上的真实误差超过 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\tau_2</annotation></semantics></math></span>。因此正文要么应写 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub><mo>=</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">J_q=J</annotation></semantics></math></span>，要么应补上 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J\subseteq J_q</annotation></semantics></math></span>。</p>
+<p>Lean 实现直接使用固定的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span>：</p>
+<pre><code class="language-lean">path_joint_empirical_guarantee_domain ... J ... tau
+</code></pre>
+<p>这正是正文证明中“对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span> 同时应用”的自然含义。因此：</p>
+<ul>
+<li>若把正文修读为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub><mo>=</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">J_q=J</annotation></semantics></math></span>，Lean 实现是准确的；</li>
+<li>若坚持字面上任意的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J_q</annotation></semantics></math></span>，则 Lean 没有覆盖这个更强、但当前缺乏额外假设的表述，需要补充 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J\subseteq J_q</annotation></semantics></math></span> 或把联合域改成带 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J_q</annotation></semantics></math></span> 的依赖族。</li>
+</ul>
+<p>这是正文记号层面的缺口，不是 Lean 三角不等式证明的缺口。</p>
+<hr>
+<h3>4.2 Lean 最终并集定理要求“所有路径”都有 Lip 证书，正文只需被选中路径有证书</h3>
+<p>最终 Lean 定理使用：</p>
+<pre><code class="language-lean">(hLq : ∀ q : N.ReachablePath,
+  IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+</code></pre>
+<p>也就是要求每个可达路径都预先带有一个路径级 Lip 矩阵。正文局部形式只对固定的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span> 取一个</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>∈</mo><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">)</mo><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><mi>q</mi></msub></msub><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+\mathbf L_q\in\mathscr L(c_q)|_{U_q},
+</annotation></semantics></math></span></p>
+<p>而最终的并集式只对满足路径采样非空条件的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span> 使用这些路径局部保证域。因此，严格按正文的一般性，应该只需要对实际出现在并集中的路径提供证书，例如可改成条件形式：</p>
+<pre><code class="language-text">hLq : ∀ q, j ∈ path_evaluable_components N sample q →
+    IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)
+</code></pre>
+<p>联合形式类似地写成：</p>
+<pre><code class="language-text">hLq : ∀ q, J ⊆ path_evaluable_components N sample q →
+    IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)
+</code></pre>
+<p>或者引入一个“带路径 Lip 证书的路径子类型”，并只对子类型中的路径取并集。</p>
+<p>为什么这是实际前提差异？可以构造直观反例：网络有一条带采样、满足所有证书的路径 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">q_0</annotation></semantics></math></span>，另有若干条没有采样的路径 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">q_1</annotation></semantics></math></span>。在某个非分离扩展伪度量下，可令 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">q_1</annotation></semantics></math></span> 的路径链把两个所有分量距离都为 0 的输入点送到一个输出分量距离为正的点对；这样的路径链不存在任何 Lip 矩阵。正文的并集只涉及 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">q_0</annotation></semantics></math></span>，因此相关结论仍可成立；但 Lean 定理由于要求 <code>∀ q</code>，无法实例化。若正文默认“所有可达路径均已给出 Lip 证书”，则这一条不构成数学错误；但附件正文没有明确写出这个全局假设。</p>
+<p>因此，这一点应记为：<strong>Lean 证明本身正确，但接口假设比正文所需更强，未完全覆盖“只在被选路径上给出局部证书”的最一般情形。</strong></p>
+<hr>
+<h3>4.3 有限阈值和非空 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 是保守加强，不是缺口</h3>
+<p>正文要求阈值有限，且联合分量族非空。Lean 的核心并集定理实际上允许 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mi>j</mi></msub><mo>=</mo><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\tau_j=\top</annotation></semantics></math></span> 以及空 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span>；对应的 <code>_text</code> 包装又加入了：</p>
+<ul>
+<li><code>finite_ennreal tau_j</code> / <code>finite_ennreal (tau i)</code>；</li>
+<li><code>J.Nonempty</code>；</li>
+<li><code>j ∈ evaluable_components sample</code>；</li>
+<li><code>J ⊆ evaluable_components sample</code>。</li>
+</ul>
+<p>这些条件在核心证明中没有被使用，但逻辑上不影响正文实例：凡是满足正文假设的情形，都满足 Lean 核心定理的较弱假设。因此这是<strong>加强结论</strong>，不是遗漏。</p>
+<p>另外，空采样时 <code>weighted_anchor_distance</code> 对空锚点集取下确界得到 <code>⊤</code>，在有限 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span> 下保证域自动为空，和正文“路径级证书停止”的语义相容。但 <code>path_empirical_residual_upper</code> 作为 Lean 全函数在空采样上仍有一个值（空上确界为 0 加修正项）；它不应被解释为正文在空采样上定义了路径残差。最终定理通过 <code>j ∈ path_evaluable_components</code> 排除了这种非预期使用。</p>
+<hr>
+<h3>4.4 没有证明逆包含或等式，这符合正文</h3>
+<p>正文只断言路径局部保证域的并集包含于真实全局拟合区域，没有断言反向包含，也没有断言它等于某个全局保证域。Lean 实现同样只证明包含：</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>路径保证域并集</mtext><mo>⊆</mo><mtext>真实误差区域</mtext><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\text{路径保证域并集}\subseteq \text{真实误差区域}.
+</annotation></semantics></math></span></p>
+<p>这是正确的范围。若把标题“全局拟合含义”理解成“路径保证域等于全局保证域”，那会超出正文；当前实现没有作这个过强的声称。</p>
+<hr>
+<h2>5. 最终判断</h2>
+<ul>
+<li>
+<p><strong>核心数学命题：准确，证明已覆盖。</strong><br>
+<code>path_component_guarantee_union_subset_proxy_error</code> 和<br>
+<code>path_joint_guarantee_union_subset_proxy_error</code> 实际完成了正文的分量并集和联合并集包含式。</p>
+</li>
+<li>
+<p><strong>局部上界与路径保证域定义：对应良好。</strong><br>
+<code>path_local_empirical_upper</code>、<code>proxy_path_local_empirical_upper</code> 及两个 guarantee-domain 错误界定理构成了完整的证明链。</p>
+</li>
+<li>
+<p><strong>逐字形式化层面：不完全。</strong><br>
+主要需要说明两点：</p>
+<ol>
+<li>正文的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J_q</annotation></semantics></math></span> 记号应明确为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>q</mi></msub><mo>=</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">J_q=J</annotation></semantics></math></span>，或补充 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>J</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">J\subseteq J_q</annotation></semantics></math></span>；Lean 采用了前者。</li>
+<li>Lean 最终定理要求所有可达路径都有 Lip 证书，比正文只在被讨论路径上取局部证书更强；可将 <code>hLq</code> 改成按路径局部非空条件给出的条件证书。</li>
+</ol>
+</li>
+<li>
+<p><strong>可选补充，不影响最终包含式：</strong></p>
+<ol>
+<li>对非空 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 证明
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo><mo>=</mo><munder><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">
+U_{q,J}(\tau)=\bigcap_{j\in J}U_{q,j}(\tau_j)
+</annotation></semantics></math></span>
+的集合等式。</li>
+<li>把正文的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mi>ϕ</mi><mo>∩</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq\operatorname{dom}\phi\cap V^*</annotation></semantics></math></span> 和采样包含条件显式写成接口引理或 wrapper 假设；它们在当前证明中可由 <code>N.represents</code>、路径域覆盖和 <code>hLstar</code> 的条件推出。</li>
+<li>若需要严格区分“空采样时路径残差未定义”和 Lean 的全函数值，可给路径残差增加 <code>j ∈ path_evaluable_components</code> 的依赖参数或使用 <code>Option</code>/子类型封装；当前所有面向正文的结论都已经加了非空可评估条件，因此不会产生错误上界。</li>
+</ol>
+</li>
+</ul>
+<p>总体评价：<strong>核心数学内容和证明是正确的；作为正文的正式逐字接口，尚需上述两处澄清或小幅加强条件，尤其是 <code>hLq</code> 的全路径假设。</strong></p>
+</div>

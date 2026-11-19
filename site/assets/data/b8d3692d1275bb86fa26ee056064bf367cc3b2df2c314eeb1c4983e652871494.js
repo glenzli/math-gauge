@@ -1,0 +1,1 @@
+window.MGEditionData("b8d3692d1275bb86fa26ee056064bf367cc3b2df2c314eeb1c4983e652871494",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/astra-6.2-max/cases/LCH02.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"astra-6.2-max","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

@@ -1,0 +1,48 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>KEEP</p>
+<h2>本轮核查结论</h2>
+<p>本轮没有发现缺陷。上一版答卷（<code>Main.lean</code> 与 <code>alignment.json</code>）维持不变，本说明不修改任何源码或结论。</p>
+<p><strong>核查依据</strong></p>
+<ol>
+<li><strong>重新编译：</strong> 被核查的文件是工作区中上一版答卷对应的 <code>Main.lean</code>（3036 行，SHA-1 <code>dbe4026af5f0400858868d5d9436416994f9c59b</code>）。它与第 2 版逐行比较只多出 122 行插入，没有删除。把它复制到全新的临时目录，在 Lean 4.29.1 + 指定 mathlib 下执行 <code>lean -o</code>，退出码 0，零错误、零警告。</li>
+<li><strong>公理：</strong> 加载新编出的模块，对全部 625 个 <code>OETCh03.*</code> 常量（含自动生成的辅助常量）逐个调用 <code>collectAxioms</code>，结果只有 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</li>
+<li><strong>禁用设施：</strong> 源码扫描未出现 <code>sorry</code>、<code>admit</code>、<code>axiom</code>、<code>native_decide</code>、<code>implemented_by</code>、<code>extern</code>、<code>unsafe</code>、<code>ofReduceBool</code>。文件只导入冻结的 <code>formal_oet</code> 模块。</li>
+<li><strong>对齐表（<code>alignment.json</code>，SHA-1 <code>882336ceb11c14c1a242ef995a406eddf41aff7c</code>）：</strong>
+<ul>
+<li>92 个 ID 与 <code>obligations.json</code> 顺序一致、无重复，全部为 complete，representation 均非空。</li>
+<li>列出的 319 个不同声明名在新编出的模块中全部存在。只有 CH03-D07 引用了冻结的 <code>metric_entropy.lean</code> 中的声明，这是该义务明确允许的。</li>
+<li>所有 dependencies 都是清单中的合法 ID。</li>
+</ul>
+</li>
+<li><strong>冻结材料：</strong> <code>formal_oet/</code>、<code>source/</code>、<code>obligations.json</code> 仍为只读，时间戳停留在发题时刻，未被改动。</li>
+<li><strong>逐项对照原文复核</strong>，重点核对了量词、边界和分支：
+<ul>
+<li>常值优先的分划（D01）与任意目标纤维，包括空纤维情形（D02）。</li>
+<li>3.2(ii) 的零步基例、实际域递推，以及 <code>Fin n</code> 有限族形式。</li>
+<li>3.6(i) 中 U 为空的边界，以及 (iii) 中有限正 K_A、有限 L_B 的条件。</li>
+<li>3.7 只在两个实际像集上分离时，才把商判据转回点值判据。</li>
+<li>3.10 中可取到的最小值形式。</li>
+<li>3.12(ii) 右端为 0 与为 ∞ 的情形。</li>
+<li>3.15(iii) 中输出距离为 ∞ 时 ε 的选取。</li>
+<li>3.16(ii) 中 B 为空、以及没有有限覆盖时的情形。</li>
+<li>3.16 后反例对所有满足 0&lt;a≤1、2a&lt;τ 的 a 全称成立。</li>
+<li>3.17 的精确条件 diam&lt;τσ≤τN。</li>
+<li>3.18(ii) 不对 ∞−∞ 赋值。</li>
+<li>3.20 中输出熵允许为 ∞。</li>
+<li>各习题的构造合法性：算子保持 ⊥、X∖U 上取 ⊥、D 非空，以及 3/2 不是合法内部中心等。</li>
+</ul>
+</li>
+</ol>
+<p><strong>仍有的不确定性（都是表示层面的选择，不影响证明）</strong></p>
+<ul>
+<li>ℝ⊔{⊥} 用 <code>Option ℝ</code> 表示，<code>none</code> 为 ⊥。</li>
+<li>3/2、7/4 等精度写成 <code>ENNReal.ofReal</code> 常量，并另证与 3/2、7/4 相等。</li>
+<li>有限链主要用 <code>ℕ → Operator</code> 的前 n 项、从 0 起标号表示；另有 <code>Fin</code> 有限族版本，以及与冻结 <code>OperatorChain</code> 的对应证明。</li>
+<li>输入尺度族定义在全部子集上，但只在非空子集上要求单调；另证与&quot;只定义在非空子集上&quot;的形式互相转换。</li>
+<li>映射熵差必须传入定义域证明，因此从不对 ∞−∞ 取值。</li>
+<li>命题 3.6(iii) 用一般的标量 δ 表述，另附 <code>Subsingleton I</code> 的矩阵版本。</li>
+<li>部分定理去掉了不需要的前提，比原文更强。</li>
+<li>共用辅助声明在依赖表中归属于第一个列出它的条目；对同一依赖关系，其他读者的划分可能不同。</li>
+<li>答卷文本由该工作区文件生成，但聊天中的代码块本身无法再做逐字节校验。</li>
+</ul>
+<p>数学内容来源：Zhe Li (Glen Li / glenzli), <em>The Operator Evolution Theory</em>, Vol. I, Ch. 3, https://glenzli.com/books/oet/ ，CC BY 4.0。Lean 形式化为新作。</p>
+<p><a href="../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/c003-rounds/R3/attempt-1/response.md">原答文件 ↗</a></p></div>

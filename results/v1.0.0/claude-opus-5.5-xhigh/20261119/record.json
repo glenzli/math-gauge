@@ -1,0 +1,1277 @@
+{
+  "schema": "math-gauge.result-record/v1",
+  "benchmark_version": "1.0.0",
+  "initial_assessment_edition": "1.1.0",
+  "record_id": "20261119",
+  "model_id": "claude-opus-5.5-xhigh",
+  "model": {
+    "id": "claude-opus-5.5-xhigh",
+    "requested_label": "Claude Opus 5.5 (xHigh)",
+    "requested_model": "claude-opus-5-5[1m]",
+    "requested_reasoning_effort": "xhigh",
+    "observed_model": "claude-opus-5-5[1m]",
+    "observed_reasoning_effort": "xhigh",
+    "model_identity_verified": false
+  },
+  "harness": {
+    "name": "Claude Code",
+    "version": "2.1.303",
+    "controller": "Math Gauge portable controller",
+    "controller_version": "0.3.0",
+    "execution_track": "math-gauge.local-tools-no-search/v1",
+    "local_tools_allowed": true,
+    "search_allowed": false,
+    "tool_network_access": false
+  },
+  "scope": "public-answers-and-combined-aggregates",
+  "retention": {
+    "user_requested": true,
+    "selection": "User-selected full portable Opus5.5xHigh archive2026-11-19;39 first normal A1 finals plus3 fixed selfcheck rounds."
+  },
+  "candidate_calls_by_migration": 0,
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "records": [
+    {
+      "id": "MG-C003:A1",
+      "case_id": "MG-C003",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "# MG-C003 v0.1.1 答卷：卷 1 第 3 章「算子局部退化」Lean 形式化\n\n全部 92 项义务均已完成（status 都是 `complete`）。整个答卷是一个单文件 `Main.lean`，命名空间为 `OET3`。\n\n**验证情况**\n- `lake env lean Main.lean` 在 Lean 4.29.1 / mathlib `5e932f97…` 下编译通过，没有任何错误。\n- 用一段元程序检查了 `OET3` 下全部 350 个声明：用到的公理只有 `propext`、`Classical.choice`、`Quot.sound`。\n- 文件里没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`。\n- `alignment.json` 共引用 244 个声明，全部用 `#check` 在编译产物里查到了。\n- `alignment.json` 恰好覆盖 92 个 ID，没有重复，依赖也都在清单内。\n\n**表示方式（几处需要说明的选择）**\n- **导入与复用**：只导入冻结的 `formal_oet` 模块和 Mathlib。直接复用了冻结的定义：`Operator`、`dom`、`ball`、`subfamily_pseudometric`、`covering_number`/`InternalEpsilonNet`、`metric_entropy`、`IsLipMatrix`/`IsCoLipMatrix`、`HasScalarLipBound`。\n- **复合与有限链**：两个算子的复合写成 `ϕ2 * ϕ1`（冻结的幺半群乘法）。有限链用 `ϕ : ℕ → Operator` 表示，从 0 开始编号，`ϕ m` 对应正文的 ϕ_{m+1}；实际中间域 `chainDom` 按递推定义，零步基例单独证明。\n- **零化半径与零化矩阵**：零化半径取合法有限正半径集合的 `sSup`，空集时自然为 0，也可以取 ⊤。零化矩阵写成 `nullMatrix d ϕ U i j`，对应正文的 [N]_{ji}。\n- **映射熵差**：用 `Option EReal` 表示，不良定时取 `none`，因此不会出现 ⊤−⊤。\n- **具体反例与习题**：吸收元统一用 `Option α` 的 `none` 表示，`absorbExt` 按吸收元隔离公理扩展距离，并证明扩展后满足扩展伪度量公理。",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/3c032a94d2e6d4742d26e41f72a279c8e05309fca72cd919b795e4670e13c6f9-response.md",
+              "bytes": 185275,
+              "sha256": "3c032a94d2e6d4742d26e41f72a279c8e05309fca72cd919b795e4670e13c6f9"
+            },
+            "start_byte": 0,
+            "end_byte": 1841,
+            "quote": "# MG-C003 v0.1.1 答卷：卷 1 第 3 章「算子局部退化」Lean 形式化\n\n全部 92 项义务均已完成（status 都是 `complete`）。整个答卷是一个单文件 `Main.lean`，命名空间为 `OET3`。\n\n**验证情况**\n- `lake env lean Main.lean` 在 Lean 4.29.1 / mathlib `5e932f97…` 下编译通过，没有任何错误。\n- 用一段元程序检查了 `OET3` 下全部 350 个声明：用到的公理只有 `propext`、`Classical.choice`、`Quot.sound`。\n- 文件里没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`。\n- `alignment.json` 共引用 244 个声明，全部用 `#check` 在编译产物里查到了。\n- `alignment.json` 恰好覆盖 92 个 ID，没有重复，依赖也都在清单内。\n\n**表示方式（几处需要说明的选择）**\n- **导入与复用**：只导入冻结的 `formal_oet` 模块和 Mathlib。直接复用了冻结的定义：`Operator`、`dom`、`ball`、`subfamily_pseudometric`、`covering_number`/`InternalEpsilonNet`、`metric_entropy`、`IsLipMatrix`/`IsCoLipMatrix`、`HasScalarLipBound`。\n- **复合与有限链**：两个算子的复合写成 `ϕ2 * ϕ1`（冻结的幺半群乘法）。有限链用 `ϕ : ℕ → Operator` 表示，从 0 开始编号，`ϕ m` 对应正文的 ϕ_{m+1}；实际中间域 `chainDom` 按递推定义，零步基例单独证明。\n- **零化半径与零化矩阵**：零化半径取合法有限正半径集合的 `sSup`，空集时自然为 0，也可以取 ⊤。零化矩阵写成 `nullMatrix d ϕ U i j`，对应正文的 [N]_{ji}。\n- **映射熵差**：用 `Option EReal` 表示，不良定时取 `none`，因此不会出现 ⊤−⊤。\n- **具体反例与习题**：吸收元统一用 `Option α` 的 `none` 表示，`absorbExt` 按吸收元隔离公理扩展距离，并证明扩展后满足扩展伪度量公理。"
+          }
+        ]
+      },
+      "response": {
+        "path": "answers/MG-C003.md",
+        "bytes": 185275,
+        "sha256": "3c032a94d2e6d4742d26e41f72a279c8e05309fca72cd919b795e4670e13c6f9"
+      },
+      "review": {
+        "path": "reviews/MG-C003.json",
+        "bytes": 360676,
+        "sha256": "10c300972f625cdecf99944bc859ee94a068798a86c217d24300747bec3d6e9d"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "3c032a94d2e6d4742d26e41f72a279c8e05309fca72cd919b795e4670e13c6f9",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GP001:A1",
+      "case_id": "MG-GP001",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GP001.md",
+        "bytes": 16456,
+        "sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0"
+      },
+      "review": {
+        "path": "reviews/MG-GP001.json",
+        "bytes": 8114,
+        "sha256": "53f6a3ddebb1f1d40843b062d34e03c4bc4afc9e0aa1d4fe2ca2ee98a9456bd0"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "b942019656e3cd79b60797392b1c8436f255c7a839c2f730dd8321b5258186c0",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GP002:A1",
+      "case_id": "MG-GP002",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GP002.md",
+        "bytes": 15657,
+        "sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba"
+      },
+      "review": {
+        "path": "reviews/MG-GP002.json",
+        "bytes": 8006,
+        "sha256": "9089203371515f3abd4a19da106167985d4463bb47153647751ca32b97a785db"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "2a4e48c7472cb89bb650a6d7a9842009a5951812a14bc090466c334da95743ba",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GR005:A1",
+      "case_id": "MG-GR005",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GR005.md",
+        "bytes": 13735,
+        "sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b"
+      },
+      "review": {
+        "path": "reviews/MG-GR005.json",
+        "bytes": 7907,
+        "sha256": "9ff1c59331f457f0fd57af87bb11d17bc04149c85310dfd2ce608d5a2dfee366"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "fa8bfb182e1c91d1b83ec40df2d842c1f9e446141f39baea1244ac4d3f75cc2b",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GR009:A1",
+      "case_id": "MG-GR009",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GR009.md",
+        "bytes": 13056,
+        "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681"
+      },
+      "review": {
+        "path": "reviews/MG-GR009.json",
+        "bytes": 8153,
+        "sha256": "02298c21eb01db77f3681b49c34859f7ef151efa96acf1b2c20b7e46db23ee9f"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-PS001:A1",
+      "case_id": "MG-PS001",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-PS001.md",
+        "bytes": 10875,
+        "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749"
+      },
+      "review": {
+        "path": "reviews/MG-PS001.json",
+        "bytes": 4106,
+        "sha256": "01184dc7692f4c6ade45d90027a28ca7e94bf97e975550997f921863a4a7b349"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GR021:A1",
+      "case_id": "MG-GR021",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GR021.md",
+        "bytes": 21057,
+        "sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb"
+      },
+      "review": {
+        "path": "reviews/MG-GR021.json",
+        "bytes": 5135,
+        "sha256": "5680b404c9d05471aff3d2733858c7b6d1801d2c15597e2c4e5a33f57a55d386"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "9dbcf99ec5f6cf9f243b51a77334709788cc3389dd296e80bc65a5931fa41bcb",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GR022:A1",
+      "case_id": "MG-GR022",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GR022.md",
+        "bytes": 13422,
+        "sha256": "19568e3d499668e77bc199696295fbe0e85a4ed11d277188ca915443ba8358a1"
+      },
+      "review": {
+        "path": "reviews/MG-GR022.json",
+        "bytes": 5610,
+        "sha256": "1c8f8fabb2159314589dec2cd56dd7c1f938a0d2f46e25d90e598f4485a0a40c"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "19568e3d499668e77bc199696295fbe0e85a4ed11d277188ca915443ba8358a1",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-GR023:A1",
+      "case_id": "MG-GR023",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-GR023.md",
+        "bytes": 25913,
+        "sha256": "e64a07a6e522ad34b3ce5da4e564b1ce94b35ea6be879b2d4c4cda4eab31774f"
+      },
+      "review": {
+        "path": "reviews/MG-GR023.json",
+        "bytes": 6380,
+        "sha256": "f7833ec0f49126dac8f860412e68ff5626c57ccf5eb082a5f67dc39851d2daaa"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "e64a07a6e522ad34b3ce5da4e564b1ce94b35ea6be879b2d4c4cda4eab31774f",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-AR001:A1",
+      "case_id": "MG-AR001",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-AR001.md",
+        "bytes": 6286,
+        "sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c"
+      },
+      "review": {
+        "path": "reviews/MG-AR001.json",
+        "bytes": 4912,
+        "sha256": "4cc5a4b7e9282bd2a8a90bfa59e4e8175c66500a4516b89a553e739b48474e13"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "72628d807d1ececf312a46f979883483cbc7cd7d2c11413edbf0a97e1e65d70c",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-AR002:A1",
+      "case_id": "MG-AR002",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 0.55,
+          "upper": 0.55,
+          "exact": 0.55
+        },
+        "strict_pass": false
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-AR002.md",
+        "bytes": 7398,
+        "sha256": "285ce03b4d171c62ef7076a0f0fbe86f2d377b8537a25d884d276180a40bdde9"
+      },
+      "review": {
+        "path": "reviews/MG-AR002.json",
+        "bytes": 4865,
+        "sha256": "b754c83fcac71013b8d375638e6b3f0eaed5feda823982e5f1497b6bec16ef54"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "285ce03b4d171c62ef7076a0f0fbe86f2d377b8537a25d884d276180a40bdde9",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-AR003:A1",
+      "case_id": "MG-AR003",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 0.95,
+          "upper": 0.95,
+          "exact": 0.95
+        },
+        "strict_pass": false
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-AR003.md",
+        "bytes": 7778,
+        "sha256": "7d4888dd17dc774f8d33d62f18cc7187262beb71950a5c858e59f1a739822b4e"
+      },
+      "review": {
+        "path": "reviews/MG-AR003.json",
+        "bytes": 4480,
+        "sha256": "628adc57df2f7cf6b95c291307870bc3c8a0caf2e798432edc6e78c14ee5f8b9"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "7d4888dd17dc774f8d33d62f18cc7187262beb71950a5c858e59f1a739822b4e",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-AR004:A1",
+      "case_id": "MG-AR004",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 0.8,
+          "upper": 0.8,
+          "exact": 0.8
+        },
+        "strict_pass": false
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-AR004.md",
+        "bytes": 7862,
+        "sha256": "e0ecaa0a95f18275a2a02b269f87e7d377970cbd2512e24f6337ed7b6aa3fc14"
+      },
+      "review": {
+        "path": "reviews/MG-AR004.json",
+        "bytes": 4961,
+        "sha256": "f8b34ddc293aee209450b09e0be1e3c1c9b3fc0f93d557554eb0d7c677552004"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "e0ecaa0a95f18275a2a02b269f87e7d377970cbd2512e24f6337ed7b6aa3fc14",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "AHR01:A1",
+      "case_id": "AHR01",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/AHR01.md",
+        "bytes": 25937,
+        "sha256": "117e5b70f7d9ab3a3a5afd46b8cbaea8e6fc16e846b599b3b26955d096efbc89"
+      },
+      "review": {
+        "path": "reviews/AHR01.json",
+        "bytes": 15432,
+        "sha256": "1d66e73806de5cbdfc89d88a271d29210cefae87261de03fa10785fadf33b8e6"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "117e5b70f7d9ab3a3a5afd46b8cbaea8e6fc16e846b599b3b26955d096efbc89",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "AHR02:A1",
+      "case_id": "AHR02",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/AHR02.md",
+        "bytes": 7655,
+        "sha256": "533ea7bb06dc31dd62ffd323be0d5e14da4e5f1927c8587d46d32675aa399eab"
+      },
+      "review": {
+        "path": "reviews/AHR02.json",
+        "bytes": 12233,
+        "sha256": "283b7ac64fd169fdb3783118fe810e651ed0482148f548817cfec4aa1d7f2a68"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "533ea7bb06dc31dd62ffd323be0d5e14da4e5f1927c8587d46d32675aa399eab",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "AHR03:A1",
+      "case_id": "AHR03",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/AHR03.md",
+        "bytes": 11380,
+        "sha256": "0c76a546becb0022a720451aef920f4b10216747b8536fe4548afea0d85cef56"
+      },
+      "review": {
+        "path": "reviews/AHR03.json",
+        "bytes": 16698,
+        "sha256": "69c8a2d96858eebc3121fdca8d4a58e53573f454782a90fe76bf318cd977e532"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "0c76a546becb0022a720451aef920f4b10216747b8536fe4548afea0d85cef56",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "AHR04:A1",
+      "case_id": "AHR04",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/AHR04.md",
+        "bytes": 6503,
+        "sha256": "b05ad18f43b432f96b79a2dcf883026dc9a0286738cae2d9a6a5e64f3b64ea67"
+      },
+      "review": {
+        "path": "reviews/AHR04.json",
+        "bytes": 11240,
+        "sha256": "f3bbbc850d1895f928d5cc2a95ed57f40c0f9f594f9bf391474c5b6a51971ac9"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "b05ad18f43b432f96b79a2dcf883026dc9a0286738cae2d9a6a5e64f3b64ea67",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "LCH01:A1",
+      "case_id": "LCH01",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "8 项义务已全部完成，均为 complete，放在一个文件 `Main.lean` 里。用 `lake env lean Main.lean` 编译通过，没有错误也没有警告。对全部 35 个定理跑过 `#print axioms`，依赖的只有 `propext`、`Classical.choice`、`Quot.sound`。文件里没有 `sorry`、`admit`，也没有新增公理。\n\n几点说明：\n\n- **单文件**：所有内容放在 `Main.lean` 一个文件里。它只导入固定版本 mathlib 和冻结的 `formal_oet` 模块，所以用现有 lakefile 就能编译，不需要另建 Lean 库。冻结模块没有改动。\n- **前提比原文弱，结论不变**：主定理只要求 `[Fintype I]` 和任意一族 `d : I → X → X → ENNReal`，不需要伪度量公理，也不需要 `I` 非空，因此比原文更强。另外附了 `*_textbook` 版本，把原文的完整前提补回来：`[Nonempty I]`、`∀ i, ExtendedPseudoMetric X bot (d i)`，以及 `U ⊆ dom ϕ`（如原文有此前提）。\n- **定义域条件写进谓词**：受限 Lip 谓词包含 `U ⊆ dom ϕ`；受限 co-Lip 谓词同时包含 `U ⊆ dom ϕ` 和 `U.Nonempty`。所以 `U` 为空时 co-Lip 证书族是空集。\n- **CH02-P21 附加了一个反例（不在义务清单内）**：在非分离空间里，命题 2.8(ii) 的结论不能加强为点相等。构造是 `Option Bool`，恒等算子取单位矩阵 `1` 作 co-Lip 证书，两个不同的点距离为零。",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c-response.md",
+              "bytes": 35322,
+              "sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+            },
+            "start_byte": 0,
+            "end_byte": 1411,
+            "quote": "8 项义务已全部完成，均为 complete，放在一个文件 `Main.lean` 里。用 `lake env lean Main.lean` 编译通过，没有错误也没有警告。对全部 35 个定理跑过 `#print axioms`，依赖的只有 `propext`、`Classical.choice`、`Quot.sound`。文件里没有 `sorry`、`admit`，也没有新增公理。\n\n几点说明：\n\n- **单文件**：所有内容放在 `Main.lean` 一个文件里。它只导入固定版本 mathlib 和冻结的 `formal_oet` 模块，所以用现有 lakefile 就能编译，不需要另建 Lean 库。冻结模块没有改动。\n- **前提比原文弱，结论不变**：主定理只要求 `[Fintype I]` 和任意一族 `d : I → X → X → ENNReal`，不需要伪度量公理，也不需要 `I` 非空，因此比原文更强。另外附了 `*_textbook` 版本，把原文的完整前提补回来：`[Nonempty I]`、`∀ i, ExtendedPseudoMetric X bot (d i)`，以及 `U ⊆ dom ϕ`（如原文有此前提）。\n- **定义域条件写进谓词**：受限 Lip 谓词包含 `U ⊆ dom ϕ`；受限 co-Lip 谓词同时包含 `U ⊆ dom ϕ` 和 `U.Nonempty`。所以 `U` 为空时 co-Lip 证书族是空集。\n- **CH02-P21 附加了一个反例（不在义务清单内）**：在非分离空间里，命题 2.8(ii) 的结论不能加强为点相等。构造是 `Option Bool`，恒等算子取单位矩阵 `1` 作 co-Lip 证书，两个不同的点距离为零。"
+          }
+        ]
+      },
+      "response": {
+        "path": "answers/LCH01.md",
+        "bytes": 35322,
+        "sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c"
+      },
+      "review": {
+        "path": "reviews/LCH01.json",
+        "bytes": 61004,
+        "sha256": "257b637a202adc1fffed518af67ccfebcb4470a0ecddd97c276414d8d178dde8"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "17670bf4811355db5b3887c50374626563e6d3d7ea79bffba65603e34995bd7c",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "LCH02:A1",
+      "case_id": "LCH02",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "All 20 obligations are formalized. `lake build` succeeds with no errors or warnings, and the files contain no `sorry`, `admit` or new axioms. `#print axioms` on every main declaration shows only `propext`, `Classical.choice` and `Quot.sound` (some use only `propext` and `Quot.sound`).\n\nTo build, I added two library entries (`LCH02` and `Main`) and a `defaultTargets` line to `lakefile.toml`. The original `require` and `formal_oet` entries are unchanged, and I did not touch `formal_oet/`.\n\nThree representation choices to know about:\n- **General distance family:** the definitions and theorems take any finite family `d : I → X → X → ENNReal`. None of the results need the pseudo-metric axioms or a nonempty `I`, so they apply to every gauge space as a special case.\n- **Domain conditions inside the predicates:** the restricted Lip predicate includes `U ⊆ dom ϕ`. The co-Lip predicate includes both `U.Nonempty` and `U ⊆ dom ϕ`.\n- **Index shift:** step m (1-based) is `Fin` index m−1. A product of n ≥ 1 matrices is written as n = N+1, and the intermediate index sequence is `Fin N → I`.",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324-response.md",
+              "bytes": 53520,
+              "sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+            },
+            "start_byte": 0,
+            "end_byte": 1109,
+            "quote": "All 20 obligations are formalized. `lake build` succeeds with no errors or warnings, and the files contain no `sorry`, `admit` or new axioms. `#print axioms` on every main declaration shows only `propext`, `Classical.choice` and `Quot.sound` (some use only `propext` and `Quot.sound`).\n\nTo build, I added two library entries (`LCH02` and `Main`) and a `defaultTargets` line to `lakefile.toml`. The original `require` and `formal_oet` entries are unchanged, and I did not touch `formal_oet/`.\n\nThree representation choices to know about:\n- **General distance family:** the definitions and theorems take any finite family `d : I → X → X → ENNReal`. None of the results need the pseudo-metric axioms or a nonempty `I`, so they apply to every gauge space as a special case.\n- **Domain conditions inside the predicates:** the restricted Lip predicate includes `U ⊆ dom ϕ`. The co-Lip predicate includes both `U.Nonempty` and `U ⊆ dom ϕ`.\n- **Index shift:** step m (1-based) is `Fin` index m−1. A product of n ≥ 1 matrices is written as n = N+1, and the intermediate index sequence is `Fin N → I`."
+          }
+        ]
+      },
+      "response": {
+        "path": "answers/LCH02.md",
+        "bytes": 53520,
+        "sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+      },
+      "review": {
+        "path": "reviews/LCH02.json",
+        "bytes": 99169,
+        "sha256": "d65beb845ebbf07e097e039846452302ea9039291f8a197628ca2f5d81bc189e"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "HCH02:A1",
+      "case_id": "HCH02",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1,
+          "upper": 1,
+          "exact": 1
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "完整文件已读出。最终答卷如下。\n\n# 第 2 章（算子界）Lean 形式化答卷\n\n整章（40 项义务）都已形式化，放在一个文件 `Main.lean`（1101 行）里。用 `lake env lean Main.lean` 编译，**没有错误，也没有警告**。文件中没有 `sorry`、`admit` 或新增公理。我对 `Main.lean` 的全部 130 个声明逐一运行了 `#print axioms`：127 个只依赖 `propext`、`Classical.choice`、`Quot.sound` 中的若干个，另外 3 个不依赖任何公理。两份冻结的前置模块只导入，没有改动；除这两份模块、Lean 标准库和固定版本的 mathlib 之外，没有使用其他材料。\n\n## 三个需要事先说明的表示选择\n\n- **下标从 0 开始。** 有限链用 `ℕ` 作下标。Lean 里的 `ϕ m`、`L m`、`imageSeq ϕ U m` 分别对应原文的 φ_{m+1}、L^{(m+1)}、U_{m+1}；长度为 k 的链只用到 `m < k` 的数据。\n- **路径判据。** n 层链写成 `n = m+1`，中间指标序列取类型 `Fin m → I`。另外给了字面上的 `n ≥ 1` 版本，中间序列取 `Fin (n-1) → I`。\n- **有些定理比原文更强。** 凡是证明用不到度量公理的地方，定理对任意距离族 `d` 都成立，因此代入扩展规范空间就得到原文的结论。只有扰动界（P08–P11）真正需要 `hd : ∀ i, ExtendedPseudoMetric X bot (d i)`。P14 不需要 U 非空；P21 不需要 0<a<∞，但仍另给了一个带原文前提的版本。\n\n\n\n\n\n## 完成情况\n\n- **整章已完整完成，并与原文严格对齐。** 40 项义务全部标为 complete，每项列出的声明都在 `Main.lean` 中实际存在，且已通过编译。\n- **没有未完成的部分。**\n- **需要说明的地方：**\n  - **0 起下标与路径长度。** 链下标从 0 开始；路径判据以 `n = m+1` 为主形式，另附 `n ≥ 1` 的字面形式。\n  - **定理比原文强的地方：**\n    - 多数定理不要求度量公理，对任意距离族成立。\n    - P14 不要求 U 非空。\n    - P21 的通用版本不要求 0<a<∞。\n    - P01 给出的是等价式，而不只是单向退化。\n  - **单通道常数的定义没有内含 U ⊆ dom φ。** 原文的 S_ij 以 U ⊆ dom φ 为语境前提，这里的定义对任意 U 都成立，因为这一前提在证明中用不到。\n  - **原文的叙述性内容没有逐句写成定理。** 例如“证书只记录数据”的说明，以及本章末尾关于上下界不能互相替代的总结，都是叙述而非可证命题。",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1-response.md",
+              "bytes": 87273,
+              "sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+            },
+            "start_byte": 0,
+            "end_byte": 1459,
+            "quote": "完整文件已读出。最终答卷如下。\n\n# 第 2 章（算子界）Lean 形式化答卷\n\n整章（40 项义务）都已形式化，放在一个文件 `Main.lean`（1101 行）里。用 `lake env lean Main.lean` 编译，**没有错误，也没有警告**。文件中没有 `sorry`、`admit` 或新增公理。我对 `Main.lean` 的全部 130 个声明逐一运行了 `#print axioms`：127 个只依赖 `propext`、`Classical.choice`、`Quot.sound` 中的若干个，另外 3 个不依赖任何公理。两份冻结的前置模块只导入，没有改动；除这两份模块、Lean 标准库和固定版本的 mathlib 之外，没有使用其他材料。\n\n## 三个需要事先说明的表示选择\n\n- **下标从 0 开始。** 有限链用 `ℕ` 作下标。Lean 里的 `ϕ m`、`L m`、`imageSeq ϕ U m` 分别对应原文的 φ_{m+1}、L^{(m+1)}、U_{m+1}；长度为 k 的链只用到 `m < k` 的数据。\n- **路径判据。** n 层链写成 `n = m+1`，中间指标序列取类型 `Fin m → I`。另外给了字面上的 `n ≥ 1` 版本，中间序列取 `Fin (n-1) → I`。\n- **有些定理比原文更强。** 凡是证明用不到度量公理的地方，定理对任意距离族 `d` 都成立，因此代入扩展规范空间就得到原文的结论。只有扰动界（P08–P11）真正需要 `hd : ∀ i, ExtendedPseudoMetric X bot (d i)`。P14 不需要 U 非空；P21 不需要 0<a<∞，但仍另给了一个带原文前提的版本。"
+          },
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1-response.md",
+              "bytes": 87273,
+              "sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+            },
+            "start_byte": 86235,
+            "end_byte": 87273,
+            "quote": "## 完成情况\n\n- **整章已完整完成，并与原文严格对齐。** 40 项义务全部标为 complete，每项列出的声明都在 `Main.lean` 中实际存在，且已通过编译。\n- **没有未完成的部分。**\n- **需要说明的地方：**\n  - **0 起下标与路径长度。** 链下标从 0 开始；路径判据以 `n = m+1` 为主形式，另附 `n ≥ 1` 的字面形式。\n  - **定理比原文强的地方：**\n    - 多数定理不要求度量公理，对任意距离族成立。\n    - P14 不要求 U 非空。\n    - P21 的通用版本不要求 0<a<∞。\n    - P01 给出的是等价式，而不只是单向退化。\n  - **单通道常数的定义没有内含 U ⊆ dom φ。** 原文的 S_ij 以 U ⊆ dom φ 为语境前提，这里的定义对任意 U 都成立，因为这一前提在证明中用不到。\n  - **原文的叙述性内容没有逐句写成定理。** 例如“证书只记录数据”的说明，以及本章末尾关于上下界不能互相替代的总结，都是叙述而非可证命题。"
+          }
+        ]
+      },
+      "response": {
+        "path": "answers/HCH02.md",
+        "bytes": 87273,
+        "sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1"
+      },
+      "review": {
+        "path": "reviews/HCH02.json",
+        "bytes": 174079,
+        "sha256": "27b399f8d6b8aa490569981538ed1d2bb63d80d81d2033320602bbcaaa5838ac"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "3037f25e7e89c018722595cf1d5fdbd195529e57cfddd73878cc4d6a1a0311a1",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-TX001:A1",
+      "case_id": "MG-TX001",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 0.6666666666666666,
+          "upper": 0.6666666666666666,
+          "exact": 0.6666666666666666
+        },
+        "strict_pass": false
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-TX001.md",
+        "bytes": 4129,
+        "sha256": "56b651d8e9e075677c5c9091e120c54540fc3282c45b7ed9cbd048d6d33f6749"
+      },
+      "review": {
+        "path": "reviews/MG-TX001.json",
+        "bytes": 9222,
+        "sha256": "0dfef4e4d18bbca2ef9b01cf3425277696acc240012c368e53fc2c76cb5e8c90"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "56b651d8e9e075677c5c9091e120c54540fc3282c45b7ed9cbd048d6d33f6749",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-TX002:A1",
+      "case_id": "MG-TX002",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-TX002.md",
+        "bytes": 5435,
+        "sha256": "ce943aacac643315922e7446469973bcffeb7b3a742408c410901996df3238bf"
+      },
+      "review": {
+        "path": "reviews/MG-TX002.json",
+        "bytes": 8555,
+        "sha256": "7ab0fd91129cab8971fb4e8a3849be3c8e3d677575053cb838b34f47a51c2e01"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "ce943aacac643315922e7446469973bcffeb7b3a742408c410901996df3238bf",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-BC001:A1",
+      "case_id": "MG-BC001",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-BC001.md",
+        "bytes": 12079,
+        "sha256": "692a1d15dc163a0f25f8f18c05459e5a9caa40c06a56efae2f3413082ad9ca77"
+      },
+      "review": {
+        "path": "reviews/MG-BC001.json",
+        "bytes": 8190,
+        "sha256": "5abeecdebf43d657d685084e92e4073169e97e0c137d1ea3c4a6604092bc0b93"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "692a1d15dc163a0f25f8f18c05459e5a9caa40c06a56efae2f3413082ad9ca77",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-BC002:A1",
+      "case_id": "MG-BC002",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-BC002.md",
+        "bytes": 11538,
+        "sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5"
+      },
+      "review": {
+        "path": "reviews/MG-BC002.json",
+        "bytes": 8747,
+        "sha256": "7dd10f1f42a961b01b234d44859396b7fc5fc1dab39fdea9c78a82f649b6b58d"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-MCP003:A1",
+      "case_id": "MG-MCP003",
+      "kind": "independent",
+      "parent_id": null,
+      "evaluation": {
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "strict_pass": true
+      },
+      "self_assessment": {
+        "value": "unresolved",
+        "origin": "not_available",
+        "evidence": [],
+        "reason": "No separate whole-task self-assessment is synthesized. Exact original final text and all original declarations remain retained."
+      },
+      "response": {
+        "path": "answers/MG-MCP003.md",
+        "bytes": 23991,
+        "sha256": "91ff3daa81a7424162b84478eaf109e272b5d19e2497f8a167be3fce402e4d27"
+      },
+      "review": {
+        "path": "reviews/MG-MCP003.json",
+        "bytes": 10575,
+        "sha256": "ab5af4d086ddb1c85f8a8ccf23420e8d5bcd8d49461bf65d07c26216132f0f96"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "91ff3daa81a7424162b84478eaf109e272b5d19e2497f8a167be3fce402e4d27",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-C003:alignment:1",
+      "case_id": "MG-C003",
+      "kind": "followup",
+      "parent_id": "MG-C003:A1",
+      "evaluation": {
+        "complete_count": 92,
+        "total": 92,
+        "false_complete_claim": false,
+        "regressed": 0,
+        "repair_score": 1,
+        "diagnosis_score": 0.3333333333333333
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "FULL\n\n# MG-C003 v0.1.1 修订答卷：卷 1 第 3 章 Lean 形式化（第二版）\n\n上一版确有一处缺陷：P20-01 的量词比原文弱。本版已修复，并另外补了三处正文对应。改后的完整项目编译无错误，全部 92 项仍为 `complete`。\n\n**修复的缺陷**\n- **P20-01（命题 3.16 后的反例）**：原文的意思是，对任意有限正 τ，任取满足 0<a≤1、2a<τ 的 `a`，二点集 B={−a,a} 都构成反例。上一版 `after316_counter` 只证明了\"存在这样的 `a`\"。\n  - 新增 `after316_counter_forall`，对所有这样的 `a` 证明 B⊆U、N(τ,B)=1、N(1/2,f(B))=2。\n  - `after316_counter`（存在形式）和 `after316_no_uniform_scale` 改为由它推出。\n\n**新增的正文对应（原有结论都保留）**\n- **D06**：原文的输入尺度只定义在非空子集上。新增同形结构 `InputScaleNE`、双向转换，以及 `inputScale_correspondence`，证明正文形式往返不变、两种形式在每个非空子集上取值一致。\n- **P11-03（命题 3.8(ii)）**：新增具体规范 `d38` 和 `prop38_ii_concrete`，写出原文的距离取值：d_i(a,b)=⊤，i≠j 时 d_j(a,b)=1。它对每个基点证明点态半径为 ⊤、统一半径为 ⊤，且 d_j(ϕa,ϕb)>0。`prop38_ii` 改为由它推出；新增 `prop38_ii_not_implies`，直接否定\"统一半径为 ⊤ 就推出常值分量\"。\n- **P21-02（推论 3.17）**：新增 `cor317_cover_of_zero`，从\"整体输出零距\"那一侧出发，同样得到输出覆盖数恰为 1。\n\n其余声明与上一版逐字相同，只是新增内容插在其间。对齐表只改了 D06、D07、P11-03、P20-01、P21-02 五项。D07 补列了冻结声明 `subfamily_pseudometric` 和 `subfamily_pseudometric_is_extended`。\n\n**验证情况**\n- `lake env lean Main.lean` 在 Lean 4.29.1 / mathlib `5e932f97…` 下编译通过，没有错误和警告。\n- 重新编译 olean 后，对 `OET3` 下全部 377 个声明做了公理审计：只用到 `propext`、`Classical.choice`、`Quot.sound`。\n- 源码里没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`。\n- 对齐表引用的 255 个声明名全部用 `#check` 确认存在。\n- 对齐表 92 个 ID 与清单顺序一致、无重复，依赖都在清单内。\n\n**仍有的不确定性**\n- 有几处表示方式与原文写法不同，评审可能有不同看法：\n  - 映射熵差用 `Option EReal` 表示，不良定时取 `none`。\n  - 有限链用 `ℕ → Operator`、从 0 编号。\n  - 零化矩阵写作 `nullMatrix d ϕ U i j` 对应 [N]_{ji}。\n  - 阈值分类的定义本身不要求阈值有限且为正。引理 3.13 的结论用不到这个条件；其余用到阈值的命题都把它作为显式前提。\n- 部分定理保留了用不到的前提（如 `hU : U ⊆ dom ϕ`），只是为了与原文的前提一一对齐，不影响结论。",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/f21d5a1a1d6fbda01bf4b4c8b5e9a4b49f747b4d863b98a7d16b7669a88937ea-response.md",
+              "bytes": 194289,
+              "sha256": "f21d5a1a1d6fbda01bf4b4c8b5e9a4b49f747b4d863b98a7d16b7669a88937ea"
+            },
+            "start_byte": 0,
+            "end_byte": 2873,
+            "quote": "FULL\n\n# MG-C003 v0.1.1 修订答卷：卷 1 第 3 章 Lean 形式化（第二版）\n\n上一版确有一处缺陷：P20-01 的量词比原文弱。本版已修复，并另外补了三处正文对应。改后的完整项目编译无错误，全部 92 项仍为 `complete`。\n\n**修复的缺陷**\n- **P20-01（命题 3.16 后的反例）**：原文的意思是，对任意有限正 τ，任取满足 0<a≤1、2a<τ 的 `a`，二点集 B={−a,a} 都构成反例。上一版 `after316_counter` 只证明了\"存在这样的 `a`\"。\n  - 新增 `after316_counter_forall`，对所有这样的 `a` 证明 B⊆U、N(τ,B)=1、N(1/2,f(B))=2。\n  - `after316_counter`（存在形式）和 `after316_no_uniform_scale` 改为由它推出。\n\n**新增的正文对应（原有结论都保留）**\n- **D06**：原文的输入尺度只定义在非空子集上。新增同形结构 `InputScaleNE`、双向转换，以及 `inputScale_correspondence`，证明正文形式往返不变、两种形式在每个非空子集上取值一致。\n- **P11-03（命题 3.8(ii)）**：新增具体规范 `d38` 和 `prop38_ii_concrete`，写出原文的距离取值：d_i(a,b)=⊤，i≠j 时 d_j(a,b)=1。它对每个基点证明点态半径为 ⊤、统一半径为 ⊤，且 d_j(ϕa,ϕb)>0。`prop38_ii` 改为由它推出；新增 `prop38_ii_not_implies`，直接否定\"统一半径为 ⊤ 就推出常值分量\"。\n- **P21-02（推论 3.17）**：新增 `cor317_cover_of_zero`，从\"整体输出零距\"那一侧出发，同样得到输出覆盖数恰为 1。\n\n其余声明与上一版逐字相同，只是新增内容插在其间。对齐表只改了 D06、D07、P11-03、P20-01、P21-02 五项。D07 补列了冻结声明 `subfamily_pseudometric` 和 `subfamily_pseudometric_is_extended`。\n\n**验证情况**\n- `lake env lean Main.lean` 在 Lean 4.29.1 / mathlib `5e932f97…` 下编译通过，没有错误和警告。\n- 重新编译 olean 后，对 `OET3` 下全部 377 个声明做了公理审计：只用到 `propext`、`Classical.choice`、`Quot.sound`。\n- 源码里没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`。\n- 对齐表引用的 255 个声明名全部用 `#check` 确认存在。\n- 对齐表 92 个 ID 与清单顺序一致、无重复，依赖都在清单内。\n\n**仍有的不确定性**\n- 有几处表示方式与原文写法不同，评审可能有不同看法：\n  - 映射熵差用 `Option EReal` 表示，不良定时取 `none`。\n  - 有限链用 `ℕ → Operator`、从 0 编号。\n  - 零化矩阵写作 `nullMatrix d ϕ U i j` 对应 [N]_{ji}。\n  - 阈值分类的定义本身不要求阈值有限且为正。引理 3.13 的结论用不到这个条件；其余用到阈值的命题都把它作为显式前提。\n- 部分定理保留了用不到的前提（如 `hU : U ⊆ dom ϕ`），只是为了与原文的前提一一对齐，不影响结论。"
+          }
+        ]
+      },
+      "round": 1,
+      "arm": "alignment_selfcheck",
+      "response": {
+        "path": "answers/C003-R1.md",
+        "bytes": 194289,
+        "sha256": "f21d5a1a1d6fbda01bf4b4c8b5e9a4b49f747b4d863b98a7d16b7669a88937ea"
+      },
+      "review": {
+        "path": "reviews/C003-R1.json",
+        "bytes": 378077,
+        "sha256": "f6fc5b2b1f6296bea78338293d180b256388513d1ac2bdafcf29ca34265ae416"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "f21d5a1a1d6fbda01bf4b4c8b5e9a4b49f747b4d863b98a7d16b7669a88937ea",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-C003:alignment:2",
+      "case_id": "MG-C003",
+      "kind": "followup",
+      "parent_id": "MG-C003:alignment:1",
+      "evaluation": {
+        "complete_count": 92,
+        "total": 92,
+        "false_complete_claim": false,
+        "regressed": 0,
+        "repair_score": 1,
+        "diagnosis_score": 1.0
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "KEEP\n\n本轮没有发现需要修复的缺陷。第二版答卷原样保留：`Main.lean` 和 `alignment.json` 都与上一轮提交的内容逐字节相同，本轮没有改动任何源码或结论。\n\n## 本轮核查依据\n\n以下检查都在工作区的 `Main.lean` 上进行，它就是上一轮答卷源码的出处（2890 行，md5 `6a0a72a9…`）。\n\n1. **编译**：`lake env lean Main.lean` 在 Lean 4.29.1 / mathlib `5e932f97…` 下退出码为 0，没有错误和警告。另用 `-o` 重新生成了 olean，供下面两项检查使用。\n2. **公理**：对 `OET3` 命名空间下全部 377 个声明调用 `collectAxioms`。除 `propext`、`Classical.choice`、`Quot.sound` 外没有其他公理。源码中也没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`、`extern`、`unsafe` 或跳过内核检查的选项。\n3. **对齐表**：\n   - `case_id` 为 MG-C003，`version` 为 0.1.1。\n   - 92 个 ID 与 `obligations.json` 完全一致，顺序相同，没有重复，全部为 complete。\n   - dependencies 都在清单内，每项 representation 都非空。\n   - 266 处声明引用（去重后 255 个）逐条用 `#check` 确认，全部真实存在。其中引用冻结文件的只有 D07，该项明确允许这样做。\n4. **冻结背景**：`formal_oet/` 下 6 个文件仍为只读，修改时间仍是初始时间，答卷没有提交或覆盖它们。\n5. **逐项数学核对**：对照原文重新看了各项的前提、量词和边界，重点如下：\n   - 命题 3.12(ii) 的下游域取实际像 `ϕ1(U)`，零化矩阵的 `[N]_{jl}` 下标方向正确，右端为 0 或 ⊤ 时不需要特判。\n   - 命题 3.15(iii) 输出距离为 ⊤ 时，取 ε = min(d, 1)。\n   - 命题 3.16 后的反例对所有满足条件的 `a` 都成立（上一轮已修复的全称形式）。\n   - 推论 3.17 的两个方向，以及覆盖数恰为 1 的两种推出路径。\n   - 习题数值：\n     - 3.1：φ(0)=−1、φ(1)=1，故 φ 的分量为常值分量；φ²(0)=−3、φ²(1)=1，故 φ² 的分量为有效分量。\n     - 3.3：两种纤维分划分别为 {{−3},{−2,2},{0}} 与 {{−3},{−2,0},{2}}；覆盖数为 2 和 1，熵差为 1。\n     - 3.4：四个域的类型依次为 (1,1)、(1,0)、(0,1)、(0,0)。\n     - 3.5：覆盖数分段为 4/2/1（分界点 ε=1、2 含端点）；g 的最优 Lip 常数为 3；7/12 尺度下覆盖数为 4，与真实值 2 比较。\n\n   这些都与 Lean 中的陈述一致。\n\n## 仍有的不确定性\n\n- **表示方式的评审口径**：有几处写法与原文不同，评审未必都接受：\n  - 映射熵差用 `Option EReal` 表示，不良定时取 `none`。\n  - 有限链用 `ℕ → Operator` 从 0 编号。\n  - 零化矩阵写作 `nullMatrix d ϕ U i j` 对应 [N]_{ji}。\n  - 输入尺度除正文同形的 `InputScaleNE` 外，还主用一种扩展到全体子集的形式。\n  - 阈值分类的定义本身不要求阈值有限且为正；引理 3.13 的结论用不到这个条件，其余用到阈值的命题都把它作为显式前提。\n- **比原文更一般的陈述**：部分定理去掉了原文的非空或有限条件，结论更强。另有部分定理保留了用不到的前提（如 `hU : U ⊆ dom ϕ`），只为与原文前提一一对应。按\"允许等价表示\"的规则这些都应合规，但评审口径可能不同。\n- **比原文更含蓄的地方**：命题 3.11 中\"取出合法有限正半径\"一步写在证明内部（`lt_sSup_iff`），没有单独陈述成定理结论。",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/a5644b44318e8ae7084067fa395ccd4c89b2c938ae646070f44db62cdaf2d7d3-response.md",
+              "bytes": 3526,
+              "sha256": "a5644b44318e8ae7084067fa395ccd4c89b2c938ae646070f44db62cdaf2d7d3"
+            },
+            "start_byte": 0,
+            "end_byte": 3526,
+            "quote": "KEEP\n\n本轮没有发现需要修复的缺陷。第二版答卷原样保留：`Main.lean` 和 `alignment.json` 都与上一轮提交的内容逐字节相同，本轮没有改动任何源码或结论。\n\n## 本轮核查依据\n\n以下检查都在工作区的 `Main.lean` 上进行，它就是上一轮答卷源码的出处（2890 行，md5 `6a0a72a9…`）。\n\n1. **编译**：`lake env lean Main.lean` 在 Lean 4.29.1 / mathlib `5e932f97…` 下退出码为 0，没有错误和警告。另用 `-o` 重新生成了 olean，供下面两项检查使用。\n2. **公理**：对 `OET3` 命名空间下全部 377 个声明调用 `collectAxioms`。除 `propext`、`Classical.choice`、`Quot.sound` 外没有其他公理。源码中也没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`、`extern`、`unsafe` 或跳过内核检查的选项。\n3. **对齐表**：\n   - `case_id` 为 MG-C003，`version` 为 0.1.1。\n   - 92 个 ID 与 `obligations.json` 完全一致，顺序相同，没有重复，全部为 complete。\n   - dependencies 都在清单内，每项 representation 都非空。\n   - 266 处声明引用（去重后 255 个）逐条用 `#check` 确认，全部真实存在。其中引用冻结文件的只有 D07，该项明确允许这样做。\n4. **冻结背景**：`formal_oet/` 下 6 个文件仍为只读，修改时间仍是初始时间，答卷没有提交或覆盖它们。\n5. **逐项数学核对**：对照原文重新看了各项的前提、量词和边界，重点如下：\n   - 命题 3.12(ii) 的下游域取实际像 `ϕ1(U)`，零化矩阵的 `[N]_{jl}` 下标方向正确，右端为 0 或 ⊤ 时不需要特判。\n   - 命题 3.15(iii) 输出距离为 ⊤ 时，取 ε = min(d, 1)。\n   - 命题 3.16 后的反例对所有满足条件的 `a` 都成立（上一轮已修复的全称形式）。\n   - 推论 3.17 的两个方向，以及覆盖数恰为 1 的两种推出路径。\n   - 习题数值：\n     - 3.1：φ(0)=−1、φ(1)=1，故 φ 的分量为常值分量；φ²(0)=−3、φ²(1)=1，故 φ² 的分量为有效分量。\n     - 3.3：两种纤维分划分别为 {{−3},{−2,2},{0}} 与 {{−3},{−2,0},{2}}；覆盖数为 2 和 1，熵差为 1。\n     - 3.4：四个域的类型依次为 (1,1)、(1,0)、(0,1)、(0,0)。\n     - 3.5：覆盖数分段为 4/2/1（分界点 ε=1、2 含端点）；g 的最优 Lip 常数为 3；7/12 尺度下覆盖数为 4，与真实值 2 比较。\n\n   这些都与 Lean 中的陈述一致。\n\n## 仍有的不确定性\n\n- **表示方式的评审口径**：有几处写法与原文不同，评审未必都接受：\n  - 映射熵差用 `Option EReal` 表示，不良定时取 `none`。\n  - 有限链用 `ℕ → Operator` 从 0 编号。\n  - 零化矩阵写作 `nullMatrix d ϕ U i j` 对应 [N]_{ji}。\n  - 输入尺度除正文同形的 `InputScaleNE` 外，还主用一种扩展到全体子集的形式。\n  - 阈值分类的定义本身不要求阈值有限且为正；引理 3.13 的结论用不到这个条件，其余用到阈值的命题都把它作为显式前提。\n- **比原文更一般的陈述**：部分定理去掉了原文的非空或有限条件，结论更强。另有部分定理保留了用不到的前提（如 `hU : U ⊆ dom ϕ`），只为与原文前提一一对应。按\"允许等价表示\"的规则这些都应合规，但评审口径可能不同。\n- **比原文更含蓄的地方**：命题 3.11 中\"取出合法有限正半径\"一步写在证明内部（`lt_sSup_iff`），没有单独陈述成定理结论。"
+          }
+        ]
+      },
+      "round": 2,
+      "arm": "alignment_selfcheck",
+      "response": {
+        "path": "answers/C003-R2.md",
+        "bytes": 3526,
+        "sha256": "a5644b44318e8ae7084067fa395ccd4c89b2c938ae646070f44db62cdaf2d7d3"
+      },
+      "review": {
+        "path": "reviews/C003-R2.json",
+        "bytes": 377346,
+        "sha256": "0e92fa803720141d05b5001cee51ad00dccc3a4072cd970df8c9c938f733f580"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "a5644b44318e8ae7084067fa395ccd4c89b2c938ae646070f44db62cdaf2d7d3",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    },
+    {
+      "id": "MG-C003:alignment:3",
+      "case_id": "MG-C003",
+      "kind": "followup",
+      "parent_id": "MG-C003:alignment:2",
+      "evaluation": {
+        "complete_count": 92,
+        "total": 92,
+        "false_complete_claim": false,
+        "regressed": 0,
+        "repair_score": 1,
+        "diagnosis_score": 1.0
+      },
+      "self_assessment": {
+        "value": "complete",
+        "origin": "extracted_from_original",
+        "scope": "full_task",
+        "original_prose": "KEEP\n\n本轮没有发现需要修复的缺陷。上一版答卷原样保留：`Main.lean` 和 `alignment.json` 都与上一版逐字节相同，本轮没有改动任何源码、对齐表或结论。\n\n## 本轮核查依据\n\n本轮重新做了以下检查：\n\n1. **文件一致性**：工作区里的 `Main.lean` 有 2890 行，MD5 为 `6a0a72a9f372f88dfc6a7baa0c022008`，与上两轮记录的源码相同。\n2. **编译**：在 Lean 4.29.1 / mathlib `5e932f97…` 下重新运行 `lake env lean Main.lean`，没有任何错误或警告输出。\n3. **公理审计**：重新生成 olean 后，对 `OET3` 下全部 377 个声明调用 `collectAxioms`。除 `propext`、`Classical.choice`、`Quot.sound` 外没有其他公理。\n4. **禁用设施**：扫描源码，没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`、`@[extern]`、`unsafe`，也没有跳过内核检查的选项。\n5. **对齐表**：\n   - 用脚本把 `alignment.json` 与 `obligations.json` 比对：`case_id` 为 MG-C003，`version` 为 0.1.1。\n   - 92 个 ID 与清单顺序一致，没有重复，全部为 complete；dependencies 都在清单内，每项 representation 都非空。\n   - 去重后共引用 255 个声明，逐一用 `#check` 检查，没有一个报 unknown。\n   - 引用的文件只有 `Main.lean`，以及 D07 明确允许的冻结文件 `metric_entropy.lean`。\n6. **冻结背景**：`formal_oet/` 下 6 个文件仍为只读，时间戳仍是初始值，答卷没有提交或覆盖它们。\n7. **逐项对照原文**：重点复核了以下几处：\n   - 命题 3.12(ii)：零化矩阵下标方向，右端为 0 或 ⊤ 的情形。\n   - 命题 3.15(iii)：输出距离为 ⊤ 时的 ε 取法。\n   - 命题 3.16 后反例：对所有满足条件的 `a` 都成立的全称形式。\n   - 推论 3.17：两个方向，以及覆盖数恰为 1。\n   - 习题数值：\n     - 3.1：φ 为常值分量，φ² 为有效分量，φ² 的纤维为 {0}。\n     - 3.3：覆盖数为 2 和 1，熵差为 1。\n     - 3.4：四个域的类型依次为 (1,1)、(1,0)、(0,1)、(0,0)。\n     - 3.5：覆盖数分段为 4/2/1；g 的最优 Lip 常数为 3；在 7/12 尺度下的覆盖数为 4。\n\n   这些都与 Lean 中的陈述一致。\n\n## 仍有的不确定性\n\n- **表示方式**：有几处写法与原文不同，评审未必都接受：\n  - 映射熵差用 `Option EReal` 表示，不良定时取 `none`。\n  - 有限链用 `ℕ → Operator` 从 0 编号。\n  - `nullMatrix d ϕ U i j` 对应 [N]_{ji}。\n  - 输入尺度主用扩展到全体子集的 `InputScale`，正文同形的 `InputScaleNE` 及其双向转换作为对应证明。\n  - 阈值分类的定义本身不要求阈值有限且为正，需要时在定理前提中给出。\n- **比原文更一般的陈述**：部分定理去掉了原文的非空或有限条件，结论更强；另有部分定理保留了用不到的前提（如 `hU : U ⊆ dom ϕ`），只为与原文前提一一对应。\n- **证明步骤的显式程度**：命题 3.11 中\"取出合法有限正半径\"一步写在证明内部（`lt_sSup_iff`），没有单独陈述为定理。",
+        "evidence": [
+          {
+            "source": {
+              "path": "admission-support/assembly/lean/evidence/04e9a54e21bf114d9e1932617c404b5d34cc09e5f004c642703a71ca73842963-response.md",
+              "bytes": 3125,
+              "sha256": "04e9a54e21bf114d9e1932617c404b5d34cc09e5f004c642703a71ca73842963"
+            },
+            "start_byte": 0,
+            "end_byte": 3125,
+            "quote": "KEEP\n\n本轮没有发现需要修复的缺陷。上一版答卷原样保留：`Main.lean` 和 `alignment.json` 都与上一版逐字节相同，本轮没有改动任何源码、对齐表或结论。\n\n## 本轮核查依据\n\n本轮重新做了以下检查：\n\n1. **文件一致性**：工作区里的 `Main.lean` 有 2890 行，MD5 为 `6a0a72a9f372f88dfc6a7baa0c022008`，与上两轮记录的源码相同。\n2. **编译**：在 Lean 4.29.1 / mathlib `5e932f97…` 下重新运行 `lake env lean Main.lean`，没有任何错误或警告输出。\n3. **公理审计**：重新生成 olean 后，对 `OET3` 下全部 377 个声明调用 `collectAxioms`。除 `propext`、`Classical.choice`、`Quot.sound` 外没有其他公理。\n4. **禁用设施**：扫描源码，没有 `sorry`、`admit`、`axiom`、`native_decide`、`implemented_by`、`@[extern]`、`unsafe`，也没有跳过内核检查的选项。\n5. **对齐表**：\n   - 用脚本把 `alignment.json` 与 `obligations.json` 比对：`case_id` 为 MG-C003，`version` 为 0.1.1。\n   - 92 个 ID 与清单顺序一致，没有重复，全部为 complete；dependencies 都在清单内，每项 representation 都非空。\n   - 去重后共引用 255 个声明，逐一用 `#check` 检查，没有一个报 unknown。\n   - 引用的文件只有 `Main.lean`，以及 D07 明确允许的冻结文件 `metric_entropy.lean`。\n6. **冻结背景**：`formal_oet/` 下 6 个文件仍为只读，时间戳仍是初始值，答卷没有提交或覆盖它们。\n7. **逐项对照原文**：重点复核了以下几处：\n   - 命题 3.12(ii)：零化矩阵下标方向，右端为 0 或 ⊤ 的情形。\n   - 命题 3.15(iii)：输出距离为 ⊤ 时的 ε 取法。\n   - 命题 3.16 后反例：对所有满足条件的 `a` 都成立的全称形式。\n   - 推论 3.17：两个方向，以及覆盖数恰为 1。\n   - 习题数值：\n     - 3.1：φ 为常值分量，φ² 为有效分量，φ² 的纤维为 {0}。\n     - 3.3：覆盖数为 2 和 1，熵差为 1。\n     - 3.4：四个域的类型依次为 (1,1)、(1,0)、(0,1)、(0,0)。\n     - 3.5：覆盖数分段为 4/2/1；g 的最优 Lip 常数为 3；在 7/12 尺度下的覆盖数为 4。\n\n   这些都与 Lean 中的陈述一致。\n\n## 仍有的不确定性\n\n- **表示方式**：有几处写法与原文不同，评审未必都接受：\n  - 映射熵差用 `Option EReal` 表示，不良定时取 `none`。\n  - 有限链用 `ℕ → Operator` 从 0 编号。\n  - `nullMatrix d ϕ U i j` 对应 [N]_{ji}。\n  - 输入尺度主用扩展到全体子集的 `InputScale`，正文同形的 `InputScaleNE` 及其双向转换作为对应证明。\n  - 阈值分类的定义本身不要求阈值有限且为正，需要时在定理前提中给出。\n- **比原文更一般的陈述**：部分定理去掉了原文的非空或有限条件，结论更强；另有部分定理保留了用不到的前提（如 `hU : U ⊆ dom ϕ`），只为与原文前提一一对应。\n- **证明步骤的显式程度**：命题 3.11 中\"取出合法有限正半径\"一步写在证明内部（`lt_sSup_iff`），没有单独陈述为定理。"
+          }
+        ]
+      },
+      "round": 3,
+      "arm": "alignment_selfcheck",
+      "response": {
+        "path": "answers/C003-R3.md",
+        "bytes": 3125,
+        "sha256": "04e9a54e21bf114d9e1932617c404b5d34cc09e5f004c642703a71ca73842963"
+      },
+      "review": {
+        "path": "reviews/C003-R3.json",
+        "bytes": 376945,
+        "sha256": "8cfcb4cad13d68c46ad637155d57981ed72198a71b34293a1496b5b788a2a879"
+      },
+      "artifacts": [],
+      "source": {
+        "response_sha256": "04e9a54e21bf114d9e1932617c404b5d34cc09e5f004c642703a71ca73842963",
+        "actual_execution_benchmark_version": "1.0.0"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "path": "scoring-inputs.json",
+      "bytes": 433417,
+      "sha256": "fe09d28a8825db76d61e125851c2307d89d119ea38e7343a9fbed3688216c5f8"
+    },
+    {
+      "path": "public-task-scores.json",
+      "bytes": 63977,
+      "sha256": "ccb33f789070f8e48d148c5662cadb1a3df3d7b7c69eb3c5bebac424607d2c1d"
+    }
+  ],
+  "formalization_review": {
+    "path": "reviews/formalization.json",
+    "bytes": 125132,
+    "sha256": "fd376199f38146c809e682fbce9dea0deb3cfa8ff7d802650c9044bcc75111cb"
+  },
+  "default_score_mode": "partial",
+  "first_assessment_source": {
+    "path": "admission/first-assessment/proof.json",
+    "bytes": 583,
+    "sha256": "588260f9f3e2f143e7d06b561e3e76683735cb489c1af14b8fa9025a085be4a5"
+  },
+  "assessment_policy": {
+    "path": "assessment-policy.json",
+    "bytes": 16680,
+    "sha256": "9527df908c8123f56fab156344a4915b77e43e5daf59a47ebfa92ce48aa20752"
+  },
+  "strict_scoring_policy": {
+    "path": "strict-scoring-policy.json",
+    "bytes": 756,
+    "sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1"
+  },
+  "capability_scoring_policy": {
+    "path": "capability-scoring-policy.json",
+    "bytes": 1216,
+    "sha256": "3de31213a6bf36642b4e93cfaad538f71de1d98aceb5352a628301ae1198d8de"
+  },
+  "claim_penalty_policy": {
+    "path": "claim-penalty-policy.json",
+    "bytes": 905,
+    "sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419"
+  },
+  "submission_policy": {
+    "path": "submission-scoring-policy.json",
+    "bytes": 728,
+    "sha256": "0e7e4265a1604357ec59d0b49908d104c015647d2282df692b874a44ee6cdb5b"
+  },
+  "score_mode_catalog": {
+    "path": "score-modes.json",
+    "bytes": 1161,
+    "sha256": "3156ba1878ff7b5698b31b3f62027df6c65d722d19c192931a016b9d0e85764d"
+  },
+  "scoring_policy": {
+    "path": "scoring-policy.json",
+    "bytes": 5195,
+    "sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6"
+  },
+  "trajectory": {
+    "planned_rounds": 3,
+    "recorded_rounds": 3,
+    "first_claimed_complete_round": 1,
+    "first_verified_complete_round": 1,
+    "verified_maintenance_rounds_after_first_complete": 2,
+    "false_complete_claim_rounds": [],
+    "last_complete_count": 92,
+    "total": 92,
+    "state": "verified_complete",
+    "selection": "last_prescribed_round; no best-of or union",
+    "stop_reason": "fixed_rounds_completed"
+  },
+  "execution_summary": {
+    "planned_initial_tasks": 39,
+    "delivered_initial_tasks": 39,
+    "prescribed_selfcheck_rounds": 3,
+    "delivered_selfcheck_rounds": 3,
+    "physical_model_requests": 43,
+    "pure_system_exclusions": 1,
+    "native_model_attempt_retries": 0,
+    "requested_model": "claude-opus-5-5[1m]",
+    "requested_effort": "xhigh",
+    "native_harness": "Claude Code",
+    "native_harness_version": "2.1.303",
+    "physical_requests_include_selfcheck": true,
+    "post_observation_archive_index": true,
+    "formal_comparison_eligible": false
+  },
+  "assessment_results": {
+    "single_attempt": {
+      "path": "combined-aggregate.json",
+      "bytes": 24196,
+      "sha256": "18f1ab4ae173f5357540b19be7e9df5c769cd618c588badfec928726f17c12b6"
+    },
+    "nonlogical_retry_3": {
+      "path": "retry-combined-aggregate.json",
+      "bytes": 24200,
+      "sha256": "23dcccc29ee4837c335d934a5d9912fb3721e339ba7e8094c6742d0571f37235"
+    }
+  },
+  "strict_results": {
+    "single_attempt": {
+      "path": "strict-combined-aggregate.json",
+      "bytes": 23948,
+      "sha256": "102f338dc1279a09a13c452b4cb2bfd446d599cfb888ab7313ad637f4b8bca21"
+    },
+    "nonlogical_retry_3": {
+      "path": "strict-retry-combined-aggregate.json",
+      "bytes": 23952,
+      "sha256": "a03ae34a2f7f3b8575b877551158aa0f016bf289f1ede60b951d4f9e668abef5"
+    }
+  },
+  "capability_results": {
+    "single_attempt": {
+      "path": "capability-combined-aggregate.json",
+      "bytes": 24516,
+      "sha256": "a14f8451d8b057e2c4d58bfc3e13f0d8ebd4c164f67e47c16e173179eed559b7"
+    },
+    "nonlogical_retry_3": {
+      "path": "capability-retry-combined-aggregate.json",
+      "bytes": 24520,
+      "sha256": "f30d8ea8d5a74223062d2645652553ada03d1ff657b18e563f2a6b1531880ac3"
+    }
+  },
+  "first_assessment_source_private_sha256": "4246ab4b9585ee75da4b28b9879031199db83e6e25b51d25e489dee3bf77fcbf",
+  "submission_evidence": {
+    "path": "submission-evidence-public.json",
+    "bytes": 8735,
+    "sha256": "4be7bd8194e2abb75a529bbc1222cac8e630be0dddd0c4a3f2634a511171a626"
+  },
+  "submission_evidence_source_sha256": "81b20d596520921853c7beee0508f9af4417c4ac2e49b16c1d3dca56905cac7b",
+  "claim_review": {
+    "path": "claim-review-public.json",
+    "bytes": 78924,
+    "sha256": "62b93f692b706e907d5b0f3e7bfeb5863c3e71a3f0bd2d29be64dec54bd1fa14"
+  },
+  "claim_review_source_sha256": "0f7e2859c4179dd2cce4b28b39b05114e4a38fa15fdf7691d34ebde7ac88ea6b",
+  "written_argument_evidence": {
+    "path": "written-additions-public.json",
+    "bytes": 250,
+    "sha256": "41987f3ab577e220fb63415bae2fc5d4081d3922cc7e03a0f237dc9f558759f4"
+  },
+  "manuscript_completion_evidence": {
+    "path": "manuscript-completion-public.json",
+    "bytes": 254,
+    "sha256": "9425244936ae1fbb63279eb865d502224e7428e5d1ebe54d467fc9bb0dd46e8a"
+  },
+  "written_replacement_evidence": {
+    "path": "written-replacement-public.json",
+    "bytes": 810,
+    "sha256": "e5eb728262f22aabd77ea434958407eec382dc36ea01b71144d5972ad60a33f7"
+  },
+  "theorem_extension_evidence": {
+    "path": "theorem-extension-public.json",
+    "bytes": 1328,
+    "sha256": "b55528b0f3fbff63066666ee8f3556b9ffc95982b93597822c75b4a7fcb97b60"
+  },
+  "background_check_evidence": {
+    "path": "background-check-public.json",
+    "bytes": 1335,
+    "sha256": "0b2c2feee939caa8e1bc31fc7bc55a4eedff53ffa05e47c3d631b271508e7c18"
+  }
+}

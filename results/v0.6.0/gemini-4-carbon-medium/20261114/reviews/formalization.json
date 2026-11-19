@@ -1,0 +1,1391 @@
+{
+  "schema": "math-gauge.formalization-engineering-review/v1",
+  "model_label": "Gemini 4 Carbon Medium",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "cases": [
+    {
+      "case_id": "LCH01",
+      "case_version": "0.1.0",
+      "slot_id": "LCH01:A1",
+      "original_response_sha256": "bdeb837c92bd7e9f9025be3ad89c73b8c6fd3f25ca96c87ab1b246123214828b",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "cabaf95f3332e5943c2114eec7d00a36815f15b1f71cd8018aabade09ce4179a",
+      "source_manifest": {
+        "path": "engineering/single_attempt/manifests/LCH01-A1-cabaf95f3332.json",
+        "bytes": 712,
+        "sha256": "c8d89a17b82c5f7d580e45d81484d37c1afc3d9d3eb8b8520bdb7b47b5ee08b3"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/single_attempt/kernel/LCH01-A1-cabaf95f3332.json",
+        "bytes": 19321,
+        "sha256": "411b4458417d667d07aeefb43ca25a831dad3031686df4113f741ca47c46cb7c"
+      },
+      "compiled_sources": {
+        "LCH01/ChannelInterface.lean": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772",
+        "Main.lean": "53bf4e94e28d33cf58125a2feaa079705e1444db98546d3086ee4276ae192e67"
+      },
+      "source_files": {
+        "LCH01/ChannelInterface.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/normal-final-byte-slices/LCH01/ChannelInterface.lean",
+          "bytes": 18207,
+          "sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+        },
+        "Main.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/normal-final-byte-slices/Main.lean",
+          "bytes": 30,
+          "sha256": "53bf4e94e28d33cf58125a2feaa079705e1444db98546d3086ee4276ae192e67"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/LCH01.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsLipMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "lipCerts",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsRestrictedLipMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedLipCerts",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mem_lipCerts_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mem_restrictedLipCerts_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "isRestrictedLipMatrix_dom_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedLipCerts_dom",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "全域IsLipMatrix精确在dom(phi)上量化；受限谓词含U⊆dom(phi)，证书族定义为满足相应原不等式的矩阵集合。两种mem iff及受限dom=全域证书族均有实际声明，不把拟合／其他结论当作实例前提。"
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsRestrictedCoLipMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedCoLipCerts",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mem_restrictedCoLipCerts_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedCoLipCerts_empty",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_coLip_entry_mul_le",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "受限co-Lip谓词显式包含U.Nonempty、U⊆dom(phi)及全部点对／输出分量的有限和下界，证书族及空集为空的引理均真实成立。未把非空条件漏掉，也未把扩展矩阵系数改为有限实数。"
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "GaugeMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "ofChanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_eq_row_col",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_ofChanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "ofChanEntry_apply",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "gaugeMatrixMul",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_mul",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_gaugeMatrixMul",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "gaugeMatrixMul_assoc",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mulVec_eq_sum_chanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "GaugeMatrix=Matrix I I ENNReal，chanEntry M i j=M j i，ofChanEntry和其还原引理明确输出行／输入列。标准乘法M2*M1的通道展开式是sum_k M2[k→j]*M1[i→k]，另有结合律和向量作用式；不是仅用注释宣称转置约定。"
+        },
+        {
+          "id": "CH02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "ComponentChannel",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "diagChannel",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "channelCoeff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsSingleInputRow",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsDiagInputRow",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsDiagonalGaugeMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "isDiagonalGaugeMatrix_iff_forall_diagInputRow",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "diagonalGaugeMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "isDiagonalGaugeMatrix_diagonal",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_diagonalGaugeMatrix_self",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "实际定义有序通道、同分量通道、单输入行、对角输入行与全矩阵对角条件；证明全矩阵对角等价逐行对角，并给Matrix.diagonal构造与正确条目取值。"
+        },
+        {
+          "id": "CH02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "single_input_row_sum_eq",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_single_input_row_reduction",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_single_input_row_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_diagonal_reduction",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_diagonal_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "lip_single_input_row_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "lip_diagonal_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "single_input_row_sum_eq用完整有限和逐个消去非活动通道，给出原文<=sum=单项的整条链及单项界；受限、全域和每个对角通道特例均覆盖，不加强为全矩阵必须对角。"
+        },
+        {
+          "id": "CH02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "pos_coLip_channel_preserves_pos_dist",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "先由co-Lip完整和的非负性取得单通道标量下界，再用ENNReal正乘积推正输出距离。没有除以系数或距离，允许无穷值，前提保留受限域、点对和严格正通道。"
+        },
+        {
+          "id": "CH02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "pos_diag_coLip_reflects_gauge_zero",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "对每个j从正对角co-Lip和P20反证输入正距，与输出族零距冲突；结论仅为原冻结GaugeZeroRelated，保留非分离规范空间，不偷加分离性或加强为x=y。"
+        },
+        {
+          "id": "CH02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "exercise_2_2_scalar_two_sided_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "上界仅要求指定输出j的Lip行除对角输入外为0；下界用一般co-Lip和中的j项。得到原题完整双侧不等式，不错误要求K也对角或所有Lip行稀疏。"
+        }
+      ],
+      "review_evidence": [],
+      "original_source_flags": {
+        "full_original_source_reviewed": true,
+        "hidden_reasoning_used": false,
+        "normal_final_workspace_supplement_used": false,
+        "source_repaired": false,
+        "semantic_alignment_verified_by_AI": true
+      },
+      "full_original_source_reviewed": true,
+      "full_proof_body_semantic_reviewed": null,
+      "proof_body_flag_not_inferred_from_compilation_or_score": true,
+      "source_representation": "exact selected normal-final Lean slices only",
+      "original_kernel_status": "passed",
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0,
+      "private_original_review_sha256": "de8325a0dc135d3001370954e8e12dc97670627d75ff6a65ea9631980ff824be"
+    },
+    {
+      "case_id": "LCH02",
+      "case_version": "0.1.0",
+      "slot_id": "LCH02:A1",
+      "original_response_sha256": null,
+      "source_kind": "not_available",
+      "delivery_status": "delivery_failed",
+      "source_sha256": null,
+      "source_manifest": null,
+      "kernel_status": "not_run",
+      "kernel_report": null,
+      "compiled_sources": {},
+      "source_files": {},
+      "background_inputs": {},
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/LCH02.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d"
+      },
+      "source_slot_record": {
+        "path": "imports/single_attempt/5400/slots/LCH02/A1/record.json",
+        "bytes": 3625,
+        "sha256": "52423097bfd9a517268b44427edc3075e205ad5c74fae44923ef1c3e0e068dfc"
+      },
+      "unavailable_evidence": {
+        "path": "bound-components/engineering/single_attempt/unavailable/LCH02-unavailable.json",
+        "bytes": 666,
+        "sha256": "1c1b883cee8a4987c8f06a4c8d1cc03dc6afd77b13728238b01c521d5ec1e532"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-D02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-D03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-D04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-D05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-D06",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P07",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P08",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P11",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P12",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P14",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P06",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P09",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P10",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH02-P13",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        }
+      ],
+      "review_evidence": [],
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0
+    },
+    {
+      "case_id": "HCH02",
+      "case_version": "0.1.0",
+      "slot_id": "HCH02:A1",
+      "original_response_sha256": null,
+      "source_kind": "not_available",
+      "delivery_status": "delivery_failed",
+      "source_sha256": null,
+      "source_manifest": null,
+      "kernel_status": "not_run",
+      "kernel_report": null,
+      "compiled_sources": {},
+      "source_files": {},
+      "background_inputs": {},
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/HCH02.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646"
+      },
+      "source_slot_record": {
+        "path": "imports/single_attempt/5400/slots/HCH02/A1/record.json",
+        "bytes": 3624,
+        "sha256": "3f8fa105b62a3aa6459abed7a7c67b11493ccb3e12ab75fb86bb880c9f53806c"
+      },
+      "unavailable_evidence": {
+        "path": "bound-components/engineering/single_attempt/unavailable/HCH02-unavailable.json",
+        "bytes": 666,
+        "sha256": "a3cf639257bb57b9e52cd8ebe1495471c070aa2d4189571342ac0265ad8a177a"
+      },
+      "obligations": [
+        {
+          "id": "HC02-D01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D06",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D07",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-D08",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P06",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P07",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P08",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P09",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P10",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P11",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P12",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P13",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P14",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P15",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P16",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P17",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P18",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P19",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P20",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P21",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P22",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P23",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P24",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P25",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P26",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P27",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P28",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P29",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P30",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P31",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "HC02-P32",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        }
+      ],
+      "review_evidence": [],
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0
+    },
+    {
+      "case_id": "MG-C003",
+      "case_version": "0.1.1",
+      "slot_id": "MG-C003:A1",
+      "original_response_sha256": null,
+      "source_kind": "not_available",
+      "delivery_status": "delivery_failed",
+      "source_sha256": null,
+      "source_manifest": null,
+      "kernel_status": "not_run",
+      "kernel_report": null,
+      "compiled_sources": {},
+      "source_files": {},
+      "background_inputs": {},
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/MG-C003.json",
+        "bytes": 122710,
+        "sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527"
+      },
+      "source_slot_record": {
+        "path": "imports/single_attempt/10800/slots/MG-C003/A1/record.json",
+        "bytes": 3613,
+        "sha256": "ab293ded6ce57dc64f503a46267613865688ccac849775ef7239652be539927f"
+      },
+      "unavailable_evidence": {
+        "path": "bound-components/engineering/single_attempt/unavailable/MG-C003-unavailable.json",
+        "bytes": 670,
+        "sha256": "899261dd62e16e0dcf79f29a37bfaaad9922a7a6b3f9ce4a9fdd4b91160b7518"
+      },
+      "obligations": [
+        {
+          "id": "CH03-D01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D06",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D07",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-D08",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P01-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P01-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P01-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P02-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P02-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P02-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P03-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P04-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P04-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P05-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-06",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-07",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P06-08",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P07-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P07-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P07-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P07-04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P08-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P08-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P08-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P09-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P09-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P09-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P10-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P10-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P10-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P11-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P11-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P11-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P12-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P12-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P13-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P13-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P13-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P14-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P14-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P14-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P15-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P15-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P16-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P16-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P16-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P17-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P17-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P17-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P17-04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P18-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P18-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P18-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P19-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P19-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P19-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P20-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P21-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P21-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P22-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P23-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P23-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P23-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P24-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P24-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P25-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P25-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P26-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P26-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P26-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P27-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P27-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P28-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P28-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P29-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P29-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P29-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P29-04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P29-05",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P30-01",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P30-02",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P30-03",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        },
+        {
+          "id": "CH03-P30-04",
+          "complete": null,
+          "declarations": [],
+          "notes": "No normal engineering final; mathematical completion remains unadjudicated."
+        }
+      ],
+      "review_evidence": [],
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0
+    }
+  ],
+  "source_rule": "Selected first normal final only; exact standard-report byte slices and existing AI obligation judgments. Failed deliveries remain unavailable, no workspace supplement.",
+  "post_observation": true,
+  "new_candidate_calls": 0,
+  "new_compilations": 0,
+  "policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+  "policy_binding_admission": {
+    "schema": "math-gauge.engineering-policy-binding/v1",
+    "post_observation": true,
+    "original_field_present": false,
+    "original_private_review_sha256": "1d341925b3c5b765636183b786939acc240f75019776a4c1d894367ec94a2445",
+    "source_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+    "original_source_bytes_rewritten": false,
+    "mathematical_judgments_changed": false,
+    "new_candidate_calls": 0
+  }
+}

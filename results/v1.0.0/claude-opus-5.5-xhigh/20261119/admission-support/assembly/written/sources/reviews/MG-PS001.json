@@ -1,0 +1,1047 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-PS001",
+  "task_id": "MG-PS001:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/task.md",
+      "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+      "bytes": 1012
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/reference.md",
+      "sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+      "bytes": 7711
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/rubric.json",
+      "sha256": "390aa44a16523d40435f5e3b51f982a3268e2ead23a9ad6b939623c9adaa6186",
+      "bytes": 543
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+      "bytes": 10875,
+      "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/request.json",
+      "bytes": 2846,
+      "sha256": "921d934cc6a1214ba4648db49810376b3a5c19ce99bdebaefd63dc201f2ed09d"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/case.json",
+      "sha256": "17e0b8f2c8c0fc8d672b7a7ff77fa9ab4955e8d6679e62c85d5038a706e36d80"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/diagnostic-rubric.json",
+      "sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+      "bytes": 5121
+    },
+    "solver_files": [],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/contract.json",
+      "sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+      "bytes": 4155
+    }
+  },
+  "criteria": [
+    {
+      "id": "K1",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "K1",
+        "points": 5,
+        "requirements": "1. **伪度量与商的合法性：5 分。** 正确处理有界数列上的有限半范数、零距等价关系及商距离。完整正确的直接使用可视为给出必要依据，不要求机械重复基本公理。"
+      },
+      "points": 5,
+      "score": 5,
+      "strict_pass": true,
+      "reason": "半范数三角、齐次和零子空间给商距离良定义。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 1144,
+          "end_utf8": 1243,
+          "quote": "**(0.1) 半范数与商空间。** 令 $\\rho(z):=\\limsup_N\\frac1N\\sum_{j\\le N}|z_j|$。它满足：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "K2",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "K2",
+        "points": 20,
+        "requirements": "2. **能够下降的完整分类：20 分。** 正确分类 4 分；充分性 6 分；必要性 10 分。必要性须在每个不允许的严格递增函数下给出实际反证，不能只举 n² 一个例子，或把此处零距误当成逐项趋零。"
+      },
+      "points": 20,
+      "score": 20,
+      "strict_pass": true,
+      "reason": "有界f(N)/N充分性；无界时用分离采样指标块构造零密度B但抽样上密度1，控制每个前缀。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 2936,
+          "end_utf8": 3065,
+          "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "K3",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "K3",
+        "points": 20,
+        "requirements": "3. **最小 Lipschitz 常数：20 分。** 正确值 5 分；有效上界 5 分；普遍尖锐性 10 分。只有上界不能获得尖锐性分数。不得默认极限 f(n)/n 存在。"
+      },
+      "points": 20,
+      "score": 20,
+      "strict_pass": true,
+      "reason": "ε稀疏采样块给任意limsup增长f的尖锐下界，结合普遍上界得最小Lip=c，无极限假设。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 4587,
+          "end_utf8": 4661,
+          "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "K4",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "K4",
+        "points": 15,
+        "requirements": "4. **单射、满射、连续性：15 分。** 满射结论及证明 4 分；单射完整判据及双向证明 8 分；连续性说明 3 分。连续性可以直接援引此前已证的有限 Lipschitz 界。"
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "任意列可沿像嵌入保证满射；补集示性函数判非单，c=1时直接证明等距与连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 6554,
+          "end_utf8": 6653,
+          "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "K5",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "K5",
+        "points": 15,
+        "requirements": "5. **迭代常数与根极限：15 分。** 将迭代对应到实际复合取样并确定其常数 5 分；根极限存在 6 分；其必要范围 4 分。允许次可加引理或其他严谨方法，不要求空间完备，不可未经证明套用 Banach 空间谱理论。"
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "实际复合取样、范数次乘性及Fekete给根极限和必要范围。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 8047,
+          "end_utf8": 8165,
+          "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "K6",
+      "parent_dimension": null,
+      "source_definition": {
+        "id": "K6",
+        "points": 25,
+        "requirements": "6. **全部有序对的可达性：25 分。** 正确给出可达集合 5 分；对每个允许实数对构造合法的严格递增整数函数 8 分；核验第一步最优常数 4 分；核验迭代根极限及全部边界 8 分。只给 r=C 或 r=1 的端点例子不覆盖全部要求。无需计算构造的每个 L_k 的显式闭式，只要所给估计确实证明要求的根极限即可。"
+      },
+      "points": 25,
+      "score": 25,
+      "strict_pass": true,
+      "reason": "阶乘块的递增整数函数实现任意1≤r≤c，固定k轨道最多跨两阶乘块，统一上界r^k(1+kD)^2给R=r，含r=1与r=c。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 10273,
+          "end_utf8": 10327,
+          "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 100,
+    "positive_mathematical_denominator": 100,
+    "removed_reliability_points": 0,
+    "removed_reliability_denominator": 0,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/task.md",
+        "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "not_supplied_as_separate_self_assessment",
+    "verbatim_evidence": [],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "K1.quotient",
+      "label": "有限半范数、零距等价关系与商距离合法",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "K1.quotient",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "有限半范数、零距等价关系与商距离合法",
+      "reason": "半范数三角、齐次和零子空间给商距离良定义。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 1144,
+          "end_utf8": 1243,
+          "quote": "**(0.1) 半范数与商空间。** 令 $\\rho(z):=\\limsup_N\\frac1N\\sum_{j\\le N}|z_j|$。它满足：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K2.classification",
+      "label": "能够下降的完整分类",
+      "delivery_weight": 4,
+      "claim_weight": 4,
+      "source_unit_id": "K2.classification",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "能够下降的完整分类",
+      "reason": "有界f(N)/N充分性；无界时用分离采样指标块构造零密度B但抽样上密度1，控制每个前缀。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 2936,
+          "end_utf8": 3065,
+          "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 4,
+      "asserted_denominator": 4,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K2.sufficiency",
+      "label": "对全部允许f证明下降充分性",
+      "delivery_weight": 6,
+      "claim_weight": 6,
+      "source_unit_id": "K2.sufficiency",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "对全部允许f证明下降充分性",
+      "reason": "有界f(N)/N充分性；无界时用分离采样指标块构造零密度B但抽样上密度1，控制每个前缀。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 2936,
+          "end_utf8": 3065,
+          "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 6,
+      "asserted_denominator": 6,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K2.necessity",
+      "label": "对每个不允许f构造实际有界反证并控制全部前缀",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "K2.necessity",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "对每个不允许f构造实际有界反证并控制全部前缀",
+      "reason": "有界f(N)/N充分性；无界时用分离采样指标块构造零密度B但抽样上密度1，控制每个前缀。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 2936,
+          "end_utf8": 3065,
+          "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K3.exact_value",
+      "label": "最小Lipschitz常数的正确值",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "K3.exact_value",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "最小Lipschitz常数的正确值",
+      "reason": "ε稀疏采样块给任意limsup增长f的尖锐下界，结合普遍上界得最小Lip=c，无极限假设。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 4587,
+          "end_utf8": 4661,
+          "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K3.upper_bound",
+      "label": "普遍有效上界",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "K3.upper_bound",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "普遍有效上界",
+      "reason": "ε稀疏采样块给任意limsup增长f的尖锐下界，结合普遍上界得最小Lip=c，无极限假设。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 4587,
+          "end_utf8": 4661,
+          "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K3.sharpness",
+      "label": "普遍尖锐性，不默认f(n)/n有极限",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "K3.sharpness",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "普遍尖锐性，不默认f(n)/n有极限",
+      "reason": "ε稀疏采样块给任意limsup增长f的尖锐下界，结合普遍上界得最小Lip=c，无极限假设。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 4587,
+          "end_utf8": 4661,
+          "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K4.surjectivity",
+      "label": "全部允许T_f满射",
+      "delivery_weight": 4,
+      "claim_weight": 4,
+      "source_unit_id": "K4.surjectivity",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "全部允许T_f满射",
+      "reason": "任意列可沿像嵌入保证满射；补集示性函数判非单，c=1时直接证明等距与连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 6554,
+          "end_utf8": 6653,
+          "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 4,
+      "asserted_denominator": 4,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K4.injectivity",
+      "label": "单射完整判据与双向证明",
+      "delivery_weight": 8,
+      "claim_weight": 8,
+      "source_unit_id": "K4.injectivity",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "单射完整判据与双向证明",
+      "reason": "任意列可沿像嵌入保证满射；补集示性函数判非单，c=1时直接证明等距与连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 6554,
+          "end_utf8": 6653,
+          "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 8,
+      "asserted_denominator": 8,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K4.continuity",
+      "label": "连续性说明",
+      "delivery_weight": 3,
+      "claim_weight": 3,
+      "source_unit_id": "K4.continuity",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "连续性说明",
+      "reason": "任意列可沿像嵌入保证满射；补集示性函数判非单，c=1时直接证明等距与连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 6554,
+          "end_utf8": 6653,
+          "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 3,
+      "asserted_denominator": 3,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K5.actual_iteration",
+      "label": "迭代对应实际复合取样并确定常数",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "K5.actual_iteration",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "迭代对应实际复合取样并确定常数",
+      "reason": "实际复合取样、范数次乘性及Fekete给根极限和必要范围。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 8047,
+          "end_utf8": 8165,
+          "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K5.root_limit",
+      "label": "根极限存在",
+      "delivery_weight": 6,
+      "claim_weight": 6,
+      "source_unit_id": "K5.root_limit",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "根极限存在",
+      "reason": "实际复合取样、范数次乘性及Fekete给根极限和必要范围。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 8047,
+          "end_utf8": 8165,
+          "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 6,
+      "asserted_denominator": 6,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K5.necessary_range",
+      "label": "有序对的必要范围",
+      "delivery_weight": 4,
+      "claim_weight": 4,
+      "source_unit_id": "K5.necessary_range",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "有序对的必要范围",
+      "reason": "实际复合取样、范数次乘性及Fekete给根极限和必要范围。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 8047,
+          "end_utf8": 8165,
+          "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 4,
+      "asserted_denominator": 4,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K6.reachable_set",
+      "label": "全部可达有序对集合",
+      "delivery_weight": 5,
+      "claim_weight": 5,
+      "source_unit_id": "K6.reachable_set",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "全部可达有序对集合",
+      "reason": "阶乘块的递增整数函数实现任意1≤r≤c，固定k轨道最多跨两阶乘块，统一上界r^k(1+kD)^2给R=r，含r=1与r=c。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 10273,
+          "end_utf8": 10327,
+          "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 5,
+      "asserted_denominator": 5,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K6.legal_construction",
+      "label": "对每个允许实数对构造严格递增整数函数并证明合法",
+      "delivery_weight": 8,
+      "claim_weight": 8,
+      "source_unit_id": "K6.legal_construction",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "对每个允许实数对构造严格递增整数函数并证明合法",
+      "reason": "阶乘块的递增整数函数实现任意1≤r≤c，固定k轨道最多跨两阶乘块，统一上界r^k(1+kD)^2给R=r，含r=1与r=c。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 10273,
+          "end_utf8": 10327,
+          "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 8,
+      "asserted_denominator": 8,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K6.first_norm",
+      "label": "构造的第一步最优常数",
+      "delivery_weight": 4,
+      "claim_weight": 4,
+      "source_unit_id": "K6.first_norm",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "构造的第一步最优常数",
+      "reason": "阶乘块的递增整数函数实现任意1≤r≤c，固定k轨道最多跨两阶乘块，统一上界r^k(1+kD)^2给R=r，含r=1与r=c。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 10273,
+          "end_utf8": 10327,
+          "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 4,
+      "asserted_denominator": 4,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "K6.root_and_boundaries",
+      "label": "构造的迭代根极限及全部边界",
+      "delivery_weight": 8,
+      "claim_weight": 8,
+      "source_unit_id": "K6.root_and_boundaries",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "构造的迭代根极限及全部边界",
+      "reason": "阶乘块的递增整数函数实现任意1≤r≤c，固定k轨道最多跨两阶乘块，统一上界r^k(1+kD)^2给R=r，含r=1与r=c。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 10273,
+          "end_utf8": 10327,
+          "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 8,
+      "asserted_denominator": 8,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "G1",
+      "label": "取样映射下降、范数与映射性质的完整分类",
+      "statement": "完成题面第1问：对每个严格递增f完整分类能否下降，证明允许情形的连续/单射/满射性质和最小Lipschitz常数，不能假定f(n)/n有极限。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 60,
+      "weight_origin": "{\"kind\": \"original_frozen_criterion_sum_by_question\", \"original_criteria\": [\"K1\", \"K2\", \"K3\", \"K4\"], \"sum\": 60}",
+      "acceptance_conditions": [
+        "有限半范数、零距等价关系与商距离合法",
+        "能够下降的完整分类",
+        "对全部允许f证明下降充分性",
+        "对每个不允许f构造实际有界反证并控制全部前缀",
+        "最小Lipschitz常数的正确值",
+        "普遍有效上界",
+        "普遍尖锐性，不默认f(n)/n有极限",
+        "全部允许T_f满射",
+        "单射完整判据与双向证明",
+        "连续性说明",
+        "本问全范围实际交付，必要构造或统一界缺一即不通过。"
+      ],
+      "dependency_scope": [
+        "实际复合取样及任意f的第1问结论可复用，但对具体构造不得把形式公式或不成立的跨阈值估计当证明。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "K1.quotient",
+        "K2.classification",
+        "K2.sufficiency",
+        "K2.necessity",
+        "K3.exact_value",
+        "K3.upper_bound",
+        "K3.sharpness",
+        "K4.surjectivity",
+        "K4.injectivity",
+        "K4.continuity"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-PS001/task.md",
+          "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+          "pointer": "numbered-question:1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-PS001/diagnostic-rubric.json",
+          "sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+          "pointer": ""
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-PS001:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "G1",
+      "passed": true,
+      "reason": "半范数三角、齐次和零子空间给商距离良定义。 有界f(N)/N充分性；无界时用分离采样指标块构造零密度B但抽样上密度1，控制每个前缀。 ε稀疏采样块给任意limsup增长f的尖锐下界，结合普遍上界得最小Lip=c，无极限假设。 任意列可沿像嵌入保证满射；补集示性函数判非单，c=1时直接证明等距与连续。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 1144,
+          "end_utf8": 1243,
+          "quote": "**(0.1) 半范数与商空间。** 令 $\\rho(z):=\\limsup_N\\frac1N\\sum_{j\\le N}|z_j|$。它满足：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 2936,
+          "end_utf8": 3065,
+          "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 4587,
+          "end_utf8": 4661,
+          "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 6554,
+          "end_utf8": 6653,
+          "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 60,
+      "denominator": 60
+    },
+    {
+      "id": "G2",
+      "label": "迭代根极限与每个有序对的完整实现",
+      "statement": "完成题面第2问：实际迭代常数的根极限存在，全部(L1,Rf)范围正确，并对每个允许实数对提供严格递增整数函数及闭合的全部范数/根极限/边界核验。",
+      "scope": "原题全部对象、假设、量词、参数与边界；只允许明示且题面允许的附加条件。",
+      "weight": 40,
+      "weight_origin": "{\"kind\": \"original_frozen_criterion_sum_by_question\", \"original_criteria\": [\"K5\", \"K6\"], \"sum\": 40}",
+      "acceptance_conditions": [
+        "迭代对应实际复合取样并确定常数",
+        "根极限存在",
+        "有序对的必要范围",
+        "全部可达有序对集合",
+        "对每个允许实数对构造严格递增整数函数并证明合法",
+        "构造的第一步最优常数",
+        "构造的迭代根极限及全部边界",
+        "本问全范围实际交付，必要构造或统一界缺一即不通过。"
+      ],
+      "dependency_scope": [
+        "实际复合取样及任意f的第1问结论可复用，但对具体构造不得把形式公式或不成立的跨阈值估计当证明。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "K5.actual_iteration",
+        "K5.root_limit",
+        "K5.necessary_range",
+        "K6.reachable_set",
+        "K6.legal_construction",
+        "K6.first_norm",
+        "K6.root_and_boundaries"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-PS001/task.md",
+          "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+          "pointer": "numbered-question:2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-PS001/diagnostic-rubric.json",
+          "sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+          "pointer": ""
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-PS001:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "G2",
+      "passed": true,
+      "reason": "实际复合取样、范数次乘性及Fekete给根极限和必要范围。 阶乘块的递增整数函数实现任意1≤r≤c，固定k轨道最多跨两阶乘块，统一上界r^k(1+kD)^2给R=r，含r=1与r=c。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 8047,
+          "end_utf8": 8165,
+          "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        },
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+          "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+          "start_utf8": 10273,
+          "end_utf8": 10327,
+          "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 40,
+      "denominator": 40
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-PS001:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/20",
+        "reason": "全部核心数学要求及其必要桥梁、边界已独立核查成立。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 1144,
+            "end_utf8": 1243,
+            "quote": "**(0.1) 半范数与商空间。** 令 $\\rho(z):=\\limsup_N\\frac1N\\sum_{j\\le N}|z_j|$。它满足：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 2936,
+            "end_utf8": 3065,
+            "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 4587,
+            "end_utf8": 4661,
+            "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 6554,
+            "end_utf8": 6653,
+            "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 8047,
+            "end_utf8": 8165,
+            "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 10273,
+            "end_utf8": 10327,
+            "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 1144,
+            "end_utf8": 1243,
+            "quote": "**(0.1) 半范数与商空间。** 令 $\\rho(z):=\\limsup_N\\frac1N\\sum_{j\\le N}|z_j|$。它满足：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 2936,
+            "end_utf8": 3065,
+            "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 4587,
+            "end_utf8": 4661,
+            "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 6554,
+            "end_utf8": 6653,
+            "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 8047,
+            "end_utf8": 8165,
+            "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 10273,
+            "end_utf8": 10327,
+            "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为100/100；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 1144,
+            "end_utf8": 1243,
+            "quote": "**(0.1) 半范数与商空间。** 令 $\\rho(z):=\\limsup_N\\frac1N\\sum_{j\\le N}|z_j|$。它满足：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 2936,
+            "end_utf8": 3065,
+            "quote": "**引理 2。** 若 $c_f=\\infty$，则存在 $B\\subseteq\\mathbb N$，使得 $\\rho(\\mathbf 1_B)=0$ 而 $\\rho(P_f\\mathbf 1_B)=1$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 4587,
+            "end_utf8": 4661,
+            "quote": "**引理 3（下界）。** 对每个 $\\eta\\in(0,1)$，存在 $B$，使得",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 6554,
+            "end_utf8": 6653,
+            "quote": "**定理 4（单射性）。** $T_f$ 是单射 $\\iff c_f=1$，并且此时 $T_f$ 是等距映射。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 8047,
+            "end_utf8": 8165,
+            "quote": "**命题 6（极限存在）。** $R_f=\\lim_k L_k^{1/k}$ 存在，等于 $\\inf_k L_k^{1/k}$，且 $1\\le R_f\\le L_1$。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-PS001-A1/attempt-1/response.md",
+            "sha256": "c63ad562684abf26a5a9ffdb215f02d8be61ce158521facddc2ddcabd5ed0749",
+            "start_utf8": 10273,
+            "end_utf8": 10327,
+            "quote": "m_k\\le r^{k-s}m_s\\bigl(1+(k-s)D\\bigr)\\le r^kn(1+kD)^2;",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "d9dba039fff14ceab70e446cc1d8bff354567d30731e222b574d4a13993847aa",
+    "mathematical_judgments_changed": false
+  }
+}

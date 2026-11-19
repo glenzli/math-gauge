@@ -1,0 +1,263 @@
+{
+  "complete_goals": [
+    {
+      "id": "G1",
+      "attained": true,
+      "reason": "空底集由零元测试排除，二元层把全部测试映射归结为互补选边，三元起实际证明滤闭合与逆向有限分拆。限制像、纤维和推前相容齐备，有限作用的轨道选择计数与延拓范围精确。",
+      "evidence": [
+        {
+          "line_start": 3,
+          "line_end": 35,
+          "utf8_start": 35,
+          "utf8_end": 3470,
+          "quote": "若 \\(X=\\varnothing\\)，则对每个 \\(m\\) 都有 \\(R_m(X)=\\varnothing\\)，因为唯一的映射 \\(X\\to[0]\\) 必须取得一个属于 \\([0]\\) 的记录值。以下先设 \\(X\\ne\\varnothing\\)。此时没有零元测试需要赋值。\n\n- \\(R_1(X)\\) 是单点集。唯一的一元测试的记录值是 \\(0\\)。\n- \\(R_2(X)\\) 对应于所有满足下列条件的子集族 \\(\\mathcal U\\subseteq\\mathcal P(X)\\)：\\(X\\in\\mathcal U\\)，且对每个 \\(A\\subseteq X\\)，\\(A\\) 与 \\(X\\setminus A\\) 恰有一个属于 \\(\\mathcal U\\)。也就是说，每个互补对选一侧，且在 \\(\\{\\varnothing,X\\}\\) 中选 \\(X\\)。\n- 对 \\(3\\le m\\le\\infty\\)，\\(R_m(X)\\) 对应于 \\(X\\) 上的所有超滤子。超滤子 \\(\\mathcal U\\) 对测试 \\(f:X\\to[n]\\) 给出的记录值，是满足 \\(f^{-1}(\\{j\\})\\in\\mathcal U\\) 的唯一 \\(j\\in[n]\\)。\n\n令 \\(\\chi_A:X\\to[2]\\) 在 \\(A\\) 上取 \\(1\\)，在其补集上取 \\(0\\)。当 \\(m\\ge2\\) 时，定义\n\\[\n\\mathcal U_r=\\{A\\subseteq X:r_2(\\chi_A)=1\\}.\n\\]\n从一元测试到二元测试的两个常值映射，强制二元常值测试取相应的常值。交换 \\([2]\\) 的两点则给出互补对条件。反过来，按 \\(\\mathcal U\\) 在 \\(\\chi_A\\) 上赋值即可构造二元记录。\\([2]\\to[2]\\) 的映射只有恒等、交换和两个常值映射，而到 \\([1]\\) 的映射自动满足相容条件，所以构造覆盖了 \\(m=2\\) 的全部要求。\n\n对任意允许的 \\(n\\ge1\\) 和 \\(j\\in[n]\\)，把 \\(f:X\\to[n]\\) 与 \\(\\{j\\}\\) 的指示映射复合，得到\n\\[\nr_n(f)=j\\quad\\Longleftrightarrow\\quad f^{-1}(\\{j\\})\\in\\mathcal U_r\n\\qquad(m\\ge2).\n\\]\n因此 \\(m\\ge3\\) 时，任意三个两两不交且并为 \\(X\\) 的部分恰有一个属于 \\(\\mathcal U_r\\)，允许部分为空。对不交的 \\(A,B\\)，应用于 \\(A,B,X\\setminus(A\\cup B)\\)，可知 \\(A\\cup B\\in\\mathcal U_r\\) 当且仅当 \\(A,B\\) 中有一个属于 \\(\\mathcal U_r\\)。由 \\(B=A\\sqcup(B\\setminus A)\\) 得到向上封闭。若 \\(A,B\\in\\mathcal U_r\\) 而 \\(A\\cap B\\notin\\mathcal U_r\\)，则分拆 \\(A=(A\\cap B)\\sqcup(A\\setminus B)\\) 得到 \\(A\\setminus B\\in\\mathcal U_r\\)，进而 \\(X\\setminus B\\in\\mathcal U_r\\)，矛盾。这证明了 \\(\\mathcal U_r\\) 是超滤子。反过来，超滤子在任何有限分拆中恰选一部分：两部分同时入选会使空集属于超滤子，全部未选则其补集的交会使空集属于超滤子。若 \\(f^{-1}(\\{j\\})\\) 入选，它包含于 \\((a\\circ f)^{-1}(\\{a(j)\\})\\)，所以由向上封闭得到所需的相容性。\n\n对于非空 \\(X\\)，所有 \\(q_{m,k}\\) 的像和纤维如下。\n\n| 情形 | 像和纤维 |\n|---|---|\n| \\(k=1\\) | 像为唯一的一元记录，其纤维是整个 \\(R_m(X)\\) |\n| \\(m=k=2\\) | 恒等映射，各纤维为单点 |\n| \\(m\\ge3,\\ k=2\\) | 像为子集族是超滤子的二元记录，这些记录各有单点纤维，其余纤维为空 |\n| \\(m\\ge k\\ge3\\) | 在超滤子表示下是恒等映射，各纤维为单点 |\n\n这些描述与 \\(h:X\\to Y\\) 相容。在二元记录和超滤子的表示下，\\(R_m(h)\\) 都把 \\(\\mathcal U\\) 送到\n\\[\nh_*\\mathcal U=\\{B\\subseteq Y:h^{-1}(B)\\in\\mathcal U\\}.\n\\]\n这是因为 \\(\\chi_B\\circ h=\\chi_{h^{-1}(B)}\\)。一元层在有记录时是单点之间的映射。按测试逐项代入还给出 \\(q_{m,k}R_m(h)=R_k(h)q_{m,k}\\)、\\(R_m(h)\\eta_{m,X}=\\eta_{m,Y}h\\)，以及 \\(R_m\\) 对恒等和复合的保持。特别地，题设确实定义了左作用。对 \\(m\\ge2\\)，点值记录对应于所有含该点的子集所成的族。\n"
+        },
+        {
+          "line_start": 39,
+          "line_end": 62,
+          "utf8_start": 3496,
+          "utf8_end": 6159,
+          "quote": "设 \\(X\\) 有限且非空。令 \\(d\\) 为 \\(G\\) 在非平凡无序二分\n\\[\n\\bigl\\{\\{A,X\\setminus A\\}:\\varnothing\\ne A\\subsetneq X\\bigr\\}\n\\]\n上的轨道数。各层的基数及存在判准为\n\\[\n\\begin{aligned}\n|R_1(X)^G|&=1,\\\\\n|R_2(X)^G|&=\n\\begin{cases}\n2^d,&\\text{每个 }g\\in G\\text{ 在 }X\\text{ 上至少有一个奇长度循环},\\\\\n0,&\\text{否则},\n\\end{cases}\\\\\n|R_m(X)^G|&=|X^G|\\qquad(3\\le m\\le\\infty).\n\\end{aligned}\n\\]\n\n二元层的不动性要求选边随 \\(G\\) 的作用相容。如果某个 \\(g\\) 交换一个互补对的两侧，该对无法相容地选边。反过来，若没有这种交换，就可以在每个非平凡二分轨道上给一个代表选边，再用 \\(G\\) 的作用确定其余二分的选边。代表的稳定子保持其两侧，所以结果良定义。每个轨道独立给出两种选择。如果 \\(gA=X\\setminus A\\)，沿 \\(g\\) 的每个循环，属于 \\(A\\) 与属于其补集必须交替出现，故每个循环均为偶长度。若 \\(g\\) 的所有循环均为偶长度，在每个循环上交替取点就得到这样的 \\(A\\)。这证明了二元层判准和基数公式。\n\n三元及以上各层，有限集上的超滤子恰好在单点分拆中选一个 \\(\\{x\\}\\)，因而是 \\(x\\) 的主超滤子。不同点给出不同的主超滤子，且 \\(G\\) 把 \\(x\\) 的主超滤子送到 \\(gx\\) 的主超滤子。因此这些层的不动记录均由 \\(X^G\\) 参数化。\n\n在不动记录之间，限制到一元层把所有记录送到唯一记录，二元层到自身是恒等，三元及以上各层之间在 \\(X^G\\) 的参数下是恒等。三元及以上限制到二元层，把 \\(x\\in X^G\\) 送到在每个二分中选含 \\(x\\) 的一侧的记录，且这些像互不相同。空底集的各层及各不动层均为空，限制映射都是空映射。\n\n因此，有限底集上的一元不动记录有 \\(|X^G|\\) 个完整不动延拓。二元不动记录恰在其选边全部由某个 \\(x\\in X^G\\) 给出时可延拓，且延拓唯一。若二元不动层非空，其每条记录均可延拓的充要条件是 \\(2^d=|X^G|\\)。从三元起，每个有限层的不动记录都唯一延拓，这对任意底集也成立，因为延拓仍由同一超滤子给出，且与群作用相容。对任意底集的二元不动记录，可延拓的充要条件是其子集族为超滤子，延拓仍唯一。一元不动记录在任意非空底集上的延拓存在性由下一节的判准给出。三元是普遍保证延拓的最小层数。循环群 \\(C_3\\) 在三点上的循环作用有一元不动记录，也有在每个二分中选较大一侧的二元不动记录，但它没有不动点，因而没有完整不动记录。\n"
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "attained": true,
+      "reason": "固定位超滤的非空、拓扑商、实际闭包、普遍作用判准及可数翻转作用的完整分类均有证明。",
+      "evidence": [
+        {
+          "line_start": 66,
+          "line_end": 128,
+          "utf8_start": 6195,
+          "utf8_end": 12057,
+          "quote": "对有限 \\(F\\subseteq G\\)，记\n\\[\nX_F=\\{x\\in X:\\forall g\\in F,\\ gx=x\\},\\qquad X_\\varnothing=X.\n\\]\n完整不动记录恰对应于满足 \\(X_F\\in\\mathcal U\\) 对所有有限 \\(F\\subseteq G\\) 成立的超滤子 \\(\\mathcal U\\)。\n\n为证明这一点，先固定单个 \\(g\\in G\\)，记其不动集为 \\(D\\)。若 \\(D\\in\\mathcal U\\)，则 \\(A\\) 和 \\(g^{-1}A\\) 在 \\(D\\) 上的交相同。一个集合是否属于 \\(\\mathcal U\\) 由它与 \\(D\\) 的交决定，所以 \\(g_*\\mathcal U=\\mathcal U\\)。反过来，\\(X\\setminus D\\) 可以分成三类 \\(C_0,C_1,C_2\\)，使每类都满足 \\(C_j\\cap gC_j=\\varnothing\\)。具体地，在 \\(g\\) 的偶长度循环上交替使用两色，在奇长度循环上先给前偶数个点交替着两色，再给最后一点着第三色。对无限轨道，任选一个起点，按整数次幂的奇偶性使用两色。这些选择可在 ZFC 中同时作出。若 \\(g_*\\mathcal U=\\mathcal U\\) 而 \\(D\\notin\\mathcal U\\)，这三个颜色类中必有一个 \\(C_j\\in\\mathcal U\\)，于是 \\(gC_j\\in\\mathcal U\\)，与二者不交矛盾。对所有 \\(g\\) 应用此论证，再用超滤子对有限交封闭，即得所述分类。\n\n由此得到非空判准\n\\[\nR_\\infty(X)^G\\ne\\varnothing\n\\quad\\Longleftrightarrow\\quad\nX_F\\ne\\varnothing\\quad\\text{对每个有限 }F\\subseteq G.\n\\]\n充分性使用超滤子延拓。这里 \\(X_{F_1}\\cap X_{F_2}=X_{F_1\\cup F_2}\\)，所以右侧给出有限交性质。具有有限交性质的子集族生成真滤子。由 Zorn 引理，它延拓为极大真滤子，因为真滤子链的并仍是真滤子。若一个集合 \\(A\\) 不在极大真滤子中，加入 \\(A\\) 后无法生成真滤子，故原滤子中有集合与 \\(A\\) 不交，从而 \\(X\\setminus A\\) 属于原滤子。这给出所需的超滤子。必要性来自真滤子不含空集。取 \\(F=\\varnothing\\) 已将空底集纳入判准。\n\n### 内在的拓扑分类\n\n令\n\\[\n\\mathcal I=\\{A\\subseteq X:\\exists\\,F\\subseteq G\\text{ 有限},\\ A\\cap X_F=\\varnothing\\}.\n\\]\n这族集合向下封闭，两个成员的并可用它们各自见证的有限集的并作为见证，因此 \\(\\mathcal I\\) 是布尔理想，允许它等于 \\(\\mathcal P(X)\\)。直接由作用构造的空间是布尔代数 \\(\\mathcal P(X)/\\mathcal I\\) 的超滤子空间，其中两个集合的对称差属于 \\(\\mathcal I\\) 时代表同一元素。若商只有一个元素，其超滤子空间为空。\n\n确实，\\(\\mathcal U\\) 包含所有 \\(X_F\\) 当且仅当它与 \\(\\mathcal I\\) 不交。一个方向由 \\(A\\cap X_F=\\varnothing\\) 得到，另一个方向用 \\(X\\setminus X_F\\in\\mathcal I\\)。如果 \\(\\mathcal U\\) 包含所有 \\(X_F\\)，同一等价类的两个代表在某个 \\(X_F\\) 上相同，故它们是否属于 \\(\\mathcal U\\) 一致。于是 \\(\\mathcal U\\) 在商上确定一个超滤子。具体地，成员指示函数保交、补及 \\(0,1\\)，因而通过商给出到二元布尔代数的同态，其取 \\(1\\) 的元素组成该超滤子。反过来，商上的超滤子沿商映射取逆像，得到与 \\(\\mathcal I\\) 不交的超滤子。这两个构造互逆。\n\n在 \\(R_\\infty(X)\\) 的超滤子表示下，记 \\(\\widehat A=\\{\\mathcal U:A\\in\\mathcal U\\}\\)。测试观察 \\(r_n(f)=j\\) 给出的开集恰是 \\(\\widehat{f^{-1}(\\{j\\})}\\)，每个 \\(\\widehat A\\) 又可由二元测试得到。它们对有限交封闭，且 \\(\\widehat A\\) 的补是 \\(\\widehat{X\\setminus A}\\)，故构成既开又闭的基。上述对应把商空间中由类 \\([A]\\) 给出的基本开集送到 \\(\\widehat A\\cap R_\\infty(X)^G\\)，因此是同胚。\n\n### 不动点记录的闭包\n\n在完整记录空间中，\n\\[\n\\overline{\\eta_{\\infty,X}(X^G)}=\\widehat{X^G}.\n\\]\n若 \\(X^G\\in\\mathcal U\\)，则每个含 \\(\\mathcal U\\) 的基本开集 \\(\\widehat A\\) 都满足 \\(A\\cap X^G\\ne\\varnothing\\)，所以含某个不动点的主超滤子。若 \\(X^G\\notin\\mathcal U\\)，则 \\(\\widehat{X\\setminus X^G}\\) 是一个含 \\(\\mathcal U\\) 且避开所有这些主超滤子的开邻域。\n\n因而有精确判准\n\\[\n\\overline{\\eta_{\\infty,X}(X^G)}=R_\\infty(X)^G\n\\quad\\Longleftrightarrow\\quad\n\\exists\\,F\\subseteq G\\text{ 有限，使 }X_F=X^G.\n\\]\n若有这样的 \\(F\\)，所有不动超滤子均含 \\(X^G\\)。反过来，若每个 \\(X_F\\) 都严格包含 \\(X^G\\)，则全体 \\(X_F\\) 与 \\(X\\setminus X^G\\) 一起具有有限交性质。将它们延拓得到的超滤子是不动记录，但不在上述闭包中。\n\n对每个 \\(G\\) 集合都成立这个闭包等式的群，恰好是**有限生成群**。有限生成集 \\(F\\) 对任意作用都满足 \\(X_F=X^G\\)。若 \\(G\\) 非有限生成，取\n\\[\nX=\\coprod_{\\substack{H\\le G\\\\ H\\text{ 有限生成}}}G/H\n\\]\n并在每个左陪集空间上作左平移。每个 \\(H\\) 都是真子群，故这些传递分量没有全局不动点。对任意有限 \\(F\\subseteq G\\)，分量 \\(G/\\langle F\\rangle\\) 的单位陪集属于 \\(X_F\\)，故闭包等式失败。\n\n### 可数例子\n\n取 \\(G=\\bigoplus_{i\\in\\mathbb N}\\mathbb Z/2\\mathbb Z\\) 和 \\(X=\\mathbb N\\times[2]\\)，令\n\\[\ng(i,b)=(i,b+g_i\\bmod 2).\n\\]\n群元素是有限支撑的二元序列，所以群和底集都可数。第 \\(i\\) 个坐标的生成元交换 \\(\\{i\\}\\times[2]\\) 的两点，故 \\(X^G=\\varnothing\\)。另一方面，每个群元素只移动有限多个点，故其不动集属于每个非主超滤子。任一主超滤子对应的点都被某个生成元移动。因此全部不动记录恰由 \\(X\\) 上的非主超滤子给出，其中至少有一个，因为余有限集合族有有限交性质。\n\n也可将每条记录唯一参数化为 \\(b\\in[2]\\) 和 \\(\\mathbb N\\) 上的一个非主超滤子 \\(\\mathcal V\\)。超滤子在两层 \\(\\mathbb N\\times\\{0\\}\\) 和 \\(\\mathbb N\\times\\{1\\}\\) 中恰选一层，在所选层上经第一坐标得到 \\(\\mathcal V\\)。反过来，这两个参数给出的 \\(r_n(f)\\) 是满足\n\\[\n\\{i\\in\\mathbb N:f(i,b)=j\\}\\in\\mathcal V\n\\]\n的唯一 \\(j\\in[n]\\)。\n"
+        }
+      ]
+    },
+    {
+      "id": "G3",
+      "attained": true,
+      "reason": "按坐标验柱集与有限固定集的共同有限交，正面完成任意集合族。有限因子主边缘给切片唯一性，两个无限集由对角和反对角给实际障碍，非平凡作用的两个提升也都满足固定集。",
+      "evidence": [
+        {
+          "line_start": 132,
+          "line_end": 164,
+          "utf8_start": 12078,
+          "utf8_end": 16041,
+          "quote": "令 \\(Z=\\prod_{i\\in I}X_i\\)。各投影 \\(p_i\\) 等变，由 \\(R_\\infty\\) 对复合的相容性，\\(R_\\infty(p_i)\\) 把不动记录送到不动记录，故 \\(\\Pi_{(X_i)}\\) 良定义。在第 \\(i\\) 个分量观察测试 \\(f:X_i\\to[n]\\)，其拉回正是在 \\(Z\\) 上观察 \\(f\\circ p_i\\)。因此各分量连续，比较映射对目标的乘积拓扑连续。\n\n**比较映射对任意群及任意集合指标族都满射。** 给定目标中的一族不动超滤子 \\((\\mathcal U_i)_{i\\in I}\\)，考虑 \\(Z\\) 上的集合族\n\\[\n\\{p_i^{-1}(A):i\\in I,\\ A\\in\\mathcal U_i\\}\n\\ \\cup\\\n\\{Z_F:F\\subseteq G\\text{ 有限}\\}.\n\\]\n要检验有限交，可把其中有限多个不动集条件合并成一个 \\(Z_F\\)，并把同一坐标的有限多个条件交成 \\(B_i\\in\\mathcal U_i\\)，未受约束的坐标取 \\(B_i=X_i\\)。每个 \\(B_i\\cap (X_i)_F\\) 属于 \\(\\mathcal U_i\\)，所以非空。由选择公理，可以在所有坐标同时取点，得到这个有限交的一个元素。故该族可延拓为 \\(Z\\) 上的超滤子 \\(\\mathcal W\\)。它包含所有 \\(Z_F\\)，所以不动。其第 \\(i\\) 个投影包含 \\(\\mathcal U_i\\)，而两个真超滤子之间的包含必为等号，因此 \\(\\mathcal W\\) 给出所需原像。\n\n若目标为空，良定义性已推出源也为空。特别地，有空因子时两边均为空。若 \\(I=\\varnothing\\)，源是单点集上的完整不动记录空间，目标也是单点，两者之间是双射。\n\n### 两个因子与有限性\n\n若 \\(X,Y\\) 中至少一个有限，则对任意群作用，两因子的比较映射为双射。只需证明单射。空因子已处理，设 \\(X\\) 非空且有限。对积上的超滤子 \\(\\mathcal W\\)，其 \\(X\\) 边缘是某个 \\(x\\) 的主超滤子，所以 \\(\\{x\\}\\times Y\\in\\mathcal W\\)。若其 \\(Y\\) 边缘为 \\(\\mathcal V\\)，则对每个 \\(D\\subseteq X\\times Y\\)，\n\\[\nD\\in\\mathcal W\n\\quad\\Longleftrightarrow\\quad\n\\{y:(x,y)\\in D\\}\\in\\mathcal V.\n\\]\n这是因为 \\(D\\) 与右侧集合在 \\(Y\\) 投影下的逆像，在 \\(\\{x\\}\\times Y\\) 上相同。故两个边缘唯一决定 \\(\\mathcal W\\)。有限因子为 \\(Y\\) 时交换坐标即可。\n\n对于平凡群，**单射的充要条件是至少一个因子有限**。为证明必要性，设 \\(X,Y\\) 均无限。由 ZFC 取单射 \\(a:\\mathbb N\\to X\\) 和 \\(b:\\mathbb N\\to Y\\)，再取 \\(\\mathbb N\\) 上的非主超滤子 \\(\\mathcal V\\)。令 \\(\\mathcal U_X=a_*\\mathcal V,\\ \\mathcal U_Y=b_*\\mathcal V\\)，并令\n\\[\nD=\\{(a(i),b(i)):i\\in\\mathbb N\\}.\n\\]\n沿 \\(i\\mapsto(a(i),b(i))\\) 推送 \\(\\mathcal V\\)，得到一个含 \\(D\\) 且具有这两个边缘的超滤子。另一方面，对任意 \\(A\\in\\mathcal U_X,\\ B\\in\\mathcal U_Y\\)，两个逆像 \\(a^{-1}(A),b^{-1}(B)\\) 都无限，可以分别取不同的 \\(i,j\\)，使 \\((a(i),b(j))\\in(A\\times B)\\setminus D\\)。所以边缘给出的全部柱集与 \\(D^c\\) 一起具有有限交性质，其中同一坐标的有限多个条件可先取交。延拓得到另一个超滤子，它有同样的两个边缘并含 \\(D^c\\)。这两个超滤子在平凡作用下都不动，证毕。\n\n### 两个因子都没有不动点\n\n命题“若 \\(X^G=Y^G=\\varnothing\\)，则比较映射为单射”**不成立**。取第二节的可数例子作两个相同的因子，选一个不动超滤子 \\(\\mathcal U\\)。沿等变对角映射 \\(x\\mapsto(x,x)\\) 推送 \\(\\mathcal U\\)，得到一个包含对角线 \\(\\Delta\\) 的不动超滤子，两个边缘均为 \\(\\mathcal U\\)。\n\n再考虑两个边缘均为 \\(\\mathcal U\\) 所要求的柱集、所有 \\((X\\times X)_F\\)，以及 \\(\\Delta^c\\)。任取有限多个条件，可将柱集条件合并为 \\(A\\times B\\)，其中 \\(A,B\\in\\mathcal U\\)，将不动集条件合并为 \\(X_F\\times X_F\\)。集合 \\(A\\cap B\\cap X_F\\) 属于非主超滤子 \\(\\mathcal U\\)，因此无限。从中取两个不同的点就满足这些条件以及 \\(\\Delta^c\\)。由有限交性质延拓得到第二个不动超滤子，边缘相同且包含 \\(\\Delta^c\\)，故两条不动记录不同。\n"
+        }
+      ]
+    }
+  ],
+  "content_claims": [
+    {
+      "label": "空底集及从三元起的稳定分类",
+      "verdict": "correct",
+      "reason": "二元全部允许映射给常值及互补，三块关系使选择族向上和交封闭，超滤推前恢复全部自然性。",
+      "evidence": [
+        {
+          "line_start": 3,
+          "line_end": 20,
+          "utf8_start": 35,
+          "utf8_end": 2495,
+          "quote": "若 \\(X=\\varnothing\\)，则对每个 \\(m\\) 都有 \\(R_m(X)=\\varnothing\\)，因为唯一的映射 \\(X\\to[0]\\) 必须取得一个属于 \\([0]\\) 的记录值。以下先设 \\(X\\ne\\varnothing\\)。此时没有零元测试需要赋值。\n\n- \\(R_1(X)\\) 是单点集。唯一的一元测试的记录值是 \\(0\\)。\n- \\(R_2(X)\\) 对应于所有满足下列条件的子集族 \\(\\mathcal U\\subseteq\\mathcal P(X)\\)：\\(X\\in\\mathcal U\\)，且对每个 \\(A\\subseteq X\\)，\\(A\\) 与 \\(X\\setminus A\\) 恰有一个属于 \\(\\mathcal U\\)。也就是说，每个互补对选一侧，且在 \\(\\{\\varnothing,X\\}\\) 中选 \\(X\\)。\n- 对 \\(3\\le m\\le\\infty\\)，\\(R_m(X)\\) 对应于 \\(X\\) 上的所有超滤子。超滤子 \\(\\mathcal U\\) 对测试 \\(f:X\\to[n]\\) 给出的记录值，是满足 \\(f^{-1}(\\{j\\})\\in\\mathcal U\\) 的唯一 \\(j\\in[n]\\)。\n\n令 \\(\\chi_A:X\\to[2]\\) 在 \\(A\\) 上取 \\(1\\)，在其补集上取 \\(0\\)。当 \\(m\\ge2\\) 时，定义\n\\[\n\\mathcal U_r=\\{A\\subseteq X:r_2(\\chi_A)=1\\}.\n\\]\n从一元测试到二元测试的两个常值映射，强制二元常值测试取相应的常值。交换 \\([2]\\) 的两点则给出互补对条件。反过来，按 \\(\\mathcal U\\) 在 \\(\\chi_A\\) 上赋值即可构造二元记录。\\([2]\\to[2]\\) 的映射只有恒等、交换和两个常值映射，而到 \\([1]\\) 的映射自动满足相容条件，所以构造覆盖了 \\(m=2\\) 的全部要求。\n\n对任意允许的 \\(n\\ge1\\) 和 \\(j\\in[n]\\)，把 \\(f:X\\to[n]\\) 与 \\(\\{j\\}\\) 的指示映射复合，得到\n\\[\nr_n(f)=j\\quad\\Longleftrightarrow\\quad f^{-1}(\\{j\\})\\in\\mathcal U_r\n\\qquad(m\\ge2).\n\\]\n因此 \\(m\\ge3\\) 时，任意三个两两不交且并为 \\(X\\) 的部分恰有一个属于 \\(\\mathcal U_r\\)，允许部分为空。对不交的 \\(A,B\\)，应用于 \\(A,B,X\\setminus(A\\cup B)\\)，可知 \\(A\\cup B\\in\\mathcal U_r\\) 当且仅当 \\(A,B\\) 中有一个属于 \\(\\mathcal U_r\\)。由 \\(B=A\\sqcup(B\\setminus A)\\) 得到向上封闭。若 \\(A,B\\in\\mathcal U_r\\) 而 \\(A\\cap B\\notin\\mathcal U_r\\)，则分拆 \\(A=(A\\cap B)\\sqcup(A\\setminus B)\\) 得到 \\(A\\setminus B\\in\\mathcal U_r\\)，进而 \\(X\\setminus B\\in\\mathcal U_r\\)，矛盾。这证明了 \\(\\mathcal U_r\\) 是超滤子。反过来，超滤子在任何有限分拆中恰选一部分：两部分同时入选会使空集属于超滤子，全部未选则其补集的交会使空集属于超滤子。若 \\(f^{-1}(\\{j\\})\\) 入选，它包含于 \\((a\\circ f)^{-1}(\\{a(j)\\})\\)，所以由向上封闭得到所需的相容性。\n"
+        }
+      ]
+    },
+    {
+      "label": "忘却像和纤维的函子相容",
+      "verdict": "correct",
+      "reason": "层表示直接给每类映射，集合逆像对每层测试与点值相容。",
+      "evidence": [
+        {
+          "line_start": 22,
+          "line_end": 35,
+          "utf8_start": 2496,
+          "utf8_end": 3470,
+          "quote": "对于非空 \\(X\\)，所有 \\(q_{m,k}\\) 的像和纤维如下。\n\n| 情形 | 像和纤维 |\n|---|---|\n| \\(k=1\\) | 像为唯一的一元记录，其纤维是整个 \\(R_m(X)\\) |\n| \\(m=k=2\\) | 恒等映射，各纤维为单点 |\n| \\(m\\ge3,\\ k=2\\) | 像为子集族是超滤子的二元记录，这些记录各有单点纤维，其余纤维为空 |\n| \\(m\\ge k\\ge3\\) | 在超滤子表示下是恒等映射，各纤维为单点 |\n\n这些描述与 \\(h:X\\to Y\\) 相容。在二元记录和超滤子的表示下，\\(R_m(h)\\) 都把 \\(\\mathcal U\\) 送到\n\\[\nh_*\\mathcal U=\\{B\\subseteq Y:h^{-1}(B)\\in\\mathcal U\\}.\n\\]\n这是因为 \\(\\chi_B\\circ h=\\chi_{h^{-1}(B)}\\)。一元层在有记录时是单点之间的映射。按测试逐项代入还给出 \\(q_{m,k}R_m(h)=R_k(h)q_{m,k}\\)、\\(R_m(h)\\eta_{m,X}=\\eta_{m,Y}h\\)，以及 \\(R_m\\) 对恒等和复合的保持。特别地，题设确实定义了左作用。对 \\(m\\ge2\\)，点值记录对应于所有含该点的子集所成的族。\n"
+        }
+      ]
+    },
+    {
+      "label": "有限不动层、延拓及最小阈值",
+      "verdict": "correct",
+      "reason": "偶循环交替等价于翻转二分，传输由稳定子保持选边。C3 多数选择证明二层并不足，任意底集的延拓也按滤子给出。",
+      "evidence": [
+        {
+          "line_start": 39,
+          "line_end": 62,
+          "utf8_start": 3496,
+          "utf8_end": 6159,
+          "quote": "设 \\(X\\) 有限且非空。令 \\(d\\) 为 \\(G\\) 在非平凡无序二分\n\\[\n\\bigl\\{\\{A,X\\setminus A\\}:\\varnothing\\ne A\\subsetneq X\\bigr\\}\n\\]\n上的轨道数。各层的基数及存在判准为\n\\[\n\\begin{aligned}\n|R_1(X)^G|&=1,\\\\\n|R_2(X)^G|&=\n\\begin{cases}\n2^d,&\\text{每个 }g\\in G\\text{ 在 }X\\text{ 上至少有一个奇长度循环},\\\\\n0,&\\text{否则},\n\\end{cases}\\\\\n|R_m(X)^G|&=|X^G|\\qquad(3\\le m\\le\\infty).\n\\end{aligned}\n\\]\n\n二元层的不动性要求选边随 \\(G\\) 的作用相容。如果某个 \\(g\\) 交换一个互补对的两侧，该对无法相容地选边。反过来，若没有这种交换，就可以在每个非平凡二分轨道上给一个代表选边，再用 \\(G\\) 的作用确定其余二分的选边。代表的稳定子保持其两侧，所以结果良定义。每个轨道独立给出两种选择。如果 \\(gA=X\\setminus A\\)，沿 \\(g\\) 的每个循环，属于 \\(A\\) 与属于其补集必须交替出现，故每个循环均为偶长度。若 \\(g\\) 的所有循环均为偶长度，在每个循环上交替取点就得到这样的 \\(A\\)。这证明了二元层判准和基数公式。\n\n三元及以上各层，有限集上的超滤子恰好在单点分拆中选一个 \\(\\{x\\}\\)，因而是 \\(x\\) 的主超滤子。不同点给出不同的主超滤子，且 \\(G\\) 把 \\(x\\) 的主超滤子送到 \\(gx\\) 的主超滤子。因此这些层的不动记录均由 \\(X^G\\) 参数化。\n\n在不动记录之间，限制到一元层把所有记录送到唯一记录，二元层到自身是恒等，三元及以上各层之间在 \\(X^G\\) 的参数下是恒等。三元及以上限制到二元层，把 \\(x\\in X^G\\) 送到在每个二分中选含 \\(x\\) 的一侧的记录，且这些像互不相同。空底集的各层及各不动层均为空，限制映射都是空映射。\n\n因此，有限底集上的一元不动记录有 \\(|X^G|\\) 个完整不动延拓。二元不动记录恰在其选边全部由某个 \\(x\\in X^G\\) 给出时可延拓，且延拓唯一。若二元不动层非空，其每条记录均可延拓的充要条件是 \\(2^d=|X^G|\\)。从三元起，每个有限层的不动记录都唯一延拓，这对任意底集也成立，因为延拓仍由同一超滤子给出，且与群作用相容。对任意底集的二元不动记录，可延拓的充要条件是其子集族为超滤子，延拓仍唯一。一元不动记录在任意非空底集上的延拓存在性由下一节的判准给出。三元是普遍保证延拓的最小层数。循环群 \\(C_3\\) 在三点上的循环作用有一元不动记录，也有在每个二分中选较大一侧的二元不动记录，但它没有不动点，因而没有完整不动记录。\n"
+        }
+      ]
+    },
+    {
+      "label": "固定集准则和精确同胚",
+      "verdict": "correct",
+      "reason": "三色必要性正确覆盖无限循环，固定约束和下闭并闭的布尔理想等价，双向构造与观察开闭基一致。",
+      "evidence": [
+        {
+          "line_start": 66,
+          "line_end": 92,
+          "utf8_start": 6195,
+          "utf8_end": 9727,
+          "quote": "对有限 \\(F\\subseteq G\\)，记\n\\[\nX_F=\\{x\\in X:\\forall g\\in F,\\ gx=x\\},\\qquad X_\\varnothing=X.\n\\]\n完整不动记录恰对应于满足 \\(X_F\\in\\mathcal U\\) 对所有有限 \\(F\\subseteq G\\) 成立的超滤子 \\(\\mathcal U\\)。\n\n为证明这一点，先固定单个 \\(g\\in G\\)，记其不动集为 \\(D\\)。若 \\(D\\in\\mathcal U\\)，则 \\(A\\) 和 \\(g^{-1}A\\) 在 \\(D\\) 上的交相同。一个集合是否属于 \\(\\mathcal U\\) 由它与 \\(D\\) 的交决定，所以 \\(g_*\\mathcal U=\\mathcal U\\)。反过来，\\(X\\setminus D\\) 可以分成三类 \\(C_0,C_1,C_2\\)，使每类都满足 \\(C_j\\cap gC_j=\\varnothing\\)。具体地，在 \\(g\\) 的偶长度循环上交替使用两色，在奇长度循环上先给前偶数个点交替着两色，再给最后一点着第三色。对无限轨道，任选一个起点，按整数次幂的奇偶性使用两色。这些选择可在 ZFC 中同时作出。若 \\(g_*\\mathcal U=\\mathcal U\\) 而 \\(D\\notin\\mathcal U\\)，这三个颜色类中必有一个 \\(C_j\\in\\mathcal U\\)，于是 \\(gC_j\\in\\mathcal U\\)，与二者不交矛盾。对所有 \\(g\\) 应用此论证，再用超滤子对有限交封闭，即得所述分类。\n\n由此得到非空判准\n\\[\nR_\\infty(X)^G\\ne\\varnothing\n\\quad\\Longleftrightarrow\\quad\nX_F\\ne\\varnothing\\quad\\text{对每个有限 }F\\subseteq G.\n\\]\n充分性使用超滤子延拓。这里 \\(X_{F_1}\\cap X_{F_2}=X_{F_1\\cup F_2}\\)，所以右侧给出有限交性质。具有有限交性质的子集族生成真滤子。由 Zorn 引理，它延拓为极大真滤子，因为真滤子链的并仍是真滤子。若一个集合 \\(A\\) 不在极大真滤子中，加入 \\(A\\) 后无法生成真滤子，故原滤子中有集合与 \\(A\\) 不交，从而 \\(X\\setminus A\\) 属于原滤子。这给出所需的超滤子。必要性来自真滤子不含空集。取 \\(F=\\varnothing\\) 已将空底集纳入判准。\n\n### 内在的拓扑分类\n\n令\n\\[\n\\mathcal I=\\{A\\subseteq X:\\exists\\,F\\subseteq G\\text{ 有限},\\ A\\cap X_F=\\varnothing\\}.\n\\]\n这族集合向下封闭，两个成员的并可用它们各自见证的有限集的并作为见证，因此 \\(\\mathcal I\\) 是布尔理想，允许它等于 \\(\\mathcal P(X)\\)。直接由作用构造的空间是布尔代数 \\(\\mathcal P(X)/\\mathcal I\\) 的超滤子空间，其中两个集合的对称差属于 \\(\\mathcal I\\) 时代表同一元素。若商只有一个元素，其超滤子空间为空。\n\n确实，\\(\\mathcal U\\) 包含所有 \\(X_F\\) 当且仅当它与 \\(\\mathcal I\\) 不交。一个方向由 \\(A\\cap X_F=\\varnothing\\) 得到，另一个方向用 \\(X\\setminus X_F\\in\\mathcal I\\)。如果 \\(\\mathcal U\\) 包含所有 \\(X_F\\)，同一等价类的两个代表在某个 \\(X_F\\) 上相同，故它们是否属于 \\(\\mathcal U\\) 一致。于是 \\(\\mathcal U\\) 在商上确定一个超滤子。具体地，成员指示函数保交、补及 \\(0,1\\)，因而通过商给出到二元布尔代数的同态，其取 \\(1\\) 的元素组成该超滤子。反过来，商上的超滤子沿商映射取逆像，得到与 \\(\\mathcal I\\) 不交的超滤子。这两个构造互逆。\n\n在 \\(R_\\infty(X)\\) 的超滤子表示下，记 \\(\\widehat A=\\{\\mathcal U:A\\in\\mathcal U\\}\\)。测试观察 \\(r_n(f)=j\\) 给出的开集恰是 \\(\\widehat{f^{-1}(\\{j\\})}\\)，每个 \\(\\widehat A\\) 又可由二元测试得到。它们对有限交封闭，且 \\(\\widehat A\\) 的补是 \\(\\widehat{X\\setminus A}\\)，故构成既开又闭的基。上述对应把商空间中由类 \\([A]\\) 给出的基本开集送到 \\(\\widehat A\\cap R_\\infty(X)^G\\)，因此是同胚。\n"
+        }
+      ]
+    },
+    {
+      "label": "闭包与有限生成群的充要条件",
+      "verdict": "correct",
+      "reason": "基本邻域刻画实际点闭包，有限固定约束与整体补集的有限交建立反向。任意非有限生成群有合法的余类和反例。",
+      "evidence": [
+        {
+          "line_start": 96,
+          "line_end": 114,
+          "utf8_start": 9758,
+          "utf8_end": 11060,
+          "quote": "在完整记录空间中，\n\\[\n\\overline{\\eta_{\\infty,X}(X^G)}=\\widehat{X^G}.\n\\]\n若 \\(X^G\\in\\mathcal U\\)，则每个含 \\(\\mathcal U\\) 的基本开集 \\(\\widehat A\\) 都满足 \\(A\\cap X^G\\ne\\varnothing\\)，所以含某个不动点的主超滤子。若 \\(X^G\\notin\\mathcal U\\)，则 \\(\\widehat{X\\setminus X^G}\\) 是一个含 \\(\\mathcal U\\) 且避开所有这些主超滤子的开邻域。\n\n因而有精确判准\n\\[\n\\overline{\\eta_{\\infty,X}(X^G)}=R_\\infty(X)^G\n\\quad\\Longleftrightarrow\\quad\n\\exists\\,F\\subseteq G\\text{ 有限，使 }X_F=X^G.\n\\]\n若有这样的 \\(F\\)，所有不动超滤子均含 \\(X^G\\)。反过来，若每个 \\(X_F\\) 都严格包含 \\(X^G\\)，则全体 \\(X_F\\) 与 \\(X\\setminus X^G\\) 一起具有有限交性质。将它们延拓得到的超滤子是不动记录，但不在上述闭包中。\n\n对每个 \\(G\\) 集合都成立这个闭包等式的群，恰好是**有限生成群**。有限生成集 \\(F\\) 对任意作用都满足 \\(X_F=X^G\\)。若 \\(G\\) 非有限生成，取\n\\[\nX=\\coprod_{\\substack{H\\le G\\\\ H\\text{ 有限生成}}}G/H\n\\]\n并在每个左陪集空间上作左平移。每个 \\(H\\) 都是真子群，故这些传递分量没有全局不动点。对任意有限 \\(F\\subseteq G\\)，分量 \\(G/\\langle F\\rangle\\) 的单位陪集属于 \\(X_F\\)，故闭包等式失败。\n"
+        }
+      ]
+    },
+    {
+      "label": "可数坐标翻转例及全部自由参数",
+      "verdict": "correct",
+      "reason": "每个群元只动有限点，每个点可以被移动。两层分拆迫使自由滤子只选一层，再由非主边缘参数化。",
+      "evidence": [
+        {
+          "line_start": 118,
+          "line_end": 128,
+          "utf8_start": 11079,
+          "utf8_end": 12057,
+          "quote": "取 \\(G=\\bigoplus_{i\\in\\mathbb N}\\mathbb Z/2\\mathbb Z\\) 和 \\(X=\\mathbb N\\times[2]\\)，令\n\\[\ng(i,b)=(i,b+g_i\\bmod 2).\n\\]\n群元素是有限支撑的二元序列，所以群和底集都可数。第 \\(i\\) 个坐标的生成元交换 \\(\\{i\\}\\times[2]\\) 的两点，故 \\(X^G=\\varnothing\\)。另一方面，每个群元素只移动有限多个点，故其不动集属于每个非主超滤子。任一主超滤子对应的点都被某个生成元移动。因此全部不动记录恰由 \\(X\\) 上的非主超滤子给出，其中至少有一个，因为余有限集合族有有限交性质。\n\n也可将每条记录唯一参数化为 \\(b\\in[2]\\) 和 \\(\\mathbb N\\) 上的一个非主超滤子 \\(\\mathcal V\\)。超滤子在两层 \\(\\mathbb N\\times\\{0\\}\\) 和 \\(\\mathbb N\\times\\{1\\}\\) 中恰选一层，在所选层上经第一坐标得到 \\(\\mathcal V\\)。反过来，这两个参数给出的 \\(r_n(f)\\) 是满足\n\\[\n\\{i\\in\\mathbb N:f(i,b)=j\\}\\in\\mathcal V\n\\]\n的唯一 \\(j\\in[n]\\)。\n"
+        }
+      ]
+    },
+    {
+      "label": "任意指标族满射并覆盖空界",
+      "verdict": "correct",
+      "reason": "选择公理给每次有限交的真实全坐标点，扩张后保持两类约束。空目标及空指标分别验证。",
+      "evidence": [
+        {
+          "line_start": 132,
+          "line_end": 142,
+          "utf8_start": 12078,
+          "utf8_end": 13514,
+          "quote": "令 \\(Z=\\prod_{i\\in I}X_i\\)。各投影 \\(p_i\\) 等变，由 \\(R_\\infty\\) 对复合的相容性，\\(R_\\infty(p_i)\\) 把不动记录送到不动记录，故 \\(\\Pi_{(X_i)}\\) 良定义。在第 \\(i\\) 个分量观察测试 \\(f:X_i\\to[n]\\)，其拉回正是在 \\(Z\\) 上观察 \\(f\\circ p_i\\)。因此各分量连续，比较映射对目标的乘积拓扑连续。\n\n**比较映射对任意群及任意集合指标族都满射。** 给定目标中的一族不动超滤子 \\((\\mathcal U_i)_{i\\in I}\\)，考虑 \\(Z\\) 上的集合族\n\\[\n\\{p_i^{-1}(A):i\\in I,\\ A\\in\\mathcal U_i\\}\n\\ \\cup\\\n\\{Z_F:F\\subseteq G\\text{ 有限}\\}.\n\\]\n要检验有限交，可把其中有限多个不动集条件合并成一个 \\(Z_F\\)，并把同一坐标的有限多个条件交成 \\(B_i\\in\\mathcal U_i\\)，未受约束的坐标取 \\(B_i=X_i\\)。每个 \\(B_i\\cap (X_i)_F\\) 属于 \\(\\mathcal U_i\\)，所以非空。由选择公理，可以在所有坐标同时取点，得到这个有限交的一个元素。故该族可延拓为 \\(Z\\) 上的超滤子 \\(\\mathcal W\\)。它包含所有 \\(Z_F\\)，所以不动。其第 \\(i\\) 个投影包含 \\(\\mathcal U_i\\)，而两个真超滤子之间的包含必为等号，因此 \\(\\mathcal W\\) 给出所需原像。\n\n若目标为空，良定义性已推出源也为空。特别地，有空因子时两边均为空。若 \\(I=\\varnothing\\)，源是单点集上的完整不动记录空间，目标也是单点，两者之间是双射。\n"
+        }
+      ]
+    },
+    {
+      "label": "二因子单射的最优范围",
+      "verdict": "correct",
+      "reason": "有限主边缘控制切片，双无限时用无限逆像与对角补给第二提升。两边无固有点的例同时加入所有产品固定集。",
+      "evidence": [
+        {
+          "line_start": 146,
+          "line_end": 164,
+          "utf8_start": 13545,
+          "utf8_end": 16041,
+          "quote": "若 \\(X,Y\\) 中至少一个有限，则对任意群作用，两因子的比较映射为双射。只需证明单射。空因子已处理，设 \\(X\\) 非空且有限。对积上的超滤子 \\(\\mathcal W\\)，其 \\(X\\) 边缘是某个 \\(x\\) 的主超滤子，所以 \\(\\{x\\}\\times Y\\in\\mathcal W\\)。若其 \\(Y\\) 边缘为 \\(\\mathcal V\\)，则对每个 \\(D\\subseteq X\\times Y\\)，\n\\[\nD\\in\\mathcal W\n\\quad\\Longleftrightarrow\\quad\n\\{y:(x,y)\\in D\\}\\in\\mathcal V.\n\\]\n这是因为 \\(D\\) 与右侧集合在 \\(Y\\) 投影下的逆像，在 \\(\\{x\\}\\times Y\\) 上相同。故两个边缘唯一决定 \\(\\mathcal W\\)。有限因子为 \\(Y\\) 时交换坐标即可。\n\n对于平凡群，**单射的充要条件是至少一个因子有限**。为证明必要性，设 \\(X,Y\\) 均无限。由 ZFC 取单射 \\(a:\\mathbb N\\to X\\) 和 \\(b:\\mathbb N\\to Y\\)，再取 \\(\\mathbb N\\) 上的非主超滤子 \\(\\mathcal V\\)。令 \\(\\mathcal U_X=a_*\\mathcal V,\\ \\mathcal U_Y=b_*\\mathcal V\\)，并令\n\\[\nD=\\{(a(i),b(i)):i\\in\\mathbb N\\}.\n\\]\n沿 \\(i\\mapsto(a(i),b(i))\\) 推送 \\(\\mathcal V\\)，得到一个含 \\(D\\) 且具有这两个边缘的超滤子。另一方面，对任意 \\(A\\in\\mathcal U_X,\\ B\\in\\mathcal U_Y\\)，两个逆像 \\(a^{-1}(A),b^{-1}(B)\\) 都无限，可以分别取不同的 \\(i,j\\)，使 \\((a(i),b(j))\\in(A\\times B)\\setminus D\\)。所以边缘给出的全部柱集与 \\(D^c\\) 一起具有有限交性质，其中同一坐标的有限多个条件可先取交。延拓得到另一个超滤子，它有同样的两个边缘并含 \\(D^c\\)。这两个超滤子在平凡作用下都不动，证毕。\n\n### 两个因子都没有不动点\n\n命题“若 \\(X^G=Y^G=\\varnothing\\)，则比较映射为单射”**不成立**。取第二节的可数例子作两个相同的因子，选一个不动超滤子 \\(\\mathcal U\\)。沿等变对角映射 \\(x\\mapsto(x,x)\\) 推送 \\(\\mathcal U\\)，得到一个包含对角线 \\(\\Delta\\) 的不动超滤子，两个边缘均为 \\(\\mathcal U\\)。\n\n再考虑两个边缘均为 \\(\\mathcal U\\) 所要求的柱集、所有 \\((X\\times X)_F\\)，以及 \\(\\Delta^c\\)。任取有限多个条件，可将柱集条件合并为 \\(A\\times B\\)，其中 \\(A,B\\in\\mathcal U\\)，将不动集条件合并为 \\(X_F\\times X_F\\)。集合 \\(A\\cap B\\cap X_F\\) 属于非主超滤子 \\(\\mathcal U\\)，因此无限。从中取两个不同的点就满足这些条件以及 \\(\\Delta^c\\)。由有限交性质延拓得到第二个不动超滤子，边缘相同且包含 \\(\\Delta^c\\)，故两条不动记录不同。\n"
+        }
+      ]
+    },
+    {
+      "label": "固定群的普遍无实际点单射判准",
+      "verdict": "correct",
+      "reason": "有限生成时定义域、值域均空。无有限生成时余类行动有一自由固定滤子，同样两种固定耦合给不单射。",
+      "evidence": [
+        {
+          "line_start": 166,
+          "line_end": 166,
+          "utf8_start": 16042,
+          "utf8_end": 16395,
+          "quote": "进一步，若固定 \\(G\\) 并要求此命题对它的所有作用成立，则其充要条件也是 \\(G\\) 有限生成。有限生成时，无全局不动点的因子没有完整不动记录。非有限生成时，第二节的陪集并作用有不动超滤子而无全局不动点，故该超滤子必为非主。上面的对角线构造同样适用。"
+        }
+      ]
+    }
+  ],
+  "claim_findings": [],
+  "extra_findings": [],
+  "profile_observations": {
+    "proof": "用允许的三元分拆生成超滤子结构，以三着色给不动必要性。固定耦合同时处理实际固定集与边缘，附带的有限生成判准衔接两个已证明机制。",
+    "fidelity": "保留 ZFC 的任意集合与群作用，在空底集、有限层、任意乘积与实际固定点之间保持原量词和对象。观察拓扑通过开闭基精确恢复。"
+  },
+  "schema": "math-gauge.written-response-support/v1",
+  "case_id": "MG-GR023",
+  "response_sha256": "89a4403881b5032486c2e20d8dc747498004198bfd0b70e2080370878a7a7389",
+  "reviewer": "GPT-6.2 Sol Max; independent Math Gauge AI reviewer",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "original_contract_kind": "written_proof",
+  "receipt_binding": {
+    "model_id": "gpt-6.2-sol/xhigh",
+    "native_prompt": {
+      "path": "sessions/MG-GR023/physical-1/input/task.md",
+      "bytes": 2947,
+      "sha256": "6e3338789577744ef8f6279c1096237c6360cada17fb80f425856f499c809555"
+    },
+    "physical_attempt": 1,
+    "selection": "first_qualified_normal_native_final_by_physical_attempt",
+    "native_final": {
+      "path": "sessions/MG-GR023/physical-1/output/response.md",
+      "bytes": 16395,
+      "sha256": "89a4403881b5032486c2e20d8dc747498004198bfd0b70e2080370878a7a7389"
+    },
+    "runner_response": {
+      "path": "runner-runs/MG-GR023/physical-1/MG-GR023/response.md",
+      "bytes": 16395,
+      "sha256": "89a4403881b5032486c2e20d8dc747498004198bfd0b70e2080370878a7a7389"
+    },
+    "source_seal": {
+      "path": "sessions/MG-GR023/physical-1/runtime/seal.json",
+      "bytes": 848,
+      "sha256": "7c1811cb4cf8266c517bd51b1c8b90adb5b5fa66e9cf25a55929a94199c81567"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-GR023/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 829,
+      "sha256": "5a57063f1ff84bba4fdd35af30739a0966c9f634a5ec586ebd5e9519c06d8935"
+    },
+    "native_command_probe": {
+      "path": "sessions/MG-GR023/physical-1/runtime/native-command-probe.json",
+      "bytes": 2541,
+      "sha256": "89e6e409f1e7c6ab03d1db8664a19a479243148de6f119b6af521907e0cf30d8"
+    },
+    "execution": {
+      "path": "sessions/MG-GR023/physical-1/runtime/execution.json",
+      "bytes": 6506,
+      "sha256": "de3340b99d366016b0ecb059c3a59d97c1ae87c7f48a9a42114c63d1b5699e97"
+    },
+    "native_events": {
+      "path": "sessions/MG-GR023/physical-1/output/events.ndjson",
+      "bytes": 18642,
+      "sha256": "8b946669c880b97727e6740625cdf299ac88c45b1b01bb960b97eaab17a45a49"
+    },
+    "collection": {
+      "path": "sessions/MG-GR023/physical-1/runtime/collection.json",
+      "bytes": 9144,
+      "sha256": "df5d0ab06817a51b1f0f4fbc80ded620259040db03f9e30b795d5c934399645e"
+    },
+    "first_terminal_index_one_based": 7,
+    "terminal_prefix_bytes": 18642,
+    "terminal_prefix_sha256": "8b946669c880b97727e6740625cdf299ac88c45b1b01bb960b97eaab17a45a49",
+    "native_final_item": "item_3",
+    "observed_backend_model": null,
+    "observed_backend_effort": null,
+    "normal_delivery_and_seal_verified": true
+  },
+  "source_bindings": {
+    "acquisition_plan_sha256": "abf20cd5dc37b9c605451371af65b6f15ac08c6e3ee2c199af62e8a88f213c23",
+    "native_final_sha256": "89a4403881b5032486c2e20d8dc747498004198bfd0b70e2080370878a7a7389",
+    "collection_sha256": "df5d0ab06817a51b1f0f4fbc80ded620259040db03f9e30b795d5c934399645e",
+    "physical_attempt": 1,
+    "task_sha256": "6e3338789577744ef8f6279c1096237c6360cada17fb80f425856f499c809555",
+    "rubric_sha256": "8dd1536da3c81095ce6db0973ef0b79206c4526141246724e3613fc0da56ef49",
+    "reference_sha256": "819d99c4e0e7315a6010f782b352c260f7edc847d6136d57e9a9713fd7262240",
+    "terminal_source_observation_sha256": "5a57063f1ff84bba4fdd35af30739a0966c9f634a5ec586ebd5e9519c06d8935",
+    "source_seal_sha256": "7c1811cb4cf8266c517bd51b1c8b90adb5b5fa66e9cf25a55929a94199c81567"
+  }
+}

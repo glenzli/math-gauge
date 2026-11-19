@@ -1,0 +1,123 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "sol-6.1-max",
+  "record_id": "20261109",
+  "source_record": {
+    "path": "results/v0.6.0/sol-6.1-max/20261109/record.json",
+    "bytes": 123035,
+    "sha256": "1a26c1d603e5a5368984af1e45fec2aab3e46995888b6801e5aeb3c94f1df6a2"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "40635e2d789a400b6bcc012536476a135de17beee5371e6f34d46c832892ae7b",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 12,
+    "total_groups": 12,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "e5ef1b6f5d7bfcd8f74621dcc1db052f0ba686d02a54764e91e3bbc895315782",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "已完整覆盖所有源绑定交付：response 9303 bytes / SHA256 e5ef1b6f5d7bfcd8f74621dcc1db052f0ba686d02a54764e91e3bbc895315782。已确认每文件结尾；重复 final/附稿仅算同一数学结果。独立枚举后核对旧审全部候选；原题completion/strict与原response SHA不变。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "非线性距离模量的统一表示",
+          "statement": "sup距离模量总有定义并与线性控制矩阵精确对应。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "sup定义保证实际点对上界，控制矩阵等价由单调性和代入r=Δ(x,y)得到；没有另证实质结构定理，不以价值标签作为排除依据。",
+          "proof_review": "sup定义保证实际点对上界，控制矩阵等价由单调性和代入r=Δ(x,y)得到；没有另证实质结构定理，不以价值标签作为排除依据。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "sup定义保证实际点对上界，控制矩阵等价由单调性和代入r=Δ(x,y)得到；没有另证实质结构定理，不以价值标签作为排除依据。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "e5ef1b6f5d7bfcd8f74621dcc1db052f0ba686d02a54764e91e3bbc895315782",
+              "start_byte": 8116,
+              "end_byte": 9303,
+              "quote": "如果“统一表达”要求**每个算子都具有一个上界对象**，可以进一步采用非线性距离模量：\n\\[\n\\Omega_{\\phi,i}(r)\n:=\n\\sup\\{d_i(\\phi x,\\phi y):\nx,y\\in S_\\phi,\\ \\Delta(x,y)\\le r\\},\n\\qquad r\\in E^I,\n\\tag{13}\n\\]\n约定 \\(\\sup\\varnothing=0\\)。它对所有算子都有定义、按分量单调，并且\n\\[\n\\Delta(\\phi x,\\phi y)\n\\le\\Omega_\\phi(\\Delta(x,y)).\n\\tag{14}\n\\]\n上界矩阵正好对应它的线性控制：\n\\[\nU\\text{ 满足 (1)}\n\\iff\n\\Omega_\\phi(r)\\le Ur\\quad(\\forall r\\in E^I).\n\\tag{15}\n\\]\n这里允许 \\(\\Omega_\\phi(0)\\ne0\\)，因此也能描述破坏零距离相容性的算子。\n\n最后，若希望连未定义行为也纳入估计，可以把上述量词范围从 \\(S_\\phi^2\\) 改为 \\(\\mathcal X^2\\)。但这会显著加强条件：只要存在 \\(x\\ne\\bot\\) 满足 \\(\\phi x=\\bot\\)，点对 \\((x,\\bot)\\) 就满足\n\\[\n\\Delta(x,\\bot)=(\\infty,\\ldots,\\infty),\n\\qquad\n\\Delta(\\phi x,\\phi\\bot)=0.\n\\]\n任何非零下界矩阵都会因此产生矛盾，所以全空间版本的下界矩阵只能是零矩阵。有效域版本估计已定义部分的距离行为；全空间版本还对算子的定义与未定义结构施加约束，二者应明确区分。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "基本矩阵/阈值传递与联合阈值例",
+          "statement": "矩阵复合、正下界保区分、联合零化阈值和逐分量阈值的差异。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "上下控制及M5输出不可区分框架所需性质；阈值传递对参与行做min是条件串接，仍为直接应用。",
+          "proof_review": "上下控制及M5输出不可区分框架所需性质；阈值传递对参与行做min是条件串接，仍为直接应用。",
+          "nontrivial_step": "没有超出原义务的独立机制，或仅为直接定义/代入。",
+          "value_rationale": "本项帮助完成原题或交代边界，其作用不构成另一个额外成果组。",
+          "reason": "上下控制及M5输出不可区分框架所需性质；阈值传递对参与行做min是条件串接，仍为直接应用。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "e5ef1b6f5d7bfcd8f74621dcc1db052f0ba686d02a54764e91e3bbc895315782",
+              "start_byte": 1999,
+              "end_byte": 3041,
+              "quote": "这些定义与算子复合相容。事实上，\n\\[\n\\operatorname{dom}(\\psi\\circ\\phi)\n=\\{x\\in S_\\phi:\\phi x\\in S_\\psi\\}.\n\\]\n若 \\((L_\\phi,U_\\phi)\\)、\\((L_\\psi,U_\\psi)\\) 分别给出双边估计，则\n\\[\n\\boxed{\\quad\n(L_\\psi L_\\phi,\\;U_\\psi U_\\phi)\n\\text{ 是 }\\psi\\circ\\phi\\text{ 的一对可容许矩阵。}\n\\quad}\n\\tag{4}\n\\]\n证明只需对复合的有效域内点对使用单调性：\n\\[\n\\begin{aligned}\nL_\\psi L_\\phi\\Delta(x,y)\n&\\le L_\\psi\\Delta(\\phi x,\\phi y)\\\\\n&\\le\\Delta(\\psi\\phi x,\\psi\\phi y)\\\\\n&\\le U_\\psi\\Delta(\\phi x,\\phi y)\\\\\n&\\le U_\\psi U_\\phi\\Delta(x,y).\n\\end{aligned}\n\\]\n\n下界还刻画了哪些输入差异不允许消失。由 (2)，\n\\[\nd_i(\\phi x,\\phi y)=0,\\quad l_{ij}>0\n\\quad\\Longrightarrow\\quad d_j(x,y)=0.\n\\tag{5}\n\\]\n因此，若 \\(L\\) 的每一列都至少有一个正元素，则\n\\[\n\\Delta(\\phi x,\\phi y)=0\\Longrightarrow\\Delta(x,y)=0.\n\\tag{6}\n\\]\n若同时存在上界矩阵，\\(\\phi\\) 就在有效域的零距离商空间上诱导单射；若规范族还具有分离性，则 \\(\\phi|_{S_\\phi}\\) 本身是单射。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

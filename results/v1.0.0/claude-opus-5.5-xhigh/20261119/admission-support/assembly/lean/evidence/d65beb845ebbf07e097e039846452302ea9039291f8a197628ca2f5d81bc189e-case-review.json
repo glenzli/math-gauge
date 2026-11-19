@@ -1,0 +1,1437 @@
+{
+  "schema": "math-gauge.independent-lean-case-review/v1",
+  "reviewer_kind": "ai",
+  "review_model": "gpt-6.1-sol",
+  "review_reasoning_effort": "max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "new_candidate_calls": 0,
+  "candidate_source_repaired": false,
+  "canonical_repositories_modified": false,
+  "case_id": "LCH02",
+  "slot_id": "LCH02",
+  "source_bindings": {
+    "identity": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/source-identity.json",
+      "bytes": 3622,
+      "sha256": "dc3962e10343e4a3412204c61de40e62ef6b2d46dff7e7310bb9dc1a59a662bd"
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/LCH02-A1/attempt-1/response.md",
+      "bytes": 53520,
+      "sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/LCH02-A1/attempt-1/request.json",
+      "bytes": 68001,
+      "sha256": "b887af5a5c1020409cc3027ea7d5277e00b2f9e626973820f4d80113329f34b5"
+    }
+  },
+  "self_assessment": {
+    "original_prose": "All 20 obligations are formalized. `lake build` succeeds with no errors or warnings, and the files contain no `sorry`, `admit` or new axioms. `#print axioms` on every main declaration shows only `propext`, `Classical.choice` and `Quot.sound` (some use only `propext` and `Quot.sound`).\n\nTo build, I added two library entries (`LCH02` and `Main`) and a `defaultTargets` line to `lakefile.toml`. The original `require` and `formal_oet` entries are unchanged, and I did not touch `formal_oet/`.\n\nThree representation choices to know about:\n- **General distance family:** the definitions and theorems take any finite family `d : I → X → X → ENNReal`. None of the results need the pseudo-metric axioms or a nonempty `I`, so they apply to every gauge space as a special case.\n- **Domain conditions inside the predicates:** the restricted Lip predicate includes `U ⊆ dom ϕ`. The co-Lip predicate includes both `U.Nonempty` and `U ⊆ dom ϕ`.\n- **Index shift:** step m (1-based) is `Fin` index m−1. A product of n ≥ 1 matrices is written as n = N+1, and the intermediate index sequence is `Fin N → I`.",
+    "claims_complete": true
+  },
+  "claim_findings": [],
+  "extra_assertion_review": {
+    "scope": "Entire original delivered prose, code comments, mathematical side claims and self-assessment, separately from kernel success.",
+    "findings": [],
+    "checks": [
+      "Prose self-assessment and explicit completion/verification statements reviewed with the mathematical source, not keyword confidence.",
+      "Original numeric exercise claims independently checked against the actual defined maps and gauges.",
+      "Generalized definitions are read only in the original admissible mathematical context; no new source obligation is imposed for optional wrappers."
+    ]
+  },
+  "kind": "formalization",
+  "judgment": "complete",
+  "obligations": [
+    {
+      "id": "CH02-D01",
+      "title": "全域/受限Lip矩阵谓词与证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Global and restricted certificate families use the required all-pair/all-output inequalities and explicit subset-domain condition, with equality at dom proved.",
+      "candidate_representation": "对象：规范族 {d_i}_{i∈I} 为 d : I → X → X → ENNReal（[Fintype I]）；算子 ϕ ∈ 𝒳_op 为前置 Operator X bot；非负扩展矩阵 L 为 Matrix I I ENNReal（条目取值 [0,+∞]，0·∞=0 由 ENNReal 算术给出）。IsLipMatrix d ϕ L：∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j, d j (ϕ x)(ϕ y) ≤ ∑ i, L_{i→j} · d i x y；lipSet d ϕ = 𝓛(ϕ)。受限：IsLipMatrixOn d ϕ U L 把原文的前置条件 U ⊆ dom ϕ 作为合取项，再加上对 x,y ∈ U 的同一不等式；lipSetOn d ϕ U = 𝓛(ϕ)|_U。lipSet_eq_lipSetOn_dom 证明 𝓛(ϕ) = 𝓛(ϕ)|_{dom ϕ}。证书族是集合（Set），不预设存在极值矩阵。定义对任意距离族成立，因此特别适用于扩展规范空间。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.IsLipMatrix",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 117,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def IsLipMatrix (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : Matrix I I ENNReal) :\n    Prop :=\n  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,\n    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, arrowEntry L i j * d i x y",
+          "response_byte_start": 7697,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSet",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 123,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def lipSet (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (Matrix I I ENNReal) :=\n  {L | IsLipMatrix d ϕ L}",
+          "response_byte_start": 7977,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.IsLipMatrixOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 127,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def IsLipMatrixOn (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)\n    (L : Matrix I I ENNReal) : Prop :=\n  U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i, arrowEntry L i j * d i x y",
+          "response_byte_start": 8221,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 133,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def lipSetOn (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :\n    Set (Matrix I I ENNReal) :=\n  {L | IsLipMatrixOn d ϕ U L}",
+          "response_byte_start": 8525,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSet_eq_lipSetOn_dom",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 138,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSet_eq_lipSetOn_dom (d : I → X → X → ENNReal) (ϕ : Operator X bot) :\n    lipSet d ϕ = lipSetOn d ϕ (dom ϕ) := by\n  ext L\n  exact ⟨fun h => ⟨subset_rfl, h⟩, fun h => h.2⟩",
+          "response_byte_start": 8737,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/0"
+      },
+      "source_anchor": "oet-af85899693cc8750",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D02",
+      "title": "含非空条件的受限co-Lip矩阵及证书族",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Restricted co-Lip membership explicitly includes a nonempty evaluation domain and the complete lower inequalities.",
+      "candidate_representation": "IsCoLipMatrixOn d ϕ U K := U.Nonempty ∧ U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j, ∑ i, K_{i→j} · d i x y ≤ d j (ϕ x)(ϕ y)。原文的非空条件 U ≠ ∅ 和 U ⊆ dom ϕ 都写进了谓词。coLipSetOn d ϕ U = 𝒦(ϕ)|_U（下界证书族，不预设极值矩阵）。nonempty_of_mem_coLipSetOn 说明凡出现 𝒦(ϕ)|_U 的成员，U 必非空。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.IsCoLipMatrixOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 148,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def IsCoLipMatrixOn (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)\n    (K : Matrix I I ENNReal) : Prop :=\n  U.Nonempty ∧ U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,\n    ∑ i, arrowEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)",
+          "response_byte_start": 9243,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 154,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def coLipSetOn (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :\n    Set (Matrix I I ENNReal) :=\n  {K | IsCoLipMatrixOn d ϕ U K}",
+          "response_byte_start": 9567,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.nonempty_of_mem_coLipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 159,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem nonempty_of_mem_coLipSetOn {d : I → X → X → ENNReal} {ϕ : Operator X bot}\n    {U : Set X} {K : Matrix I I ENNReal} (hK : K ∈ coLipSetOn d ϕ U) : U.Nonempty :=\n  hK.1",
+          "response_byte_start": 9767,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/1"
+      },
+      "source_anchor": "oet-af85899693cc8750",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D03",
+      "title": "输入/输出矩阵指标约定与乘法",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "arrowEntry M i j=M j i and arrowEntry_mul has the required output-row convention and reversed application order.",
+      "candidate_representation": "arrowEntry M i j := M j i，即 L_{i→j} 位于第 j 行（输出分量）、第 i 列（输入分量），对应 (L)_{ji} = L_{i→j}。矩阵乘法用 Mathlib 的 Matrix 乘法；arrowEntry_mul：(A·B)_{i→j} = ∑_k A_{k→j} B_{i→k}，与原文的 (L^{(2)}·L^{(1)})_{i→j} = ∑_k L^{(2)}_{k→j} L^{(1)}_{i→k} 一致。arrowEntry_fin_three 在 I = Fin 3（对应 {1,2,3}，指标平移 1）上验证原文 3×3 示例的行列布局，例如 L_{2→1} 位于第一行第二列。",
+      "candidate_dependencies": [],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.arrowEntry",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 30,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def arrowEntry (M : Matrix I I ENNReal) (i j : I) : ENNReal := M j i",
+          "response_byte_start": 3801,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.matrix_apply_eq_arrowEntry",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 33,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem matrix_apply_eq_arrowEntry (M : Matrix I I ENNReal) (i j : I) :\n    M j i = arrowEntry M i j := rfl",
+          "response_byte_start": 3952,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.arrowEntry_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 37,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem arrowEntry_mul [Fintype I] (A B : Matrix I I ENNReal) (i j : I) :\n    arrowEntry (A * B) i j = ∑ k, arrowEntry A k j * arrowEntry B i k := by\n  simp [arrowEntry, Matrix.mul_apply]",
+          "response_byte_start": 4151,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.arrowEntry_fin_three",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 56,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem arrowEntry_fin_three (a₁₁ a₂₁ a₃₁ a₁₂ a₂₂ a₃₂ a₁₃ a₂₃ a₃₃ : ENNReal) :\n    let L : Matrix (Fin 3) (Fin 3) ENNReal :=\n      !![a₁₁, a₂₁, a₃₁; a₁₂, a₂₂, a₃₂; a₁₃, a₂₃, a₃₃]\n    arrowEntry L 1 0 = a₂₁ ∧ arrowEntry L 0 1 = a₁₂ ∧ arrowEntry L 2 0 = a₃₁ ∧\n      arrowEntry L 0 2 = a₁₃ := by\n  simp [arrowEntry]",
+          "response_byte_start": 5112,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/2"
+      },
+      "source_anchor": "oet-af85899693cc8750",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D04",
+      "title": "单位矩阵、空乘积及有序非空乘积",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The recursive product left-multiplies the last factor; empty and singleton products and reversed-list correspondence are proved.",
+      "candidate_representation": "单位矩阵为 (1 : Matrix I I ENNReal)，arrowEntry_one 给出 𝐈_{i→j} = [i=j]。有序乘积 finOrderedProd 定义在任意幺半群上：对 M : Fin n → α，finOrderedProd M = M^{(n)}·⋯·M^{(1)}，其中 M^{(m)} = M (m−1)。n = 0 时为空乘积 1（finOrderedProd_zero；矩阵情形见 finOrderedProd_matrix_zero，即空乘积 = 𝐈）。非空乘积按 M^{(n+1)}·(M^{(n)}⋯M^{(1)}) 递推（finOrderedProd_succ），也有另一侧递推（finOrderedProd_succ'）；单项乘积为 M^{(1)}（finOrderedProd_one）。finOrderedProd_eq_list_prod 证明它等于列表 [M^{(n)},…,M^{(1)}] 的乘积。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.arrowEntry_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 42,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem arrowEntry_one [DecidableEq I] (i j : I) :\n    arrowEntry (1 : Matrix I I ENNReal) i j = if i = j then 1 else 0 := by\n  by_cases h : i = j\n  · subst h\n    simp [arrowEntry]\n  · simp [arrowEntry, h, Matrix.one_apply_ne (Ne.symm h)]",
+          "response_byte_start": 4424,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.sum_arrowEntry_one_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 50,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem sum_arrowEntry_one_mul [Fintype I] [DecidableEq I] (f : I → ENNReal) (j : I) :\n    ∑ i, arrowEntry (1 : Matrix I I ENNReal) i j * f i = f j := by\n  simp [arrowEntry_one, ite_mul]",
+          "response_byte_start": 4736,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 73,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def finOrderedProd : {n : ℕ} → (Fin n → α) → α\n  | 0, _ => 1\n  | n + 1, M => M (Fin.last n) * finOrderedProd (fun m : Fin n => M m.castSucc)",
+          "response_byte_start": 5803,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 78,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_zero (M : Fin 0 → α) : finOrderedProd M = 1 := rfl",
+          "response_byte_start": 5995,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_succ",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 81,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_succ {n : ℕ} (M : Fin (n + 1) → α) :\n    finOrderedProd M = M (Fin.last n) * finOrderedProd (fun m : Fin n => M m.castSucc) := rfl",
+          "response_byte_start": 6168,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 85,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_one (M : Fin 1 → α) : finOrderedProd M = M 0 := by\n  simp [finOrderedProd_succ]",
+          "response_byte_start": 6374,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_succ'",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 98,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_succ' {n : ℕ} (M : Fin (n + 1) → α) :\n    finOrderedProd M = finOrderedProd (fun m : Fin n => M m.succ) * M 0 := by\n  rw [finOrderedProd_eq_list_prod, finOrderedProd_eq_list_prod, List.ofFn_succ]\n  simp",
+          "response_byte_start": 6946,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_eq_list_prod",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 89,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_eq_list_prod {n : ℕ} (M : Fin n → α) :\n    finOrderedProd M = (List.ofFn M).reverse.prod := by\n  induction n with\n  | zero => simp\n  | succ n ih =>\n    rw [finOrderedProd_succ, ih, List.ofFn_succ', List.concat_eq_append, List.reverse_append]\n    simp",
+          "response_byte_start": 6565,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_matrix_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 106,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_matrix_zero {I : Type} [Fintype I] [DecidableEq I]\n    (M : Fin 0 → Matrix I I ENNReal) : finOrderedProd M = 1 := rfl",
+          "response_byte_start": 7274,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/3"
+      },
+      "source_anchor": "oet-11006ddd8c43bfec",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D05",
+      "title": "实际中间像域与链表示对应",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "chainDomain is the actual recursively generated image, and partial/full image identities and every step-domain inclusion are proved from the composite-domain assumption.",
+      "candidate_representation": "链 ϕ_1,…,ϕ_k 表示为 ϕ : Fin k → Operator X bot（ϕ_m = ϕ (m−1)）。c_k = ϕ_k∘⋯∘ϕ_1 表示为算子幺半群中的 finOrderedProd ϕ：c_0 = id（finOrderedProd_operator_zero），c_{k+1} = ϕ_{k+1}∘c_k（finOrderedProd_operator_func_succ），并且它等于前置模块的 OperatorChain [ϕ_k,…,ϕ_1]（finOrderedProd_eq_operatorChain，经 operator_chain_eq_prod）。实际中间像域 chainDomain ϕ U₁ : Fin (k+1) → Set X 按原文递推定义：U_1 = U₁（chainDomain_zero），U_{m+1} = ϕ_m(U_m)（chainDomain_succ）；chainDomain ϕ U₁ m 表示 U_{m+1}，第 m 步的输入域为 chainDomain ϕ U₁ m.castSucc。另外证明：U_{m+1} = c_m(U₁)（chainDomain_eq_image_partial），U_{k+1} = c_k(U₁)（chainDomain_last），截去最后一步不改变前面的像域（chainDomain_init），以及由 U₁ ⊆ dom c_k 逐步推出 U_m ⊆ dom ϕ_m（chainDomain_subset_dom）。",
+      "candidate_dependencies": [
+        "CH02-D04"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 354,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def chainDomain {k : ℕ} (ϕ : Fin k → Operator X bot) (U₁ : Set X) : Fin (k + 1) → Set X :=\n  Fin.induction U₁ (fun m Um => operator_image (ϕ m) Um)",
+          "response_byte_start": 20554,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 357,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainDomain_zero {k : ℕ} (ϕ : Fin k → Operator X bot) (U₁ : Set X) :\n    chainDomain ϕ U₁ 0 = U₁ := by\n  simp [chainDomain]",
+          "response_byte_start": 20723,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain_succ",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 361,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainDomain_succ {k : ℕ} (ϕ : Fin k → Operator X bot) (U₁ : Set X) (m : Fin k) :\n    chainDomain ϕ U₁ m.succ = operator_image (ϕ m) (chainDomain ϕ U₁ m.castSucc) := by\n  simp [chainDomain]",
+          "response_byte_start": 20868,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain_init",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 366,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainDomain_init {k : ℕ} (ϕ : Fin (k + 1) → Operator X bot) (U₁ : Set X)\n    (m : Fin (k + 1)) :\n    chainDomain (fun i : Fin k => ϕ i.castSucc) U₁ m = chainDomain ϕ U₁ m.castSucc := by\n  induction m using Fin.induction with\n  | zero => simp\n  | succ m ih =>\n    rw [chainDomain_succ, ih, ← Fin.succ_castSucc, chainDomain_succ]",
+          "response_byte_start": 21148,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain_last",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 375,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainDomain_last {k : ℕ} (ϕ : Fin k → Operator X bot) (U₁ : Set X) :\n    chainDomain ϕ U₁ (Fin.last k) = operator_image (finOrderedProd ϕ) U₁ := by\n  induction k with\n  | zero =>\n    show U₁ = id '' U₁\n    rw [Set.image_id]\n  | succ k ih =>\n    rw [← Fin.succ_last, chainDomain_succ, ← chainDomain_init, ih]\n    simp only [operator_image, finOrderedProd_operator_func_succ, Set.image_comp]",
+          "response_byte_start": 21565,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain_eq_image_partial",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 386,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainDomain_eq_image_partial {k : ℕ} (ϕ : Fin k → Operator X bot) (U₁ : Set X)\n    (m : Fin (k + 1)) :\n    chainDomain ϕ U₁ m =\n      operator_image (finOrderedProd (fun i : Fin m => ϕ (Fin.castLE (Nat.lt_succ_iff.mp m.isLt) i)))\n        U₁ := by\n  induction m using Fin.induction with\n  | zero =>\n    show U₁ = id '' U₁\n    rw [Set.image_id]\n  | succ m ih =>\n    rw [chainDomain_succ, ih]\n    simp only [operator_image, Fin.val_succ, finOrderedProd_operator_func_succ, Set.image_comp]\n    rfl",
+          "response_byte_start": 22083,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.chainDomain_subset_dom",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 401,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem chainDomain_subset_dom {k : ℕ} (ϕ : Fin k → Operator X bot) (U₁ : Set X)\n    (hU₁ : U₁ ⊆ dom (finOrderedProd ϕ)) (m : Fin k) :\n    chainDomain ϕ U₁ m.castSucc ⊆ dom (ϕ m) := by\n  induction k with\n  | zero => exact m.elim0\n  | succ k ih =>\n    have hinit : U₁ ⊆ dom (finOrderedProd (fun i : Fin k => ϕ i.castSucc)) :=\n      hU₁.trans (dom_mul_subset_right _ _)\n    induction m using Fin.lastCases with\n    | last =>\n      rw [← chainDomain_init, chainDomain_last]\n      exact image_subset_dom_of_subset_dom_mul hU₁\n    | cast m =>\n      rw [← chainDomain_init]\n      exact ih (fun i => ϕ i.castSucc) hinit m",
+          "response_byte_start": 22694,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_operator_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 339,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_operator_zero (ϕ : Fin 0 → Operator X bot) :\n    finOrderedProd ϕ = operator_identity := rfl",
+          "response_byte_start": 19590,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_operator_func_succ",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 343,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_operator_func_succ {k : ℕ} (ϕ : Fin (k + 1) → Operator X bot) :\n    (finOrderedProd ϕ).func =\n      (ϕ (Fin.last k)).func ∘ (finOrderedProd (fun m : Fin k => ϕ m.castSucc)).func := rfl",
+          "response_byte_start": 19798,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_eq_operatorChain",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 348,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_eq_operatorChain {k : ℕ} (ϕ : Fin k → Operator X bot) :\n    finOrderedProd ϕ = OperatorChain (List.ofFn ϕ).reverse := by\n  rw [operator_chain_eq_prod, finOrderedProd_eq_list_prod]",
+          "response_byte_start": 20126,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.dom_mul_subset_right",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 243,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem dom_mul_subset_right (ϕ₂ ϕ₁ : Operator X bot) : dom (ϕ₂ * ϕ₁) ⊆ dom ϕ₁ := by\n  intro x hx h\n  apply hx\n  change ϕ₂.func (ϕ₁.func x) = bot\n  rw [h, ϕ₂.preserves_bot]",
+          "response_byte_start": 14296,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.image_subset_dom_of_subset_dom_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 250,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem image_subset_dom_of_subset_dom_mul {ϕ₂ ϕ₁ : Operator X bot} {U₁ : Set X}\n    (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) : operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by\n  rintro _ ⟨x, hx, rfl⟩\n  exact hU₁ hx",
+          "response_byte_start": 14607,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/4"
+      },
+      "source_anchor": "oet-c80171fa685dc795",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-D06",
+      "title": "有限指标路径与全正路径谓词",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "indexPath enumerates all unconstrained intermediate sequences, proves uniqueness of the representation and its endpoints, and defines positive/zero factors without filtering paths.",
+      "candidate_representation": "n ≥ 1 写作 n = N+1，矩阵族为 M : Fin (N+1) → Matrix I I ENNReal。中间指标序列 (k_1,…,k_{n−1}) 为 p : Fin N → I。indexPath i j p : Fin (N+2) → I 是完整路径 (k_0,…,k_n)，满足 k_0 = i、k_n = j、k_m = p(m−1)。existsUnique_indexPath 证明端点固定的完整路径与中间序列一一对应。pathFactor M i j p t = [M^{(t+1)}]_{k_t→k_{t+1}}。IsAllPositivePath：所有层级的因子 > 0；HasZeroFactor：存在某层因子 = 0。n = 1 时中间序列是唯一的空序列 Fin 0 → I，其因子为 [M^{(1)}]_{i→j}（pathFactor_one）。",
+      "candidate_dependencies": [
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.indexPath",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 497,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def indexPath (i j : I) {N : ℕ} (p : Fin N → I) : Fin (N + 2) → I :=\n  Fin.cons i (Fin.snoc p j)",
+          "response_byte_start": 27407,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.indexPath_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 500,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem indexPath_zero (i j : I) {N : ℕ} (p : Fin N → I) : indexPath i j p 0 = i := by\n  simp [indexPath]",
+          "response_byte_start": 27519,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.indexPath_last",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 503,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem indexPath_last (i j : I) {N : ℕ} (p : Fin N → I) :\n    indexPath i j p (Fin.last (N + 1)) = j := by\n  rw [← Fin.succ_last]\n  simp [indexPath]",
+          "response_byte_start": 27638,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.indexPath_succ_castSucc",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 509,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem indexPath_succ_castSucc (i j : I) {N : ℕ} (p : Fin N → I) (m : Fin N) :\n    indexPath i j p m.castSucc.succ = p m := by\n  simp [indexPath]",
+          "response_byte_start": 27867,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.existsUnique_indexPath",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 514,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem existsUnique_indexPath (i j : I) {N : ℕ} (k : Fin (N + 2) → I) (hi : k 0 = i)\n    (hj : k (Fin.last (N + 1)) = j) : ∃! p : Fin N → I, indexPath i j p = k := by\n  refine ⟨fun m => k m.castSucc.succ, ?_, ?_⟩\n  · funext t\n    induction t using Fin.cases with\n    | zero => simp [hi]\n    | succ t =>\n      induction t using Fin.lastCases with\n      | last => rw [Fin.succ_last, indexPath_last, hj]\n      | cast m => simp\n  · intro p hp\n    funext m\n    rw [← hp, indexPath_succ_castSucc]",
+          "response_byte_start": 28123,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.pathFactor",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 529,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def pathFactor {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal) (i j : I) (p : Fin N → I)\n    (t : Fin (N + 1)) : ENNReal :=\n  arrowEntry (M t) (indexPath i j p t.castSucc) (indexPath i j p t.succ)",
+          "response_byte_start": 28723,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.IsAllPositivePath",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 534,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def IsAllPositivePath {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal) (i j : I)\n    (p : Fin N → I) : Prop :=\n  ∀ t : Fin (N + 1), 0 < pathFactor M i j p t",
+          "response_byte_start": 29003,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.HasZeroFactor",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 539,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "def HasZeroFactor {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal) (i j : I)\n    (p : Fin N → I) : Prop :=\n  ∃ t : Fin (N + 1), pathFactor M i j p t = 0",
+          "response_byte_start": 29254,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.pathFactor_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 566,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem pathFactor_one (M : Fin 1 → Matrix I I ENNReal) (i j : I) (p : Fin 0 → I) :\n    pathFactor M i j p 0 = arrowEntry (M 0) i j := by\n  simp only [pathFactor]\n  rw [show (0 : Fin 1).succ = Fin.last 1 from rfl, indexPath_last, Fin.castSucc_zero,\n    indexPath_zero]",
+          "response_byte_start": 30538,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/5"
+      },
+      "source_anchor": "oet-e4154c34e95d3c23",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P01",
+      "title": "单分量求和退化为标量Lip界",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Singleton indexing collapses the whole finite sum and all-output condition to the original scalar inequality, in both global and restricted forms.",
+      "candidate_representation": "|I| = 1 且 I = {i} 表示为前提 i : I 与 hI : ∀ k : I, k = i。结论为等价式：L ∈ 𝓛(ϕ) ↔ ∀ x,y ∈ dom ϕ, d_i(ϕx,ϕy) ≤ L_{i→i}·d_i(x,y)。另给受限版本 lipSetOn_single_component（U ⊆ dom ϕ 的合取项保留）。证明用 Finset.sum_eq_single 把求和退化为单项。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSet_single_component",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 180,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSet_single_component (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (i : I) (hI : ∀ k : I, k = i) (L : Matrix I I ENNReal) :\n    L ∈ lipSet d ϕ ↔\n      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ,\n        d i (ϕ.func x) (ϕ.func y) ≤ arrowEntry L i i * d i x y := by\n  rw [lipSet_eq_lipSetOn_dom, lipSetOn_single_component d ϕ (dom ϕ) i hI L]\n  exact ⟨fun h => h.2, fun h => ⟨subset_rfl, h⟩⟩",
+          "response_byte_start": 10968,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSetOn_single_component",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 166,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSetOn_single_component (d : I → X → X → ENNReal) (ϕ : Operator X bot)\n    (U : Set X) (i : I) (hI : ∀ k : I, k = i) (L : Matrix I I ENNReal) :\n    L ∈ lipSetOn d ϕ U ↔\n      U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U,\n        d i (ϕ.func x) (ϕ.func y) ≤ arrowEntry L i i * d i x y := by\n  have hsum : ∀ f : I → ENNReal, ∑ k, f k = f i := fun f => by\n    rw [Finset.sum_eq_single i (fun k _ hk => absurd (hI k) hk) (fun h => absurd (mem_univ i) h)]\n  simp only [lipSetOn, IsLipMatrixOn, Set.mem_setOf_eq, hsum]\n  refine and_congr_right fun _ => ⟨fun h x hx y hy => h x hx y hy i, fun h x hx y hy j => ?_⟩\n  rw [hI j]\n  exact h x hx y hy",
+          "response_byte_start": 10105,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/6"
+      },
+      "source_anchor": "oet-c4369c63c86cbacf",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P02",
+      "title": "受限Lip矩阵族反单调",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Restriction is proved by pairwise subset transport; no larger or altered domain is used.",
+      "candidate_representation": "前提 U ⊆ V（hUV）与 V ⊆ dom ϕ（hV），对应原文 U ⊆ V ⊆ dom(ϕ)；结论 lipSetOn d ϕ V ⊆ lipSetOn d ϕ U，即 𝓛(ϕ)|_V ⊆ 𝓛(ϕ)|_U，对任意 ϕ 与距离族成立。",
+      "candidate_dependencies": [
+        "CH02-D01"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSetOn_antitone",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 191,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSetOn_antitone (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}\n    (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :\n    lipSetOn d ϕ V ⊆ lipSetOn d ϕ U := by\n  rintro L ⟨-, hL⟩\n  exact ⟨hUV.trans hV, fun x hx y hy j => hL x (hUV hx) y (hUV hy) j⟩",
+          "response_byte_start": 11560,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/7"
+      },
+      "source_anchor": "oet-4ff5c58d71e1651f",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P04",
+      "title": "两步Lip复合：精确中间像域，乘积次序",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The outer certificate is applied on the exact inner image; substitution, monotone multiplication and exchange of finite sums produce L₂*L₁.",
+      "candidate_representation": "复合 ϕ₂∘ϕ₁ 为 ϕ₂ * ϕ₁（前置幺半群，func = ϕ₂.func ∘ ϕ₁.func）。前提：hU₁ : U₁ ⊆ dom(ϕ₂*ϕ₁)；L₁ ∈ lipSetOn d ϕ₁ U₁；L₂ ∈ lipSetOn d ϕ₂ (operator_image ϕ₁ U₁)，即精确中间像域 U₂ = ϕ₁(U₁)。结论 L₂ * L₁ ∈ lipSetOn d (ϕ₂*ϕ₁) U₁，乘积次序为 𝐋^{(2)}·𝐋^{(1)}。dom_mul_subset_right（U₁ ⊆ dom ϕ₁）与 image_subset_dom_of_subset_dom_mul（U₂ ⊆ dom ϕ₂）形式化了“由复合定义直接保证”。证明按原文顺序：先用 L₂ 的不等式，再乘非负系数代入 L₁ 的不等式，最后交换有限和。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lip_comp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 262,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_comp (d : I → X → X → ENNReal) (ϕ₁ ϕ₂ : Operator X bot) (U₁ : Set X)\n    (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) (L₁ L₂ : Matrix I I ENNReal)\n    (h₁ : L₁ ∈ lipSetOn d ϕ₁ U₁) (h₂ : L₂ ∈ lipSetOn d ϕ₂ (operator_image ϕ₁ U₁)) :\n    L₂ * L₁ ∈ lipSetOn d (ϕ₂ * ϕ₁) U₁ := by\n  refine ⟨hU₁, fun x hx y hy j => ?_⟩\n  have hx' : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩\n  have hy' : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩\n  calc d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y)\n      = d j (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) := rfl\n    _ ≤ ∑ k, arrowEntry L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := h₂.2 _ hx' _ hy' j\n    _ ≤ ∑ k, arrowEntry L₂ k j * ∑ i, arrowEntry L₁ i k * d i x y := by\n        gcongr with k\n        exact h₁.2 x hx y hy k\n    _ = ∑ i, arrowEntry (L₂ * L₁) i j * d i x y := by\n        simp only [arrowEntry_mul, Finset.mul_sum, Finset.sum_mul, mul_assoc]\n        exact Finset.sum_comm",
+          "response_byte_start": 15252,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.dom_mul_subset_right",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 243,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem dom_mul_subset_right (ϕ₂ ϕ₁ : Operator X bot) : dom (ϕ₂ * ϕ₁) ⊆ dom ϕ₁ := by\n  intro x hx h\n  apply hx\n  change ϕ₂.func (ϕ₁.func x) = bot\n  rw [h, ϕ₂.preserves_bot]",
+          "response_byte_start": 14296,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.image_subset_dom_of_subset_dom_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 250,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem image_subset_dom_of_subset_dom_mul {ϕ₂ ϕ₁ : Operator X bot} {U₁ : Set X}\n    (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) : operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by\n  rintro _ ⟨x, hx, rfl⟩\n  exact hU₁ hx",
+          "response_byte_start": 14607,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/8"
+      },
+      "source_anchor": "oet-193cebcc1a7f9259",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P05",
+      "title": "非空受限co-Lip矩阵族反单调",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The restricted lower family is transported to U only with the required U.Nonempty premise.",
+      "candidate_representation": "前提 hU : U.Nonempty、hUV : U ⊆ V、hV : V ⊆ dom ϕ，对应原文 ∅ ≠ U ⊆ V ⊆ dom(ϕ)；结论 coLipSetOn d ϕ V ⊆ coLipSetOn d ϕ U，即 𝒦(ϕ)|_V ⊆ 𝒦(ϕ)|_U。U 的非空性用于构造结论谓词中的非空合取项。",
+      "candidate_dependencies": [
+        "CH02-D02"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLipSetOn_antitone",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 207,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLipSetOn_antitone (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}\n    (hU : U.Nonempty) (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :\n    coLipSetOn d ϕ V ⊆ coLipSetOn d ϕ U := by\n  rintro K ⟨-, -, hK⟩\n  exact ⟨hU, hUV.trans hV, fun x hx y hy j => hK x (hUV hx) y (hUV hy) j⟩",
+          "response_byte_start": 12366,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/9"
+      },
+      "source_anchor": "oet-893b1d33535f7245",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P07",
+      "title": "输出零距且输入正距迫使对应co-Lip条目为0",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The designated positive-distance pair forces the selected co-Lip product to zero; ENNReal no-zero-divisor reasoning gives the coefficient zero.",
+      "candidate_representation": "前提：∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d_j(ϕx,ϕy) = 0 ∧ 0 < d_i(x,y)。结论：∀ K ∈ coLipSetOn d ϕ (dom ϕ), K_{i→j} = 0（全域 co-Lip 矩阵即 𝒦(ϕ)|_{dom ϕ}）。证明：0 = d_j ≥ ∑_k K_{k→j} d_k ≥ K_{i→j} d_i，再由 ENNReal 无零因子以及 d_i > 0 推出 K_{i→j} = 0。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLip_entry_eq_zero",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 223,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_entry_eq_zero (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i j : I)\n    (h : ∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d j (ϕ.func x) (ϕ.func y) = 0 ∧ 0 < d i x y) :\n    ∀ K ∈ coLipSetOn d ϕ (dom ϕ), arrowEntry K i j = 0 := by\n  rintro K ⟨-, -, hK⟩\n  obtain ⟨x, hx, y, hy, hzero, hpos⟩ := h\n  have hle : arrowEntry K i j * d i x y ≤ 0 :=\n    calc arrowEntry K i j * d i x y\n        ≤ ∑ k, arrowEntry K k j * d k x y :=\n          Finset.single_le_sum (f := fun k => arrowEntry K k j * d k x y)\n            (fun _ _ => zero_le _) (mem_univ i)\n      _ ≤ d j (ϕ.func x) (ϕ.func y) := hK x hx y hy j\n      _ = 0 := hzero\n  have hprod : arrowEntry K i j * d i x y = 0 := le_antisymm hle (zero_le _)\n  rcases mul_eq_zero.mp hprod with hK0 | hd0\n  · exact hK0\n  · exact absurd hd0 hpos.ne'",
+          "response_byte_start": 13307,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/10"
+      },
+      "source_anchor": "oet-88784dcbfff0ea66",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P08",
+      "title": "两步co-Lip复合：非空性及精确中间像域",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Both lower inequalities use the exact actual image, and the inner co-Lip certificate supplies U nonempty; the proof constructs the product bound.",
+      "candidate_representation": "前提：hU₁ : U₁ ⊆ dom(ϕ₂*ϕ₁)；K₁ ∈ coLipSetOn d ϕ₁ U₁（其中含 U₁ 非空）；K₂ ∈ coLipSetOn d ϕ₂ (operator_image ϕ₁ U₁)（精确中间像域 U₂ = ϕ₁(U₁)，含 U₂ 非空）。结论 K₂ * K₁ ∈ coLipSetOn d (ϕ₂*ϕ₁) U₁，结论中的非空性由 K₁ 的证书继承。operator_image_nonempty 说明 U₁ 非空时 U₂ 非空；image_subset_dom_of_subset_dom_mul 给出 U₂ ⊆ dom ϕ₂。证明按原文链式不等式展开并交换有限和。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLip_comp",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 282,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_comp (d : I → X → X → ENNReal) (ϕ₁ ϕ₂ : Operator X bot) (U₁ : Set X)\n    (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) (K₁ K₂ : Matrix I I ENNReal)\n    (h₁ : K₁ ∈ coLipSetOn d ϕ₁ U₁) (h₂ : K₂ ∈ coLipSetOn d ϕ₂ (operator_image ϕ₁ U₁)) :\n    K₂ * K₁ ∈ coLipSetOn d (ϕ₂ * ϕ₁) U₁ := by\n  refine ⟨h₁.1, hU₁, fun x hx y hy j => ?_⟩\n  have hx' : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩\n  have hy' : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩\n  calc ∑ i, arrowEntry (K₂ * K₁) i j * d i x y\n      = ∑ k, arrowEntry K₂ k j * ∑ i, arrowEntry K₁ i k * d i x y := by\n        simp only [arrowEntry_mul, Finset.mul_sum, Finset.sum_mul, mul_assoc]\n        exact Finset.sum_comm\n    _ ≤ ∑ k, arrowEntry K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by\n        gcongr with k\n        exact h₁.2.2 x hx y hy k\n    _ ≤ d j (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) := h₂.2.2 _ hx' _ hy' j\n    _ = d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y) := rfl",
+          "response_byte_start": 16628,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.operator_image_nonempty",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 256,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem operator_image_nonempty {ϕ : Operator X bot} {U : Set X} (hU : U.Nonempty) :\n    (operator_image ϕ U).Nonempty :=\n  hU.image ϕ.func",
+          "response_byte_start": 14871,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.image_subset_dom_of_subset_dom_mul",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 250,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem image_subset_dom_of_subset_dom_mul {ϕ₂ ϕ₁ : Operator X bot} {U₁ : Set X}\n    (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) : operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by\n  rintro _ ⟨x, hx, rfl⟩\n  exact hU₁ hx",
+          "response_byte_start": 14607,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/11"
+      },
+      "source_anchor": "oet-0f256e6f1d38a612",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P11",
+      "title": "零步恒等算子的单位Lip矩阵",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The identity operator and matrix empty products are proved and give the exact unit Lip certificate.",
+      "candidate_representation": "id_𝒳 为 (1 : Operator X bot)，即 c_0 = 零步有序复合；dom_one 给出 dom(id) = {x ≠ bot}。one_mem_lipSetOn_one：∀ U ⊆ dom(id)，𝐈 ∈ 𝓛(id)|_U。它不需要非空前提，因此比原文更强、蕴含原文。原文的合并形式 zero_step_certificate：对 ϕ : Fin 0 → Operator、M : Fin 0 → Matrix（空乘积 finOrderedProd M = 𝐈，c_0 = finOrderedProd ϕ = id）与非空 U ⊆ dom(c_0)，有 𝐈 ∈ 𝓛(c_0)|_U ∩ 𝒦(c_0)|_U。证明用 ∑_i 𝐈_{i→j} d_i = d_j（sum_arrowEntry_one_mul）。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D04",
+        "CH02-P12"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.one_mem_lipSetOn_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 307,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem one_mem_lipSetOn_one (d : I → X → X → ENNReal) {U : Set X}\n    (hU : U ⊆ dom (1 : Operator X bot)) :\n    (1 : Matrix I I ENNReal) ∈ lipSetOn d (1 : Operator X bot) U := by\n  refine ⟨hU, fun x _ y _ j => ?_⟩\n  rw [sum_arrowEntry_one_mul (fun i => d i x y) j]\n  exact le_rfl",
+          "response_byte_start": 18083,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.zero_step_certificate",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 324,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem zero_step_certificate (d : I → X → X → ENNReal) (ϕ : Fin 0 → Operator X bot)\n    (M : Fin 0 → Matrix I I ENNReal) {U : Set X} (hne : U.Nonempty)\n    (hU : U ⊆ dom (finOrderedProd ϕ)) :\n    finOrderedProd M ∈ lipSetOn d (finOrderedProd ϕ) U ∩ coLipSetOn d (finOrderedProd ϕ) U :=\n  ⟨one_mem_lipSetOn_one d hU, one_mem_coLipSetOn_one d hne hU⟩",
+          "response_byte_start": 19042,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.dom_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 302,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem dom_one : dom (1 : Operator X bot) = {x | x ≠ bot} := rfl",
+          "response_byte_start": 17872,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/12"
+      },
+      "source_anchor": "oet-11006ddd8c43bfec",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P12",
+      "title": "零步恒等算子的单位co-Lip矩阵",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The same unit matrix gives the co-Lip certificate with the original nonempty-domain premise.",
+      "candidate_representation": "one_mem_coLipSetOn_one：对任意非空 U ⊆ dom(id_𝒳)，(1 : Matrix) ∈ coLipSetOn d (1 : Operator X bot) U，即 𝐈 ∈ 𝒦(id)|_U，非空前提按原文保留。零步合并形式见 zero_step_certificate（与 P11 共用）。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-D04"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.one_mem_coLipSetOn_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 315,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem one_mem_coLipSetOn_one (d : I → X → X → ENNReal) {U : Set X} (hne : U.Nonempty)\n    (hU : U ⊆ dom (1 : Operator X bot)) :\n    (1 : Matrix I I ENNReal) ∈ coLipSetOn d (1 : Operator X bot) U := by\n  refine ⟨hne, hU, fun x _ y _ j => ?_⟩\n  rw [sum_arrowEntry_one_mul (fun i => d i x y) j]\n  exact le_rfl",
+          "response_byte_start": 18504,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.zero_step_certificate",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 324,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem zero_step_certificate (d : I → X → X → ENNReal) (ϕ : Fin 0 → Operator X bot)\n    (M : Fin 0 → Matrix I I ENNReal) {U : Set X} (hne : U.Nonempty)\n    (hU : U ⊆ dom (finOrderedProd ϕ)) :\n    finOrderedProd M ∈ lipSetOn d (finOrderedProd ϕ) U ∩ coLipSetOn d (finOrderedProd ϕ) U :=\n  ⟨one_mem_lipSetOn_one d hU, one_mem_coLipSetOn_one d hne hU⟩",
+          "response_byte_start": 19042,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/13"
+      },
+      "source_anchor": "oet-11006ddd8c43bfec",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P14",
+      "title": "任意有限非空矩阵乘积正值 iff 存在全正路径；含n=1",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Negating the zero criterion yields an existential all-positive path. The n=1 empty intermediate sequence and single-entry criterion are included.",
+      "candidate_representation": "对任意 N 与 M : Fin (N+1) → Matrix I I ENNReal（即任意 n = N+1 ≥ 1 个扩展非负矩阵）及任意 i, j：0 < [M^{(n)}⋯M^{(1)}]_{i→j} ↔ ∃ p : Fin N → I, IsAllPositivePath M i j p，即存在至少一条中间指标序列，其所有单步条目严格正。n = 1 情形 finOrderedProd_entry_pos_iff_one 同时给出唯一空序列上的判据，以及它与 [M^{(1)}]_{i→j} > 0 的等价。证明经路径展开式 arrowEntry_finOrderedProd_eq_sum_paths（对 N 归纳、Fin.snocEquiv 重排求和），再由零值判据取否定得到。",
+      "candidate_dependencies": [
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D06",
+        "CH02-P13"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_entry_pos_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 610,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_entry_pos_iff {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal)\n    (i j : I) :\n    0 < arrowEntry (finOrderedProd M) i j ↔ ∃ p : Fin N → I, IsAllPositivePath M i j p := by\n  rw [pos_iff_ne_zero, Ne, finOrderedProd_entry_eq_zero_iff]\n  simp only [HasZeroFactor, IsAllPositivePath, not_forall, not_exists, pos_iff_ne_zero, Ne]",
+          "response_byte_start": 32725,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_entry_pos_iff_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 624,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_entry_pos_iff_one (M : Fin 1 → Matrix I I ENNReal) (i j : I) :\n    (0 < arrowEntry (finOrderedProd M) i j ↔ ∃ p : Fin 0 → I, IsAllPositivePath M i j p) ∧\n      (0 < arrowEntry (finOrderedProd M) i j ↔ 0 < arrowEntry (M 0) i j) := by\n  refine ⟨finOrderedProd_entry_pos_iff M i j, ?_⟩\n  rw [finOrderedProd_one]",
+          "response_byte_start": 33638,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.arrowEntry_finOrderedProd_eq_sum_paths",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 581,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem arrowEntry_finOrderedProd_eq_sum_paths {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal)\n    (i j : I) :\n    arrowEntry (finOrderedProd M) i j = ∑ p : Fin N → I, ∏ t, pathFactor M i j p t := by\n  induction N generalizing j with\n  | zero =>\n    rw [finOrderedProd_one, Fintype.sum_unique, Fin.prod_univ_one, pathFactor_one]\n  | succ N ih =>\n    rw [finOrderedProd_succ, arrowEntry_mul]\n    simp_rw [ih (fun m => M m.castSucc)]\n    rw [← (Fin.snocEquiv (fun _ => I)).sum_comp, Fintype.sum_prod_type]\n    simp_rw [Finset.mul_sum]\n    refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun p _ => ?_\n    change _ = ∏ t, pathFactor M i j (Fin.snoc p k : Fin (N + 1) → I) t\n    rw [mul_comm]\n    conv_rhs => rw [Fin.prod_univ_castSucc]\n    rw [pathFactor_snoc_last]\n    congr 1\n    exact Finset.prod_congr rfl fun t _ => (pathFactor_snoc_castSucc M i j k p t).symm",
+          "response_byte_start": 31084,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/14"
+      },
+      "source_anchor": "oet-e4154c34e95d3c23",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P03",
+      "title": "全域Lip证书可限制",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The global family is first identified with its dom restriction and then restricted to U.",
+      "candidate_representation": "前提 hU : U ⊆ dom ϕ；结论 lipSet d ϕ ⊆ lipSetOn d ϕ U，即 𝓛(ϕ) ⊆ 𝓛(ϕ)|_U。证明按原文：取 V = dom ϕ，用 lipSet_eq_lipSetOn_dom 与引理 2.1（lipSetOn_antitone）。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-P02"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lipSet_subset_lipSetOn",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 198,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lipSet_subset_lipSetOn (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}\n    (hU : U ⊆ dom ϕ) :\n    lipSet d ϕ ⊆ lipSetOn d ϕ U := by\n  rw [lipSet_eq_lipSetOn_dom]\n  exact lipSetOn_antitone d ϕ hU subset_rfl",
+          "response_byte_start": 11939,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/15"
+      },
+      "source_anchor": "oet-4ff5c58d71e1651f",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P06",
+      "title": "全域co-Lip证书可限制",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The full-domain co-Lip family is restricted while preserving nonemptiness and domain inclusion.",
+      "candidate_representation": "前提 hU : U.Nonempty、hUdom : U ⊆ dom ϕ；结论 coLipSetOn d ϕ (dom ϕ) ⊆ coLipSetOn d ϕ U，即 𝒦(ϕ)|_{dom ϕ} ⊆ 𝒦(ϕ)|_U。证明按原文取 V = dom ϕ 并应用 coLipSetOn_antitone。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-P05"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLipSetOn_dom_subset",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 214,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLipSetOn_dom_subset (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}\n    (hU : U.Nonempty) (hUdom : U ⊆ dom ϕ) :\n    coLipSetOn d ϕ (dom ϕ) ⊆ coLipSetOn d ϕ U :=\n  coLipSetOn_antitone d ϕ hU hUdom subset_rfl",
+          "response_byte_start": 12792,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/16"
+      },
+      "source_anchor": "oet-893b1d33535f7245",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P09",
+      "title": "任意正长度链的Lip连乘界；从逐步证书建立链证书",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "Finite induction builds the whole-chain Lip certificate from step certificates on chainDomain, including the correctly separated zero-step case.",
+      "candidate_representation": "lip_chain_certificate：对任意 k，前提 1 ≤ k（保留原文 k ≥ 1，证明不需要）、ϕ : Fin k → Operator X bot、U₁ ⊆ dom(c_k)（c_k = finOrderedProd ϕ），以及逐步证书 ∀ m : Fin k, L m ∈ lipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)，即 𝐋^{(m)} ∈ 𝓛(ϕ_m)|_{U_m}，其中 U_m 是实际中间像域。结论 finOrderedProd L ∈ lipSetOn d (finOrderedProd ϕ) U₁，即 𝐋^{(k)}⋯𝐋^{(1)} ∈ 𝓛(c_k)|_{U₁}。lip_chain_certificate_general 是对所有 k ≥ 0 的归纳形式：k = 0 用单位矩阵证书（P11），归纳步对 c_{k+1} = ϕ_{k+1}∘c_k 应用两步复合律（P04），中间像域为 c_k(U₁) = U_{k+1}（chainDomain_last）。",
+      "candidate_dependencies": [
+        "CH02-D01",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-P04",
+        "CH02-P11"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lip_chain_certificate",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 447,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_chain_certificate (d : I → X → X → ENNReal) {k : ℕ} (_hk : 1 ≤ k)\n    (ϕ : Fin k → Operator X bot) (U₁ : Set X) (hU₁ : U₁ ⊆ dom (finOrderedProd ϕ))\n    (L : Fin k → Matrix I I ENNReal)\n    (hL : ∀ m : Fin k, L m ∈ lipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)) :\n    finOrderedProd L ∈ lipSetOn d (finOrderedProd ϕ) U₁ := by\n  exact lip_chain_certificate_general d ϕ U₁ hU₁ L hL",
+          "response_byte_start": 24824,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.lip_chain_certificate_general",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 426,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem lip_chain_certificate_general (d : I → X → X → ENNReal) {k : ℕ}\n    (ϕ : Fin k → Operator X bot) (U₁ : Set X) (hU₁ : U₁ ⊆ dom (finOrderedProd ϕ))\n    (L : Fin k → Matrix I I ENNReal)\n    (hL : ∀ m : Fin k, L m ∈ lipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)) :\n    finOrderedProd L ∈ lipSetOn d (finOrderedProd ϕ) U₁ := by\n  induction k with\n  | zero => exact one_mem_lipSetOn_one d hU₁\n  | succ k ih =>\n    have hinit : U₁ ⊆ dom (finOrderedProd (fun i : Fin k => ϕ i.castSucc)) :=\n      hU₁.trans (dom_mul_subset_right _ _)\n    refine lip_comp d _ _ U₁ hU₁ _ _ ?_ ?_\n    · refine ih (fun i => ϕ i.castSucc) hinit (fun i => L i.castSucc) fun m => ?_\n      rw [chainDomain_init]\n      exact hL m.castSucc\n    · have h := hL (Fin.last k)\n      rwa [← chainDomain_init, chainDomain_last] at h",
+          "response_byte_start": 23584,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/17"
+      },
+      "source_anchor": "oet-c80171fa685dc795",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P10",
+      "title": "任意正长度链的co-Lip连乘界；从逐步证书建立链证书",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "The positive-length theorem extracts nonemptiness from the first co-Lip step, then inductively constructs the product bound; no final bound is an input field.",
+      "candidate_representation": "coLip_chain_certificate：前提 1 ≤ k、ϕ : Fin k → Operator X bot、U₁ ⊆ dom(c_k)，以及逐步证书 ∀ m, K m ∈ coLipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)，即 𝐊^{(m)} ∈ 𝒦(ϕ_m)|_{U_m}（含每个 U_m 非空）。结论 finOrderedProd K ∈ coLipSetOn d (finOrderedProd ϕ) U₁，即 𝐊^{(k)}⋯𝐊^{(1)} ∈ 𝒦(c_k)|_{U₁}。k ≥ 1 在这里确实被使用：第 1 步证书给出 U₁ = U_1 非空。coLip_chain_certificate_of_nonempty 是在 U₁ 非空时对所有 k ≥ 0 的归纳形式：k = 0 用 P12，归纳步用两步 co-Lip 复合律（P08）。",
+      "candidate_dependencies": [
+        "CH02-D02",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-P08",
+        "CH02-P12"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLip_chain_certificate",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 476,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_chain_certificate (d : I → X → X → ENNReal) {k : ℕ} (hk : 1 ≤ k)\n    (ϕ : Fin k → Operator X bot) (U₁ : Set X) (hU₁ : U₁ ⊆ dom (finOrderedProd ϕ))\n    (K : Fin k → Matrix I I ENNReal)\n    (hK : ∀ m : Fin k, K m ∈ coLipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)) :\n    finOrderedProd K ∈ coLipSetOn d (finOrderedProd ϕ) U₁ := by\n  have hne : U₁.Nonempty := by\n    have h := (hK ⟨0, hk⟩).1\n    have h0 : (⟨0, hk⟩ : Fin k).castSucc = 0 := rfl\n    rwa [h0, chainDomain_zero] at h\n  exact coLip_chain_certificate_of_nonempty d ϕ U₁ hne hU₁ K hK",
+          "response_byte_start": 26526,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.coLip_chain_certificate_of_nonempty",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 455,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem coLip_chain_certificate_of_nonempty (d : I → X → X → ENNReal) {k : ℕ}\n    (ϕ : Fin k → Operator X bot) (U₁ : Set X) (hne : U₁.Nonempty)\n    (hU₁ : U₁ ⊆ dom (finOrderedProd ϕ))\n    (K : Fin k → Matrix I I ENNReal)\n    (hK : ∀ m : Fin k, K m ∈ coLipSetOn d (ϕ m) (chainDomain ϕ U₁ m.castSucc)) :\n    finOrderedProd K ∈ coLipSetOn d (finOrderedProd ϕ) U₁ := by\n  induction k with\n  | zero => exact one_mem_coLipSetOn_one d hne hU₁\n  | succ k ih =>\n    have hinit : U₁ ⊆ dom (finOrderedProd (fun i : Fin k => ϕ i.castSucc)) :=\n      hU₁.trans (dom_mul_subset_right _ _)\n    refine coLip_comp d _ _ U₁ hU₁ _ _ ?_ ?_\n    · refine ih (fun i => ϕ i.castSucc) hinit (fun i => K i.castSucc) fun m => ?_\n      rw [chainDomain_init]\n      exact hK m.castSucc\n    · have h := hK (Fin.last k)\n      rwa [← chainDomain_init, chainDomain_last] at h",
+          "response_byte_start": 25353,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/18"
+      },
+      "source_anchor": "oet-c80171fa685dc795",
+      "source_lines": null
+    },
+    {
+      "id": "CH02-P13",
+      "title": "任意有限非空矩阵乘积零值 iff 每条路径含零因子；含n=1",
+      "declared_status": "complete",
+      "verified_complete": true,
+      "status": "complete",
+      "points": 1,
+      "reason": "A proved expansion sums all path products. Sum-zero iff all products zero and product-zero iff one factor zero give the criterion, including the singleton-matrix boundary.",
+      "candidate_representation": "对任意 N 与 M : Fin (N+1) → Matrix I I ENNReal（n = N+1 ≥ 1）及任意 i, j：[M^{(n)}⋯M^{(1)}]_{i→j} = 0 ↔ ∀ p : Fin N → I, HasZeroFactor M i j p，即每条中间指标序列上都存在某层 m 使 [M^{(m)}]_{k_{m−1}→k_m} = 0（k_0 = i, k_n = j）。n = 1 情形 finOrderedProd_entry_eq_zero_iff_one 同时给出唯一空序列上的判据，以及它与 [M^{(1)}]_{i→j} = 0 的等价。证明按原文：路径展开式 arrowEntry_finOrderedProd_eq_sum_paths 给出 ∑_p ∏_t 因子；非负项之和为 0 当且仅当每项为 0；ENNReal 中乘积为 0 当且仅当某因子为 0（含 0·∞ = 0）。",
+      "candidate_dependencies": [
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D06"
+      ],
+      "declarations": [
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_entry_eq_zero_iff",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 602,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_entry_eq_zero_iff {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal)\n    (i j : I) :\n    arrowEntry (finOrderedProd M) i j = 0 ↔ ∀ p : Fin N → I, HasZeroFactor M i j p := by\n  rw [arrowEntry_finOrderedProd_eq_sum_paths, Finset.sum_eq_zero_iff]\n  simp only [mem_univ, true_implies, HasZeroFactor, Finset.prod_eq_zero_iff, true_and]",
+          "response_byte_start": 32177,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.finOrderedProd_entry_eq_zero_iff_one",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 617,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem finOrderedProd_entry_eq_zero_iff_one (M : Fin 1 → Matrix I I ENNReal) (i j : I) :\n    (arrowEntry (finOrderedProd M) i j = 0 ↔ ∀ p : Fin 0 → I, HasZeroFactor M i j p) ∧\n      (arrowEntry (finOrderedProd M) i j = 0 ↔ arrowEntry (M 0) i j = 0) := by\n  refine ⟨finOrderedProd_entry_eq_zero_iff M i j, ?_⟩\n  rw [finOrderedProd_one]",
+          "response_byte_start": 33198,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.arrowEntry_finOrderedProd_eq_sum_paths",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 581,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem arrowEntry_finOrderedProd_eq_sum_paths {N : ℕ} (M : Fin (N + 1) → Matrix I I ENNReal)\n    (i j : I) :\n    arrowEntry (finOrderedProd M) i j = ∑ p : Fin N → I, ∏ t, pathFactor M i j p t := by\n  induction N generalizing j with\n  | zero =>\n    rw [finOrderedProd_one, Fintype.sum_unique, Fin.prod_univ_one, pathFactor_one]\n  | succ N ih =>\n    rw [finOrderedProd_succ, arrowEntry_mul]\n    simp_rw [ih (fun m => M m.castSucc)]\n    rw [← (Fin.snocEquiv (fun _ => I)).sum_comp, Fintype.sum_prod_type]\n    simp_rw [Finset.mul_sum]\n    refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun p _ => ?_\n    change _ = ∏ t, pathFactor M i j (Fin.snoc p k : Fin (N + 1) → I) t\n    rw [mul_comm]\n    conv_rhs => rw [Fin.prod_univ_castSucc]\n    rw [pathFactor_snoc_last]\n    congr 1\n    exact Finset.prod_congr rfl fun t _ => (pathFactor_snoc_castSucc M i j k p t).symm",
+          "response_byte_start": 31084,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.pathFactor_snoc_castSucc",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 551,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem pathFactor_snoc_castSucc {N : ℕ} (M : Fin (N + 2) → Matrix I I ENNReal)\n    (i j k : I) (p : Fin N → I) (t : Fin (N + 1)) :\n    pathFactor M i j (Fin.snoc p k : Fin (N + 1) → I) t.castSucc =\n      pathFactor (fun m : Fin (N + 1) => M m.castSucc) i k p t := by\n  simp only [pathFactor]\n  rw [Fin.succ_castSucc, indexPath_snoc_castSucc, indexPath_snoc_castSucc]",
+          "response_byte_start": 29715,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.pathFactor_snoc_last",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 558,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem pathFactor_snoc_last {N : ℕ} (M : Fin (N + 2) → Matrix I I ENNReal)\n    (i j k : I) (p : Fin N → I) :\n    pathFactor M i j (Fin.snoc p k : Fin (N + 1) → I) (Fin.last (N + 1)) =\n      arrowEntry (M (Fin.last (N + 1))) k j := by\n  simp only [pathFactor]\n  rw [indexPath_snoc_castSucc, indexPath_last, Fin.succ_last, indexPath_last]",
+          "response_byte_start": 30092,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        },
+        {
+          "file": "LCH02/OperatorBounds.lean",
+          "name": "LCH02.indexPath_snoc_castSucc",
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+          "bytes": 31299,
+          "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0",
+          "line": 543,
+          "compiled_declaration_verified": true,
+          "source_excerpt": "theorem indexPath_snoc_castSucc (i j k : I) {N : ℕ} (p : Fin N → I) (u : Fin (N + 2)) :\n    indexPath i j (Fin.snoc p k : Fin (N + 1) → I) u.castSucc = indexPath i k p u := by\n  induction u using Fin.cases with\n  | zero => simp\n  | succ v =>\n    rw [← Fin.succ_castSucc]\n    simp [indexPath]",
+          "response_byte_start": 29414,
+          "response_sha256": "8f8777a8df8d9d345194a24ccb2a0de2261ad8e7d0a522f18fccb9bd370f2324"
+        }
+      ],
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-formalization/LCH02/contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "pointer": "/stages/19"
+      },
+      "source_anchor": "oet-e4154c34e95d3c23",
+      "source_lines": null
+    }
+  ],
+  "required_obligations": 20,
+  "completed_obligations": 20,
+  "engineering_strict_pass": true,
+  "strict_pass": true,
+  "compilation": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/compilation.json",
+    "bytes": 4701,
+    "sha256": "079d58d682c41b73b1fbb8fce0406e7b3e0df2032efec026d11312406f2650bc"
+  },
+  "effective_delivered_source": {
+    "slot_id": "LCH02",
+    "source_files": [
+      {
+        "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/Main.lean",
+        "bytes": 1154,
+        "sha256": "d49c529d2c7e32745931b1ba6345b6aac08c3bcee7a269173a8dfe78bfdf46c3"
+      },
+      {
+        "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/LCH02/OperatorBounds.lean",
+        "bytes": 31299,
+        "sha256": "1eb229301185c02f3cd153a278a175b7b8872c401418db7b773052090b26faa0"
+      }
+    ],
+    "alignment": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/LCH02/delivered/alignment.json",
+      "bytes": 19465,
+      "sha256": "2f0870a8947c8b6087f06fc30830afae2b449ae9e941efdefcd9c498a4f63cb2"
+    },
+    "parent_byte_inheritance": false
+  },
+  "format_note": "The fully delivered lakefile.toml block is tagged lean; manual extension-based extraction preserves it as TOML and does not parse it as Lean. Main.lean and LCH02/OperatorBounds.lean are complete and compile unchanged."
+}

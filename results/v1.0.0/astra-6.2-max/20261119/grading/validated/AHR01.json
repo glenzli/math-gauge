@@ -1,0 +1,132 @@
+{
+  "schema": "math-gauge.report/v1",
+  "run": {
+    "schema": "math-gauge.run/v1",
+    "run_id": "9ef4b53094d547bca2a02626a94590a9",
+    "created_at": "2026-11-19T08:55:09.209005+00:00",
+    "runner_version": "0.1.0",
+    "runner_sha256": "4d2b50a03b4a0486bc3a990e70a3d648afa3fa78d71bf38dec917a0a7ed566c6",
+    "suite_id": "math-gauge-combined",
+    "suite_version": "1.0.0",
+    "suite_sha256": "4bcf7e34c2ffae8e3f109ea1a62b8d36516ec33b86581ce903190054572795ce",
+    "visibility": "private",
+    "origin": "command",
+    "model_label": "gpt-6.2-astra/max",
+    "model_identity_verified": false,
+    "timeout_seconds": 5490,
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-B",
+      "/private/tmp/math-gauge-astra62-max-20261119/controller.py",
+      "adapter",
+      "AHR01",
+      "1"
+    ],
+    "cases": [
+      {
+        "id": "AHR01",
+        "version": "0.1.0",
+        "track": "alignment",
+        "task_kind": "audit",
+        "family_id": "oet-node-domain-refinement",
+        "candidate_message_sha256": "2491a0969a5279c483a9687eecbd67aec2b8f61e95d296211f885b2186a985b2",
+        "case_approved": false,
+        "group_contract": {
+          "path": "AHR01/review-contract.json",
+          "sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+        }
+      }
+    ],
+    "completed_at": "2026-11-19T09:05:15.204964+00:00",
+    "execution_failures": 0
+  },
+  "tracks": {
+    "determinate": {
+      "attempted": 0,
+      "execution_ok": 0,
+      "reviewed": 0,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 0,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": 0,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": null
+    },
+    "alignment": {
+      "attempted": 1,
+      "execution_ok": 1,
+      "reviewed": 1,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 1,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": 0,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": null
+    },
+    "exploration": {
+      "attempted": 0,
+      "execution_ok": 0,
+      "reviewed": 0,
+      "pending": 0,
+      "human_reviews": 0,
+      "provisional_reviews": 0,
+      "eligible_for_model_comparison": 0,
+      "strict_passes": null,
+      "assumption_drifts": 0,
+      "unnecessary_restrictions": 0,
+      "reviewed_findings": 0
+    }
+  },
+  "group_diagnostics": {
+    "AHR01": {
+      "assessment_unit": "review_dimension",
+      "dimension_count": 4,
+      "completed_weight": 100,
+      "upper_weight": 100,
+      "total_weight": 100,
+      "completion": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "exact": 1.0
+      },
+      "strict_pass": true,
+      "dimensions": [
+        {
+          "dimension_id": "judgment",
+          "score": 35,
+          "notes": "Correctly locates choice_projection on actual output image rather than full local output image and explains the missing retained-edge/terminal-domain data; it does not reject extensional equality."
+        },
+        {
+          "dimension_id": "valid_parts",
+          "score": 20,
+          "notes": "Explicitly checks partition, local restrictions, entry splitting, actual-state recoloring, pruning, path length and both canonical/global and relational/local extensional proofs. Missing bridge declarations are distinguished from the already proved construction."
+        },
+        {
+          "dimension_id": "evidence",
+          "score": 30,
+          "notes": "For X={bottom,1,2,3},U={1,2}, f(1)=f(2)=1,f(3)=2,old self-edge{2}, split A={1,3},B={2}: both child nodes are entry-reachable, actual outputs only1, and all-stop satisfies operational projection while deleting required retained edge A→B={2}. Full-domain state(A,3) witnesses changed data without contradicting entry extensional equality."
+        },
+        {
+          "dimension_id": "repair_scope",
+          "score": 15,
+          "notes": "Full edge_domain equality for every retained pair exactly preserves the intended edge data. The U={1} variant legitimately prunes B, demonstrating why enlarging choice_projection indiscriminately to full local output images is too strong. Construction-to-relation and relabeling characterization are clearly proposed additions, not presumed existing results."
+        }
+      ],
+      "kind": "semantic_audit"
+    }
+  },
+  "input_identity": {
+    "AHR01": {
+      "status": "verified",
+      "verified": true,
+      "request_sha256": "1f4237277cd4002f5ec872b58db5fd60e2843cacc0d72b3a3262d85532a41589",
+      "candidate_message_sha256": "2491a0969a5279c483a9687eecbd67aec2b8f61e95d296211f885b2186a985b2"
+    }
+  },
+  "automatically_establishes_mathematical_correctness": false,
+  "notice": "Replay、AI/fixture 审核与未人工审定的题目不计为模型比较成绩；开放构造单独记录发现，不生成统一总分。"
+}

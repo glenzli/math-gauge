@@ -1,0 +1,93 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-PS001:A1",
+    "case_id": "MG-PS001",
+    "reviewer": "AI original-review format conversion",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "完整审核首份正常 native SUCCESS 原文，物理第3次=有效第2次，896.877秒，5个完成的本地工具步骤。K1—K6全部完成，AI初评100/100、Strict通过，人审待定。K6使用比参考更松但足够的迭代上界，已逐步核验两个分块及跨界情形；不因未求 L_k 闭式扣分。PS001物理2是独立证实的发题前认证DNS故障，未计有效次数；旧物理1原断流及原时间不改。用户报告的约15分钟断网和控制器HOLD在本次新请求开始前，未加进本次答卷耗时，也未凭估计减900秒。无隐藏思考、未交付工作区、其他尝试或审核者修补的数学补充。",
+    "findings": [],
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Readable original normal native final; raw answer, including all qualifications, is retained unchanged. This does not certify its mathematics."
+    },
+    "post_observation_binding": true,
+    "original_quote_bindings": [
+      {
+        "quote": "N_r = 2^{r^2}",
+        "start_byte": 14568,
+        "end_byte": 14581
+      },
+      {
+        "quote": "L_k \\le R^k + k(L - R) R^{k-1}",
+        "start_byte": 16913,
+        "end_byte": 16943
+      },
+      {
+        "quote": "\\frac{\\varepsilon}{C}",
+        "start_byte": 8342,
+        "end_byte": 8363
+      },
+      {
+        "quote": "1 \\le R \\le L < +\\infty",
+        "start_byte": 11815,
+        "end_byte": 11838
+      }
+    ],
+    "source_schema_adaptation": {
+      "post_observation": true,
+      "mathematical_judgment_changed": false,
+      "criterion_scores_changed": false,
+      "source_raw_bytes_rewritten": false,
+      "reason": "Original explicit complete flag, exact unit credit and actual classified findings are preserved. Unknown overall axes remain unknown where the original did not establish them."
+    },
+    "human_review": "pending",
+    "formal_comparison_eligible": false,
+    "new_candidate_calls": 0,
+    "source_raw_review_sha256": "d02f4a7ca1b7c595872da4732d6783059162da1b875eef2cfcb31cc2984a59c9",
+    "criteria": [
+      {
+        "criterion_id": "K1",
+        "score": 5,
+        "notes": "有界性保证有限伪度量，limsup 次可加给三角不等式；零距等价与商距离合法，取样保持有界并线性。未假设商完备。"
+      },
+      {
+        "criterion_id": "K2",
+        "score": 20,
+        "notes": "精确分类 C=limsup f(n)/n<∞。充分性用非负部分和及有限增长率；必要性对任意 C=∞ 取 n_r>2n_(r−1)、f(n_r)/n_r≥2^r，支持 f((n_r,2n_r]) 的单一有界指标列在所有 M 上密度0、取样上密度≥1/2，涵盖一般振荡而非只举 n²。"
+      },
+      {
+        "criterion_id": "K3",
+        "score": 20,
+        "notes": "上界 C 已有效证明。尖锐性对任意 ε>0 沿 f(n_r)/n_r→C 稀疏选块，并压低先前块总长度；原列上密度≤ε/C、取样上密度≥ε/(1+ε)。先用已证上界保证原列非零距，再得任意有效 L≥C/(1+ε)，令 ε→0 得最优 C。未默认比值极限存在。"
+      },
+      {
+        "criterion_id": "K4",
+        "score": 15,
+        "notes": "任意有界目标可在 f(N) 上零延拓，证明满射；C>1 时补集指标列非零距但取样为0，C=1 时用计数 N(M)/M→1 和有界余项证明单射。连续性直接由有限 Lipschitz 界。"
+      },
+      {
+        "criterion_id": "K5",
+        "score": 15,
+        "notes": "实际复合 P_f^k=P_(f^k)，按已证分类与最优常数得 L_k=limsup f^k(n)/n；有效次可乘界与下界1成立，完整带余除法证明 lnL_k/k 极限及 inf 公式，故1≤R_f≤L_1。不使用未证完备性或谱公式。"
+      },
+      {
+        "criterion_id": "K6",
+        "score": 25,
+        "notes": "对所有实数1≤R≤L<∞ 统一构造 N_r=2^(r²)、c_r=floor((L−R)N_r)、f(n)=ceil(Rn)+c_r（n=1另定义），严格递增并有 L_1=L。固定k时至多跨一个稀疏边界；分未跨及首次跨越 s 两种情形，以 δ_r→0 控制新常量，证明 R^k≤L_k≤R^k+k(L−R)R^(k−1)，充分给根极限R。L=R、R=1、L=R=1均由同一证明覆盖；题目不要求每个 L_k 的精确闭式。"
+      }
+    ],
+    "recorded_at": "2026-11-14T15:43:57.051360+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "ca0aa1bcbb8bc2f8d86c2c2df6c69cb03a4a55f8726aa842e313da5ca65a2b52"
+  },
+  "original_private_review_sha256": "95a72766055e41cf331a7502bff51947b80efba408bf4235292ff29cbbc04ea8"
+}

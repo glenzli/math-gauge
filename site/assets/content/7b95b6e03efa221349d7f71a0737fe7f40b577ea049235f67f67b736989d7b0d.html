@@ -1,0 +1,60 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>{}
+KEEP</p>
+<h3>本轮独立核查依据</h3>
+<ol>
+<li>
+<p><strong>原始冻结背景与上一轮交付原字节完整性</strong>：</p>
+<ul>
+<li>核验 [<code>.visible-history/R2/index.json</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/.visible-history/R2/index.json) 全部消息与分段 SHA256 均无篡改（失败项 <code>[]</code>）。</li>
+<li>核对 [<code>.visible-history/R2/01-user-001.txt</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/.visible-history/R2/01-user-001.txt)（及同组其余分片）载明的全部 13 个冻结背景文件（[<code>ATTRIBUTION.md</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/ATTRIBUTION.md)、[<code>LICENSE</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/LICENSE)、<code>formal_oet/vol_01/{ch_01_foundations,ch_02_operator_bounds}/*.lean</code>、<code>source/{01-foundations,02-operator-bounds,03-operator-local-degeneracy}.md</code>、[<code>obligations.json</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/obligations.json)、[<code>dependencies.md</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/dependencies.md)）均与工作区原字节一致。</li>
+<li>核对上一轮最终交付的 8 个文件均与工作区磁盘文件完全一致（结尾仅含标准换行 <code>\n</code>）：
+<ul>
+<li>[<code>Ch03/Partition.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Ch03/Partition.lean)（24347 字节，620 行）</li>
+<li>[<code>Ch03/Fiber.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Ch03/Fiber.lean)（28968 字节，630 行）</li>
+<li>[<code>Ch03/Radius.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Ch03/Radius.lean)（35375 字节，773 行）</li>
+<li>[<code>Ch03/Scale.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Ch03/Scale.lean)（27365 字节，564 行）</li>
+<li>[<code>Ch03/Entropy.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Ch03/Entropy.lean)（23787 字节，437 行）</li>
+<li>[<code>Ch03/Exercises.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Ch03/Exercises.lean)（59196 字节，1184 行）</li>
+<li>[<code>Main.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/Main.lean)（119 字节，6 行）</li>
+<li>[<code>alignment.json</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/alignment.json)（58824 字节）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Lean 编译与公理/禁用构造静态核查</strong>（在独立 scratch 构建目录执行，未修改工作区）：</p>
+<ul>
+<li>依 [<code>LEAN_ENV.sh</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/LEAN_ENV.sh) 验证 <code>Lean (version 4.29.1, arm64-apple-darwin24.6.0, commit f72c35b3f637c8c6571d353742168ab66cc22c00, Release)</code>。</li>
+<li>从零按依赖顺序编译全部 6 个冻结背景模块（[<code>gauge_space.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean)、[<code>metric_entropy.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean)、[<code>operator_space.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean)、[<code>lip_matrix.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean)、[<code>decoupling.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean)、[<code>single_channel.lean</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean)）及全部 7 个交付模块（<code>Ch03/*.lean</code> + <code>Main.lean</code>），均以退出码 <code>0</code> 通过；对全部 7 个交付模块进一步启用 <code>-DwarningAsError=true</code> 严格编译全部通过。</li>
+<li>全量扫描 <code>Ch03/*.lean</code> 与 <code>Main.lean</code>，<code>sorry</code>、<code>admit</code>、<code>axiom</code>、<code>@[implemented_by]</code>、<code>@[extern]</code>、<code>opaque</code>、<code>unsafe</code>、<code>native_decide</code>、<code>set_option debug</code>、<code>Lean.ofReduceBool</code>/<code>Lean.trustCompiler</code>、<code>csimp</code>/<code>unsafeCast</code>/<code>lcProof</code> 等禁用构造命中数均为 <code>0</code>。</li>
+<li>对全部 216 个声明（<code>alignment.json</code> 涉及的 198 个声明与 <code>Ch03</code> 全部 211 个非 <code>private</code> 声明之并集）统一运行 <code>#print axioms</code>，全部仅依赖 <code>{propext, Classical.choice, Quot.sound}</code> 之子集，无任何额外公理或 <code>sorryAx</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>92 项义务覆盖与 [<code>alignment.json</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/alignment.json) 拓扑对齐核查</strong>：</p>
+<ul>
+<li>与 [<code>obligations.json</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/obligations.json) 的 92 个 ID 逐一匹配（<code>CH03-D01</code>..<code>CH03-D08</code>、<code>CH03-P01-01</code>..<code>CH03-P30-04</code>），<code>status</code> 均为 <code>&quot;complete&quot;</code>，仅 <code>CH03-D07</code> 按 <code>allow_background_declarations: true</code> 复用 <code>formal_oet</code> 中的基础覆盖数与度量熵声明，其余声明均精确存在于对应 <code>Ch03/*.lean</code> 文件中。</li>
+<li>依赖图无未知节点、无环（DAG 检验通过），且结合 <code>Ch03</code> 全部 23 个未入表辅助引理（均为私有助手、数值等式、距离公理及端点辅助引理）做全传递闭包引用核查，缺失依赖项数为 <code>0</code>。</li>
+<li>逐条对照 [<code>source/03-operator-local-degeneracy.md</code>](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/alignment-visible-history-v1/R2/physical-2/session/work/source/03-operator-local-degeneracy.md) 核查核心数学语义与边界情形：三分划常量优先与真实中间域复合链（<code>prop_3_2_act_comp_zero</code> 与七点反例 <code>prop_3_3_const_comp_right_counterexample</code>）、去重像纤维分划与虚真/空域商分解充要条件及 <code>(L_B / K_A)</code> 矩阵桥梁、点态/统一零化半径与有限通道极小值及 <code>= ⊤</code> 非常值反例（<code>BotAB</code>）、尺度族与内部 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi></mrow><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math></span>-网覆盖数转化（含有限性反例 <code>prop_3_16_pointwise_counterexample</code>）、<code>EReal</code> 映射熵差良定性与推前/拉回界（允许输出熵为 <code>⊤</code>），以及习题 3.1–3.5（含习题 3.1(ii) 双分支、习题 3.2 允许 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">K_{ij}=\top</annotation></semantics></math></span>、习题 3.4 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mn>1</mn></msub><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><msub><mi>D</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">D_1..D_4</annotation></semantics></math></span> 与 <code>{0,2}</code> 孤立反例、习题 3.5 全分段覆盖数与 <code>7/4</code> 比较），均无数学漏洞。</li>
+</ul>
+</li>
+</ol>
+<h3>仍有的不确定性</h3>
+<ol>
+<li><strong>编译器可验证范围之外的形式化表征惯例选择</strong>：
+<ul>
+<li>带吸收元集合 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>⊔</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">X \sqcup \{\bot\}</annotation></semantics></math></span>、一维实数/整数构造例中的“吸收元 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span>”分别以 <code>Option ℝ</code>、<code>Option SevenPt</code>、<code>Option BotAB</code> 承载；二维阈值类型 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\{0,1\}^2</annotation></semantics></math></span> 以 <code>Fin 2 × Fin 2</code> 表征；子集上的诱导伪度量（如 <code>subfamily_covering_number</code> 与部分复合像域陈述）通过 <code>{z // z ∈ ...}</code> 子类型与背景 <code>subfamily_metric_entropy</code> 衔接。此类同构编码选择在 Lean 内可完整检验，但在与外部多文件库跨章节拼装或以不同载体类型呈现时仍依赖读者认同其自然同构。</li>
+</ul>
+</li>
+<li><strong>部分定理采用数学上更强（去掉冗余假设）的陈述</strong>：
+<ul>
+<li>个别引理或推论在原文陈述中的部分额外前提在严格证明中并非必要（例如部分局部纤维/单调性/复合界定理未要求局部全有限或非退化假设，或仅针对实际所需成分量化），当前形式化保留了更强且真包含原结论的陈述；若后续外部自动评测器按严格固定的隐式/显式参数顺序逐字匹配类型签名，则仍存在签名同构而非逐记号一致的风险。</li>
+</ul>
+</li>
+<li><strong>辅助引理粒度的依赖表征说明</strong>：
+<ul>
+<li><code>Ch03/*.lean</code> 中共有 23 个纯内部算术或工程桥接辅助引理未单独列为独立 <code>obligations</code> 声明；静态传递闭包与 <code>#print axioms</code> 核查已确认它们不引入任何缺失依赖或非常规公理，但未额外用 Lean 元编程遍历每个 <code>ConstantInfo</code> 的内核级展开常量集去逐一逆向枚举 <code>alignment.json</code> 的直接边（最小生成树 vs 直接引用边）偏好。</li>
+</ul>
+</li>
+</ol>
+<p><a href="../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/native-source/alignment-visible-history-v1/R2/physical-2/sealed/answer.md">原答文件 ↗</a></p></div>

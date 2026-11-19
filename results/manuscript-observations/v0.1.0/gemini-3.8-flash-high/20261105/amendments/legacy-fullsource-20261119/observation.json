@@ -1,0 +1,150 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "gemini-3.8-flash-high",
+  "record_id": "20261105",
+  "source_record": {
+    "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/record.json",
+    "bytes": 233638,
+    "sha256": "f21a758a493ecd8fd98e3ac65c50bda5b0e1f92a7c20dcf86df8cc7dbc8404ef"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "a87c4a57b3c9e381e79e9d70d2eed10274d118f5899afca02dfbbe01107281a5",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 1,
+    "total_groups": 1,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+      "original_task": {
+        "strict_pass": false,
+        "completion": {
+          "lower": 0.31,
+          "upper": 0.31,
+          "exact": 0.31
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "完整读26914字节至结尾。上/下/零化定义及无限值边界属于M1-M6；单独审链式复合、死区复合、不动点附加定理，未以主要得分低作为排除理由。",
+      "candidates": [
+        {
+          "id": "F01",
+          "group_id": "G01",
+          "title": "广义矩阵收缩不动点声明",
+          "statement": "全族分离、序列完备且ρ(A)<1推出有效域内唯一不动点。",
+          "scope": "beyond_required",
+          "correctness": "incorrect",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": false,
+          "scope_delta": "错误：非吸收部分取{a,b}，d(a,b)=∞，加入隔离⊥；恒等映射可取A=1/2作为全局上界，空间分离且序列完备、正常域不变，却有两个非底不动点。不能隐补全部正常点间有限距离。",
+          "proof_review": "错误：非吸收部分取{a,b}，d(a,b)=∞，加入隔离⊥；恒等映射可取A=1/2作为全局上界，空间分离且序列完备、正常域不变，却有两个非底不动点。不能隐补全部正常点间有限距离。",
+          "nontrivial_step": "错误：非吸收部分取{a,b}，d(a,b)=∞，加入隔离⊥；恒等映射可取A=1/2作为全局上界，空间分离且序列完备、正常域不变，却有两个非底不动点。不能隐补全部正常点间有限距离。",
+          "value_rationale": "现有交付不支持将这一断言用作已核实成果。",
+          "reason": "错误：非吸收部分取{a,b}，d(a,b)=∞，加入隔离⊥；恒等映射可取A=1/2作为全局上界，空间分离且序列完备、正常域不变，却有两个非底不动点。不能隐补全部正常点间有限距离。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "start_byte": 24537,
+              "end_byte": 25705,
+              "quote": "> **定理 7.1（矩阵收缩与不动点动力学）**  \n> 设 $(\\mathcal{X}, \\mathcal{G}, \\bot)$ 具有全族分离性且关于 $\\mathcal{G}$ 序列完备。设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$ 是保有效定义域的算子，且具有有限实矩阵元的上 Lipschitz 矩阵 $A \\in \\mathbb{R}_+^{m \\times m}$。\n> 记矩阵 $A$ 的**谱半径**为 $\\rho(A) = \\max \\{|\\lambda| : \\lambda \\in \\sigma(A)\\}$。\n> 若：\n> $$\\rho(A) < 1,$$\n> 则：\n> 1. $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 内存在唯一的不可区分不动点 $x^* \\in \\mathrm{dom}(\\phi)$（即 $\\phi(x^*) = x^*$）。\n> 2. 对任意初值 $x_0 \\in \\mathrm{dom}(\\phi)$，Picard 迭代序列 $x_{n+1} = \\phi(x_n)$ 在规范结构下以矩阵几何级数速率收敛到 $x^*$：\n>    $$\\mathbf{d}(x_n, x^*) \\le A^n (I - A)^{-1} \\mathbf{d}(x_1, x_0) \\xrightarrow{n \\to \\infty} \\mathbf{0}.$$\n> 3. **有限步不可区分坍缩**：若 $\\phi$ 同时具有非平凡的死区矩阵 $\\Theta$，且系统迭代轨线在有限步 $N$ 进入了不可区分范畴 $\\mathcal{U}(\\Theta)$，则自第 $N$ 步起，系统不再产生动态差异，在度量意义下完全凝固于不可区分等价类中。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "现有核验尚未确认闭合且正确的数学成果，不计入已核实额外成果组。"
+        },
+        {
+          "id": "F02",
+          "group_id": "G02",
+          "title": "上下与逆向模矩阵链式法则",
+          "statement": "复合的上界AψAφ、下界BψBφ、逆向界CφCψ。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "原文证明在真实复合域内逐次代入非负矩阵控制，数学正确；只是定义和矩阵单调性的直接链式推论，未给独立的新结构障碍。本候选暂不计，供root与其他模型统一。",
+          "proof_review": "原文证明在真实复合域内逐次代入非负矩阵控制，数学正确；只是定义和矩阵单调性的直接链式推论，未给独立的新结构障碍。本候选暂不计，供root与其他模型统一。",
+          "nontrivial_step": "逐次代入原定义，无独立于基础矩阵控制的新证明桥。",
+          "value_rationale": "可在相应研究情境复用；价值标签不是主动额外成果计数门槛。",
+          "reason": "原文证明在真实复合域内逐次代入非负矩阵控制，数学正确；只是定义和矩阵单调性的直接链式推论，未给独立的新结构障碍。本候选暂不计，供root与其他模型统一。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "start_byte": 10682,
+              "end_byte": 12153,
+              "quote": "> **定理 3.1（上下模矩阵乘法链式法则）**  \n> 设 $\\phi, \\psi \\in \\mathcal{X}_{\\mathrm{op}}$，满足 $\\phi(\\mathrm{dom}(\\psi \\circ \\phi)) \\subseteq \\mathrm{dom}(\\psi)$。\n> 1. 若 $A_\\phi, A_\\psi$ 分别为 $\\phi, \\psi$ 的上模矩阵，则 $A_\\psi A_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的上模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le (A_\\psi A_\\phi)\\, \\mathbf{d}(x, y).$$\n> 2. 若 $B_\\phi, B_\\psi$ 分别为 $\\phi, \\psi$ 的正向下模矩阵，则 $B_\\psi B_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的正向下模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\ge (B_\\psi B_\\phi)\\, \\mathbf{d}(x, y).$$\n> 3. 若 $C_\\phi, C_\\psi$ 分别为 $\\phi, \\psi$ 的余 Lipschitz 矩阵，则 $C_\\phi C_\\psi$ 为复合算子 $\\psi \\circ \\phi$ 的余 Lipschitz 矩阵：\n>    $$\\mathbf{d}(x, y) \\le (C_\\phi C_\\psi)\\, \\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))).$$\n\n*证明*：\n仅证 (1)，其余同理：对任意 $x, y \\in \\mathrm{dom}(\\psi \\circ \\phi)$，记 $u = \\phi(x), v = \\phi(y) \\in \\mathrm{dom}(\\psi)$。\n由 $\\psi$ 的上模性：$\\mathbf{d}(\\psi(u), \\psi(v)) \\le A_\\psi \\mathbf{d}(u, v)$。\n由于 $A_\\psi$ 的元素非负，矩阵作用保持 $\\le$ 的偏序单调性，将 $\\mathbf{d}(u, v) \\le A_\\phi \\mathbf{d}(x, y)$ 代入：\n$$\\mathbf{d}(\\psi(u), \\psi(v)) \\le A_\\psi \\bigl( A_\\phi \\mathbf{d}(x, y) \\bigr) = (A_\\psi A_\\phi) \\mathbf{d}(x, y).$$\n结合律由命题 1.1 的半环性质保证。 $\\blacksquare$\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "现有核验未确认区别于直接应用、代入或等价表达的实质独立内容，不另计一组。"
+        },
+        {
+          "id": "F03",
+          "group_id": "G03",
+          "title": "死区复合传递",
+          "statement": "死区控制复合为B[A[d−θ]+−ξ]+。",
+          "scope": "beyond_required",
+          "correctness": "unsupported",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": false,
+          "scope_delta": "所声明扩展值范围允许d=θ=∞，没有定义∞−∞；不能把审阅者的剩余算术补入原文。即使只取有限值，公式本身也只是逐次代入单调截断。",
+          "proof_review": "所声明扩展值范围允许d=θ=∞，没有定义∞−∞；不能把审阅者的剩余算术补入原文。即使只取有限值，公式本身也只是逐次代入单调截断。",
+          "nontrivial_step": "所声明扩展值范围允许d=θ=∞，没有定义∞−∞；不能把审阅者的剩余算术补入原文。即使只取有限值，公式本身也只是逐次代入单调截断。",
+          "value_rationale": "现有交付不支持将这一断言用作已核实成果。",
+          "reason": "所声明扩展值范围允许d=θ=∞，没有定义∞−∞；不能把审阅者的剩余算术补入原文。即使只取有限值，公式本身也只是逐次代入单调截断。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "start_byte": 18081,
+              "end_byte": 19459,
+              "quote": "> **定理 4.2（死区系统的复合传递法则）**  \n> 为表述紧凑，考虑分量阈值向量形式：设 $\\phi$ 具有参数 $(A, \\theta)$，即 $\\mathbf{d}(\\phi(x), \\phi(y)) \\le A [\\mathbf{d}(x, y) - \\theta]_+$（其中 $\\theta \\in \\bar{\\mathbb{R}}_+^m$）；$\\psi$ 具有参数 $(B, \\xi)$，即 $\\mathbf{d}(\\psi(u), \\psi(v)) \\le B [\\mathbf{d}(u, v) - \\xi]_+$（其中 $\\xi \\in \\bar{\\mathbb{R}}_+^m$）。\n> 则复合算子 $\\psi \\circ \\phi$ 满足：\n> $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le B \\Bigl[ A [\\mathbf{d}(x, y) - \\theta]_+ - \\xi \\Bigr]_+.$$\n> 特别地，复合算子的不可区分输入范畴被扩大，其不可区分充分条件集合包含以下非线性凸多面体区域：\n> $$\\Omega_{\\mathrm{indist}} := \\Bigl\\{ (x, y) \\;\\Big|\\; A [\\mathbf{d}(x, y) - \\theta]_+ \\le \\xi \\Bigr\\}.$$\n> 在该范畴内，输出满足全不可区分性：$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) = \\mathbf{0}$。\n\n*证明*：\n由偏序单调性，记 $u = \\phi(x), v = \\phi(y)$，直接将 $\\mathbf{d}(u, v) \\le A [\\mathbf{d}(x, y) - \\theta]_+$ 代入 $\\psi$ 的控制式中，利用截断函数 $t \\mapsto [t]_+$ 在 $\\bar{\\mathbb{R}}$ 上的单调不减性即得上述不等式。当输入落在 $\\Omega_{\\mathrm{indist}}$ 内时，括号内每一分量均非正，经正部截断后全为 $0$，矩阵乘积后输出必为零向量。 $\\blacksquare$\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "现有核验尚未确认闭合且正确的数学成果，不计入已核实额外成果组。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

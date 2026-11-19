@@ -1,0 +1,1 @@
+window.MGEditionData("0fe8d6262bfe03453bc8d29bf43b224cdbb0944be7f00c1c416a4842e7d6b155",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/sol-6.2-xhigh/cases/LCH01.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"sol-6.2-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

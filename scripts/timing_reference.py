@@ -10,6 +10,7 @@ import math
 from pathlib import Path
 import re
 import statistics
+from math_gauge.editions import result_archive, source_edition
 from math_gauge.evidence_retention import is_file, iter_files, read_bytes, read_json
 
 
@@ -105,10 +106,17 @@ def select_timing(case_id, expected_sha, sources):
 
 def build_reference(root, *, display_data=None):
     root = Path(root)
-    edition = read(root / "benchmark.json")
+    edition = source_edition(root)
     selected = dict(edition["selected_result_record_ids"])
     selected["dot-underlying-model-20261108"] = "20261108"
-    display = {m["id"]: m for m in (display_data or read(root / "site/data.json"))["models"]}
+    payload = display_data or read(root / "site/data.json")
+    display = {m["id"]: m for m in payload["models"]}
+    from math_gauge.current_assessment_admissions import record_paths
+    fresh = record_paths(root) if payload.get('benchmark_version') == '1.1.0' else {}
+    for mid, path in fresh.items():
+        selected[mid] = Path(path).parent.name
+    if set(display) != set(selected):
+        raise ValueError('Timing display differs from its edition-selected model cohort')
     cases = [{"id": cid, "group": group, "title": {"zh": zh, "en": en}}
              for cid, group, zh, en in CASES]
     policy_path = root / "protocol/scoring-policy.json"
@@ -120,8 +128,8 @@ def build_reference(root, *, display_data=None):
         raise ValueError("Unknown timing observations")
     models, inputs = [], [{"path": "protocol/scoring-policy.json", "sha256": sha(policy_path)}]
     for model_id, record_id in selected.items():
-        from math_gauge.editions import result_archive
-        folder = root / result_archive(edition, model_id) / model_id / record_id
+        folder = ((root / fresh[model_id]).parent if model_id in fresh else
+                  root / result_archive(edition, model_id) / model_id / record_id)
         record_path = folder / ("record.json" if is_file(folder / "record.json") else "native-observation.json")
         task_path = folder / "public-task-scores.json"
         scores = {r["case_id"]: r for r in read(task_path)["views"]["partial"]["nonlogical_retry_3"]["tasks"]}

@@ -1,0 +1,264 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h2>Mathematical appendix</h2>
+<p>Let <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">∇</mi><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">g(z)=\nabla f(z)</annotation></semantics></math></span> and <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mi>x</mi><mo>+</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">s=x+y</annotation></semantics></math></span>. Then</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">∇</mi><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>x</mi><mo>+</mo><msup><mi>s</mi><mn>3</mn></msup></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mn>2</mn><mi>y</mi><mo>+</mo><msup><mi>s</mi><mn>3</mn></msup></mrow></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+g(x,y)=\nabla f(x,y)
+=\begin{pmatrix}x+s^3\\[2mm]2y+s^3\end{pmatrix},
+</annotation></semantics></math></span></p>
+<p>and</p>
+<h1>[
+\nabla^2 f(x,y)</h1>
+<p>\begin{pmatrix}
+1+3s^2 &amp; 3s^2\
+3s^2 &amp; 2+3s^2
+\end{pmatrix}.
+]</p>
+<p>For every <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>=</mo><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">v=(a,b)\in\mathbb R^2</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>v</mi><mi>T</mi></msup><msup><mi mathvariant="normal">∇</mi><mn>2</mn></msup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mi>v</mi><mo>=</mo><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mn>2</mn><msup><mi>b</mi><mn>2</mn></msup><mo>+</mo><mn>3</mn><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>a</mi><mo>+</mo><mi>b</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>≥</mo><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+v^T\nabla^2 f(x,y)v
+=a^2+2b^2+3s^2(a+b)^2
+\ge a^2+b^2.
+</annotation></semantics></math></span></p>
+<p>Therefore <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span> is <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>C</mi><mi mathvariant="normal">∞</mi></msup></mrow><annotation encoding="application/x-tex">C^\infty</annotation></semantics></math></span>, coercive, and <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span>-strongly convex.</p>
+<h3>1. Continuous flow: well-posedness, contraction, and dissipation</h3>
+<h4>1.1 Global well-posedness and equilibrium</h4>
+<p>Because <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi></mrow><annotation encoding="application/x-tex">g</annotation></semantics></math></span> is <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>C</mi><mi mathvariant="normal">∞</mi></msup></mrow><annotation encoding="application/x-tex">C^\infty</annotation></semantics></math></span>, local solutions of</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mover accent="true"><mi>z</mi><mo>˙</mo></mover><mo>=</mo><mo>−</mo><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">
+\dot z=-g(z)
+</annotation></semantics></math></span></p>
+<p>exist and are unique. Along a trajectory,</p>
+<h1>[
+\frac{d}{dt}f(z(t))</h1>
+<h1>-g(z(t))\cdot \dot z(t)</h1>
+<p>-|g(z(t))|^2\le 0.
+]</p>
+<p>Thus <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z(t)</annotation></semantics></math></span> remains in the sublevel set <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>z</mi><mo>:</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>≤</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{z:f(z)\le f(z(0))\}</annotation></semantics></math></span>, which is compact because <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span> is coercive. Since <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi></mrow><annotation encoding="application/x-tex">g</annotation></semantics></math></span> is locally Lipschitz and bounded on that compact set, the local solution cannot blow up in finite time. Hence <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\Phi_t(z)</annotation></semantics></math></span> exists uniquely for every <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">z\in\mathbb R^2</annotation></semantics></math></span> and every <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">t\ge0</annotation></semantics></math></span>, and</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="normal">Φ</mi><mrow><mi>t</mi><mo>+</mo><mi>s</mi></mrow></msub><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo>∘</mo><msub><mi mathvariant="normal">Φ</mi><mi>s</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\Phi_{t+s}=\Phi_t\circ\Phi_s.
+</annotation></semantics></math></span></p>
+<p>The equilibrium is unique. Indeed, <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">g(0)=0</annotation></semantics></math></span>, and <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f\ge0</annotation></semantics></math></span> with <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f(0)=0</annotation></semantics></math></span>, so <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span> is the global minimizer. Alternatively, if <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">g(z)=0</annotation></semantics></math></span>, strong monotonicity gives</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0</mn><mo>=</mo><mo stretchy="false">⟨</mo><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mi>g</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>z</mi><mo>−</mo><mn>0</mn><mo stretchy="false">⟩</mo><mo>≥</mo><mi mathvariant="normal">∥</mi><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+0=\langle g(z)-g(0),z-0\rangle\ge \|z\|^2,
+</annotation></semantics></math></span></p>
+<p>so <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z=0</annotation></semantics></math></span>. Thus</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mtext>the unique equilibrium is </mtext><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{\text{the unique equilibrium is }(x,y)=(0,0).}
+</annotation></semantics></math></span></p>
+<h4>1.2 Contraction</h4>
+<p>Let <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z(t)=\Phi_t(z)</annotation></semantics></math></span> and <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">w(t)=\Phi_t(w)</annotation></semantics></math></span>. Then</p>
+<h1>[
+\frac12\frac{d}{dt}|z(t)-w(t)|^2</h1>
+<p>-\langle z-w,g(z)-g(w)\rangle
+\le -|z-w|^2,
+]</p>
+<p>where the inequality is strong monotonicity. Hence</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>z</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>−</mo><mi>w</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>t</mi></mrow></msup><mi mathvariant="normal">∥</mi><mi>z</mi><mo>−</mo><mi>w</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+\|z(t)-w(t)\|^2\le e^{-2t}\|z-w\|^2,
+</annotation></semantics></math></span></p>
+<p>or</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mi mathvariant="normal">∥</mi><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∥</mi><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>t</mi></mrow></msup><mi mathvariant="normal">∥</mi><mi>z</mi><mo>−</mo><mi>w</mi><mi mathvariant="normal">∥</mi><mo separator="true">,</mo><mspace width="2em"/><mi>t</mi><mo>≥</mo><mn>0.</mn></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+\|\Phi_t(z)-\Phi_t(w)\|
+\le e^{-t}\|z-w\|,
+\qquad t\ge0.
+}
+</annotation></semantics></math></span></p>
+<p>In particular, taking <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">w=0</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∥</mi><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>t</mi></mrow></msup><mi mathvariant="normal">∥</mi><mi>z</mi><mi mathvariant="normal">∥</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\|\Phi_t(z)\|\le e^{-t}\|z\|.
+</annotation></semantics></math></span></p>
+<h4>1.3 Energy decay</h4>
+<p>Strong convexity gives, for all <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo separator="true">,</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">z,w</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mo>≥</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">⟨</mo><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>w</mi><mo>−</mo><mi>z</mi><mo stretchy="false">⟩</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>w</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+f(w)\ge f(z)+\langle g(z),w-z\rangle+\frac12\|w-z\|^2.
+</annotation></semantics></math></span></p>
+<p>Take <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo>=</mo><mi>z</mi><mo>−</mo><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">w=z-g(z)</annotation></semantics></math></span>. Since <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f\ge0</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0</mn><mo>≤</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo>−</mo><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≥</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+0\le f(z-g(z))
+\ge f(z)-\frac12\|g(z)\|^2,
+</annotation></semantics></math></span></p>
+<p>so</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>≥</mo><mn>2</mn><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\|g(z)\|^2\ge 2f(z).
+</annotation></semantics></math></span></p>
+<p>Therefore</p>
+<h1>[
+\frac{d}{dt}f(\Phi_t(z))</h1>
+<p>-|g(\Phi_t(z))|^2
+\le -2f(\Phi_t(z)),
+]</p>
+<p>and Gronwall's inequality yields</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>f</mi><mo stretchy="false">(</mo><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>t</mi></mrow></msup><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+f(\Phi_t(z))\le e^{-2t}f(z).
+}
+</annotation></semantics></math></span></p>
+<h4>1.4 Stacked blocks</h4>
+<p>Since <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>τ</mi></msub><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub></mrow><annotation encoding="application/x-tex">T_\tau=\Phi_\tau</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>Z</mi><mi>n</mi></msub><mo>=</mo><msubsup><mi>T</mi><mi>τ</mi><mi>n</mi></msubsup><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mrow><mi>n</mi><mi>τ</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+Z_n=T_\tau^n(Z_0)=\Phi_{n\tau}(Z_0).
+</annotation></semantics></math></span></p>
+<p>Using <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Φ</mi><mi>t</mi></msub><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\Phi_t(0)=0</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mi mathvariant="normal">∥</mi><msub><mi>Z</mi><mi>n</mi></msub><mi mathvariant="normal">∥</mi><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>n</mi><mi>τ</mi></mrow></msup><mi mathvariant="normal">∥</mi><msub><mi>Z</mi><mn>0</mn></msub><mi mathvariant="normal">∥</mi><mo separator="true">,</mo></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+\|Z_n\|\le e^{-n\tau}\|Z_0\|,
+}
+</annotation></semantics></math></span></p>
+<p>and</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>f</mi><mo stretchy="false">(</mo><msub><mi>Z</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>n</mi><mi>τ</mi></mrow></msup><mi>f</mi><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+f(Z_n)\le e^{-2n\tau}f(Z_0).
+}
+</annotation></semantics></math></span></p>
+<p>Thus the stack converges exponentially to the unique equilibrium <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span>. If one wants <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∥</mi><msub><mi>Z</mi><mi>n</mi></msub><mi mathvariant="normal">∥</mi><mo>≤</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">\|Z_n\|\le\varepsilon</annotation></semantics></math></span>, it suffices that</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>n</mi><mo>≥</mo><mfrac><mn>1</mn><mi>τ</mi></mfrac><mi>log</mi><mo>⁡</mo><mfrac><mrow><mi mathvariant="normal">∥</mi><msub><mi>Z</mi><mn>0</mn></msub><mi mathvariant="normal">∥</mi></mrow><mi>ε</mi></mfrac><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+n\ge \frac1\tau\log\frac{\|Z_0\|}{\varepsilon}.
+</annotation></semantics></math></span></p>
+<p>If one wants <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><msub><mi>Z</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>ε</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">f(Z_n)\le\varepsilon_f</annotation></semantics></math></span>, it suffices that</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>n</mi><mo>≥</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>τ</mi></mrow></mfrac><mi>log</mi><mo>⁡</mo><mfrac><mrow><mi>f</mi><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><msub><mi>ε</mi><mi>f</mi></msub></mfrac><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+n\ge \frac{1}{2\tau}\log\frac{f(Z_0)}{\varepsilon_f}.
+</annotation></semantics></math></span></p>
+<p>These estimates are exact for the exact flow map; they contain no time-discretization error.</p>
+<hr>
+<h3>2. Conditional proximal certificate</h3>
+<p>Let <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>:</mo><msup><mi mathvariant="double-struck">R</mi><mn>2</mn></msup><mo>→</mo><mo stretchy="false">(</mo><mo>−</mo><mi mathvariant="normal">∞</mi><mo separator="true">,</mo><mo>+</mo><mi mathvariant="normal">∞</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">r:\mathbb R^2\to(-\infty,+\infty]</annotation></semantics></math></span> be proper, lower-semicontinuous, and convex, and suppose</p>
+<h1>[
+T(z)=\operatorname{prox}_r(z)</h1>
+<p>\arg\min_u\left{r(u)+\frac12|u-z|^2\right}.
+]</p>
+<p>Set <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mi>T</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p=T(z)</annotation></semantics></math></span>. The first-order optimality condition for the prox minimization is</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0</mn><mo>∈</mo><mi mathvariant="normal">∂</mi><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mo>+</mo><mi>p</mi><mo>−</mo><mi>z</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+0\in \partial r(p)+p-z,
+</annotation></semantics></math></span></p>
+<p>equivalently,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>z</mi><mo>−</mo><mi>p</mi><mo>∈</mo><mi mathvariant="normal">∂</mi><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+z-p\in\partial r(p).
+</annotation></semantics></math></span></p>
+<p>By convexity of <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span>, for every <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>∈</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mi>r</mi></mrow><annotation encoding="application/x-tex">u\in\operatorname{dom}r</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>r</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>≥</mo><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">⟨</mo><mi>z</mi><mo>−</mo><mi>p</mi><mo separator="true">,</mo><mi>u</mi><mo>−</mo><mi>p</mi><mo stretchy="false">⟩</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+r(u)\ge r(p)+\langle z-p,u-p\rangle.
+</annotation></semantics></math></span></p>
+<p>Therefore</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>r</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>u</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>≥</mo><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">⟨</mo><mi>z</mi><mo>−</mo><mi>p</mi><mo separator="true">,</mo><mi>u</mi><mo>−</mo><mi>p</mi><mo stretchy="false">⟩</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>u</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>p</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>u</mi><mo>−</mo><mi>p</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mi mathvariant="normal">.</mi></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+r(u)+\frac12\|u-z\|^2
+&amp;\ge
+r(p)+\langle z-p,u-p\rangle+\frac12\|u-z\|^2\\
+&amp;=
+r(p)+\frac12\|p-z\|^2+\frac12\|u-p\|^2.
+\end{aligned}
+</annotation></semantics></math></span></p>
+<p>Hence the standard proximal certificate holds:</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>p</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>u</mi><mo>−</mo><mi>p</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>≤</mo><mi>r</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>u</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+r(p)+\frac12\|p-z\|^2+\frac12\|u-p\|^2
+\le
+r(u)+\frac12\|u-z\|^2
+}
+</annotation></semantics></math></span></p>
+<p>for all <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>∈</mo><mi mathvariant="normal">dom</mi><mo>⁡</mo><mi>r</mi></mrow><annotation encoding="application/x-tex">u\in\operatorname{dom}r</annotation></semantics></math></span>.</p>
+<p>Now put <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mi>T</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p=T(z)</annotation></semantics></math></span>, <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mi>T</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q=T(w)</annotation></semantics></math></span>, and apply the certificate twice: once to <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>z</mi><mo separator="true">,</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(z,p)</annotation></semantics></math></span> with <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>=</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">u=q</annotation></semantics></math></span>, and once to <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>w</mi><mo separator="true">,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(w,q)</annotation></semantics></math></span> with <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>=</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">u=p</annotation></semantics></math></span>. Adding the resulting inequalities gives</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>p</mi><mo>−</mo><mi>q</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo fence="true">(</mo><mi mathvariant="normal">∥</mi><mi>q</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>+</mo><mi mathvariant="normal">∥</mi><mi>p</mi><mo>−</mo><mi>w</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>−</mo><mi mathvariant="normal">∥</mi><mi>p</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>−</mo><mi mathvariant="normal">∥</mi><mi>q</mi><mo>−</mo><mi>w</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo fence="true">)</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\|p-q\|^2
+\le
+\frac12\left(
+\|q-z\|^2+\|p-w\|^2-\|p-z\|^2-\|q-w\|^2
+\right).
+</annotation></semantics></math></span></p>
+<p>The right-hand side equals <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⟨</mo><mi>q</mi><mo>−</mo><mi>p</mi><mo separator="true">,</mo><mi>w</mi><mo>−</mo><mi>z</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">\langle q-p,w-z\rangle</annotation></semantics></math></span>, so</p>
+<h1>[
+|p-q|^2\le \langle q-p,w-z\rangle</h1>
+<p>\langle p-q,z-w\rangle.
+]</p>
+<p>Equivalently,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mo stretchy="false">⟨</mo><mi>T</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mi>T</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>z</mi><mo>−</mo><mi>w</mi><mo stretchy="false">⟩</mo><mo>≥</mo><mi mathvariant="normal">∥</mi><mi>T</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mi>T</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mi mathvariant="normal">.</mi></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+\langle T(z)-T(w),z-w\rangle
+\ge
+\|T(z)-T(w)\|^2.
+}
+</annotation></semantics></math></span></p>
+<p>Thus <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span> is firmly nonexpansive. By Cauchy–Schwarz,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mi mathvariant="normal">∥</mi><mi>T</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mi>T</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∥</mi><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>z</mi><mo>−</mo><mi>w</mi><mi mathvariant="normal">∥</mi><mi mathvariant="normal">.</mi></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">
+\boxed{
+\|T(z)-T(w)\|\le \|z-w\|.
+}
+</annotation></semantics></math></span></p>
+<p>Equivalently,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>T</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mi>T</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>+</mo><mi mathvariant="normal">∥</mi><mo stretchy="false">(</mo><mi>I</mi><mo>−</mo><mi>T</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><mo stretchy="false">(</mo><mi>I</mi><mo>−</mo><mi>T</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>z</mi><mo>−</mo><mi>w</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\|T(z)-T(w)\|^2
++
+\|(I-T)(z)-(I-T)(w)\|^2
+\le
+\|z-w\|^2.
+</annotation></semantics></math></span></p>
+<h4>Important caveat: this certificate is conditional</h4>
+<p>The above argument proves only:</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>T</mi><mo>=</mo><msub><mrow><mi mathvariant="normal">prox</mi><mo>⁡</mo></mrow><mi>r</mi></msub><mtext> for convex </mtext><mi>r</mi><mspace width="1em"/><mo>⟹</mo><mspace width="1em"/><mi>T</mi><mtext> satisfies the certificate and is firmly nonexpansive.</mtext></mrow><annotation encoding="application/x-tex">
+T=\operatorname{prox}_r\text{ for convex }r
+\quad\Longrightarrow\quad
+T\text{ satisfies the certificate and is firmly nonexpansive.}
+</annotation></semantics></math></span></p>
+<p>It does <strong>not</strong> prove that a strongly convex gradient flow map is a proximal map. In fact, the statement in the draft that <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>τ</mi></msub><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub></mrow><annotation encoding="application/x-tex">T_\tau=\Phi_\tau</annotation></semantics></math></span> admits a convex proximal representation for every <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\tau&gt;0</annotation></semantics></math></span> is false for the present <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span>.</p>
+<p>For example, take <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z_0=(0,1)</annotation></semantics></math></span>, and let <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>τ</mi></msub><mo>=</mo><mi>D</mi><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub><mo stretchy="false">(</mo><msub><mi>z</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">J_\tau=D\Phi_\tau(z_0)</annotation></semantics></math></span>. The Jacobian solves the variational equation</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mover accent="true"><mi>J</mi><mo>˙</mo></mover><mi>τ</mi></msub><mo>=</mo><mo>−</mo><mi>H</mi><mo stretchy="false">(</mo><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub><mo stretchy="false">(</mo><msub><mi>z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo><msub><mi>J</mi><mi>τ</mi></msub><mo separator="true">,</mo><mspace width="2em"/><msub><mi>J</mi><mn>0</mn></msub><mo>=</mo><mi>I</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\dot J_\tau=-H(\Phi_\tau(z_0))J_\tau,
+\qquad J_0=I.
+</annotation></semantics></math></span></p>
+<p>At <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z_0=(0,1)</annotation></semantics></math></span>,</p>
+<h1>[
+H(z_0)=
+\begin{pmatrix}4&amp;3\3&amp;5\end{pmatrix},
+\qquad
+\dot H(0)</h1>
+<p>-24
+\begin{pmatrix}1&amp;1\1&amp;1\end{pmatrix}
++O(t^2).
+]</p>
+<p>A direct Taylor expansion of the variational equation gives</p>
+<h1>[
+(J_\tau)<em>{12}-(J</em>\tau)_{21}</h1>
+<p>-4\tau^3+O(\tau^4).
+]</p>
+<p>Thus, for every sufficiently small <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\tau&gt;0</annotation></semantics></math></span>, <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub><mo stretchy="false">(</mo><msub><mi>z</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D\Phi_\tau(z_0)</annotation></semantics></math></span> is not symmetric.</p>
+<p>If <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub><mo>=</mo><msub><mrow><mi mathvariant="normal">prox</mi><mo>⁡</mo></mrow><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">\Phi_\tau=\operatorname{prox}_r</annotation></semantics></math></span> for a convex <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span>, then <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub></mrow><annotation encoding="application/x-tex">\Phi_\tau</annotation></semantics></math></span> is a <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>C</mi><mi mathvariant="normal">∞</mi></msup></mrow><annotation encoding="application/x-tex">C^\infty</annotation></semantics></math></span> diffeomorphism onto its open range, and</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>↦</mo><msubsup><mi mathvariant="normal">Φ</mi><mi>τ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo><mo>−</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">
+p\mapsto \Phi_\tau^{-1}(p)-p
+</annotation></semantics></math></span></p>
+<p>is a continuous selection of <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∂</mi><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\partial r(p)</annotation></semantics></math></span>. Convexity then forces this selection to equal <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∇</mi><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\nabla r(p)</annotation></semantics></math></span> on the open range, so its Jacobian <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>J</mi><mi>τ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mo>−</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">J_\tau^{-1}-I</annotation></semantics></math></span> must be symmetric. This would force <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>τ</mi></msub></mrow><annotation encoding="application/x-tex">J_\tau</annotation></semantics></math></span> itself to be symmetric, a contradiction.</p>
+<p>Therefore the exact flow block is not, in general, an exact convex proximal step. The correct conclusion from strong convexity is contraction and energy dissipation, not proximal representability.</p>
+<hr>
+<h3>3. Deployment description</h3>
+<p>Each deployed block is the exact autonomous continuous-flow map</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>T</mi><mi>τ</mi></msub><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mi>τ</mi></msub><mo separator="true">,</mo><mspace width="2em"/><mover accent="true"><mi>z</mi><mo>˙</mo></mover><mo>=</mo><mo>−</mo><mi mathvariant="normal">∇</mi><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mn>2</mn><msup><mi>y</mi><mn>2</mn></msup></mrow><mn>2</mn></mfrac><mo>+</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>+</mo><mi>y</mi><msup><mo stretchy="false">)</mo><mn>4</mn></msup></mrow><mn>4</mn></mfrac><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+T_\tau=\Phi_\tau,
+\qquad
+\dot z=-\nabla f(z),
+\qquad
+f(x,y)=\frac{x^2+2y^2}{2}+\frac{(x+y)^4}{4},
+</annotation></semantics></math></span></p>
+<p>where <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\tau&gt;0</annotation></semantics></math></span> is the physical evolution time. For all <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo separator="true">,</mo><mi>w</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">z,w\in\mathbb R^2</annotation></semantics></math></span>,</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><msub><mi>T</mi><mi>τ</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>−</mo><msub><mi>T</mi><mi>τ</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∥</mi><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>τ</mi></mrow></msup><mi mathvariant="normal">∥</mi><mi>z</mi><mo>−</mo><mi>w</mi><mi mathvariant="normal">∥</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+\|T_\tau(z)-T_\tau(w)\|\le e^{-\tau}\|z-w\|,
+</annotation></semantics></math></span></p>
+<p>and</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><msub><mi>T</mi><mi>τ</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>τ</mi></mrow></msup><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+f(T_\tau(z))\le e^{-2\tau}f(z).
+</annotation></semantics></math></span></p>
+<p>Stacking <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span> identical blocks gives the exact flow at horizon <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>τ</mi></mrow><annotation encoding="application/x-tex">n\tau</annotation></semantics></math></span>:</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>Z</mi><mi>n</mi></msub><mo>=</mo><msubsup><mi>T</mi><mi>τ</mi><mi>n</mi></msubsup><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="normal">Φ</mi><mrow><mi>n</mi><mi>τ</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+Z_n=T_\tau^n(Z_0)=\Phi_{n\tau}(Z_0),
+</annotation></semantics></math></span></p>
+<p>so</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><msub><mi>Z</mi><mi>n</mi></msub><mi mathvariant="normal">∥</mi><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>n</mi><mi>τ</mi></mrow></msup><mi mathvariant="normal">∥</mi><msub><mi>Z</mi><mn>0</mn></msub><mi mathvariant="normal">∥</mi><mo separator="true">,</mo><mspace width="2em"/><mi>f</mi><mo stretchy="false">(</mo><msub><mi>Z</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>≤</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>n</mi><mi>τ</mi></mrow></msup><mi>f</mi><mo stretchy="false">(</mo><msub><mi>Z</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\|Z_n\|\le e^{-n\tau}\|Z_0\|,
+\qquad
+f(Z_n)\le e^{-2n\tau}f(Z_0).
+</annotation></semantics></math></span></p>
+<p>Hence the stack converges exponentially to the unique equilibrium <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math></span>, with bounded sensitivity to perturbations and monotone energy dissipation.</p>
+<p>The coefficient in</p>
+<h1>[
+\operatorname{prox}_r(z)</h1>
+<p>\arg\min_u\left{r(u)+\frac12|u-z|^2\right}
+]</p>
+<p>is fixed at <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">1/2</annotation></semantics></math></span>; it is not the evolution time <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span>. If one uses the common notation <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">prox</mi><mo>⁡</mo></mrow><mrow><mi>η</mi><mi>r</mi></mrow></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mi>arg</mi><mo>⁡</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mi>u</mi></msub><mo stretchy="false">{</mo><mi>η</mi><mi>r</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="normal">∥</mi><mi>u</mi><mo>−</mo><mi>z</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\operatorname{prox}_{\eta r}(z)=\arg\min_u\{\eta r(u)+\frac12\|u-z\|^2\}</annotation></semantics></math></span>, then <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span> is a separate proximal-step coefficient. In particular, <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">prox</mi><mo>⁡</mo></mrow><mrow><mi>η</mi><mi>f</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\operatorname{prox}_{\eta f}</annotation></semantics></math></span> is the backward-Euler map with step <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span>, not the exact flow map <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Φ</mi><mi>η</mi></msub></mrow><annotation encoding="application/x-tex">\Phi_\eta</annotation></semantics></math></span>. Therefore the deployed block should be described as an exact continuous-flow contraction/dissipation step, not as an exact convex regularization step, unless a proximal representation is separately proved. For the present <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span>, the draft’s universal proximal-representation claim is false.</p>
+</div>

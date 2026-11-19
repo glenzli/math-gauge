@@ -70,6 +70,8 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT))
 from math_gauge.catalog import Suite, candidate_message, safe_file  # noqa: E402
 from math_gauge.benchmarks import reliability_schedule  # noqa: E402
+from math_gauge.editions import SOURCE_EDITION, source_edition  # noqa: E402
+from math_gauge.result_admissions import COUNTS  # noqa: E402
 from scripts.formal import check_evidence as author_evidence  # noqa: E402
 
 
@@ -114,11 +116,18 @@ def check_fixed_design(plan: dict, selection: dict, packet: Path) -> None:
                 f"Fixed design bytes changed: {name}")
 
 
-def check_plan(plan: dict) -> None:
+def check_plan(plan: dict, *, root: Path = ROOT) -> None:
     if plan.get("schema") == "math-gauge.reliability-material-plan/v3":
         ids = [row["case_id"] for row in plan.get("cases", [])]
-        public_count = read(ROOT / "benchmark.json")["public"]["tasks"]
-        require(plan.get("protocol_version") == "0.5.0" and plan.get("suite_version") == read(ROOT / "benchmark.json")["version"]
+        try:
+            (root / "benchmark.json").lstat()
+        except FileNotFoundError:
+            # Standalone material packets retain the v3 source suite contract.
+            source_version, public_count = SOURCE_EDITION, COUNTS["public_a1"]
+        else:
+            edition = source_edition(root)
+            source_version, public_count = edition["version"], edition["public"]["tasks"]
+        require(plan.get("protocol_version") == "0.5.0" and plan.get("suite_version") == source_version
                 and len(ids) == public_count and len(set(ids)) == public_count
                 and plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
                 and plan.get("human_approved") is False and plan.get("actual_results") is None
@@ -429,7 +438,7 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
     """Validate the versioned local draft without inheriting older acceptance."""
     from math_gauge.benchmarks import BenchmarkProfile, build_plan
     packet = root / PACKET
-    check_plan(plan)
+    check_plan(plan, root=root)
     current = plan.get("schema") == "math-gauge.reliability-material-plan/v3"
     check_fixed_design(plan, selection, packet)
     if current:
@@ -525,7 +534,7 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         return validate_v06_materials(root, plan, selection, prompts, schedule,
                                       refresh=refresh, write_report=write_report)
     require(plan.get("protocol_version") == selection.get("protocol_version"), "Reliability protocol versions differ")
-    check_plan(plan)
+    check_plan(plan, root=root)
     check_fixed_design(plan, selection, packet)
     check_messages(selection, prompts, (packet / "reply-format.md").read_text())
     check_schedule(plan, schedule, prompts)

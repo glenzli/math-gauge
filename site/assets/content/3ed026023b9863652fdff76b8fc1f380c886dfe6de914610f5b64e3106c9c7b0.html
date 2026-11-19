@@ -1,0 +1,49 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>KEEP</p>
+<p>本轮没有发现需要修改的缺陷，答卷主体（<code>Main.lean</code>、<code>alignment.json</code>）原样保留，我没有改动其中任何内容。</p>
+<h2>核查依据</h2>
+<p>本轮工作区里没有上一轮的文件。我把上一版答卷里的 <code>Main.lean</code>（3167 行）和 <code>alignment.json</code> 原文重新落盘，在固定环境（Lean 4.29.1，mathlib 5e932f9，导入冻结的 <code>formal_oet</code>）里重新核查。</p>
+<p><strong>1. 编译。</strong> <code>lake env lean Main.lean</code> 退出码为 0，输出为空，没有错误也没有警告。</p>
+<p><strong>2. 公理与禁用设施。</strong></p>
+<ul>
+<li>我用元程序遍历 <code>MGC003</code> 命名空间的全部 413 个声明（含辅助引理和具体例子）。它们只依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</li>
+<li>引用的冻结声明（<code>covering_number</code>、<code>metric_entropy</code> 等）同样只依赖这三条。</li>
+<li>全文没有 <code>sorry</code>、<code>admit</code>、<code>native_decide</code>、<code>axiom</code>、<code>unsafe</code>、<code>implemented_by</code>，也没有改动 <code>maxHeartbeats</code> 或递归深度；<code>set_option</code> 只有 <code>linter.*</code>。</li>
+</ul>
+<p><strong>3. <code>alignment.json</code>。</strong> 我写了脚本对照 <code>obligations.json</code> 校验：</p>
+<ul>
+<li>JSON 能解析，<code>case_id</code> 和 <code>version</code> 与清单一致。</li>
+<li>92 项，ID 集合和顺序与清单完全相同，没有缺项、多项或重复。</li>
+<li>全部为 <code>complete</code>（92 项），每项的 <code>representation</code> 非空且至少有一个声明。</li>
+<li>依赖 ID 都在清单内，没有自依赖。</li>
+<li>非 <code>Main.lean</code> 的文件只出现在 CH03-D07，这是清单明确允许的冻结背景，且文件存在。</li>
+<li>168 处声明引用共 165 个唯一名字，我把这些名字直接送进编译后的环境核对：全部存在，且公理干净。</li>
+</ul>
+<p><strong>4. 覆盖与对齐复查。</strong> 我按清单逐项对照原文重读了一遍，未发现不一致：</p>
+<ul>
+<li>定义 D01–D08 与命题 3.1–3.20、引理 3.13、推论 3.4 和 3.17、各条注，都对应到具体声明。</li>
+<li>反例有对应的 Lean 构造：阶跃算子（反例 3.1）、七点双分量例（命题 3.3(ii)）、两点换位例、两点无穷距离例（命题 3.8(ii)，含 i=j 与 i≠j）、命题 3.14(iii)、命题 3.16 后的覆盖数反例。</li>
+<li>习题 3.1–3.5 的数值结果由 Lean 证明验证，包括覆盖数分段与端点、阈值类型、熵差 1 等。</li>
+<li>边界与分支也在代码里：命题 3.6(i) 的 U=∅、命题 3.2(ii) 的零步链、Lip/co-Lip 条目取 +∞、命题 3.15(iii) 输出距离为 +∞、命题 3.18(i) 与 3.20 的无穷熵、习题 3.1(ii) 中 ψ(c)=⊥ 的分支。</li>
+<li>对定义、定量词和不等号方向，我逐一对照了原文（如阈值分类中 <code>&lt;</code> 与 <code>≥</code>，零化矩阵行列约定，复合的左右顺序）。</li>
+</ul>
+<h2>仍有的不确定性</h2>
+<ol>
+<li><strong>核查对象是重新落盘的副本。</strong> 无法与上一轮的原文件逐字节比对。重新落盘后能干净编译，说明转写没有引入可见错误。</li>
+<li><strong>对齐表的粒度。</strong> 两个反例的主定理没有把规范结构合法性和 <code>U ⊆ dom φ</code> 打包进结论：
+<ul>
+<li>换位例（CH03-P03-01）的合法性由 <code>Swap.dS_gauge</code> 证明，两点无穷距离例（CH03-P11-03）的由 <code>TwoPt.dd_gauge</code> 证明，两者都在 <code>Main.lean</code> 中，但没写进对齐表的声明列表。</li>
+<li>这两个例子的 <code>U ⊆ dom φ</code> 没有单独陈述，因为所用定义不要求它。</li>
+<li>这是粒度问题，不是数学缺口。如果评审要求打包，会是一处小的对齐扣分。</li>
+</ul>
+</li>
+<li><strong>复合伪度量用 sup 表示。</strong> 背景里的 <code>subfamily_pseudometric</code> 是上确界，原文写的是最大值。对有限非空子族两者相等，但我只证明了用到的零距刻画（<code>subfam_eq_zero_iff</code>）和命题 3.10 的最小值公式，没有单列&quot;上确界可取到&quot;的引理。</li>
+<li><strong>假设强度和辅助定义。</strong>
+<ul>
+<li>一部分定义不把 <code>U ⊆ dom φ</code> 写进定义，而是放在定理假设里。</li>
+<li>个别定理省略了原文有但证明用不到的假设，所以比原文更强。</li>
+<li><code>HasScalarCoLipBound</code> 是我仿照冻结的 <code>HasScalarLipBound</code> 自己补的 co-Lip 版本。</li>
+</ul>
+</li>
+<li><strong><code>dependencies</code> 字段。</strong> 我只核对了 ID 合法，实际使用关系是我按证明逐项整理的，没有机器校验。</li>
+</ol>
+<p><a href="../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/c003-rounds/R1/attempt-1/response.md">原答文件 ↗</a></p></div>

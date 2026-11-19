@@ -1,0 +1,112 @@
+{
+  "schema": "math-gauge.independent-lean-case-review/v1",
+  "reviewer_kind": "ai",
+  "review_model": "gpt-6.1-sol",
+  "review_reasoning_effort": "max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "assessment_edition": "1.1.0",
+  "new_candidate_calls": 0,
+  "candidate_source_repaired": false,
+  "canonical_repositories_modified": false,
+  "case_id": "AHR03",
+  "slot_id": "AHR03",
+  "source_bindings": {
+    "identity": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR03/source-identity.json",
+      "bytes": 10725,
+      "sha256": "7ae5b22dddca60feb83f91f23fc1cc9270208419205e2dec95dd68f5e882b681"
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/AHR03-A1/attempt-1/response.md",
+      "bytes": 11380,
+      "sha256": "0c76a546becb0022a720451aef920f4b10216747b8536fe4548afea0d85cef56"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/lean/AHR03-A1/attempt-1/request.json",
+      "bytes": 574343,
+      "sha256": "366ca19a6f411ce70f646dbbae2d912903cea9b7dd13aa4be067ef497a46231d"
+    }
+  },
+  "self_assessment": {
+    "original_prose": "## 结论\n\n在题目限定的范围内，即正文 (i) 节点域加细的定义，以及命题 #h-012f4ba72aeb3f20 的节点域加细情形，**这份 Lean 实现准确且完整，没有发现数学上的缺口**。\n\n具体有三点：\n\n- **定义：** 有两种编码，与正文逐项一致。一种是构造型的 `NodePartitionData`，另一种是关系型的 `NodeDomainRefinement`。\n- **命题：** 有两条相互独立的证明，都已完成：\n  - 实际构造出的网络（含剪枝）外延算子**全等**。这比正文要求的 $\\equiv_U$ 更强。\n  - 任何满足 `NodeDomainRefinement` 的 $\\mathcal N'$ 在 $U$ 上与原网络局部等价。\n- **编译：** 模块 `lake build` 成功。关键定理用 `#print axioms` 检查，只依赖 `propext`、`Classical.choice`、`Quot.sound`。全库检索没有 `sorry`、`admit` 或自定义 `axiom`。\n\n不足之处都在形式化层面：有一个冗余字段、\"精确性\"没有写成定理、缺少最终打包。详见第五节。\n\n---\n\n## 一、定义逐项对照（正文 (i)）\n\n| 正文条款 | Lean 中的对应 |\n|---|---|\n| 被细分的节点 $\\beta$ | 构造里是 `target` 参数；关系里是 `target` 字段 |\n| 有限非空分划 $U_\\beta=\\bigsqcup_a U_{\\beta,a}$ | `count`、`count_pos`、`piece : Fin count → Set X`、`nonempty`、`disjoint`、`cover : ⋃ piece = N.node_dom target` |\n| $f_{\\beta,a}$ 满足 $\\mathrm{dom}=U_{\\beta,a}$ 且 $f_{\\beta,a}\\equiv_{U_{\\beta,a}}f_\\beta$ | `local_op`、`local_domain`、`local_eq`；正文附注\"$f_{\\beta,a}=f_\\beta|_{U_{\\beta,a}}$\"由 `local_op_eq_restrict` 证明 |\n| 用子节点 $\\beta_a$ 替换 $\\beta$ | 标签 `Label = {v // v ≠ target} ⊕ Fin count`；关系侧为单射的 `source`，加上 `old_node_op_compat` / `piece_node_op_compat` |\n| 子节点入口片取 $U^{\\rm in}_\\beta\\cap U_{\\beta,a}$，其余入口片不变 | 构造里 `entry := lift_label (N.entry x) x`；关系侧由 `entry_projection` 推出 `NodeDomainRefinement.entry_domain_eq`：$\\mathrm{entry}'(v)=\\mathrm{entry}(\\pi v)\\cap U'_v$。对旧节点这就是\"不变\"，对子节点就是 $U^{\\rm in}_\\beta\\cap U_{\\beta,a}$ |\n| 入边、出边、自环的新边域，其余边不变 | 构造的 `choice` 写作 `map_output_choice (lift_label · z) (N.choice (π v) z)`。剪枝前的自环双交由 `self_loop_choice_iff` 给出，剪枝后的统一公式由 `network_edge_domain_eq` 给出；关系侧是字段 `edge_domain_eq` |\n| 空入口片、空边省略；终止域取出边域的补集 | Lean 里边就是非空的 `edge_domain`，入口节点就是 `entry_domain` 非空的节点，`terminal_domain` 本身定义为补集，因此自动成立 |\n| 按 #h-ced8c7236326e104 删除冗余子节点 | `presentation.prune`、`prune_choice`；`old_label_reached` 证明旧节点全部保留，`piece_label_reached_iff` 证明子节点保留当且仅当 `NodePieceReached` |\n\n统一边域公式是 $D'_{v\\to w}=(D_{\\pi v\\to\\pi w}\\cap f'_v(U'_v))\\cap U'_w$。利用 $D\\subseteq f(U)\\cap U_{\\rm tgt}$，它对四类边分别化简为：\n\n- 旧节点 → 旧节点：保持不变。\n- $\\gamma\\to\\beta_a$：$D_{\\gamma\\to\\beta}\\cap U_{\\beta,a}$。\n- $\\beta_a\\to\\gamma$：$D_{\\beta\\to\\gamma}\\cap f_{\\beta,a}(U_{\\beta,a})$。\n- $\\beta_a\\to\\beta_b$：正文的双交 $D_{\\beta\\to\\beta}\\cap f_{\\beta,a}(U_{\\beta,a})\\cap U_{\\beta,b}$。\n\n因此正文的全部边域规则都被准确编码。\n\n## 二、命题对照\n\n**正文：** 若 $\\mathcal N'$ 由 $\\mathcal N$ 经一次节点域加细（含剪枝）得到，则 $\\phi_{\\mathcal N'}\\equiv_U\\phi_{\\mathcal N}$。\n\n**Lean 中有两条证明：**\n\n- **构造层：** `NodePartitionData.network_extensional_eq : P.network.extensional_operator = N.extensional_operator`。前提恰好是正文的加细数据，结论比 $\\equiv_U$ 更强。\n- **关系层：** `refinement_preserves_local_equivalence (h : NetworkRefinement N N')` 的 `.node_domain` 分支，结论是 `LocalEquivalent N'.ext N.ext N.U`，其中 $U$ 相同由 `same_input_domain` 给出。两层之间由 `network_refinement : NodeDomainRefinement N P.network` 和 `allowed_network_refinement` 连接，所以关系层的前提是可满足的，不是空真。\n\n正文默认 $U\\neq\\emptyset$；Lean 不需要这个前提。若 $U=\\emptyset$，网络没有节点，也就不存在可加细的节点，结论平凡。\n\n## 三、证明结构对照\n\n| 正文证明步骤 | Lean 中的对应 |\n|---|---|\n| 每次经过 $\\beta$ 时，按当前输入唯一选出 $a_s$ | `colour_path`，借助 `piece_at` / `piece_at_unique`；`colour_path_get` 证明第 $n$ 位使用的正是原路径在该位的当前输入 |\n| 新轨迹合法且在末节点终止，输出不变 | `coloured_terminal`、`coloured_eval` |\n| 轨迹长度不变 | `colour_path_length`、`network_path_projection` |\n| 入口唯一、出边互斥、边域落入目标定义域、节点域非空、统一长度界 | 入口唯一和出边互斥由函数型的 `entry` / `choice` 自动保证；其余由 `choice_next_mem`、`node_dom_nonempty`、`depth_bound := N.depth_bound` 给出 |\n| 剪枝后求值不变 | `prune_path_labels`、`prune_eval` |\n| 关系层 | `node_eval_eq`、`terminal_projection`、`path_projection`、`eval_projected`、`path_eval_eq` |\n\n## 四、边界情形核查\n\n1. **分块非空。** Lean 要求每块非空（`nonempty`）。正文的转移图要求节点定义域非空，所以两者一致。即使允许空块，空块对应的子节点不可达，剪枝后结果相同，只差标签。`count_pos` 可由 $U_\\beta\\neq\\emptyset$ 和覆盖条件推出，冗余但无害。\n2. **输出像之外的 `choice` 值。** `piece_at` 在 $U_\\beta$ 外的默认值只会出现在输出像之外。进入 `target` 的输出由 `choice_next_mem` 保证落在 $U_\\beta$ 内。这些值不属于 `PresentationData`，不影响网络对象。\n3. **自环。** 不同次经过 $\\beta$ 可以选中不同的子节点，`self_loop_choice_iff` 和 `colour_path` 正确处理了这一点。入口节点同时带入边的情形也正确，因为入口与后继是相互独立的数据。\n4. **剪枝会扩大旧节点的终止域。** Lean 与正文一致。例子：\n   - 底空间 $\\mathcal X=\\{\\bot,a,b,1,2\\}$，入口片 $U=\\{a\\}$。\n   - 节点 $\\gamma$：入口片 $\\{a\\}$，$f_\\gamma(a)=1$，$f_\\gamma(b)=2$，$U_\\gamma=\\{a,b\\}$，$D_{\\gamma\\to\\beta}=\\{1,2\\}$。\n   - 节点 $\\beta$：$f_\\beta=\\mathrm{id}$，$U_\\beta=\\{1,2\\}$，无出边。\n   \n   把 $U_\\beta$ 分为 $\\{1\\},\\{2\\}$ 后，$\\beta_2$ 不可达而被删除，于是 $T'_\\gamma=\\{2\\}\\supsetneq T_\\gamma=\\emptyset$，但外延不变。Lean 用 `prune_choice` 把指向已删节点的 `next` 改为 `stop`，`edge_domain_eq` 也只约束保留下来的节点对。这与 #h-ced8c7236326e104 中的 $T^{\\mathcal T_R}\\supseteq T^{\\mathcal T}$ 一致；正文从未声称旧节点的终止域不变。\n5. **$q=1$。** 正文和 Lean 都允许，此时加细只是重编号。这只与不可约性有关，不在本题范围内。\n\n## 五、已证明的结论与需要补充的内容\n\n**源码已证明：**\n- 构造本身：`presentation`、`network`。\n- 外延全等：`network_extensional_eq`。\n- 路径重着色与投影：`network_path_labels`、`network_path_projection`。\n- 节点保留情况：`old_label_reached`、`piece_label_reached_iff`。\n- 边域与自环公式：剪枝后的 `network_edge_domain_eq`，剪枝前的 `self_loop_choice_iff`。\n- 实际路由兼容：`network_choice_projection`。\n- 构造满足关系：`network_refinement`；入口片交集公式：`entry_domain_eq`。\n- 关系层保持定理：`refinement_preserves_local_equivalence`、`refinement_preserves_representation`。\n\n**需要补充（都不构成数学缺口）：**\n\n**(S1) 冗余字段 `choice_projection`。** 这个字段不在正文定义里，关系层的证明却依赖它，而完全没有用到正文意义上的 `edge_domain_eq`。数学上它是冗余的，可以从正文字段推出：\n\n- 对 $x\\in U$，沿原路径 $(\\beta_k,y_k)$ 归纳。设 $\\mathcal N'$ 中的状态 $(v_k,y_k)$ 满足 $\\pi v_k=\\beta_k$ 且 $y_k\\in U'_{v_k}$。\n- 由 `node_eval_eq`，$z=f'_{v_k}(y_k)=f_{\\beta_k}(y_k)$。\n- **原网络在 $z$ 终止时：** 若 $\\mathcal N'$ 有某条边 $v_k\\to w$ 含 $z$，由 `edge_domain_eq` 得 $z\\in D_{\\beta_k\\to\\pi w}$，矛盾。所以 $\\mathcal N'$ 也终止。\n- **原网络进入 $\\gamma$ 时：** 先取 $\\mathcal N'$ 中投影为 $\\gamma$ 的节点 $w$：\n  - 若 $\\gamma\\neq\\beta$，用 `old_node_present` 取 $w$。\n  - 若 $\\gamma=\\beta$，$z$ 属于唯一的块 $a$；$(x,k+1)$ 见证了 `NodePieceReached a`，再由 `piece_node_present_iff_reached` 取 $w$。\n  \n  于是 $z\\in f'_{v_k}(U'_{v_k})\\cap U'_w$，由 `edge_domain_eq` 得 $z\\in D'_{v_k\\to w}$，即 $\\mathcal N'$ 的 `choice` 为 `next w`。\n- **起点：** 由 `entry_projection` 和 `entry_mem` 给出。\n- **收尾：** 由终止路径的唯一性，$\\mathcal N'$ 的路径投影后就是原路径，`choice_projection` 随之成立。\n\n我在临时目录写了一份草稿验证这一推导，没有改动附件：`lift_path_aux`、`path_projection_textbook`、`extensional_eq_textbook` 全程不使用 `choice_projection`，编译通过，只依赖三个标准公理。\n\n**影响：** 若有人独立构造出满足正文条款的 $\\mathcal N'$，现有关系层定理在使用前要先补证 `choice_projection`。\n**修复：** 把上述引理加入库中，把 `choice_projection` 改成由它导出的定理，或从 `NodeDomainRefinement` 中移除这个字段。\n\n**(S2) 关系的\"精确性\"没有写成定理。** 文档字符串称 `NodeDomainRefinement` 为 \"exact relation\"。从数学上看确实如此：各字段决定了节点集（旧节点加上可达的块）、局域算子、$U$、入口和全部边域，因而在重编号意义下决定了 `PresentationData`。但库里没有一条定理断言\"满足该关系的 $\\mathcal N'$ 经某个双射 $V'\\simeq$ 可达标签后，与 `P.network` 的表示数据相同\"。证明命题本身不需要它；若要把这个关系视为\"加细的结果\"，就需要补上。\n\n**(S3) 缺少最终打包。** 两个推论都是一两行的事，但源码里都没有：\n- `ExtensionalEquivalent N N'`：由 `same_input_domain` 加局部等价即得，我在草稿中已验证。\n- 对象层的等价：经 `encode` 后得到 `NetworkObject.ExtensionalEquivalent`，由 `encode_extensional_operator` 加 `network_extensional_eq` 即得。\n\n**(S4) 正文证明里的中间结论没有形式化。** 这两条不是命题的结论：\n- $\\ell(\\mathcal N')=\\ell(\\mathcal N)$：可由 `network_path_projection` 配合 `evaluation_depth_le_of_input_lengths` 推出。\n- 剪枝前的 $T'_{\\beta_a}=f_{\\beta,a}(U_{\\beta,a})\\cap T_\\beta$：Lean 通过 `choice` 绕开了这一步。\n\n**(S5) 范围之外。** `RefinementRule (NetworkObject X bot)` 没有用 `NetworkRefinement` 实例化，不可约代表与加细关系之间也没有连接。\n\n## 六、复核方法\n\n- 执行 `lake build formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction`，应构建成功。\n- 对 `network_extensional_eq`、`network_refinement`、`refinement_preserves_local_equivalence`、`entry_domain_eq`、`network_edge_domain_eq` 执行 `#print axioms`，应只出现 `[propext, Classical.choice, Quot.sound]`。\n- 全库检索 `sorry`、`admit`、`axiom`，应无结果。",
+    "claims_complete": null,
+    "claims_implementation_complete": true,
+    "interpretation": "The conclusion concerns completeness of the supplied implementation, not a claim to have supplied candidate Lean engineering; none is required by these audit tasks."
+  },
+  "claim_findings": [],
+  "extra_assertion_review": {
+    "scope": "Entire original delivered prose, code comments, mathematical side claims and self-assessment, separately from kernel success.",
+    "findings": [],
+    "checks": [
+      "Prose self-assessment and explicit completion/verification statements reviewed with the mathematical source, not keyword confidence.",
+      "Original numeric exercise claims independently checked against the actual defined maps and gauges.",
+      "Generalized definitions are read only in the original admissible mathematical context; no new source obligation is imposed for optional wrappers."
+    ]
+  },
+  "kind": "semantic_audit",
+  "candidate_lean_required": false,
+  "expected_source_disposition": "aligned",
+  "judgment": "complete_correct_audit",
+  "strict_pass": true,
+  "dimensions": [
+    {
+      "id": "judgment",
+      "points_awarded": 35,
+      "points_possible": 35,
+      "complete": true,
+      "reason": "Correctly accepts the exact current NodeDomainRefinement while distinguishing the weaker OperationalNodeDomainRefinement; acceptance is supported by full-edge and construction bridges, not build identity.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR03/group-contract.json",
+        "bytes": 3932,
+        "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+        "pointer": "/dimensions/0"
+      }
+    },
+    {
+      "id": "valid_parts",
+      "points_awarded": 20,
+      "points_possible": 20,
+      "complete": true,
+      "reason": "Explains exact entry/local operators, retained full edge domains, reachable-piece pruning, real construction network_refinement/allowed_network_refinement and independent extensional proofs.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR03/group-contract.json",
+        "bytes": 3932,
+        "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+        "pointer": "/dimensions/1"
+      }
+    },
+    {
+      "id": "evidence",
+      "points_awarded": 30,
+      "points_possible": 30,
+      "complete": true,
+      "reason": "The formula (old full edge ∩ new source image)∩new target domain is correctly reduced to all four edge cases. The example where pruning enlarges an old terminal domain is compatible with the original deletion rule and is mathematically valid.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR03/group-contract.json",
+        "bytes": 3932,
+        "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+        "pointer": "/dimensions/2"
+      }
+    },
+    {
+      "id": "repair_scope",
+      "points_awarded": 15,
+      "points_possible": 15,
+      "complete": true,
+      "reason": "Correctly finds no task-scope repair. Redundant operational fields, optional wrappers and unrelated algebraic/irreducibility machinery are kept separate from the completed target.",
+      "contract": {
+        "path": "/Users/g4i/lab/math-gauge/cases/lean-audit/AHR03/group-contract.json",
+        "bytes": 3932,
+        "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+        "pointer": "/dimensions/3"
+      }
+    }
+  ],
+  "compilation": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/lean/AHR03/compilation.json",
+    "bytes": 22693,
+    "sha256": "2b5e651314b061d32d9175c450b7c11625d5d100a0886dbd2aa824faac6dcddb"
+  },
+  "obligations": []
+}

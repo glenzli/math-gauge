@@ -1,0 +1,70 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>KEEP</p>
+<h3>本轮核查依据与验证结果</h3>
+<p>本轮（R3）已完整读取 <code>.visible-history/R3/index.json</code> 及全部 20 个历史分段文件（<code>01-user-001.txt</code> 至 <code>07-user-001.txt</code>），并对紧邻上一版（R2）封卷工作区中的全部源码、对齐表及冻结文件进行了逐项核查：</p>
+<ol>
+<li>
+<p><strong>工程结构与冻结文件完整性核查</strong></p>
+<ul>
+<li>原始题目规格 [obligations.json](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/obligations.json)、原文章节 [source/03-operator-local-degeneracy.md](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/source/03-operator-local-degeneracy.md)、冻结背景库 <code>formal_oet/</code> 以及 <code>.visible-history/</code> 全部保持原始字节未改动。</li>
+<li>[Main.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Main.lean) 完整导入全部 8 个目标模块：
+<ul>
+<li>[Ch03/Defs.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Defs.lean)（<code>CH03-D01</code> 至 <code>CH03-D08</code>）</li>
+<li>[Ch03/Sec3_1.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_1.lean)（<code>CH03-P01-01</code> 至 <code>CH03-P05-01</code>）</li>
+<li>[Ch03/Sec3_2.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_2.lean)（<code>CH03-P06-01</code> 至 <code>CH03-P09-03</code>）</li>
+<li>[Ch03/Sec3_3.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_3.lean)（<code>CH03-P10-01</code> 至 <code>CH03-P15-02</code>）</li>
+<li>[Ch03/Sec3_4_5.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_4_5.lean)（<code>CH03-P16-01</code> 至 <code>CH03-P21-02</code>）</li>
+<li>[Ch03/Sec3_6.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_6.lean)（<code>CH03-P22-01</code> 至 <code>CH03-P25-02</code>）</li>
+<li>[Ch03/Ex3_1_to_3_3.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Ex3_1_to_3_3.lean)（<code>CH03-P26-01</code> 至 <code>CH03-P28-02</code>）</li>
+<li>[Ch03/Ex3_4_to_3_5.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Ex3_4_to_3_5.lean)（<code>CH03-P29-01</code> 至 <code>CH03-P30-04</code>）</li>
+</ul>
+</li>
+<li>全工程零 <code>sorry</code>、零 <code>admit</code>、零自定义 <code>axiom</code>、零绕过检查机制，所有证明仅依赖 Lean 4 标准公理 <code>{propext, Classical.choice, Quot.sound}</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>92 项义务（<code>CH03-D01</code>..<code>CH03-D08</code> 与 <code>CH03-P01-01</code>..<code>CH03-P30-04</code>）逐项对齐复核</strong></p>
+<ul>
+<li><strong>§3.1 局域退化、有效分量与链式传导（<code>CH03-D01</code>..<code>CH03-D04</code>, <code>CH03-P01-01</code>..<code>CH03-P05-01</code>）</strong>：
+<ul>
+<li>[Ch03/Defs.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Defs.lean) 中 <code>OpDegOn</code>、<code>OpActOn</code>、<code>OpDegGlobal</code>、<code>OpActGlobal</code>、<code>AllComponentsDegOn</code>、<code>IsConstantOnSlice</code>、<code>ProdIndexedMetricSpace</code>、<code>SubfamilyCylinder</code>、<code>HasIterativeDomain</code> 与原文定义 3.1–3.2 完全对应。</li>
+<li>[Ch03/Sec3_1.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_1.lean) 中命题 3.1、引理 3.1、命题 3.2（含双步链、直接面向迭代复合链 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>F</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">F^{(n)}</annotation></semantics></math></span> 的任意长度 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n \ge 1</annotation></semantics></math></span> 归纳定理 <code>prop_3_2_ii_act_chain_subset</code> 与含 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">n=0</annotation></semantics></math></span> 基例、中间复合步定义域保持及逆否命题的 <code>prop_3_2_ii_act_chain_full</code>）、注 3.2（二元交换算子完整反例 <code>remark_3_2_swap_counterexample</code>，涵盖逐点距离、二次迭代不动点、单步/复合退化与有效分量集精确计算及两个方向的包含关系否定）、定理 3.1（退化投影消元定理的唯一性、距离等距、复合退化保持与全局推论）及定理 3.2（有限迭代激活传播上限）全部严格对齐。</li>
+</ul>
+</li>
+<li><strong>§3.2 定量伪退化（<code>CH03-D05</code>..<code>CH03-D06</code>, <code>CH03-P06-01</code>..<code>CH03-P09-03</code>）</strong>：
+<ul>
+<li>[Ch03/Defs.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Defs.lean) 中 <code>ComponentOscillation</code>、<code>OpEpsDegOn</code>、<code>ComponentLipConst</code>、<code>OpLipDegOn</code>、<code>FamilyUniformDiam</code> 与定义 3.3–3.4 一致。</li>
+<li>[Ch03/Sec3_2.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_2.lean) 中命题 3.4（<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span>-退化与精确退化等价、参数单调性）、命题 3.6（Lipschitz 伪退化蕴含 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi></mrow><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math></span>-伪退化、单分量扰动非扩张上界、多分量三角形逐步替换引理与含空集及一般有限子集求和上界、单分量标量 Lipschitz 递推 <code>prop_3_6_iii_scalar_lip_bound</code> 及复合矩阵单分量特化接口 <code>prop_3_6_iii_scalar_lip_bound_matrix</code>、耦合矩阵乘积上界）、定理 3.3（近似投影消元与轨迹稳定性，含 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">n=0</annotation></semantics></math></span> 基例、逐项 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span> 步界、几何级数闭式上界及 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ε</mi><mi>k</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\varepsilon_k=0</annotation></semantics></math></span> 退化回定理 3.1 的验证）全部完整形式化。</li>
+</ul>
+</li>
+<li><strong>§3.3 映射诱导的度量熵变与信息压缩（<code>CH03-D07</code>..<code>CH03-D08</code>, <code>CH03-P10-01</code>..<code>CH03-P15-02</code>）</strong>：
+<ul>
+<li>[Ch03/Defs.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Defs.lean) 与 [alignment.json](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/alignment.json) 中 <code>CH03-D07</code> 严格按完整命名空间 <code>formal_oet.vol_01.ch_01_foundations.*</code> 复用第 1 章内部网与度量熵声明，并补充全空间特化接口；<code>CH03-D08</code> 完整定义扩展实数域上的 <code>mapping_entropy_diff</code>、良定义性条件 <code>mapping_entropy_diff_well_defined</code> 及排除 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∞</mi><mo>−</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">\infty - \infty</annotation></semantics></math></span> 与验证 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">\pm\infty</annotation></semantics></math></span> 分支的 <code>mapping_entropy_diff_well_defined_branches</code>。</li>
+<li>[Ch03/Sec3_3.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_3.lean) 中引理 3.2、定理 3.4、推论 3.1、引理 3.3、定理 3.5 及命题 3.7 全部无省略地完成证明。</li>
+</ul>
+</li>
+<li><strong>§3.4–§3.6 复合不可逆性、低维吸引趋势与耦合消退（<code>CH03-P16-01</code>..<code>CH03-P25-02</code>）</strong>：
+<ul>
+<li>[Ch03/Sec3_4_5.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_4_5.lean) 完整覆盖命题 3.8、命题 3.9、推论 3.2、命题 3.10、定理 3.6、定理 3.7。</li>
+<li>[Ch03/Sec3_6.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Sec3_6.lean) 完整覆盖命题 3.11、命题 3.12、推论 3.3、定理 3.8。</li>
+</ul>
+</li>
+<li><strong>§3.7 综合例题 3.1–3.5（<code>CH03-P26-01</code>..<code>CH03-P30-04</code>）</strong>：
+<ul>
+<li>[Ch03/Ex3_1_to_3_3.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Ex3_1_to_3_3.lean) 与 [Ch03/Ex3_4_to_3_5.lean](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/Ch03/Ex3_4_to_3_5.lean) 完整覆盖例 3.1 至例 3.5 的全部具体构造、距离与覆盖数上下界、退化/有效分量集、轨迹误差与极限结论。</li>
+</ul>
+</li>
+<li><strong>对齐表核查</strong>：[alignment.json](file:///private/tmp/math-gauge-c003-supplement-20261114/alignment/R3/physical-1/session/work/alignment.json) 中 92 项义务全部为 <code>&quot;complete&quot;</code>，仅 <code>CH03-D07</code> 包含允许的冻结背景库声明，其余 91 项义务仅引用 <code>Ch03.*</code> 声明且一一对应。</li>
+</ul>
+</li>
+</ol>
+<h3>仍有的不确定性说明</h3>
+<ol>
+<li><strong>形式化表示层面的等价建模选择</strong>：
+<ul>
+<li>在涉及指标子集积度量与有限和的命题（如引理 3.3、定理 3.5、定理 3.6、定理 3.8）以及例 3.3–3.5 的有限维坐标空间建模中，为了规避 Lean 4 依值子类型转换带来的冗余类型强制转换，工程采用了显式子集求和上界谓词（<code>HasSubsetSumBound</code>）、截面选取映射（<code>SliceSelect</code>）以及专门的结构体/元组类型（<code>R3Max</code>、<code>R2Max</code>、<code>Ex3_5_Space</code>）。这些建模在数学内容、量词结构与不等式方向上与原文 100% 等价，仅在形式化接口形态上属于标准编码选择。</li>
+<li>在覆盖数无穷大或零的边界情形以及扩展实数 <code>EReal</code> 的算术接口中，部分定理将原文隐含的有限覆盖良定义性、正实数参数范围或非平凡性条件显式列为定理前提，同时亦配套给出了对应的存在性构造或扩展实数分支验证定理。</li>
+</ul>
+</li>
+</ol>
+<p>综上，紧邻上一版封卷工程已 100% 覆盖并严格对齐全部数学内容与交付要求，本轮未做任何文件修改，原字节保留交付。</p>
+<p><a href="../../../results/v0.6.0/gemini-4-argon/20261111/supplements/c003-20261114/rounds/R3-final.md">原答文件 ↗</a> · <a href="../../../results/v0.6.0/gemini-4-argon/20261111/supplements/c003-20261114/rounds/R3-review.json">本轮审核 ↗</a></p></div>

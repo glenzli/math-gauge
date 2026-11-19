@@ -4,7 +4,7 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前版本为 **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**。
+Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前评分版本为 **[1.1.0](docs/theorem-extension-reassessment.md)**；最新已发布题包为 **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**。
 
 [在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh) · [完整结果](docs/results.md) · [公开题目](cases/README.md) · [运行指南](docs/harness-guide.md)
 
@@ -44,11 +44,15 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 三种分数使用同一批规则选定答卷和固定权重，均按 **100 分**报告；未测项保留未知范围，不把已测部分放大到满分。每题采用规则内首次正常交卷；没有正常交卷时，MC 可计经核实的截止前原成果，RMC 与 SMC 为 0。具体判准见[评分规范](protocol/benchmark-scoring.md)。
 
+命题拓展题另看实际研究增量：R1 是有用的局部推进，R2 是实质拓展，R3 是深入且完整的研究成果；同等分量的不同路线、证明内部的强结论都可计入。该子类的 SMC 要求原题正确并完整达到 R3。B2／R0 表示原题证明正确，只是没有研究增量。具体尺度见 [1.1.0 评分说明](docs/theorem-extension-reassessment.md)。
+
 ## 当前结果
 
-榜单默认按 RMC 排序。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
+榜单默认按 RMC 排序。结果页面默认显示 **1.1.0**，也可切换到 **1.0.0**；模型页、逐题评审和下载跟随选版，详见[版本切换](docs/edition-views.md)。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
 
-2026-11-18 的 [Sol 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/sol-6.2-max/?lang=zh) 已测完并入榜：MC **93.21**、RMC **93.21**、SMC **89.17**。与 Sol 6.1 Max 的逐项变化见[完整结果](docs/results.md#sol-62-max--2026-11-18)。
+2026-11-19 的 [Claude Opus 5.5 (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/claude-opus-5.5-xhigh/?lang=zh) 经 Sol 6.1 Max 并行全审，MC **91.36**、RMC **88.80**、SMC **54.92**。39道初答及三轮自查全部正常交付；逐项依据与运行条件见[完整结果](docs/results.md#claude-opus-55-xhigh--2026-11-19)。
+
+2026-11-19 的 [Astra 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/astra-6.2-max/?lang=zh) 已完成39道初答和三轮自查。与 Astra 6 原答对照复核后，按1.1.0标准计为 MC **92.25**、RMC **92.25**、SMC **87.17**。分项、两率、数学画像和运行条件见[完整结果](docs/results.md#astra-62-max--2026-11-19)；Sol 6.2 Max／xHigh 的结果及前代对比也保留在其中。
 
 [![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 
@@ -81,10 +85,8 @@ python3 -m http.server 8000 --bind 127.0.0.1
 |---|---|
 | 题目与选题 | [公开题目](cases/README.md) · [选题说明](docs/selection.md) |
 | 评分与审核 | [评测协议](protocol/evaluation.md) · [评分规范](protocol/benchmark-scoring.md) · [审核方式](docs/review-process.md) |
-| 辅助指标 | [内容可靠率与目标达成率](protocol/content-rates.md) · [手稿主动额外成果](docs/manuscript-observations.md) |
+| 辅助指标 | [数学画像（1.1.0）](protocol/mathematical-profile.md) · [内容可靠率与目标达成率](protocol/content-rates.md) · [手稿主动额外成果](docs/manuscript-observations.md) |
 | 执行与留档 | [运行与交付指南](docs/harness-guide.md) · [正式记录合同](protocol/result-record.md) |
 | 时间与费用 | [计时口径](docs/answer-timings.md) · [成本口径](docs/cost-reference.md) |
 | 故障与补测 | [答卷来源更正](docs/harness-corrections.md) · [整章自查补充](docs/c003-sealed-continuation.md) · [尝试与重试统计](docs/execution-attempts.md) |
-| 版本与证据 | [1.0.0 发行说明](releases/v1.0.0/README.md) · [历史发行](releases/) · [证据留存与恢复](docs/evidence-retention.md) |
-
-当前 1.0.0 复用的历史答卷保留原执行版本、原答和原审核，兼容关系见发行说明。查看或复算这些结果不表示模型重新参加了测试。
+| 版本与证据 | [1.1.0 评分说明](docs/theorem-extension-reassessment.md) · [1.0.0 发行说明](releases/v1.0.0/README.md) · [证据留存与恢复](docs/evidence-retention.md) |

@@ -1,0 +1,1079 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "status": "final",
+  "case_id": "MG-GR009",
+  "task_id": "MG-GR009:A1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "source_benchmark_version": "1.0.0",
+  "assessment_edition": "1.1.0",
+  "reviewer_id": "gpt-6.1-sol-max-written-review-20261119",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "independent_review": true,
+  "other_model_judgments_imported": false,
+  "new_candidate_calls": 0,
+  "source_bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/task.md",
+      "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+      "bytes": 2254
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/reference.md",
+      "sha256": "ed6a569d9ed574c65d931262e24a053478f3b0d419be9d9620ee91f4602c92ee",
+      "bytes": 14202
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/rubric.json",
+      "sha256": "5461942bd5353f7069401cd9e91d696ae5209179df00329cc8dcc51416d57135",
+      "bytes": 768
+    },
+    "response": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+      "bytes": 13056,
+      "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681"
+    },
+    "request": {
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/request.json",
+      "bytes": 4027,
+      "sha256": "bee521d115c7ea2eb35558f1c3d8d0c2be390883e2c6ee69253f5046d6db30d0"
+    },
+    "case_manifest": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/case.json",
+      "sha256": "3f4e39c0f71bd16dd078015d6d0ce89b406cac5c80529aa386a9d01efd1bf5dd"
+    },
+    "criterion_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json",
+      "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+      "bytes": 8002
+    },
+    "solver_files": [],
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json",
+      "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+      "bytes": 8002
+    }
+  },
+  "criteria": [
+    {
+      "id": "S1",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "有限群的自由作用",
+        "kind": "construct",
+        "assumptions": [
+          "Γ有限",
+          "T为profinite且Γ作用自由",
+          "E任意等变层"
+        ],
+        "expected": "construction",
+        "depends_on": [],
+        "required_evidence": [
+          "轨道空间Hausdorff及全不连通",
+          "真正层商泛性质",
+          "所有测试对象上单射并局部满射"
+        ],
+        "critical_errors": [
+          "任意群轨道商都Hausdorff",
+          "只检查集合轨道而未检查层"
+        ],
+        "id": "S1",
+        "points": 15,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "有限群商的开闭分离证明profinite，覆盖拉回及有限闭图覆盖给真实层商；自由作用使全测试稳定子条件成立。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 103,
+          "end_utf8": 222,
+          "quote": "| S1 | Γ 有限且自由时，T/Γ 是 profinite 空间，h_{T/Γ}=H/Γ，每个等变对象都可在其上实现。 |",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "有限集合上的纤维分类",
+        "kind": "synthesize",
+        "assumptions": [
+          "Γ,T,X均有限离散",
+          "X→T等变",
+          "每轨道选代表t用于分类表达"
+        ],
+        "expected": "classification",
+        "depends_on": [
+          "S1"
+        ],
+        "required_evidence": [
+          "诱导Γ集合的双向构造",
+          "全部态射对应",
+          "稳定子作用判据",
+          "自同构群含空纤维"
+        ],
+        "critical_errors": [
+          "基底非自由就断言所有对象不下降",
+          "忽略对象的自同构"
+        ],
+        "id": "S2",
+        "points": 15,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "诱导Γ集合双向构造、全部态射和稳定子平凡判据闭合，自同构含空纤维。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 7110,
+          "end_utf8": 7150,
+          "quote": "**自同构群。** 对可实现的 X：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "一般层的完整下降",
+        "kind": "construct",
+        "assumptions": [
+          "共同站点、宇宙和群作用全部条件",
+          "Γ不要求有限或作用自由",
+          "E任意Set_V值层",
+          "B任意层而非仅可表示"
+        ],
+        "expected": "construction",
+        "depends_on": [
+          "S1",
+          "S2"
+        ],
+        "required_evidence": [
+          "层商与局部轨道相等",
+          "所有测试对象稳定子判据两方向",
+          "对象和全部态射等价",
+          "任意层基底相容"
+        ],
+        "critical_errors": [
+          "逐对象商直接当层",
+          "假设全局代表",
+          "把全部等变对象都当有效下降数据"
+        ],
+        "id": "S3",
+        "points": 30,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 30,
+      "score": 30,
+      "strict_pass": true,
+      "reason": "层化轨道商的局部相等给比较映射总满，稳定子条件等价于单；伴随全忠实给分类，任意层基底及拉回相容均证明。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 2600,
+          "end_utf8": 2677,
+          "quote": "**引理 A.** c_F 总是满态射；并且 c_F 是同构 ⇔ (Stab) 成立。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "单点上的检验",
+        "kind": "decide",
+        "assumptions": [
+          "共同设定",
+          "仅在单点测试对象*上给稳定子作用平凡",
+          "E任意层，不要求可表示"
+        ],
+        "expected": "false",
+        "depends_on": [
+          "S2",
+          "S3"
+        ],
+        "required_evidence": [
+          "真实层的点不可见作用例",
+          "非单点截面上作用非平凡",
+          "全部大小/连续性合法"
+        ],
+        "critical_errors": [
+          "用有限集合S2纤维结论替代一般层全测试条件"
+        ],
+        "id": "S4",
+        "points": 15,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "有限像子层上的双份粘合在点上作用平凡，在A的一致截面非平凡；分类子证据合法。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 9559,
+          "end_utf8": 9730,
+          "quote": "- A=ℕ∪{∞}（一点紧化）。A_δ⊂h_A 是像有限的连续映射组成的子层。它是层：若 fp_i 都只取有限个值，则 f(S)=⋃fp_i(S_i) 也有限。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "局部满射的基底检验",
+        "kind": "decide",
+        "assumptions": [
+          "共同设定",
+          "B→Q局部满射",
+          "拉回等变对象在B上可实现"
+        ],
+        "expected": "true",
+        "depends_on": [
+          "S3",
+          "S4"
+        ],
+        "required_evidence": [
+          "按局部提升检测稳定子",
+          "用层分离性回到原对象",
+          "不选择全局截面"
+        ],
+        "critical_errors": [
+          "局部满射误作每个U全局满射"
+        ],
+        "id": "S5",
+        "points": 15,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 15,
+      "score": 15,
+      "strict_pass": true,
+      "reason": "局部满射提升共同Q截面后逐片检验稳定子，再由层分离性下降。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 10951,
+          "end_utf8": 11039,
+          "quote": "1. b 局部满射，所以有覆盖 S_i→S 和 β_i∈B(S_i)，使 bβ_i=qπe|_{S_i}。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "parent_dimension": null,
+      "source_definition": {
+        "title": "非空基底与全局结论",
+        "kind": "decide",
+        "assumptions": [
+          "共同设定",
+          "B非空可表示且任意映到Q",
+          "拉回对象可实现",
+          "不假设B→Q局部满射"
+        ],
+        "expected": "false",
+        "depends_on": [
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "required_evidence": [
+          "非空而非空基底的合法反例",
+          "原与拉回下降分别核验",
+          "正确检验边界"
+        ],
+        "critical_errors": [
+          "只给空基底例不满足题设",
+          "非空当覆盖"
+        ],
+        "id": "S6",
+        "points": 10,
+        "lean_required": false,
+        "mandatory": true
+      },
+      "points": 10,
+      "score": 10,
+      "strict_pass": true,
+      "reason": "非空点基底只覆盖好纤维，另一纤维C2交换失败，完整说明覆盖与非空的差别。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 12819,
+          "end_utf8": 13056,
+          "quote": "   - 一般地，设 b 的像为 Q'⊂Q（拓扑斯中的满–单分解）。由 S5（B→Q' 是满态射）加上相容性：b^*E 可实现 ⇔ E×_Q Q' 在 Q' 上可实现。也就是说，拉回只检验 E 在 b 的像上的部分。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "source_mathematical_review_points": 100,
+    "source_total_points": 100,
+    "positive_mathematical_points": 100,
+    "positive_mathematical_denominator": 100,
+    "removed_reliability_points": 0,
+    "removed_reliability_denominator": 0,
+    "strict_pass": true,
+    "core_false_endorsement_or_rejection": false,
+    "uncertainties": [],
+    "scoring_owner": "math_gauge.scoring; no global weights reimplemented"
+  },
+  "input_identity_verification": {
+    "task_and_all_candidate_files": [
+      {
+        "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/task.md",
+        "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+        "verbatim_in_actual_request": true
+      }
+    ],
+    "evaluator_criteria_separate": true
+  },
+  "original_self_assessment": {
+    "status": "not_supplied_as_separate_self_assessment",
+    "verbatim_evidence": [],
+    "numeric_completion_claim": null,
+    "note": "No invented percentage, KEEP/FULL declaration, or retrospective model self-rating. Mathematical conclusions about the reviewed parent are not substituted for the reviewer model self-assessment."
+  },
+  "content_reliability_units": [
+    {
+      "id": "S1",
+      "label": "有限群的自由作用",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S1",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "有限群的自由作用",
+      "reason": "有限群商的开闭分离证明profinite，覆盖拉回及有限闭图覆盖给真实层商；自由作用使全测试稳定子条件成立。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 103,
+          "end_utf8": 222,
+          "quote": "| S1 | Γ 有限且自由时，T/Γ 是 profinite 空间，h_{T/Γ}=H/Γ，每个等变对象都可在其上实现。 |",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S2",
+      "label": "有限集合上的纤维分类",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S2",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "有限集合上的纤维分类",
+      "reason": "诱导Γ集合双向构造、全部态射和稳定子平凡判据闭合，自同构含空纤维。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 7110,
+          "end_utf8": 7150,
+          "quote": "**自同构群。** 对可实现的 X：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S3",
+      "label": "一般层的完整下降",
+      "delivery_weight": 30,
+      "claim_weight": 30,
+      "source_unit_id": "S3",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "一般层的完整下降",
+      "reason": "层化轨道商的局部相等给比较映射总满，稳定子条件等价于单；伴随全忠实给分类，任意层基底及拉回相容均证明。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 2600,
+          "end_utf8": 2677,
+          "quote": "**引理 A.** c_F 总是满态射；并且 c_F 是同构 ⇔ (Stab) 成立。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 30,
+      "asserted_denominator": 30,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S4",
+      "label": "单点上的检验",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S4",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "单点上的检验",
+      "reason": "有限像子层上的双份粘合在点上作用平凡，在A的一致截面非平凡；分类子证据合法。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 9559,
+          "end_utf8": 9730,
+          "quote": "- A=ℕ∪{∞}（一点紧化）。A_δ⊂h_A 是像有限的连续映射组成的子层。它是层：若 fp_i 都只取有限个值，则 f(S)=⋃fp_i(S_i) 也有限。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S5",
+      "label": "局部满射的基底检验",
+      "delivery_weight": 15,
+      "claim_weight": 15,
+      "source_unit_id": "S5",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "局部满射的基底检验",
+      "reason": "局部满射提升共同Q截面后逐片检验稳定子，再由层分离性下降。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 10951,
+          "end_utf8": 11039,
+          "quote": "1. b 局部满射，所以有覆盖 S_i→S 和 β_i∈B(S_i)，使 bβ_i=qπe|_{S_i}。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 15,
+      "asserted_denominator": 15,
+      "unknown_denominator": 0
+    },
+    {
+      "id": "S6",
+      "label": "非空基底与全局结论",
+      "delivery_weight": 10,
+      "claim_weight": 10,
+      "source_unit_id": "S6",
+      "fulfillment": "complete",
+      "aligned": true,
+      "assertion": "correct",
+      "asserted_scope": "非空基底与全局结论",
+      "reason": "非空点基底只覆盖好纤维，另一纤维C2交换失败，完整说明覆盖与非空的差别。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 12819,
+          "end_utf8": 13056,
+          "quote": "   - 一般地，设 b 的像为 Q'⊂Q（拓扑斯中的满–单分解）。由 S5（B→Q' 是满态射）加上相容性：b^*E 可实现 ⇔ E×_Q Q' 在 Q' 上可实现。也就是说，拉回只检验 E 在 b 的像上的部分。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "correct_numerator": 10,
+      "asserted_denominator": 10,
+      "unknown_denominator": 0
+    }
+  ],
+  "complete_goals": [
+    {
+      "id": "S1",
+      "label": "有限群的自由作用",
+      "statement": "S1　有限群的自由作用\n\n设Γ有限且在T上自由。构造profinite轨道空间T/Γ，证明h_(T/Γ)是层商，并证明每个等变层E→H都在该商上实现。\n\n",
+      "scope": "# 群作用下降、稳定子与基底检验\n\n版本 0.1.1。以下全部阶段均须作答。\n\n采用ZFC，固定Grothendieck宇宙U∈V，N∈U。Prof_U是U小紧Hausdorff全不连通空间及连续映射的范畴，覆盖是有限联合满射族（空空间包括空覆盖）。C为其上的Set_V值层范畴，h_T(U)=C(U,T)。给U小离散群Γ作用于profinite T，H=h_T。等变对象是层E、π:E→H和群作用a_γ，满足πa_γ=h_γπ；态射在H上且等变。“在Q上实现”指E≅H×_Q D，作用仅改变H坐标。阶段中“局部满射”指每个测试对象上的目标截面都在某有限覆盖上有提升。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json\", \"pointer\": \"/stages/0/points\"}",
+      "acceptance_conditions": [
+        "轨道空间Hausdorff及全不连通",
+        "真正层商泛性质",
+        "所有测试对象上单射并局部满射",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S1"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/task.md",
+          "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+          "pointer": "section:S1"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/contract.json",
+          "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+          "pointer": "/stages/0"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR009:A1/goals/0"
+        }
+      ],
+      "source_goal_id": "S1",
+      "passed": true,
+      "reason": "有限群商的开闭分离证明profinite，覆盖拉回及有限闭图覆盖给真实层商；自由作用使全测试稳定子条件成立。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 103,
+          "end_utf8": 222,
+          "quote": "| S1 | Γ 有限且自由时，T/Γ 是 profinite 空间，h_{T/Γ}=H/Γ，每个等变对象都可在其上实现。 |",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S2",
+      "label": "有限集合上的纤维分类",
+      "statement": "S2　有限集合上的纤维分类\n\n设Γ和T均有限，X为有限Γ集合且X→T等变。选每个T轨道的代表t，稳定子Γ_t。分类这些X→T及其等变态射；给h_X在Q=h_(T/Γ)上实现的充要条件，并计算可实现对象的自同构群。\n\n",
+      "scope": "# 群作用下降、稳定子与基底检验\n\n版本 0.1.1。以下全部阶段均须作答。\n\n采用ZFC，固定Grothendieck宇宙U∈V，N∈U。Prof_U是U小紧Hausdorff全不连通空间及连续映射的范畴，覆盖是有限联合满射族（空空间包括空覆盖）。C为其上的Set_V值层范畴，h_T(U)=C(U,T)。给U小离散群Γ作用于profinite T，H=h_T。等变对象是层E、π:E→H和群作用a_γ，满足πa_γ=h_γπ；态射在H上且等变。“在Q上实现”指E≅H×_Q D，作用仅改变H坐标。阶段中“局部满射”指每个测试对象上的目标截面都在某有限覆盖上有提升。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json\", \"pointer\": \"/stages/1/points\"}",
+      "acceptance_conditions": [
+        "诱导Γ集合的双向构造",
+        "全部态射对应",
+        "稳定子作用判据",
+        "自同构群含空纤维",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S2"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/task.md",
+          "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+          "pointer": "section:S2"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/contract.json",
+          "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+          "pointer": "/stages/1"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR009:A1/goals/1"
+        }
+      ],
+      "source_goal_id": "S2",
+      "passed": true,
+      "reason": "诱导Γ集合双向构造、全部态射和稳定子平凡判据闭合，自同构含空纤维。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 7110,
+          "end_utf8": 7150,
+          "quote": "**自同构群。** 对可实现的 X：",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S3",
+      "label": "一般层的完整下降",
+      "statement": "S3　一般层的完整下降\n\n只用共同设定，构造层Q及不变q:H→Q，使Hom(Q,Y)自然等于Γ不变的Hom(H,Y)。给出不预选D的可实现性充要判据，分类所有实现及态射；对每个任意层B→Q构造对应分类，并证明与基底拉回相容。\n\n",
+      "scope": "# 群作用下降、稳定子与基底检验\n\n版本 0.1.1。以下全部阶段均须作答。\n\n采用ZFC，固定Grothendieck宇宙U∈V，N∈U。Prof_U是U小紧Hausdorff全不连通空间及连续映射的范畴，覆盖是有限联合满射族（空空间包括空覆盖）。C为其上的Set_V值层范畴，h_T(U)=C(U,T)。给U小离散群Γ作用于profinite T，H=h_T。等变对象是层E、π:E→H和群作用a_γ，满足πa_γ=h_γπ；态射在H上且等变。“在Q上实现”指E≅H×_Q D，作用仅改变H坐标。阶段中“局部满射”指每个测试对象上的目标截面都在某有限覆盖上有提升。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 30,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json\", \"pointer\": \"/stages/2/points\"}",
+      "acceptance_conditions": [
+        "层商与局部轨道相等",
+        "所有测试对象稳定子判据两方向",
+        "对象和全部态射等价",
+        "任意层基底相容",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S3"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/task.md",
+          "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+          "pointer": "section:S3"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/contract.json",
+          "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+          "pointer": "/stages/2"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR009:A1/goals/2"
+        }
+      ],
+      "source_goal_id": "S3",
+      "passed": true,
+      "reason": "层化轨道商的局部相等给比较映射总满，稳定子条件等价于单；伴随全忠实给分类，任意层基底及拉回相容均证明。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 2600,
+          "end_utf8": 2677,
+          "quote": "**引理 A.** c_F 总是满态射；并且 c_F 是同构 ⇔ (Stab) 成立。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 30,
+      "denominator": 30
+    },
+    {
+      "id": "S4",
+      "label": "单点上的检验",
+      "statement": "S4　单点上的检验\n\n在共同设定下，若对每个e∈E(*)及γ∈Γ，γπ(e)=π(e)都推出a_γ(e)=e，判断E是否必在Q上可实现。\n\n",
+      "scope": "# 群作用下降、稳定子与基底检验\n\n版本 0.1.1。以下全部阶段均须作答。\n\n采用ZFC，固定Grothendieck宇宙U∈V，N∈U。Prof_U是U小紧Hausdorff全不连通空间及连续映射的范畴，覆盖是有限联合满射族（空空间包括空覆盖）。C为其上的Set_V值层范畴，h_T(U)=C(U,T)。给U小离散群Γ作用于profinite T，H=h_T。等变对象是层E、π:E→H和群作用a_γ，满足πa_γ=h_γπ；态射在H上且等变。“在Q上实现”指E≅H×_Q D，作用仅改变H坐标。阶段中“局部满射”指每个测试对象上的目标截面都在某有限覆盖上有提升。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json\", \"pointer\": \"/stages/3/points\"}",
+      "acceptance_conditions": [
+        "真实层的点不可见作用例",
+        "非单点截面上作用非平凡",
+        "全部大小/连续性合法",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S4"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/task.md",
+          "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+          "pointer": "section:S4"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/contract.json",
+          "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+          "pointer": "/stages/3"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR009:A1/goals/3"
+        }
+      ],
+      "source_goal_id": "S4",
+      "passed": true,
+      "reason": "有限像子层上的双份粘合在点上作用平凡，在A的一致截面非平凡；分类子证据合法。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 9559,
+          "end_utf8": 9730,
+          "quote": "- A=ℕ∪{∞}（一点紧化）。A_δ⊂h_A 是像有限的连续映射组成的子层。它是层：若 fp_i 都只取有限个值，则 f(S)=⋃fp_i(S_i) 也有限。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S5",
+      "label": "局部满射的基底检验",
+      "statement": "S5　局部满射的基底检验\n\n给定任意层B→Q且该态射局部满射。若E×_Q B作为H×_Q B上的等变对象可在B上实现，判断E是否必可在Q上实现。\n\n",
+      "scope": "# 群作用下降、稳定子与基底检验\n\n版本 0.1.1。以下全部阶段均须作答。\n\n采用ZFC，固定Grothendieck宇宙U∈V，N∈U。Prof_U是U小紧Hausdorff全不连通空间及连续映射的范畴，覆盖是有限联合满射族（空空间包括空覆盖）。C为其上的Set_V值层范畴，h_T(U)=C(U,T)。给U小离散群Γ作用于profinite T，H=h_T。等变对象是层E、π:E→H和群作用a_γ，满足πa_γ=h_γπ；态射在H上且等变。“在Q上实现”指E≅H×_Q D，作用仅改变H坐标。阶段中“局部满射”指每个测试对象上的目标截面都在某有限覆盖上有提升。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 15,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json\", \"pointer\": \"/stages/4/points\"}",
+      "acceptance_conditions": [
+        "按局部提升检测稳定子",
+        "用层分离性回到原对象",
+        "不选择全局截面",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S5"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/task.md",
+          "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+          "pointer": "section:S5"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/contract.json",
+          "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+          "pointer": "/stages/4"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR009:A1/goals/4"
+        }
+      ],
+      "source_goal_id": "S5",
+      "passed": true,
+      "reason": "局部满射提升共同Q截面后逐片检验稳定子，再由层分离性下降。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 10951,
+          "end_utf8": 11039,
+          "quote": "1. b 局部满射，所以有覆盖 S_i→S 和 β_i∈B(S_i)，使 bβ_i=qπe|_{S_i}。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 15,
+      "denominator": 15
+    },
+    {
+      "id": "S6",
+      "label": "非空基底与全局结论",
+      "statement": "S6　非空基底与全局结论\n\n仅假设B是非空可表示层且有B→Q。判断拉回后可实现是否必反映原E可实现；给出证明或完整例子，并据此前结果整理可用的检验原则。\n",
+      "scope": "# 群作用下降、稳定子与基底检验\n\n版本 0.1.1。以下全部阶段均须作答。\n\n采用ZFC，固定Grothendieck宇宙U∈V，N∈U。Prof_U是U小紧Hausdorff全不连通空间及连续映射的范畴，覆盖是有限联合满射族（空空间包括空覆盖）。C为其上的Set_V值层范畴，h_T(U)=C(U,T)。给U小离散群Γ作用于profinite T，H=h_T。等变对象是层E、π:E→H和群作用a_γ，满足πa_γ=h_γπ；态射在H上且等变。“在Q上实现”指E≅H×_Q D，作用仅改变H坐标。阶段中“局部满射”指每个测试对象上的目标截面都在某有限覆盖上有提升。\n\n逐 S 编号交付。证明题须写出论证；判断题须明确结论并给证明或完整核验反例；构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用。各阶段的附加条件只在该阶段明确指定的范围内生效。未完成内容请明确标记。\n\n\n本stage的附加条件只在当前范围有效。",
+      "weight": 10,
+      "weight_origin": "{\"kind\": \"original_independent_stage\", \"path\": \"/Users/g4i/lab/math-gauge/cases/proofs/MG-GR009/contract.json\", \"pointer\": \"/stages/5/points\"}",
+      "acceptance_conditions": [
+        "非空而非空基底的合法反例",
+        "原与拉回下降分别核验",
+        "正确检验边界",
+        "结论正确且实际给出闭合证明或满足全部原前提的反例；不能只给正确结论。"
+      ],
+      "dependency_scope": [
+        "实际所用的构造/定理须核对全部前提；原contract depends_on仅是可能路线，不机械要求前goal通过。",
+        "若同一结果另有原答已完整交付的独立有效证明，可分离错误辅助路线不使该goal失败。"
+      ],
+      "required_goals": [],
+      "source_unit_ids": [
+        "S6"
+      ],
+      "definition_evidence": [
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/task.md",
+          "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+          "pointer": "section:S6"
+        },
+        {
+          "repository": "public",
+          "path": "cases/proofs/MG-GR009/contract.json",
+          "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+          "pointer": "/stages/5"
+        },
+        {
+          "repository": "private",
+          "path": "verification/content-rates/v0.2-20261108/written-goals.json",
+          "sha256": "6d3f5e51a56f26913502a6d192f1fc0715327c35d30e3bc58933ef05fb37dde8",
+          "pointer": "MG-GR009:A1/goals/5"
+        }
+      ],
+      "source_goal_id": "S6",
+      "passed": true,
+      "reason": "非空点基底只覆盖好纤维，另一纤维C2交换失败，完整说明覆盖与非空的差别。",
+      "evidence": [
+        {
+          "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+          "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+          "start_utf8": 12819,
+          "end_utf8": 13056,
+          "quote": "   - 一般地，设 b 的像为 Q'⊂Q（拓扑斯中的满–单分解）。由 S5（B→Q' 是满态射）加上相容性：b^*E 可实现 ⇔ E×_Q Q' 在 Q' 上可实现。也就是说，拉回只检验 E 在 b 的像上的部分。",
+          "offset_convention": "zero-based half-open UTF-8 bytes"
+        }
+      ],
+      "numerator": 10,
+      "denominator": 10
+    }
+  ],
+  "mathematical_profile": {
+    "contract": {
+      "sha256": "3986224b493f8d68b49e4416354d21e811789a8da2158f995be6cf18487af94c",
+      "bytes": 551860,
+      "visibility": "private_evaluator_definition",
+      "path_withheld": true
+    },
+    "task_contract_id": "MG-GR009:A1",
+    "judgments": [
+      {
+        "axis": "proof",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/20",
+        "reason": "全部核心数学要求及其必要桥梁、边界已独立核查成立。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 103,
+            "end_utf8": 222,
+            "quote": "| S1 | Γ 有限且自由时，T/Γ 是 profinite 空间，h_{T/Γ}=H/Γ，每个等变对象都可在其上实现。 |",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 7110,
+            "end_utf8": 7150,
+            "quote": "**自同构群。** 对可实现的 X：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 2600,
+            "end_utf8": 2677,
+            "quote": "**引理 A.** c_F 总是满态射；并且 c_F 是同构 ⇔ (Stab) 成立。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 9559,
+            "end_utf8": 9730,
+            "quote": "- A=ℕ∪{∞}（一点紧化）。A_δ⊂h_A 是像有限的连续映射组成的子层。它是层：若 fp_i 都只取有限个值，则 f(S)=⋃fp_i(S_i) 也有限。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 10951,
+            "end_utf8": 11039,
+            "quote": "1. b 局部满射，所以有覆盖 S_i→S 和 β_i∈B(S_i)，使 bβ_i=qπe|_{S_i}。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 12819,
+            "end_utf8": 13056,
+            "quote": "   - 一般地，设 b 的像为 Q'⊂Q（拓扑斯中的满–单分解）。由 S5（B→Q' 是满态射）加上相容性：b^*E 可实现 ⇔ E×_Q Q' 在 Q' 上可实现。也就是说，拉回只检验 E 在 b 的像上的部分。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "fidelity",
+        "applicable": true,
+        "rating": 4,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "保持题面对象、结构、量词、定义域和目标；所用替代表示或条件化分支有原答实际证明。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 103,
+            "end_utf8": 222,
+            "quote": "| S1 | Γ 有限且自由时，T/Γ 是 profinite 空间，h_{T/Γ}=H/Γ，每个等变对象都可在其上实现。 |",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 7110,
+            "end_utf8": 7150,
+            "quote": "**自同构群。** 对可实现的 X：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 2600,
+            "end_utf8": 2677,
+            "quote": "**引理 A.** c_F 总是满态射；并且 c_F 是同构 ⇔ (Stab) 成立。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 9559,
+            "end_utf8": 9730,
+            "quote": "- A=ℕ∪{∞}（一点紧化）。A_δ⊂h_A 是像有限的连续映射组成的子层。它是层：若 fp_i 都只取有限个值，则 f(S)=⋃fp_i(S_i) 也有限。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 10951,
+            "end_utf8": 11039,
+            "quote": "1. b 局部满射，所以有覆盖 S_i→S 和 β_i∈B(S_i)，使 bβ_i=qπe|_{S_i}。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 12819,
+            "end_utf8": 13056,
+            "quote": "   - 一般地，设 b 的像为 Q'⊂Q（拓扑斯中的满–单分解）。由 S5（B→Q' 是满态射）加上相容性：b^*E 可实现 ⇔ E×_Q Q' 在 Q' 上可实现。也就是说，拉回只检验 E 在 b 的像上的部分。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "completion",
+        "applicable": true,
+        "rating": 4.0,
+        "scale_max": 4,
+        "axis_weight": "1/35",
+        "reason": "按冻结独立完整目标逐个验收，已通过权重为100/100；不由原分或扣罚倒算。",
+        "evidence": [
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 103,
+            "end_utf8": 222,
+            "quote": "| S1 | Γ 有限且自由时，T/Γ 是 profinite 空间，h_{T/Γ}=H/Γ，每个等变对象都可在其上实现。 |",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 7110,
+            "end_utf8": 7150,
+            "quote": "**自同构群。** 对可实现的 X：",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 2600,
+            "end_utf8": 2677,
+            "quote": "**引理 A.** c_F 总是满态射；并且 c_F 是同构 ⇔ (Stab) 成立。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 9559,
+            "end_utf8": 9730,
+            "quote": "- A=ℕ∪{∞}（一点紧化）。A_δ⊂h_A 是像有限的连续映射组成的子层。它是层：若 fp_i 都只取有限个值，则 f(S)=⋃fp_i(S_i) 也有限。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 10951,
+            "end_utf8": 11039,
+            "quote": "1. b 局部满射，所以有覆盖 S_i→S 和 β_i∈B(S_i)，使 bβ_i=qπe|_{S_i}。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          },
+          {
+            "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-GR009-A1/attempt-1/response.md",
+            "sha256": "7c1c3074c5fa535f2318fe5681914b9f5927a579efd92ff5d1dbfc691ae3d681",
+            "start_utf8": 12819,
+            "end_utf8": 13056,
+            "quote": "   - 一般地，设 b 的像为 Q'⊂Q（拓扑斯中的满–单分解）。由 S5（B→Q' 是满态射）加上相容性：b^*E 可实现 ⇔ E×_Q Q' 在 Q' 上可实现。也就是说，拉回只检验 E 在 b 的像上的部分。",
+            "offset_convention": "zero-based half-open UTF-8 bytes"
+          }
+        ]
+      },
+      {
+        "axis": "discernment",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "initiative",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "depth",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      },
+      {
+        "axis": "closure",
+        "applicable": false,
+        "rating": null,
+        "reason": "This written/review task has no frozen sampling opportunity on this axis."
+      }
+    ],
+    "method": "Independent source-based behavioral and goal judgments, no conversion from MC/RMC/SMC or penalties."
+  },
+  "common_rate_definitions": {
+    "path": "/private/tmp/math-gauge-sol62-xhigh-20261119/grading/contracts/common-rate-definitions.json",
+    "sha256": "a989c5e2592ea5bc38c94014dee5186dcf9006e1f0db00834c4646648ab1a69d",
+    "source_goal_definition_sha256": "8c46716a979cfe8a1289ebbde0f2a603de55502ebc1c4766ac0f039d384a1ef4",
+    "candidate_answer_or_judgment_imported": false
+  },
+  "public_projection": {
+    "private_definition_locations_withheld": true,
+    "original_source_sha256": "3e1232e59052a551e4d81cf751f94a4a0dd01f5c0363cadb78e36d29d9e8d635",
+    "mathematical_judgments_changed": false
+  }
+}

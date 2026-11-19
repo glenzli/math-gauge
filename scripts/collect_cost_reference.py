@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.costs import (SCHEMA, VERSION, SUPPLEMENT_REFERENCE_SCHEMA, project_public,
                               source_descriptor, validate_private, verify_source)
+from math_gauge.editions import result_archive, source_edition
 from math_gauge.timings import record_context
 from math_gauge.evidence_retention import is_file, iter_files, read_bytes, read_json
 
@@ -294,8 +295,7 @@ class Collector:
                 "answer_sha256": expected_answer, "units": units, "sources": [source]}
 
     def model(self, model, record_id):
-        from math_gauge.editions import result_archive
-        edition = read(self.public_root / 'benchmark.json')
+        edition = source_edition(self.public_root)
         relative = Path(result_archive(edition, model)) / model / record_id
         public = self.public_root / relative
         private = self.private_root / relative
@@ -399,7 +399,7 @@ def main():
     parser.add_argument("--as-of")
     args = parser.parse_args()
     collector = Collector(args.root, args.private_root, args.out_dir)
-    edition = read(args.root / "benchmark.json")
+    edition = source_edition(args.root)
     records = dict(edition["selected_result_record_ids"])
     records["dot-underlying-model-20261108"] = "20261108"
     if args.check:
@@ -412,7 +412,6 @@ def main():
             record_path = args.private_root / model["record_binding"]["path"]
             if collector.upstream(record_path) != model["record_binding"]:
                 raise ValueError("The cost observation's source record changed")
-            from math_gauge.editions import result_archive
             relative = Path(result_archive(edition, name)) / name / rid
             expected[name] = record_context(args.root / relative,
                                              args.private_root / relative)["expected"]

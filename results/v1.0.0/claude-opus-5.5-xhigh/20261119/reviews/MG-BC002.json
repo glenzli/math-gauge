@@ -1,0 +1,190 @@
+{
+  "schema": "math-gauge.external-case-substantive-review/v1",
+  "case_id": "MG-BC002",
+  "case_version": "0.1.0",
+  "visibility": "public",
+  "assessment_edition": "1.1.0",
+  "source_benchmark_version": "1.0.0",
+  "assessment_role": "first_assessment_of_this_answer_under_edition_1.1.0",
+  "prior_1_0_review": null,
+  "reviewer": "gpt-6.1-sol/max",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "candidate_calls": 0,
+  "stage": "A1",
+  "submission_scope": "actual original native final only",
+  "response": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-BC002-A1/attempt-1/response.md",
+    "bytes": 11538,
+    "sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5"
+  },
+  "request": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-BC002-A1/attempt-1/request.json",
+    "bytes": 3757,
+    "sha256": "38fb8cde301b10df930a3a10865b18b1528cb68d420e8e519b477f5cb3433e80"
+  },
+  "materials": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/task.md",
+      "bytes": 1993,
+      "sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af"
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/rubric.json",
+      "bytes": 630,
+      "sha256": "a9664da66d113b6ac0098ba8997a6fa247281873ebad84f726f3757f6216fd59"
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/reference.md",
+      "bytes": 6153,
+      "sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3"
+    },
+    "group_contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/contract.json",
+      "bytes": 2038,
+      "sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+    }
+  },
+  "kind": "background_check",
+  "decision": "pass",
+  "assumption_fidelity": "pass",
+  "proof_validity": "pass",
+  "scope_accuracy": "pass",
+  "unnecessary_restriction": false,
+  "summary": "完整保留真梯度流和条件prox数学，并以任意固定τ的初值小振幅二阶展开排除其prox表示；背景R3/Strict通过。",
+  "mathematical_analysis": [
+    "Hessian=D+3(x+y)^2eeT≥I，强凸与能量紧子水平保证全局存在、唯一零平衡，强单调给e^−t距离收缩，PL给e^−2t能量界，半群给nτ栈界。条件近端三点式由强凸目标最优性证明，firm非扩张由两式相加得到，保持表示前提。",
+    "对任意固定τ>0，在初值(ε,0)处使用变分方程M′=−(D+aεJ)M。aε在ε=0的一阶为0、二阶为6e^−2s，故Jacobian反对称差的二阶导为2e^−4τ(e^τ−1)^3>0。对每个τ可取充分小非零ε使Jacobian不对称，此为完整反例，不局限参考的小τ结论；初值光滑依赖和固定有限积分区间支持求导与余项。",
+    "连续prox选择为某凸共轭的梯度，C1时Jacobian对称；这一必要条件已证明。原答因此有效否定所有正τ的具体凸prox表示，并区分exact flow、implicit Euler=proxτf与τ的角色。数值单调性观察明确标数值并非证明，不承担解析结论。不能仅由非prox推断所有τ的firm非扩张必失败；原答在本段的“cannot be used”按缺乏该表示证书理解，未将该错误推理作为独立已证命题计分。"
+  ],
+  "evidence": [
+    {
+      "response_sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5",
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-BC002-A1/attempt-1/response.md",
+      "byte_start": 49,
+      "byte_end": 99,
+      "byte_interval": "zero-based half-open UTF-8",
+      "line_start": 1,
+      "line_end": 1,
+      "quote": "the central claim of the design rationale is false"
+    },
+    {
+      "response_sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5",
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-BC002-A1/attempt-1/response.md",
+      "byte_start": 7137,
+      "byte_end": 7233,
+      "byte_interval": "zero-based half-open UTF-8",
+      "line_start": 124,
+      "line_end": 124,
+      "quote": "ω″(0) = −6∫₀^τ (e^{−2τ−s} − e^{−τ−3s}) ds = 2e^{−4τ}(e^τ − 1)³ > 0."
+    },
+    {
+      "response_sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5",
+      "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-BC002-A1/attempt-1/response.md",
+      "byte_start": 9306,
+      "byte_end": 9335,
+      "byte_interval": "zero-based half-open UTF-8",
+      "line_start": 152,
+      "line_end": 152,
+      "quote": "**Implicit Euler is a prox.**"
+    }
+  ],
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "title": "准确定位背景问题",
+      "max_points": 1,
+      "score": 1,
+      "notes": "Hessian=D+3(x+y)^2eeT≥I，强凸与能量紧子水平保证全局存在、唯一零平衡，强单调给e^−t距离收缩，PL给e^−2t能量界，半群给nτ栈界。条件近端三点式由强凸目标最优性证明，firm非扩张由两式相加得到，保持表示前提。",
+      "evidence_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "title": "本模型有效证据",
+      "max_points": 1,
+      "score": 1,
+      "notes": "对任意固定τ>0，在初值(ε,0)处使用变分方程M′=−(D+aεJ)M。aε在ε=0的一阶为0、二阶为6e^−2s，故Jacobian反对称差的二阶导为2e^−4τ(e^τ−1)^3>0。对每个τ可取充分小非零ε使Jacobian不对称，此为完整反例，不局限参考的小τ结论；初值光滑依赖和固定有限积分区间支持求导与余项。",
+      "evidence_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "criterion_id": "complete-correction",
+      "title": "完整背景纠错",
+      "max_points": 1,
+      "score": 1,
+      "notes": "连续prox选择为某凸共轭的梯度，C1时Jacobian对称；这一必要条件已证明。原答因此有效否定所有正τ的具体凸prox表示，并区分exact flow、implicit Euler=proxτf与τ的角色。数值单调性观察明确标数值并非证明，不承担解析结论。不能仅由非prox推断所有τ的firm非扩张必失败；原答在本段的“cannot be used”按缺乏该表示证书理解，未将该错误推理作为独立已证命题计分。",
+      "evidence_indices": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "strict_pass": true,
+  "claim_penalty_review": {
+    "complete_visible_final_read": true,
+    "findings": [],
+    "core_false_endorsement": false,
+    "core_false_rejection": false,
+    "core_false_verification": false,
+    "ordinary_cap_points": 20,
+    "deduplication": "max severity per root then sum; existing baseline/fidelity penalties must not be duplicated"
+  },
+  "self_assessment": {
+    "source": "not_available",
+    "verbatim": null,
+    "scope": null,
+    "evidence": null,
+    "warning": "Reviewer judgment is not candidate self-assessment.",
+    "completion_value": null
+  },
+  "auxiliary_status": "complete",
+  "background_R": 3,
+  "total_points": 3,
+  "arithmetic_owner": "math_gauge.scoring",
+  "source_criteria": {
+    "D_true_mathematics": {
+      "score": 4,
+      "max_points": 4
+    },
+    "U_scrutiny": {
+      "score": 3,
+      "max_points": 3
+    },
+    "S": "corrected"
+  },
+  "substantive_classification": "S-corrected",
+  "limitations": [
+    "数值工具执行声明未在本数学审核中独立认证；解析证明独立成立。"
+  ],
+  "auxiliary_review": {
+    "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/reviews/research/MG-BC002/auxiliary-review.json",
+    "sha256": "7a63b0484a04d1a740d43403adacd1fdf51d910efdff9ef03b3e4df62e36f805"
+  },
+  "original_self_assessment_statements": [
+    {
+      "kind": "mathematical_scope_claim",
+      "verbatim": "Items 1 and 2 are correct as stated. Proofs are in §A1–A3.",
+      "evidence": {
+        "response_sha256": "cb389267aa31ddb3eedbe4aaf4a0a341bd69f664773d0909975cc8b0380933a5",
+        "path": "/private/tmp/math-gauge-opus55-xhigh-review-20261119-v1/native/evidence/written/MG-BC002-A1/attempt-1/response.md",
+        "byte_start": 157,
+        "byte_end": 218,
+        "byte_interval": "zero-based half-open UTF-8",
+        "line_start": 4,
+        "line_end": 4,
+        "quote": "Items 1 and 2 are correct as stated. Proofs are in §A1–A3."
+      }
+    }
+  ],
+  "review_status": "final_ai_review",
+  "material_other_model_verdicts_used": false
+}

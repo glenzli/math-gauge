@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from math_gauge.costs import PUBLIC_SCHEMA, pareto_frontier
-from math_gauge.editions import result_archive
+from math_gauge.editions import result_archive, source_edition
 from math_gauge.records import evidence_bytes
 
 DATA_PATH = "results/costs/v0.1.0/current.json"
@@ -34,11 +34,16 @@ def selected_cost_source(folder, model, base):
 
 
 def build_reference(root, *, display_data, timing_reference):
-    edition = json.loads((Path(root) / "benchmark.json").read_bytes())
+    edition = source_edition(root)
     path = Path(root) / DATA_PATH
     if not path.is_file():
         return None
     document = json.loads(path.read_text())
+    from math_gauge.current_assessment_admissions import record_paths, historical_cost_source
+    fresh = record_paths(root)
+    if display_data.get('benchmark_version') == '1.0.0' and fresh:
+        document = historical_cost_source(root)
+    current_fresh = fresh if display_data.get('benchmark_version') == '1.1.0' else {}
     if document.get("schema") != PUBLIC_SCHEMA or document.get("other_retries_included") is not False:
         raise ValueError("Cost display requires a selected-attempt public projection")
     costs = {row["model_id"]: row for row in document["models"]}
@@ -50,7 +55,10 @@ def build_reference(root, *, display_data, timing_reference):
         row = costs.get(model["id"])
         if row is None:
             raise ValueError("Missing model in cost reference: " + model["id"])
-        folder = Path(root) / result_archive(edition, model["id"]) / model["id"] / row["record_id"]
+        folder = ((Path(root) / current_fresh[model['id']]).parent if model['id'] in current_fresh else
+                  Path(root) / result_archive(edition, model["id"]) / model["id"] / row["record_id"])
+        if folder.name != row['record_id']:
+            raise ValueError('Cost reference selects another admission record')
         row, companion = selected_cost_source(folder, model, row)
         source = folder / ("record.json" if (folder / "record.json").is_file() else "native-observation.json")
         if not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != row.get("record_sha256"):

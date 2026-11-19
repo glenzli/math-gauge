@@ -91,6 +91,8 @@ def project_payload(data):
                    for condition, view in views.items()} for mode, views in item["views"].items()}}
             for item in data["cases"]]
     elif "models" in data:
+        if data.get('mathematical_profile') is not None:
+            shared['mathematical_profile'] = copy.deepcopy(data['mathematical_profile'])
         shared["models"] = [model_view(model) for model in data["models"]]
         shared["category_leaderboards"] = [pick(board, ("id", "views"))
                                             for board in data["category_leaderboards"]]
