@@ -1,0 +1,184 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-opus-5.5-max",
+  "case_id": "MG-AR003",
+  "response_sha256": "d48439c0939c2f839df7cc59d8f99b14980566fcb25a8660b7c59f740c1ff3dc",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 100,
+  "RMC": 100,
+  "SMC": true,
+  "positive_criteria": [
+    {
+      "id": "mapping_identification",
+      "earned": 30,
+      "reason": "明确纠正固定目标映射集应C(X,Y)，并保留全Y结论。",
+      "quote": "**(3) 结论正确，但有一个错误的中间断言。** 答卷写道：\"连续 $f:X\\to Y$ 诱导的自然变换对应于集合 $C(X,kY)$。\"这是错的。在 (2) 的对应下 $h_f\\leftrightarrow f$，所以诱导出的变换对应的集合是 $C(X,Y)$。由 $k$ 的函子性，$C(X,Y)\\subset C(kX,kY)$。",
+      "evidence_file": "answer.md",
+      "max": 30
+    },
+    {
+      "id": "exponential_law",
+      "earned": 15,
+      "reason": "识别S1的局部紧变量错位并认可原稿后续CGHaus独立路线。",
+      "quote": "- ev 的构造、Z 部分的三个双射、S6 对 S3 的引用都不依赖第 4 步。S6 只用到 $M$ 紧生成以及 CGHaus 中的求值和伴随。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "ultrafilter",
+      "earned": 5,
+      "reason": "识别恰有一个过强，至少一个足够。",
+      "quote": "- **措辞错误。** \"恰有一个集合不属于 $\\mathcal U$\"应改为\"至少有一个\"。当 $K\\cap\\mathbb N\\notin\\mathcal U$ 时，$A_1$ 和 $A_2$ 都不属于 $\\mathcal U$。论证只用到\"至少一个\"，所以无害。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "retained_results",
+      "earned": 10,
+      "reason": "保留原全Y充要命题、有效非k反例、求值与复合结果。",
+      "quote": "- ev 的构造、Z 部分的三个双射、S6 对 S3 的引用都不依赖第 4 步。S6 只用到 $M$ 紧生成以及 CGHaus 中的求值和伴随。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "mapping_evidence",
+      "earned": 15,
+      "reason": "用非k空间上的恒等映射给合法反例，区分固定Y与全Y。",
+      "quote": "- **反例：** 取 $Z$ 为 S5 中的超滤空间。$\\mathrm{id}_Z\\in C(Z,Z)$ 诱导恒等变换；但 $kZ$ 离散而 $Z$ 不离散，所以 $\\mathrm{id}\\notin C(Z,kZ)$。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "exponential_scope",
+      "earned": 10,
+      "reason": "正确要求kX局部紧，不以参数S的局部紧代替；后续独立标准定理条件适合。",
+      "quote": "- S1 的局部紧假设加在函数空间的**定义域**上，在这里就是 $kX$。而 $kX$ 一般不局部紧，例如 $X=\\mathbb Q$ 时 $kX=\\mathbb Q$。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "ultrafilter_scope",
+      "earned": 5,
+      "reason": "说明两个不交部分可都不在超滤子，保留开覆盖。",
+      "quote": "- **措辞错误。** \"恰有一个集合不属于 $\\mathcal U$\"应改为\"至少有一个\"。当 $K\\cap\\mathbb N\\notin\\mathcal U$ 时，$A_1$ 和 $A_2$ 都不属于 $\\mathcal U$。论证只用到\"至少一个\"，所以无害。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "beta_size",
+      "earned": 5,
+      "reason": "补出betaD可表示为双重幂集子集，不误判宇宙越界。",
+      "quote": "- 省略：答卷没有说明 $\\beta D$ 是 U 小的。补充：$\\beta D$ 可以取为 $D$ 上全体超滤子的集合，它包含于 $\\mathcal P(\\mathcal P(D))\\in U$，它的拓扑也属于 $U$。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "mapping_space_size",
+      "earned": 5,
+      "reason": "指出M大小遗漏或补出底集界；将其作为可补缺口而非越界。",
+      "quote": "| 6 | S2(1)、S2(3)、S3、S4(1) | 未写出：$\\beta D$ 与 $M$ 的 U 小性、$k$ 的幂等性、邻域基的说明 | 次要，已补 |",
+      "evidence_file": "answer.md",
+      "max": 5
+    }
+  ],
+  "claim_deductions": [],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。"
+  },
+  "strict_reason": "完整识别并证明三类问题，保留全部独立有效主结果，补足大小边界；新增数学没有已证实质错误。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "固定目标识别、局部紧输入错位、超滤子边界均正确，独立CGHaus主路线得到保留；大小遗漏仅补充覆盖。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- ev 的构造、Z 部分的三个双射、S6 对 S3 的引用都不依赖第 4 步。S6 只用到 $M$ 紧生成以及 CGHaus 中的求值和伴随。"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- ev 的构造、Z 部分的三个双射、S6 对 S3 的引用都不依赖第 4 步。S6 只用到 $M$ 紧生成以及 CGHaus 中的求值和伴随。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 4,
+      "reason": "准确区分固定Y中间假等同、最终全Y真命题、无效引用与独立标准定理，大小遗漏未夸为越界。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "**(3) 结论正确，但有一个错误的中间断言。** 答卷写道：\"连续 $f:X\\to Y$ 诱导的自然变换对应于集合 $C(X,kY)$。\"这是错的。在 (2) 的对应下 $h_f\\leftrightarrow f$，所以诱导出的变换对应的集合是 $C(X,Y)$。由 $k$ 的函子性，$C(X,Y)\\subset C(kX,kY)$。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "通过探针、紧子集限制与指数伴随建立结构性的核验和修复；额外范围锐化有成立证明。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- S1 的局部紧假设加在函数空间的**定义域**上，在这里就是 $kX$。而 $kX$ 一般不局部紧，例如 $X=\\mathbb Q$ 时 $kX=\\mathbb Q$。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 4,
+      "reason": "交出的审阅证据、补充论证及影响范围完整闭合。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- ev 的构造、Z 部分的三个双射、S6 对 S3 的引用都不依赖第 4 步。S6 只用到 $M$ 紧生成以及 CGHaus 中的求值和伴随。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.276709+00:00",
+    "source_review_sha256": "6c482009edec021aedf1b4728165aa8c7a36b87ed5cb3d9f39b01a19c4366a0a",
+    "source_review_path": "grading/audit_background_written/claude-opus-5.5-max--MG-AR003.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}

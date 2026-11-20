@@ -1,11 +1,11 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {series,readBoard,readView,toggleShown,boardURL,applyVisibility,applyView}=require('../scripts/templates/board-controls.js');
-const all=['capability','partial','strict'];
+const all=['strict','partial','capability'];
 
 test('scoped preferences restore independently while legacy shared links remain readable',()=>{
  assert.deepEqual(readBoard('').shown,all);
- assert.deepEqual(readBoard('?show=smc,mc,smc','written').shown,['capability','strict']);
+ assert.deepEqual(readBoard('?show=smc,mc,smc','written').shown,['strict','capability']);
  const search='?show=rmc&complete=1&show-written=smc&complete-written=0';
  assert.deepEqual(readBoard(search,'overall'),{shown:['partial']});
  assert.deepEqual(readBoard(search,'written'),{shown:['strict']});

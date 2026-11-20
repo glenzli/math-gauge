@@ -18,7 +18,10 @@ from math_gauge.records import load_assessment_results, load_content_rates, vali
 from math_gauge.native_observations import load_public_record
 from math_gauge.paper_observations import load_public_record as load_paper_record
 from scripts.results_details import build_detail_pages, review_status
-from scripts.results_rankings import category_rankings, overall_key, published_value, SCORE_MODES
+from scripts.results_rankings import (
+    category_rankings, model_display_key, overall_key, overall_places, set_model_display_order,
+    set_published_scores,
+)
 from scripts.results_i18n import javascript_catalog, language_switch
 from scripts.results_surplus import load_observations, render_subboard
 from scripts.results_delivery import delivery_progress, load_legacy_projections
@@ -27,7 +30,7 @@ from scripts.results_presentation import project_payload
 from scripts.results_publication import prepare_publication, write_publication
 from scripts.timing_reference import build_reference, render_panel
 from scripts.cost_reference import build_reference as build_cost_reference, render_panel as render_cost_panel
-from scripts.results_anomalies import render_panel as render_anomaly_panel
+from scripts.results_anomalies import render_panel as render_run_history
 from scripts.results_attempt_history import load_public as load_attempt_history
 from math_gauge.execution_anomalies import load_public as load_execution_anomalies
 from math_gauge.submission_evidence import load_review_completion
@@ -37,8 +40,10 @@ from math_gauge.evidence_retention import is_file as retained_file, read_bytes a
 from math_gauge.current_results import apply_current_assessment, public_reassessment_metadata, load_source_assessment, selected_current_cli_records
 from math_gauge.mathematical_profile import load_public_profiles
 from scripts.results_profile import render_panel as render_profile_panel
+from scripts.results_eligibility import eligibility, ranked_models
 
 MODEL_THEMES = {
+    "astra-6.2-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "claude-opus-5.5-xhigh": {"color": "#d97757", "ink": "#9f4d34", "tint": "#fbf1ec"},
     "astra-6.2-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "sol-6.2-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
@@ -53,7 +58,7 @@ MODEL_THEMES = {
     "sol-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "terra-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "terra-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
-    "deepseek-v4.1-flash-1017": {"color": "#4b6ed8", "ink": "#3655b2", "tint": "#f1f4fd"},
+    "deepseek-v4.1-flash-1017": {"color": "#6557d6", "ink": "#48409d", "tint": "#f1effc"},
     "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-hydrogen-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
@@ -62,6 +67,7 @@ MODEL_THEMES = {
     "gemini-4-carbon-medium": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
+    "astra-6.2-xhigh": ("OpenAI", "openai.svg"),
     "claude-opus-5.5-xhigh": ("Anthropic", "anthropic.svg"),
     "astra-6.2-max": ("OpenAI", "openai.svg"),
     "sol-6.2-xhigh": ("OpenAI", "openai.svg"),
@@ -85,6 +91,7 @@ MODEL_PROVIDERS = {
     "gemini-4-carbon-medium": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
+    "astra-6.2-xhigh": "Astra 6.2 (xHigh)",
     "claude-opus-5.5-xhigh": "Claude Opus 5.5 (xHigh)",
     "astra-6.2-max": "Astra 6.2 (max)",
     "sol-6.2-xhigh": "Sol 6.2 (xhigh)",
@@ -109,6 +116,7 @@ MODEL_LABELS = {
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 MODEL_SHORT_LABELS = {
+    "astra-6.2-xhigh": "Astra 6.2 (xHigh)",
     "claude-opus-5.5-xhigh": "Opus 5.5 (xHigh)",
     "astra-6.2-max": "Astra 6.2 (max)",
     "sol-6.2-xhigh": "Sol 6.2 (xhigh)",
@@ -179,12 +187,14 @@ def build_data(source_root=ROOT, *, assessment_version=None):
     root = Path(source_root).resolve()
     from math_gauge.editions import verify_compatibility, source_edition
     current_edition = verify_compatibility(root)
-    historical = source_edition(root, current_edition)
+    from math_gauge.neutral_revision import source_assessment_edition
+    assessment_edition = source_assessment_edition(root, current_edition)
+    historical = source_edition(root, assessment_edition)
     requested = assessment_version or current_edition['version']
-    if requested not in {current_edition['version'], historical['version']}:
+    if requested not in {current_edition['version'], assessment_edition['version'], historical['version']}:
         raise ValueError('Display edition is not one of the retained assessment snapshots')
-    edition = current_edition if requested == current_edition['version'] else historical
-    use_current_assessment = requested == current_edition['version']
+    edition = historical if requested == historical['version'] else assessment_edition
+    use_current_assessment = requested != historical['version']
     policy = json.loads((root / "protocol/scoring-policy.json").read_bytes())
     strict_policy = json.loads((root / "protocol/strict-scoring-policy.json").read_bytes())
     mode_catalog = json.loads((root / "protocol/score-modes.json").read_bytes())
@@ -327,6 +337,7 @@ def build_data(source_root=ROOT, *, assessment_version=None):
     # All harness kinds enter the same assessment layer after their original
     # source corrections and trajectories, before any ranking or chart data.
     for model in models:
+        model['presentation_eligibility'] = eligibility(model['id'])
         if not use_current_assessment:
             continue
         record = json.loads((root / model['source_record']).read_bytes())
@@ -375,8 +386,7 @@ def build_data(source_root=ROOT, *, assessment_version=None):
         record_bytes = (root / model['source_record']).read_bytes()
         original_record = json.loads(record_bytes)
         model['test_order'] = recorded_test_order((root / model['source_record']).parent, original_record)
-        model['ranking_values'] = {mode: published_value(earned_value(selected_result(model, mode)))
-                                   for mode in SCORE_MODES}
+        set_published_scores(model)
         completion = load_review_completion((root / model['source_record']).parent, original_record)
         if completion is not None:
             model['review_completion'] = completion
@@ -389,8 +399,10 @@ def build_data(source_root=ROOT, *, assessment_version=None):
         if model.get('record_kind') == 'paper_observation':
             model['comparison_note'] = ''
             model['retry']['note'] = '全部尝试记录与答卷来源见正式档案。'
+    set_model_display_order(models)
     display_modes = copy.deepcopy(mode_catalog['modes'])
     next(m for m in display_modes if m['id'] == 'strict')['abbreviation'] = 'SMC'
+    display_modes.sort(key=lambda mode: ('strict', 'partial', 'capability').index(mode['id']))
     sources.append({'path': 'site/harnesses.json', 'sha256': hashlib.sha256(harness_path.read_bytes()).hexdigest()})
     sources.append({'path': 'site/answer-delivery.json',
                     'sha256': hashlib.sha256((root / 'site/answer-delivery.json').read_bytes()).hexdigest()})
@@ -422,6 +434,9 @@ def build_data(source_root=ROOT, *, assessment_version=None):
     profile = load_public_profiles(root, models, benchmark_version=edition['version'])
     if profile is not None:
         data['mathematical_profile'] = profile
+    if requested == '1.2.0':
+        from scripts.results_editions import neutral_revision_data
+        return neutral_revision_data(root, data)
     return data
 
 
@@ -464,6 +479,8 @@ def gap_diagnostics(models):
     tables, values = [], []
     definitions = (('RG', '可靠差', 'Reliability Gap', 'partial', 'RMC − MC'),
                    ('DG', '交付差', 'Delivery Gap', 'strict', 'SMC − MC'))
+    models = ranked_models(models)
+    model_keys = {model['id']: model_display_key(model) for model in models}
     for code, title, english, mode, formula in definitions:
         rows = []
         for model in models:
@@ -481,7 +498,7 @@ def gap_diagnostics(models):
             if value is not None:
                 values.append(value)
         key = lambda row: (abs(row['value']) if row['value'] is not None else float('inf'),
-                           -(row['mc'] or 0), row['model_id'])
+                           model_keys[row['model_id']])
         ranked = sorted((row for row in rows if row['status'] == 'ranked'), key=key)
         previous, rank = None, 0
         for index, row in enumerate(ranked, 1):
@@ -574,8 +591,8 @@ def render_gap_chart(data):
               for table in diagnostic['tables']}
     def order(model):
         value = lookup['RG'][model['id']]['value']
-        return (value is None, 0 if value is None else abs(value), model['id'])
-    ordered = sorted(data['models'], key=order)
+        return (value is None, 0 if value is None else abs(value), model_display_key(model))
+    ordered = sorted(ranked_models(data['models']), key=order)
     for model in ordered:
         row = lookup['RG'][model['id']]
         bars = []
@@ -615,12 +632,12 @@ def grouped_bars(data, category=None):
     scope = 'overall' if category is None else category['id']
     scope_attr = ' data-score-scope="'+html.escape(scope, quote=True)+'"'
     if category is None:
-        ordered = sorted(data['models'], key=overall_key)
+        ordered = sorted(ranked_models(data['models']), key=overall_key)
         views = {mode['id']: {m['id']: dict(selected_result(m, mode['id'])['metrics']['overall'],
                     value=earned_value(selected_result(m, mode['id']))) for m in ordered} for mode in modes}
     else:
         by_id = {m['id']: m for m in data['models']}
-        ordered = [by_id[row['model_id']] for row in category['views']['partial']]
+        ordered = [by_id[row['model_id']] for row in category['views']['strict']]
         views = {mode['id']: {row['model_id']: row for row in category['views'][mode['id']]}
                  for mode in modes}
     values = [row['value'] for view in views.values() for row in view.values() if row['value'] is not None]
@@ -649,6 +666,7 @@ def grouped_bars(data, category=None):
         logo = model['logo']
         theme = model['theme']
         groups.append('<div class="bar-group"'+scope_attr+' data-model="'+html.escape(model['id'], quote=True)+'" role="group" '
+            +'data-provider="'+html.escape(logo['label'], quote=True)+'" '
             +'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken), quote=True)+'" '
             +'style="--model-color:'+html.escape(theme['color'], quote=True)+';--model-ink:'+html.escape(theme['ink'], quote=True)
             +'">'
@@ -667,8 +685,8 @@ def render_content_rates(data):
                    ('attainment', '目标达成率', 'confirmed', 'strict'))
     def order(model):
         value = (model.get('content_rates') or {}).get('metrics', {}).get('reliability', {}).get('observed')
-        return (value is None, 0 if value is None else -value, model['id'])
-    for model in sorted(data['models'], key=order):
+        return (value is None, 0 if value is None else -value, model_display_key(model))
+    for model in sorted(ranked_models(data['models']), key=order):
         report = model.get('content_rates')
         if report is not None and report['version'] != '0.2.0':
             raise ValueError('Current rates require a source-bound 0.2.0 report')
@@ -721,7 +739,7 @@ def render_category_leaderboards(data):
                       +'" aria-labelledby="category-tab-'+cid+'"'+(' hidden' if index else '')+'>'
                       '<div class="panel-head"><div><h3>'+title+'排行榜</h3><p class="panel-desc">类内满分100 · 总榜权重'
                       +str(group['weight'])+'%</p></div>'
-                      +'<div class="board-toolbar">'+view_control()+sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'partial')
+                      +'<div class="board-toolbar">'+view_control()+sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'strict')
                       +score_board_settings(group['id'], data['display_score_modes'])+'</div>'
                       +'</div><figure class="score-figure category-figure" data-view-pane="chart" aria-label="'+title+'分类成绩图">'
                       '<figcaption class="chart-caption"><span>类内百分制</span><span class="chart-legend">'
@@ -747,20 +765,21 @@ def is_fully_evaluated(model):
             and selected_result(model)['metrics']['overall']['exact'] is not None)
 
 
-def render(data, *, timing_reference=None, cost_reference=None, anomaly_reference=None, attempt_reference=None):
+def render(data, *, timing_reference=None, cost_reference=None, anomaly_reference=None, attempt_reference=None,
+           continuation_resources=(), source_root=None):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
-    ordered = sorted(data['models'], key=overall_key)
+    ordered = overall_places(data['models'])
     harness_notes = {}
-    for model in ordered:
+    for model, _ in ordered:
         harness = model['harness']
         if harness.get('note_text'):
             marker = harness['note_marker']
             if marker in harness_notes and harness_notes[marker]['harness']['note_text'] != harness['note_text']:
                 raise ValueError('Shared harness note markers must have the same explanation')
             harness_notes.setdefault(marker, model)
-    for index, model in enumerate(ordered, 1):
+    for model, place in ordered:
         source = html.escape('models/'+model['id']+'/index.html?score=partial&condition=nonlogical_retry_3', quote=True)
         progress = model['evaluation_progress']['nonlogical_retry_3']
         delivery = model['answer_delivery']
@@ -770,17 +789,21 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
         score_cells = []
         for mode in data['display_score_modes']:
             value = earned_value(selected_result(model, mode['id']))
-            score_cells.append('<td data-display-mode="'+mode['id']+'" class="numeric score-cell'+(' primary-score' if mode['id']=='partial' else '')+'">'
+            score_cells.append('<td data-display-mode="'+mode['id']+'" class="numeric score-cell'+(' primary-score' if mode['id']=='strict' else '')+'">'
                 '<span class="score-number">'+('—' if value is None else f'{value:.2f}')+'</span></td>')
-        rows.append('<tr><td class="rank">'+str(index)+'</td><td class="model-name"><a href="'+source+'">'
+        rows.append('<tr><td class="rank">'+('—' if place is None else str(place))+'</td><td class="model-name"><a href="'+source+'">'
             +html.escape(model['label'])+'</a><span class="mobile-harness">'
             +html.escape(harness_display_name(model))+'</span><span class="mobile-delivery">交卷 '+delivered+'</span></td>'
             '<td class="harness-cell">'+html.escape(harness_display_name(model))+'</td>'
             '<td class="numeric delivery-cell">'+delivered+'</td>'+''.join(score_cells)
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
+    retries = render_run_history(anomaly_reference, models=data['models'], attempt_reference=attempt_reference,
+                                 continuation_resources=continuation_resources, source_root=source_root,
+                                 source_edition=data['benchmark_version'])
     values = {"DATA": payload, "VERSION":html.escape(data['benchmark_version']),
               "MATHEMATICAL_PROFILE":render_profile_panel(data.get('mathematical_profile')),
-              "PROFILE_NAV":('<a class="optional" data-assessment-only="1.1.0" href="#mathematical-profile"><span data-lang-content="zh">数学画像</span><span data-lang-content="en" hidden>Profile</span></a>'
+              "PROFILE_NAV":(''.join('<a class="optional" data-assessment-only="'+edition+'" href="#mathematical-profile"><span data-lang-content="zh">数学画像</span><span data-lang-content="en" hidden>Profile</span></a>'
+                                     for edition in ('1.1.0', '1.2.0'))
                              if data.get('mathematical_profile') else ''),
               "PROFILE_CSS":('<link rel="stylesheet" href="assets/mathematical-profile.css">'
                              if data.get('mathematical_profile') else ''),
@@ -789,7 +812,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
               "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
               "REVIEW_STATUS": review_status(data, 'method.html#review-process'),
               "LANGUAGE_SWITCH": language_switch(),
-              "OVERALL_CONTROLS": view_control()+sort_control('overall', '总榜排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], data['default_score_mode'])+score_board_settings('overall', data['display_score_modes']),
+              "OVERALL_CONTROLS": view_control()+sort_control('overall', '总榜排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'strict')+score_board_settings('overall', data['display_score_modes']),
               "GAP_CHART": render_gap_chart(data),
               "CONTENT_RATES": render_content_rates(data),
               "CATEGORY_RANKINGS": render_category_leaderboards(data),
@@ -800,7 +823,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
                                              for m in sorted(harness_notes.values(), key=lambda m: m['harness']['note_marker'])),
               "MODE_CONTROLS": ''.join(
                   '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)
-                  +'" aria-pressed="'+str(m['id']==data['default_score_mode']).lower()+'"><span class="mode-name">'
+                  +'" aria-pressed="'+str(m['id']=='strict').lower()+'"><span class="mode-name">'
                   +html.escape(m['name'])+'</span><span class="mode-code">'+html.escape(m['abbreviation'])+'</span></button>'
                   for m in data['display_score_modes']),
               "TASKS": str(data["policy"]["scope"]["tasks"]),
@@ -822,8 +845,8 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
               "COST_REFERENCE": render_cost_panel(cost_reference),
               "COST_CSS": '<link rel="stylesheet" href="assets/cost-reference.css">' if cost_reference else '',
               "COST_JS": '<script src="assets/cost-label-layout.js"></script><script src="assets/cost-reference.js"></script>' if cost_reference else '',
-              "EXECUTION_ANOMALIES": render_anomaly_panel(anomaly_reference, models=data['models'], attempt_reference=attempt_reference),
-              "ANOMALY_CSS": '<link rel="stylesheet" href="assets/execution-anomalies.css">' if anomaly_reference else ''}
+              "RETRY_REFERENCE": retries,
+              "ANOMALY_CSS": '<link rel="stylesheet" href="assets/execution-anomalies.css">' if retries else ''}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
     return re.sub(r"@@MG_(" + '|'.join(re.escape(key) for key in values) + r")@@",
                   lambda match: values[match[1]], template)
@@ -831,14 +854,33 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
 
 def write_site(destination, *, source_root=ROOT):
     dest = Path(destination)
-    data = build_data(source_root)
-    timings = build_reference(source_root,display_data=data)
-    costs = build_cost_reference(source_root,display_data=data,timing_reference=timings)
+    # Render shared page geometry from the retained full first-answer cohort.
+    # The edition loader installs the selected version before any controller.
+    from math_gauge.neutral_revision import load_transition
+    neutral = load_transition(source_root)
+    base_data = build_data(source_root, assessment_version='1.1.0') if neutral else build_data(source_root)
+    if neutral:
+        from scripts.results_editions import neutral_revision_data
+        data = neutral_revision_data(source_root, base_data, transition=neutral)
+    else:
+        data = base_data
+    base_timings = build_reference(source_root, display_data=base_data)
+    base_costs = build_cost_reference(source_root, display_data=base_data, timing_reference=base_timings)
+    timings = base_timings
+    if neutral:
+        expanded = build_reference(source_root, display_data=base_data,
+                                   revision_models={model['id'] for model in data['models']})
+        timings = build_reference(source_root, display_data=data, base_reference=expanded)
+    costs = (build_cost_reference(source_root, display_data=data, timing_reference=timings,
+                                 base_reference=base_costs) if neutral else base_costs)
     anomalies = load_execution_anomalies(source_root)
     attempts = load_attempt_history(source_root)
     # Resolve all evidence before changing navigation or writing any page.
-    files = build_detail_pages(data, source_root, anomaly_reference=anomalies)
-    files["index.html"] = render(data,timing_reference=timings,cost_reference=costs,anomaly_reference=anomalies,attempt_reference=attempts)
+    files = build_detail_pages(base_data, source_root, anomaly_reference=anomalies)
+    resources = [model['revision_resources'] for model in data['models'] if model.get('revision_resources')]
+    files["index.html"] = render(base_data, timing_reference=base_timings, cost_reference=base_costs,
+                                 anomaly_reference=anomalies, attempt_reference=attempts,
+                                 continuation_resources=resources, source_root=source_root)
     files['downloads/timing-reference.json'] = json.dumps(timings,ensure_ascii=False,indent=2)+'\n'
     if costs is not None:
         files['downloads/cost-reference.json'] = json.dumps(costs,ensure_ascii=False,indent=2)+'\n'
@@ -847,7 +889,7 @@ def write_site(destination, *, source_root=ROOT):
     if attempts is not None:
         files['downloads/execution-attempts.json'] = json.dumps(attempts,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js", "mathematical-profile.js", "mathematical-profile.css"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.css", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "edition-notes.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js", "mathematical-profile.js", "mathematical-profile.css"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     files['assets/execution-anomalies.css'] = (Path(__file__).parent/'templates/execution-anomalies.css').read_text()
@@ -858,10 +900,11 @@ def write_site(destination, *, source_root=ROOT):
             for condition, suffix in (("single_attempt", ""), ("nonlogical_retry_3", "-retry")):
                 files["downloads/"+model["id"]+"-combined-strict"+suffix+".json"] = json.dumps(model["strict"][condition], ensure_ascii=False, indent=2)+"\n"
                 files["downloads/"+model["id"]+"-combined-capability"+suffix+".json"] = json.dumps(model["capability"][condition], ensure_ascii=False, indent=2)+"\n"
-    retired = ["downloads/" + model["id"] + suffix for model in data["models"]
+    retired = ["downloads/" + model["id"] + suffix for model in base_data["models"]
                for suffix in ("-public.json", "-public-retry.json")]
     from scripts.results_editions import prepare_edition_publication
-    write_publication(dest, prepare_edition_publication(files, source_root, data), retired=retired)
+    write_publication(dest, prepare_edition_publication(files, source_root, data, base_data=base_data,
+        base_timing=base_timings, base_cost=base_costs, current_timing=timings, current_cost=costs), retired=retired)
     return data
 
 

@@ -11,15 +11,19 @@
 .cost-clear-selection:focus-visible,.cost-pin-button:focus-visible{outline:2px solid #5572df;outline-offset:2px}
 .cost-interaction-hint{flex:1 1 260px;margin:0;color:#7b879b;font-size:11px;line-height:1.6}
 .cost-label-target{cursor:pointer;transition:opacity .12s}
-.cost-label-target .cost-label{pointer-events:none}
-.cost-frontier-path{stroke:#586b87;stroke-width:2.6;opacity:1;stroke-linejoin:round}
-.cost-frontier-legend .cost-line{border-top:3px solid #586b87}
-.cost-label-connector{stroke:#a5afbd;stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.7;pointer-events:none;transition:opacity .12s}
+.cost-label-target .cost-label{pointer-events:none;fill:var(--ink);white-space:pre}
+.cost-label-qualifier{fill:var(--cost-muted);font-weight:400}
+.cost-label-target:is(.cost-active,.cost-pinned) .cost-label{fill:var(--cost-model-ink)}
+.cost-label-target:is(.cost-active,.cost-pinned) .cost-label-qualifier{fill:inherit}
+.cost-frontier-panel{--cost-frontier-ink:#586b87}
+.cost-frontier-path{stroke:var(--cost-frontier-ink);stroke-width:3;stroke-dasharray:8 5;vector-effect:non-scaling-stroke;opacity:1;stroke-linejoin:round}
+.cost-frontier-legend .cost-line{width:26px;height:3px;border:0;background:repeating-linear-gradient(to right,var(--cost-frontier-ink) 0 8px,transparent 8px 13px)}
+.cost-label-connector{stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.68;pointer-events:none;transition:opacity .12s}
+.cost-label-connector:not(.cost-active,.cost-pinned){stroke:#a5afbd}
 .cost-point-halo{stroke-width:1;opacity:0;pointer-events:none;vector-effect:non-scaling-stroke;transition:opacity .12s}
 .cost-model-target{transition:opacity .12s}
 .cost-has-active [data-cost-model]:not(.cost-active):not(.cost-pinned){opacity:.23}
-.cost-label-connector.cost-pinned{opacity:.55}
-.cost-label-connector.cost-active{opacity:.7;stroke-width:1}
+.cost-label-connector:is(.cost-active,.cost-pinned){opacity:.8}
 .cost-model-target.cost-pinned .cost-point-halo{opacity:.38}
 .cost-model-target.cost-active .cost-point-halo{opacity:.8}
 .cost-label-target.cost-active .cost-label{stroke-width:5px}

@@ -1,0 +1,269 @@
+{
+  "schema": "math-gauge.nonlean-primary-case-support/v1",
+  "case_id": "MG-PS001",
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "candidate_feedback": false,
+  "complete_native_final_read": true,
+  "explicit_delivered_attachments": [],
+  "unsubmitted_work_used": false,
+  "source_repaired": false,
+  "frozen_case_sources": {
+    "task": {
+      "repository": "public",
+      "path": "cases/proofs/MG-PS001/task.md",
+      "absolute_path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/task.md",
+      "bytes": 1012,
+      "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+      "snapshot": "grading-support/source-materials/public/cases/proofs/MG-PS001/task.md"
+    },
+    "rubric": {
+      "repository": "public",
+      "path": "cases/proofs/MG-PS001/rubric.json",
+      "absolute_path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/rubric.json",
+      "bytes": 543,
+      "sha256": "390aa44a16523d40435f5e3b51f982a3268e2ead23a9ad6b939623c9adaa6186",
+      "snapshot": "grading-support/source-materials/public/cases/proofs/MG-PS001/rubric.json"
+    },
+    "reference": {
+      "repository": "public",
+      "path": "cases/proofs/MG-PS001/reference.md",
+      "absolute_path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/reference.md",
+      "bytes": 7711,
+      "sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+      "snapshot": "grading-support/source-materials/public/cases/proofs/MG-PS001/reference.md"
+    },
+    "group_contract": {
+      "repository": "public",
+      "path": "cases/proofs/MG-PS001/contract.json",
+      "absolute_path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/contract.json",
+      "bytes": 4155,
+      "sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+      "snapshot": "grading-support/source-materials/public/cases/proofs/MG-PS001/contract.json"
+    },
+    "auxiliary:diagnostic-rubric.json": {
+      "repository": "public",
+      "path": "cases/proofs/MG-PS001/diagnostic-rubric.json",
+      "absolute_path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/diagnostic-rubric.json",
+      "bytes": 5121,
+      "sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+      "snapshot": "grading-support/source-materials/public/cases/proofs/MG-PS001/diagnostic-rubric.json"
+    }
+  },
+  "delivery": {
+    "path": "grading/nonlean/MG-PS001/delivery.v1.json",
+    "bytes": 3075,
+    "sha256": "8209b4753514b02044e692b426ec5c0ac00295345838e1fa145ce08044decbd7"
+  },
+  "evidence_sources": {
+    "answer": {
+      "path": "sessions/MG-PS001/physical-1/output/response.md",
+      "bytes": 4816,
+      "sha256": "d30f346f0bd0b582db5018a420b3697ef4172349878bc04f9ded4061c2ddd909"
+    }
+  },
+  "mathematical_review": {
+    "case_id": "MG-PS001",
+    "response_sha256": "d30f346f0bd0b582db5018a420b3697ef4172349878bc04f9ded4061c2ddd909",
+    "reviewer": "GPT-6.1 Sol Max; primary independent AI reviewer",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "两项原目标均完整成立。下降必要性和最优Lipschitz常数对任意原f给出真实稀疏密度见证；全部有序对由阶乘分块构造实现，最多跨一个边界的两段上界正确闭合根极限。K1按冻结原量规允许的正确直接使用评满，无需机械重述伪度量公理。没有把普通商空间当Banach空间，未发现独立错误承诺。",
+    "findings": [],
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+    "criteria": [
+      {
+        "criterion_id": "K1",
+        "score": 5,
+        "notes": "Cesaro-limsup半范数、零距商及其诱导距离被全程正确直接使用；由有界序列保证有限性，基本半范数/商公理属此定义的常规读出。冻结K1明确接受完整正确直接使用，不要求机械重复基本公理；未发现商上对象或等价关系的错误。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 14,
+            "line_end": 23,
+            "utf8_start": 435,
+            "utf8_end": 821,
+            "quote": "对任意 \\(z\\in E\\)，由 \\(f(1),\\ldots,f(n)\\) 互不相同可得\n\\[\n\\frac1n\\sum_{j=1}^n |z_{f(j)}|\n\\le \\frac{f(n)}n\\cdot\\frac1{f(n)}\\sum_{i=1}^{f(n)}|z_i|.\n\\]\n当 \\(a_f<\\infty\\) 时，取上极限并令 \\(z=x-y\\)，得到\n\\[\nd(P_fx,P_fy)\\le a_f\\,d(x,y).\n\\]\n所以 \\(P_f\\) 保持等价关系，诱导的 \\(T_f\\) 是 Lipschitz 映射，且其最小 Lipschitz 常数至多为 \\(a_f\\)。\n"
+          },
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 25,
+            "line_end": 28,
+            "utf8_start": 822,
+            "utf8_end": 992,
+            "quote": "为证明必要性与常数的最优性，记集合 \\(A\\subseteq\\mathbb N\\) 的上密度为\n\\[\nD^*(A)=\\limsup_{N\\to\\infty}\\frac{|A\\cap[1,N]|}{N}\n      =d(\\mathbf 1_A,0).\n"
+          },
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 69,
+            "line_end": 75,
+            "utf8_start": 2561,
+            "utf8_end": 2902,
+            "quote": "若 \\(a_f=1\\)，则 \\(f(n)/n\\to1\\)。令 \\(m=|f(\\mathbb N)\\cap[1,N]|\\)。对充分大的 \\(N\\)，由 \\(f(m)\\le N<f(m+1)\\) 得 \\(m/N\\to1\\)。对任意 \\(x\\in E\\)，有\n\\[\n\\frac1N\\sum_{j=1}^N|x_j|\n\\le \\frac1m\\sum_{j=1}^m|x_{f(j)}|\n+\\|x\\|_\\infty\\left(1-\\frac mN\\right).\n\\]\n所以 \\(P_fx\\sim0\\) 蕴含 \\(x\\sim0\\)。由线性，\\(T_f\\) 单射。\n"
+          }
+        ]
+      },
+      {
+        "criterion_id": "K2",
+        "score": 20,
+        "notes": "有限a_f时，取样和不等式对任意有界差序列成立，零距因而保持。对每个a_f无穷的严格递增f，实际选取稀疏实现limsup的n_i并构造A，其全N上密度为0而取样前像上密度为正；不是仅举一个坏f。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 14,
+            "line_end": 23,
+            "utf8_start": 435,
+            "utf8_end": 821,
+            "quote": "对任意 \\(z\\in E\\)，由 \\(f(1),\\ldots,f(n)\\) 互不相同可得\n\\[\n\\frac1n\\sum_{j=1}^n |z_{f(j)}|\n\\le \\frac{f(n)}n\\cdot\\frac1{f(n)}\\sum_{i=1}^{f(n)}|z_i|.\n\\]\n当 \\(a_f<\\infty\\) 时，取上极限并令 \\(z=x-y\\)，得到\n\\[\nd(P_fx,P_fy)\\le a_f\\,d(x,y).\n\\]\n所以 \\(P_f\\) 保持等价关系，诱导的 \\(T_f\\) 是 Lipschitz 映射，且其最小 Lipschitz 常数至多为 \\(a_f\\)。\n"
+          },
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 30,
+            "line_end": 51,
+            "utf8_start": 995,
+            "utf8_end": 2011,
+            "quote": "固定 \\(0<\\delta<1\\)。选取递增数列 \\(n_i\\)，使得\n\\[\n\\frac{f(n_i)}{n_i}\\longrightarrow a_f,\\qquad\n\\sum_{h<i}n_h=o(n_i).\n\\]\n当 \\(a_f=\\infty\\) 时，第一个极限取 \\(+\\infty\\)。这样的数列可从实现上极限的子列中递归选取，每次取 \\(n_i>i\\sum_{h<i}n_h\\) 即可。令\n\\[\nm_i=n_i+\\lfloor\\delta n_i\\rfloor,\\qquad\nA=\\bigcup_{i\\ge1}\\{f(j):n_i<j\\le m_i\\}.\n\\]\n由于 \\(f^{-1}(A)\\) 包含每一段 \\((n_i,m_i]\\) 中的整数，在 \\(N=m_i\\) 处计算得\n\\[\nD^*(f^{-1}(A))\\ge\\frac{\\delta}{1+\\delta}.\n\\]\n另一方面，当 \\(f(n_i)\\le N<f(n_{i+1})\\) 时，只有前 \\(i\\) 段可能对 \\(A\\cap[1,N]\\) 有贡献，故\n\\[\n\\frac{|A\\cap[1,N]|}{N}\n\\le \\frac{\\delta\\sum_{h\\le i}n_h}{f(n_i)}.\n\\]\n因此 \\(D^*(A)\\le\\delta/a_f\\)，其中 \\(\\delta/\\infty=0\\)。\n\n若 \\(a_f=\\infty\\)，则 \\(\\mathbf1_A\\sim0\\)，而 \\(P_f\\mathbf1_A=\\mathbf1_{f^{-1}(A)}\\) 与 \\(0\\) 的距离为正，故 \\(P_f\\) 不能诱导商空间上的映射。若 \\(a_f<\\infty\\)，对 \\(T_f\\) 的任何 Lipschitz 常数 \\(L\\)，都有\n"
+          }
+        ]
+      },
+      {
+        "criterion_id": "K3",
+        "score": 20,
+        "notes": "一般有限limsup的最优常数上界与分块指标见证给完整双向证明。对每个delta，D*(A)<=delta/a_f且D*(f^{-1}A)>=delta/(1+delta)，令delta趋0强迫任何常数L>=a_f；无需f(n)/n有极限。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 30,
+            "line_end": 58,
+            "utf8_start": 995,
+            "utf8_end": 2179,
+            "quote": "固定 \\(0<\\delta<1\\)。选取递增数列 \\(n_i\\)，使得\n\\[\n\\frac{f(n_i)}{n_i}\\longrightarrow a_f,\\qquad\n\\sum_{h<i}n_h=o(n_i).\n\\]\n当 \\(a_f=\\infty\\) 时，第一个极限取 \\(+\\infty\\)。这样的数列可从实现上极限的子列中递归选取，每次取 \\(n_i>i\\sum_{h<i}n_h\\) 即可。令\n\\[\nm_i=n_i+\\lfloor\\delta n_i\\rfloor,\\qquad\nA=\\bigcup_{i\\ge1}\\{f(j):n_i<j\\le m_i\\}.\n\\]\n由于 \\(f^{-1}(A)\\) 包含每一段 \\((n_i,m_i]\\) 中的整数，在 \\(N=m_i\\) 处计算得\n\\[\nD^*(f^{-1}(A))\\ge\\frac{\\delta}{1+\\delta}.\n\\]\n另一方面，当 \\(f(n_i)\\le N<f(n_{i+1})\\) 时，只有前 \\(i\\) 段可能对 \\(A\\cap[1,N]\\) 有贡献，故\n\\[\n\\frac{|A\\cap[1,N]|}{N}\n\\le \\frac{\\delta\\sum_{h\\le i}n_h}{f(n_i)}.\n\\]\n因此 \\(D^*(A)\\le\\delta/a_f\\)，其中 \\(\\delta/\\infty=0\\)。\n\n若 \\(a_f=\\infty\\)，则 \\(\\mathbf1_A\\sim0\\)，而 \\(P_f\\mathbf1_A=\\mathbf1_{f^{-1}(A)}\\) 与 \\(0\\) 的距离为正，故 \\(P_f\\) 不能诱导商空间上的映射。若 \\(a_f<\\infty\\)，对 \\(T_f\\) 的任何 Lipschitz 常数 \\(L\\)，都有\n\\[\n\\frac{\\delta}{1+\\delta}\n\\le D^*(f^{-1}(A))\n\\le L D^*(A)\n\\le L\\frac{\\delta}{a_f}.\n\\]\n令 \\(\\delta\\downarrow0\\) 得 \\(L\\ge a_f\\)，从而最小常数恰为 \\(a_f\\)。\n"
+          }
+        ]
+      },
+      {
+        "criterion_id": "K4",
+        "score": 15,
+        "notes": "在f像上延拓有界序列给满射；a_f>1时像补集有正上密度给真实核元，a_f=1时逆计数m/N趋1及有界尾项估计给单射。连续性由已证有限Lipschitz界。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 60,
+            "line_end": 75,
+            "utf8_start": 2180,
+            "utf8_end": 2902,
+            "quote": "**满射性。** 给定 \\(y\\in E\\)，令 \\(x_{f(j)}=y_j\\)，其余位置取 \\(0\\)。则 \\(x\\in E\\) 且 \\(P_fx=y\\)，所以 \\(T_f\\) 满射。\n\n**单射性。** 令 \\(C=\\mathbb N\\setminus f(\\mathbb N)\\)。若 \\(a_f>1\\)，则\n\\[\nD^*(C)\\ge \\limsup_{n\\to\\infty}\\frac{f(n)-n}{f(n)}\n=1-\\frac1{a_f}>0.\n\\]\n于是 \\([\\mathbf1_C]\\ne[0]\\)，而 \\(P_f\\mathbf1_C=0\\)，故 \\(T_f\\) 不单射。\n\n若 \\(a_f=1\\)，则 \\(f(n)/n\\to1\\)。令 \\(m=|f(\\mathbb N)\\cap[1,N]|\\)。对充分大的 \\(N\\)，由 \\(f(m)\\le N<f(m+1)\\) 得 \\(m/N\\to1\\)。对任意 \\(x\\in E\\)，有\n\\[\n\\frac1N\\sum_{j=1}^N|x_j|\n\\le \\frac1m\\sum_{j=1}^m|x_{f(j)}|\n+\\|x\\|_\\infty\\left(1-\\frac mN\\right).\n\\]\n所以 \\(P_fx\\sim0\\) 蕴含 \\(x\\sim0\\)。由线性，\\(T_f\\) 单射。\n"
+          }
+        ]
+      },
+      {
+        "criterion_id": "K5",
+        "score": 15,
+        "notes": "实际复合取样对应f的迭代，最优常数因此为limsup f^k(n)/n；次乘性和k=qm+s的统一余项证明根极限存在等于inf，且全部必要范围1<=R<=L1成立，不假设商完备。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 79,
+            "line_end": 92,
+            "utf8_start": 2950,
+            "utf8_end": 3530,
+            "quote": "记 \\(f^{\\circ k}\\) 为 \\(f\\) 的 \\(k\\) 次复合。由于 \\(P_f^k=P_{f^{\\circ k}}\\)，第 1 问给出\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^{\\circ k}(n)}n.\n\\]\n这些常数满足 \\(L_{k+\\ell}\\le L_kL_\\ell\\)，并且 \\(1\\le L_k\\le L_1^k\\)。令 \\(L_0=1\\)。固定 \\(m\\ge1\\)，写 \\(k=qm+s\\)，其中 \\(0\\le s<m\\)，则\n\\[\nL_k\\le L_m^q\\max_{0\\le s<m}L_s.\n\\]\n取 \\(k\\) 次方根并令 \\(k\\to\\infty\\)，得到 \\(\\limsup_k L_k^{1/k}\\le L_m^{1/m}\\)。再对 \\(m\\) 取下确界，便有\n\\[\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}\n=\\inf_{m\\ge1}L_m^{1/m}.\n\\]\n特别地，\\(1\\le R_f\\le L_1<\\infty\\)。\n"
+          }
+        ]
+      },
+      {
+        "criterion_id": "K6",
+        "score": 25,
+        "notes": "对每个1<=b<=a<infty构造f(n)=floor(bn+(a-b)s(n))，s(n)取不超过n的最大阶乘，严格递增且limsup正好a。固定k时[n,a^k n]至多跨一个阶乘边界；每个恒定s段有b^t(1+(a-b)t)倍上界，最多两段得到b^k<=L_k<=b^k(1+(a-b)k)^2，根极限为b。所有参数和b=1、b=a均覆盖；原量规不要求L_k精确闭式。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 94,
+            "line_end": 119,
+            "utf8_start": 3531,
+            "utf8_end": 4816,
+            "quote": "现在给定任意 \\(1\\le b\\le a<\\infty\\)。取分界点 \\(s_i=i!\\)（\\(i\\ge1\\)），令\n\\[\ns(n)=\\max\\{s_i:s_i\\le n\\},\\qquad\nf(n)=\\big\\lfloor bn+(a-b)s(n)\\big\\rfloor .\n\\]\n因为 \\(b\\ge1\\) 且 \\((a-b)s(n)\\) 单调不减，\\(f\\) 严格递增。又有 \\(f(n)\\le an\\) 且 \\(f(s_i)=\\lfloor as_i\\rfloor\\)，所以 \\(L_1=a\\)。\n\n为计算 \\(R_f\\)，先由 \\(f(u)\\ge bu-1\\) 迭代得到\n\\[\nf^{\\circ k}(n)\\ge b^k n-\\sum_{j=0}^{k-1}b^j.\n\\]\n对固定的 \\(k\\) 令 \\(n\\to\\infty\\)，可知 \\(L_k\\ge b^k\\)。\n\n对于上界，固定 \\(k\\)。从 \\(n\\) 出发的前 \\(k\\) 次迭代都落在 \\([n,a^kn]\\) 内。由于 \\(s_{i+1}/s_i=i+1\\to\\infty\\)，当 \\(n\\) 充分大时，这一区间至多含一个分界点。因此，\\(k\\) 次迭代可分成至多两段，每段内各次迭代的输入 \\(u\\) 都具有相同的 \\(s(u)\\)。\n\n设其中一段从 \\(v\\) 开始，共迭代 \\(t\\) 次。段内 \\(s(u)=s(v)\\le v\\)，故每一步都有 \\(f(u)\\le bu+(a-b)v\\)。逐次代入得到\n\\[\nf^{\\circ t}(v)\n\\le b^t v+(a-b)v\\sum_{j=0}^{t-1}b^j\n\\le b^t\\bigl(1+(a-b)t\\bigr)v.\n\\]\n将至多两段的估计相乘，再对 \\(n\\) 取上极限，得到\n\\[\nb^k\\le L_k\\le b^k\\bigl(1+(a-b)k\\bigr)^2.\n\\]\n取 \\(k\\) 次方根并令 \\(k\\to\\infty\\)，即得 \\(R_f=b\\)。这一构造也覆盖 \\(b=1\\) 和 \\(b=a\\) 两个边界情形。"
+          }
+        ]
+      }
+    ],
+    "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+    "human_review": "pending",
+    "formal_comparison_eligible": false,
+    "source_bindings": {
+      "delivery": {
+        "path": "grading/nonlean/MG-PS001/delivery.v1.json",
+        "bytes": 3075,
+        "sha256": "8209b4753514b02044e692b426ec5c0ac00295345838e1fa145ce08044decbd7"
+      },
+      "actual_acquisition_plan": {
+        "path": "plan.json",
+        "bytes": 45143,
+        "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+      },
+      "original_final": {
+        "path": "sessions/MG-PS001/physical-1/output/response.md",
+        "bytes": 4816,
+        "sha256": "d30f346f0bd0b582db5018a420b3697ef4172349878bc04f9ded4061c2ddd909"
+      },
+      "full_candidate_prompt": {
+        "path": "sessions/MG-PS001/physical-1/input/task.md",
+        "bytes": 1012,
+        "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7"
+      },
+      "original_seal": {
+        "path": "sessions/MG-PS001/physical-1/runtime/seal.json",
+        "bytes": 848,
+        "sha256": "3707a5174ed618115fc3f5223529fdd8af6facc6d7e2c25ca05d97356aad03ce"
+      },
+      "terminal_source_observation": {
+        "path": "sessions/MG-PS001/physical-1/runtime/terminal-source-observation.json",
+        "bytes": 829,
+        "sha256": "32c20b74855cd824191e6118bd63b61d1b93d63ec630ced69b710ed273228662"
+      }
+    }
+  },
+  "root_causes": [],
+  "claim_findings": [],
+  "claim_review_scope": "Complete selected normal final and substantive supplementary assertions; no new evidenced error found.",
+  "claim_policy": {
+    "repository": "public",
+    "path": "protocol/claim-penalty-policy.json",
+    "absolute_path": "/Users/g4i/lab/math-gauge/protocol/claim-penalty-policy.json",
+    "bytes": 905,
+    "sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419",
+    "snapshot": "grading-support/source-materials/public/protocol/claim-penalty-policy.json"
+  },
+  "score_facts": {
+    "mathematical_completed_points": 100,
+    "mathematical_total_points": 100,
+    "ordinary_claim_deduction_points": 0,
+    "core_false_endorsement": false,
+    "required_goals_complete": true,
+    "strict_substantive_error_blocker": false,
+    "normal_final": true
+  },
+  "per_task_mode_conclusions": {
+    "MC": "full valid mathematical credit",
+    "RMC": "full; no evidenced deduction or core cap",
+    "SMC": "pass; both original goals and six frozen criteria established"
+  },
+  "root_review_attention": "K1 direct-use allowance and the alternative factorial-block construction are explicitly justified; no hidden reference route or exact L_k formula imposed.",
+  "aggregation_boundary": "No benchmark aggregate, family weights, existing score, profile or website changed; shared math_gauge.scoring owns arithmetic."
+}

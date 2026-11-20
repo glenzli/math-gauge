@@ -1,16 +1,19 @@
-"""Read-only category leaderboards from retained rule-selected score reports.
+"""Presentation order and ranks from retained rule-selected score reports.
 
 No score weights, families or arithmetic are reconstructed here. ``value`` and
 its bounds are copied from metrics[group_id]; rounding affects ordering/ties
 only. Source result objects are never modified.
 """
 from decimal import Decimal
-from datetime import date
 import math
+import re
+from scripts.results_eligibility import ranked_models
 
 SCORE_MODES = ("capability", "partial", "strict")
 PUBLISHED_PRECISION = 2
-TIE_PRIORITY = ("partial", "strict", "capability")
+TIE_PRIORITY = ("strict", "partial", "capability")
+EFFORT_ORDER = ("max", "xhigh", "high", "medium", "low", "minimal")
+VERSIONED_LABEL = re.compile(r"(.+?)\s+v?(\d+(?:\.\d+)*)(?:\s+(.*))?", re.IGNORECASE)
 
 
 def mode_order(primary):
@@ -23,33 +26,68 @@ def published_value(value, precision=PUBLISHED_PRECISION):
     return None if value is None else int(Decimal(f'{value:.{precision}f}') * 10 ** precision)
 
 
-def test_date(model):
-    value = model.get('test_order', {}).get('date')
-    if value is not None:
-        date.fromisoformat(value)
-    return value
+def model_display_key(model):
+    """Group vendor and series, then order named versions and configurations."""
+    label = model.get('label', model['id'])
+    provider = (model.get('logo') or {}).get('label', '').casefold()
+    base, separator, suffix = label.rpartition(' (')
+    effort = suffix[:-1].casefold() if separator and suffix.endswith(')') else ''
+    name = base if effort in EFFORT_ORDER else label
+    match = VERSIONED_LABEL.fullmatch(name)
+    family, version, variant = name, (), ''
+    if match:
+        family, number, variant = match.groups()
+        number = re.sub(r'(?:\.0)+$', '', number)
+        version = (*(-int(component) for component in number.split('.')), 1)
+    level = EFFORT_ORDER.index(effort) if effort in EFFORT_ORDER else len(EFFORT_ORDER)
+    return (not provider, provider, family.casefold(), not version, version,
+            (variant or '').casefold(), level, label.casefold(), model['id'])
 
 
-def ranking_key(values, primary, model, *, precision=PUBLISHED_PRECISION):
-    """Selected score, other RMC/SMC/MC scores, then a known test day and start time.
-
-    Only display precision participates in ties. Equal/unknown timestamps preserve
-    source order through the stable sort; no model-name preference is added.
-    """
-    scores = tuple((values.get(mode) is None,
-                    0 if values.get(mode) is None else -published_value(values[mode], precision))
-                   for mode in mode_order(primary))
-    day = test_date(model)
-    stamp = model.get('test_order', {}).get('started_at')
-    return (*scores, day is None, day or '', stamp is None, stamp or '')
+def set_model_display_order(models):
+    for index, model in enumerate(sorted(models, key=model_display_key)):
+        model['display_order'] = index
 
 
-def overall_key(model, primary='partial'):
-    values = {mode: (_selected_result(model, mode)['metrics']['earned'].get('confirmed')
-                     if 'confirmed' in _selected_result(model, mode)['metrics']['earned'] else
-                     _selected_result(model, mode)['metrics']['earned'].get('exact'))
-              for mode in SCORE_MODES}
-    return ranking_key(values, primary, model)
+def _score_key(values, primary, precision=PUBLISHED_PRECISION):
+    ordered = (published_value(values.get(mode), precision) for mode in mode_order(primary))
+    return tuple((value is None, 0 if value is None else -value) for value in ordered)
+
+
+def _overall_scores(model):
+    earned = {mode: _selected_result(model, mode)['metrics']['earned'] for mode in SCORE_MODES}
+    return ({mode: metric['confirmed'] if metric.get('confirmed') is not None else metric.get('exact')
+             for mode, metric in earned.items()},
+            all(metric.get('exact') is not None and metric.get('complete') is not False
+                for metric in earned.values()))
+
+
+def set_published_scores(model):
+    values, complete = _overall_scores(model)
+    model['ranking_values'] = {mode: published_value(value) for mode, value in values.items()}
+    model['ranking_complete'] = complete
+
+
+def overall_key(model, primary='strict'):
+    values, complete = _overall_scores(model)
+    return _score_key(values, primary), not complete, model_display_key(model)
+
+
+def _places(signatures):
+    previous, place = None, 0
+    for index, signature in enumerate(signatures, 1):
+        if signature is None or signature != previous:
+            place = index
+        yield place
+        previous = signature
+
+
+def overall_places(models, primary='strict'):
+    ordered = sorted(ranked_models(models), key=lambda model: overall_key(model, primary))
+    values = [_overall_scores(model) for model in ordered]
+    signatures = (_score_key(scores, primary) if complete else None for scores, complete in values)
+    return [(model, place if scores[primary] is not None else None)
+            for model, (scores, _), place in zip(ordered, values, _places(signatures))]
 
 
 def _selected_result(model, mode):
@@ -86,19 +124,19 @@ def _metric_row(model_id, metric):
 
 
 def _rank(rows, precision, *, primary, views, models):
-    # Use the same formatting precision as the published static score labels.
-    # Decimal keys avoid hidden binary differences between identical labels.
-    known = [(Decimal(f'{row["value"]:.{precision}f}'), row)
-             for row in rows if row["value"] is not None]
-    def key(row):
-        mid = row['model_id']
-        return ranking_key({mode: views[mode][mid]['value'] for mode in SCORE_MODES},
-                           primary, models[mid], precision=precision)
-    known.sort(key=lambda item: key(item[1]))
-    for position, (_, row) in enumerate(known, 1):
-        row["rank"] = position
-    unknown = sorted((row for row in rows if row["value"] is None), key=key)
-    return [row for _, row in known] + unknown
+    def scores(mid):
+        selected = {mode: views[mode][mid] for mode in SCORE_MODES}
+        return (_score_key({mode: row['value'] for mode, row in selected.items()}, primary, precision),
+                all(row['status'] == 'complete' for row in selected.values()))
+
+    keys = {row['model_id']: scores(row['model_id']) for row in rows}
+    ordered = sorted(rows, key=lambda row: (keys[row['model_id']][0], not keys[row['model_id']][1],
+                                            model_display_key(models[row['model_id']])))
+    signatures = (key if complete else None for key, complete in (keys[row['model_id']] for row in ordered))
+    for row, place in zip(ordered, _places(signatures)):
+        if row['value'] is not None:
+            row['rank'] = place
+    return ordered
 
 
 def category_rankings(models, groups, *, result_selector=None, precision=PUBLISHED_PRECISION):
@@ -110,7 +148,7 @@ def category_rankings(models, groups, *, result_selector=None, precision=PUBLISH
     """
     if type(precision) is not int or not 0 <= precision <= 10:
         raise ValueError("Published score precision must be between zero and ten")
-    models, groups = tuple(models), tuple(groups)
+    models, groups = tuple(ranked_models(models)), tuple(groups)
     ids = [model["id"] for model in models]
     if len(set(ids)) != len(ids) or any(not isinstance(mid, str) or not mid for mid in ids):
         raise ValueError("Category leaderboards need distinct source model IDs")

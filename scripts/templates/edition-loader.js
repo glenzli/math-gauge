@@ -206,9 +206,10 @@
    if(envelope.data.edition_unavailable===true){
     document.querySelectorAll('[data-edition-content]').forEach(node=>node.hidden=true);
     const panel=document.createElement('section');panel.className='panel';
-    const p=document.createElement('p');p.textContent=language()==='en'?'This model was not evaluated in this edition.':'此模型未在本版本评测。';
-    const link=document.createElement('a'),next=new URL(location.href);next.searchParams.set('edition',config.latest);
-    link.href=next.href;link.textContent=language()==='en'?'Return to '+config.latest:'返回 '+config.latest;
+    const fallback=envelope.data.edition_fallback&&own(config.versions,envelope.data.edition_fallback)?envelope.data.edition_fallback:config.latest;
+    const p=document.createElement('p');p.textContent=envelope.data.edition_unavailable_reason==='partial_test'?(language()==='en'?'This partial-test model is excluded from rankings. Its retained partial results and archive remain available in 1.1.':'此模型为部分测试，不参加排行；已保留的部分成绩与档案可在1.1查看。'):envelope.data.edition_unavailable_reason==='continuation_pending'?(language()==='en'?'This model has not completed the 1.2 continuation assessment. Its retained first-answer results remain available in 1.1.':'此模型尚未完成1.2续答评测；已保留的首答成绩可在1.1查看。'):(language()==='en'?'This model was not evaluated in this edition.':'此模型未在本版本评测。');
+    const link=document.createElement('a'),next=new URL(location.href);next.searchParams.set('edition',fallback);
+    link.href=next.href;link.textContent=language()==='en'?'View '+fallback:'查看 '+fallback;
     panel.append(p,link);document.body.append(panel);html.removeAttribute('data-edition-loading');html.setAttribute('data-edition-ready','');return true;
    }
    window.MGEdition=Object.freeze({selected,latest:config.latest,page:config.page});

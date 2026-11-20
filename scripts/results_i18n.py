@@ -106,8 +106,6 @@ MESSAGES = {
         'One model per row · expand a category header for subcategories · cells show earned / available points',
     '保留大类合计，子类在其右侧展开。公私合并，书面论证12个家族等权；逐题评审与自查轨迹见模型详情。':
         'Category totals stay visible, with subcategories to their right. Public and private results are combined; 12 written-argument families have equal weight. Model details contain task reviews and self-check trajectories.',
-    '总分结构 · 书面证明35% · Lean35% · 数学研究30%':
-        'Score structure · written proofs 35% · Lean 35% · research 30%',
     '同一份答卷，三个计分口径。分类贡献与下载跟随当前选择；自查、三轮轨迹和扣罚依据在模型详情展开。':
         'Three score modes use the same answers. Contributions and downloads follow the overall mode; model details contain self-check rounds and penalty evidence.',
     '当前成绩下载': 'Download current results',
@@ -229,7 +227,6 @@ MESSAGES.update({
     '以MC为共同基准': 'Common baseline: MC',
     '点击大类表头展开子类 · 贡献分 / 该项满分':
         'Expand category headers for subcategories · earned / available points',
-    '分类贡献与下载使用当前总榜口径。': 'Contributions and downloads follow the overall score mode.',
     '公私合并成绩，使用当前总榜口径。': 'Combined results in the selected overall score mode.',
     '柱图与表格同步显示，至少保留一项。': 'Bars and tables update together. Keep at least one score visible.',
     '内容可靠率衡量已作断言的正确性，目标达成率统计完整成果的交付。':

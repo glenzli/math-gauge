@@ -16,6 +16,7 @@ from math_gauge.records import evidence_bytes
 from scripts.results_presentation import project_payload
 from scripts.results_publication import prepare_publication, lazy_prose, data_literal as encoded
 from scripts.results_harness import display_harness_labels
+from scripts.results_eligibility import eligibility, ranked_models
 
 DATA = re.compile(r'(<script\b[^>]*\bid="data"[^>]*>)([\s\S]*?)(</script>)')
 JSON_SCRIPT = re.compile(r'<script\b[^>]*\bid="([^"]+)"[^>]*type="application/json"[^>]*>([\s\S]*?)</script>|<script\b[^>]*type="application/json"[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)</script>')
@@ -35,7 +36,7 @@ def chart_scenes(data):
                     value=m['retry']['combined']['metrics']['earned']['confirmed'])
                     if mode=='partial' else dict(m[mode]['nonlogical_retry_3']['metrics']['overall'],
                     value=m[mode]['nonlogical_retry_3']['metrics']['earned']['confirmed'])
-                    for m in data['models']} for mode in data['score_modes']}
+                    for m in ranked_models(data['models'])} for mode in data['score_modes']}
             key = 'chart-groups'
         else:
             rows = {mode:{r['model_id']:r for r in view} for mode,view in category['views'].items()}
@@ -99,7 +100,7 @@ def retained_source_data(root, current, transition, manifests):
     the entire source validation a second time for the historical presentation.
     """
     from scripts.render_results_site import evaluation_progress, gap_diagnostics, is_fully_evaluated, selected_result
-    from scripts.results_rankings import category_rankings, published_value
+    from scripts.results_rankings import category_rankings, set_published_scores
     from math_gauge.current_assessment_admissions import selections, historical_display_source
     if selections(root):
         data = historical_display_source(root)
@@ -130,8 +131,7 @@ def retained_source_data(root, current, transition, manifests):
         model.pop('tx_calibration',None)
         model['evaluation_progress']={c:evaluation_progress(v) for c,v in views['partial'].items()}
         model['fully_evaluated']=is_fully_evaluated(model)
-        model['ranking_values']={mode:published_value(selected_result(model,mode)['metrics']['earned']['confirmed'])
-                                 for mode in data['score_modes']}
+        set_published_scores(model)
     data['gap_diagnostics']=gap_diagnostics(data['models'])
     data['category_leaderboards']=category_rankings(data['models'],data['policy']['groups'],result_selector=selected_result)
     fresh=[model for model in current['models'] if model['id'] not in manifests]
@@ -146,6 +146,109 @@ def retained_source_data(root, current, transition, manifests):
     return data
 
 
+def _neutral_baseline(root, model, adoption):
+    """Keep exact parent reports separate from admission display metadata."""
+    from math_gauge.neutral_revision import document, require
+    from math_gauge.current_assessment_admissions import project_score
+    displayed = {'partial': {'single_attempt': model['combined'], 'nonlogical_retry_3': model['retry']['combined']},
+                 'capability': model['capability'], 'strict': model['strict']}
+    source = {mode: {condition: document(root, ref) for condition, ref in refs.items()}
+              for mode, refs in adoption['base_reports'].items()}
+    expected = ({mode: {condition: project_score(report) for condition, report in refs.items()}
+                 for mode, refs in source.items()} if model.get('initial_assessment') is not None else source)
+    require(displayed == expected, 'Neutral display lost its authenticated original or initial-admission projection')
+    return source
+
+
+def neutral_revision_data(root, base_data, *, transition=None):
+    """Use the source owner's adopted reports, without recalculating task weights."""
+    from math_gauge.neutral_revision import load_transition, load_public
+    from scripts.render_results_site import evaluation_progress, gap_diagnostics, selected_result
+    from scripts.results_rankings import category_rankings, model_display_key, set_published_scores
+    from scripts.results_revision_resources import load_public as load_resources, DATA_PATH, INDEX_PATH
+    from scripts.results_revision_completion import load_completion
+    from math_gauge.scoring import score_neutral_revision_delta
+    transition = transition or load_transition(root)
+    if transition is None:
+        return copy.deepcopy(base_data)
+    data = copy.deepcopy(base_data)
+    original = {model['id']: model for model in base_data['models']}
+    resources = load_resources(root)
+    resource_models = {model['id']: model for model in resources['models']}
+    data['models'] = []
+    for mid, ref in transition['adoptions'].items():
+        model = copy.deepcopy(original[mid])
+        adopted = load_public(root, ref)
+        baseline = _neutral_baseline(root, model, adopted)
+        scores = adopted['_scores']
+        model['neutral_revision_delta'] = score_neutral_revision_delta(baseline, scores)
+        model['retry']['combined'] = copy.deepcopy(scores['partial'])
+        for mode in ('capability', 'strict'):
+            model[mode]['nonlogical_retry_3'] = copy.deepcopy(scores[mode])
+        model['evaluation_progress']['nonlogical_retry_3'] = evaluation_progress(scores['partial'])
+        set_published_scores(model)
+        model['neutral_revision'] = {key: copy.deepcopy(adopted[key]) for key in
+            ('revision_counts', 'public_tasks', 'public_continuations', 'policy')}
+        model['neutral_revision']['manifest'] = copy.deepcopy(ref)
+        # This describes the new public revision reviews, not the source A1
+        # reviewers or a guessed backend model for the coordinator.
+        reviewers = [json.loads(evidence_bytes(root, row['review'])).get('reviewer_id')
+                     for row in adopted['public_continuations']]
+        model['neutral_revision']['reviewer_ids'] = sorted({value for value in reviewers
+                                                           if isinstance(value, str) and value.strip()})
+        model['revision_resources'] = copy.deepcopy(resource_models[mid])
+        data['models'].append(model)
+    data['benchmark_version'] = '1.2.0'
+    data['edition_status'] = {'status': 'partial_adoption', 'completed_models': len(data['models']),
+        'pending_models': sum(eligibility(mid)['ranked'] for mid in transition['pending_models']),
+        'partial_test_models': sum(not eligibility(mid)['ranked'] for mid in transition['pending_models'])}
+    pending = sorted(transition['pending_models'], key=lambda mid: model_display_key(original[mid]))
+    data['pending_models'] = [{key: copy.deepcopy(original[mid][key]) for key in
+                               ('id', 'label', 'display_order', 'presentation_eligibility') if key in original[mid]}
+                              for mid in pending if eligibility(mid)['ranked']]
+    data['partial_models'] = [{key: copy.deepcopy(model[key]) for key in
+                               ('id', 'label', 'display_order', 'presentation_eligibility', 'ranking_values', 'answer_delivery')
+                               if key in model}
+                              for model in sorted(base_data['models'], key=model_display_key)
+                              if not eligibility(model['id'])['ranked']]
+    for model in data['partial_models']:
+        model['score_values'] = {mode: selected_result(original[model['id']], mode)['metrics']['earned']['confirmed']
+                                 for mode in data['score_modes']}
+    data['diagnostic_source_edition'] = '1.1.0'
+    # First-answer traits keep their authenticated 0.4.0 source. The revision
+    # layer is separately reviewed and never substitutes main-score grades.
+    if data.get('mathematical_profile') is not None:
+        keys = ('id', 'label', 'short_label', 'theme', 'logo',
+                'presentation_eligibility', 'display_order', 'ranking_values', 'ranking_complete')
+        data['profile_models'] = [{key: copy.deepcopy(model[key]) for key in keys if key in model}
+                                  for model in base_data['models']]
+        from math_gauge.mathematical_profile_corrections import apply_public
+        corrected = apply_public(root, data['mathematical_profile'])
+        if corrected is not None:
+            data['mathematical_profile_baseline'] = corrected
+        from math_gauge.mathematical_profile_revision import load_public_profiles as load_revised_profiles
+        revised = load_revised_profiles(root, data['models'], transition=transition)
+        if revised is not None:
+            data['mathematical_profile_revision'] = revised
+        from math_gauge.open_research import load_public as load_open_research
+        research = load_open_research(root, benchmark_version='1.2.0')
+        if research is not None:
+            data['open_research'] = research
+            data['sources'].append(research['source'])
+    data['gap_diagnostics'] = gap_diagnostics(data['models'])
+    data['category_leaderboards'] = category_rankings(data['models'], data['policy']['groups'], result_selector=selected_result)
+    resource_source = INDEX_PATH if (Path(root)/INDEX_PATH).is_file() else DATA_PATH
+    data['sources'].extend([transition['policy'], *transition['adoptions'].values(),
+        {'path': resource_source, 'sha256': hashlib.sha256((Path(root)/resource_source).read_bytes()).hexdigest()}])
+    completion = load_completion(root, transition=transition)
+    if completion is not None:
+        by_id = {row['id']: row for row in completion['models']}
+        for model in data['models']:
+            model['neutral_revision_completion'] = copy.deepcopy(by_id[model['id']])
+        data['sources'].append(completion['source'])
+    return data
+
+
 
 def edition_supplemental(supplemental, *, historical, unavailable, timing, cost):
     """Install both edition-specific companions before any display controller runs."""
@@ -154,6 +257,9 @@ def edition_supplemental(supplemental, *, historical, unavailable, timing, cost)
         for name, value in (('timing-reference-data', timing), ('cost-reference-data', cost)):
             if name in extra:
                 extra[name] = copy.deepcopy(value)
+                for model in (extra[name] or {}).get('models', []):
+                    if isinstance(model, dict):
+                        model.pop('revision_resources', None)
                 if name == 'timing-reference-data':
                     # The panel renderer adds route metadata independently of
                     # the version-specific timing document. Retain those exact
@@ -164,7 +270,12 @@ def edition_supplemental(supplemental, *, historical, unavailable, timing, cost)
     return extra
 
 
-def prepare_edition_publication(files, root, current_data):
+def prepare_edition_publication(files, root, current_data, *, base_data=None, base_timing=None,
+                                base_cost=None, current_timing=None, current_cost=None):
+    if current_data.get('benchmark_version') == '1.2.0':
+        return prepare_neutral_publication(files, root, current_data, base_data=base_data,
+            base_timing=base_timing, base_cost=base_cost, current_timing=current_timing,
+            current_cost=current_cost)
     from math_gauge.editions import load_assessment_transition
     transition=load_assessment_transition(root)
     if transition is None:
@@ -180,6 +291,19 @@ def prepare_edition_publication(files, root, current_data):
         manifests[m['id']]=manifest
         old_projection[m['id']]=json.loads(evidence_bytes(root,manifest['base_public_tasks']))
     old_data=retained_source_data(root,current_data,transition,manifests)
+    # The retained snapshot loader returns its exact authenticated source.
+    # Current publication choices are a separate display projection afterward.
+    from scripts.render_results_site import gap_diagnostics, selected_result
+    from scripts.results_rankings import category_rankings, set_model_display_order, set_published_scores
+    themes = {model['id']: model['theme'] for model in current_data['models']}
+    for model in old_data['models']:
+        model['presentation_eligibility'] = eligibility(model['id'])
+        if model['id'] in themes:
+            model['theme'] = copy.deepcopy(themes[model['id']])
+        set_published_scores(model)
+    set_model_display_order(old_data['models'])
+    old_data['gap_diagnostics'] = gap_diagnostics(old_data['models'])
+    old_data['category_leaderboards'] = category_rankings(old_data['models'], old_data['policy']['groups'], result_selector=selected_result)
     versions=[current_data['benchmark_version'],old_data['benchmark_version']]
     old_time=build_time(root,display_data=old_data)
     old_cost=build_cost(root,display_data=old_data,timing_reference=old_time)
@@ -223,6 +347,8 @@ def prepare_edition_publication(files, root, current_data):
             if page=='index.html':payload['chart_scenes']=scenes[version]
             extra=edition_supplemental(supplemental, historical=bool(index),
                 unavailable=payload.get('edition_unavailable',False), timing=old_time, cost=old_cost)
+            if page=='index.html' and extra.get('timing-reference-data'):
+                extra['timing-reference-data']['data_link']=payload['edition_paths']['download_prefix']+'downloads/timing-reference.json'
             # Provider icons in old shared references were read before public
             # asset projection. Match the already projected route-relative logo.
             if index and page=='index.html' and old_cost:
@@ -248,4 +374,150 @@ def prepare_edition_publication(files, root, current_data):
         value=value.replace('<html ','<html data-edition-loading ',1)
         prepared[page]=value
     prepared['editions.json']=json.dumps(catalog,ensure_ascii=False,indent=2)+'\n'
+    return prepared
+
+
+def _neutral_payload(page, base, data, projections):
+    if page == 'index.html':
+        result = project_payload(data)
+        logos = {model['id']: model['logo'] for model in base['models']}
+        for model in result['models']:
+            model['logo'] = copy.deepcopy(logos[model['id']])
+        return result
+    result = copy.deepcopy(base)
+    result['benchmark_version'] = '1.2.0'
+    result['diagnostic_source_edition'] = '1.1.0'
+    mid = base.get('model', {}).get('id')
+    if mid is None:
+        return result
+    models = {model['id']: model for model in data['models']}
+    if mid not in models:
+        return {'benchmark_version': '1.2.0', 'model_id': mid, 'edition_unavailable': True,
+                'edition_fallback': '1.1.0', 'edition_unavailable_reason':
+                    'continuation_pending' if eligibility(mid)['ranked'] else 'partial_test'}
+    model, projection = copy.deepcopy(models[mid]), projections[mid]
+    def task_views(cid, target):
+        for mode in data['score_modes']:
+            task = next(row for row in projection['views'][mode]['nonlogical_retry_3']['tasks'] if row['case_id'] == cid)
+            target[mode]['nonlogical_retry_3'] = {key: copy.deepcopy(task[key]) for key in
+                ('completion', 'strict_pass', 'response_sha256', 'review_sha256', 'neutral_revision') if key in task}
+    if 'case' in result:
+        task_views(result['case']['id'], result['case']['views'])
+        return result
+    from scripts.results_presentation import model_view
+    model['public_claims'] = copy.deepcopy(base['model']['public_claims'])
+    result['model'] = model_view(model, model_page=True)
+    result['model']['logo'] = copy.deepcopy(base['model']['logo'])
+    for case in result['cases']:
+        task_views(case['id'], case['views'])
+    return result
+
+
+def _neutral_evidence_sections(root, data):
+    """Render only public continuation originals; private rows stay aggregate-only."""
+    from scripts.results_details import EvidenceRenderer, source_link
+    renderer, pages = EvidenceRenderer(), {}
+    for model in data['models']:
+        for row in model['neutral_revision']['public_continuations']:
+            page = 'models/' + model['id'] + '/cases/' + row['case_id'] + '.html'
+            answer = renderer.add(evidence_bytes(root, row['answer']).decode())
+            review_raw = evidence_bytes(root, row['review']).decode()
+            reviewer = json.loads(review_raw).get('reviewer_id')
+            attribution = ('<p class="panel-desc"><span data-lang-content="zh">续答评审：</span>'
+                '<span data-lang-content="en" hidden>Continuation reviewer: </span>'
+                + html.escape(reviewer) + '</p>') if isinstance(reviewer, str) and reviewer.strip() else ''
+            review = renderer.add('```json\n' + review_raw + '\n```')
+            links = ' · '.join(source_link(Path(root)/row[key]['path'], page, label, root=root)
+                for key, label in [('input', '续答输入 / Input'), ('answer', '完整续答 / Answer'), ('review', '续答评审 / Review')])
+            pages[page] = ('<section class="panel" data-assessment-only="1.2.0"><div class="panel-head"><h2>'
+                '<span data-lang-content="zh">1.2 · 中性续答</span><span data-lang-content="en" hidden>1.2 · Neutral continuation</span>'
+                '</h2></div>'+attribution+'<p>'+links+'</p><div class="prose" data-original>'+answer+'</div>'
+                '<details><summary><span data-lang-content="zh">续答原评</span><span data-lang-content="en" hidden>Original continuation review</span>'
+                '</summary><div class="prose" data-original>'+review+'</div></details></section>')
+    return renderer.finish(pages) if pages else {}
+
+
+def prepare_neutral_publication(files, root, current_data, *, base_data, base_timing,
+                                base_cost, current_timing, current_cost):
+    """Extend the same UI to 1.2 while retaining independent 1.1 and 1.0 data."""
+    from math_gauge.neutral_revision import load_public
+    from scripts.results_revision_resources import load_public as load_resources
+    root, files = Path(root), dict(files)
+    if base_data is None or base_data['benchmark_version'] != '1.1.0':
+        raise ValueError('Continuation publication requires its already authenticated 1.1 display')
+    files['data.json'] = json.dumps(display_harness_labels(base_data), ensure_ascii=False, indent=2)+'\n'
+    files['downloads/timing-reference.json'] = json.dumps(base_timing, ensure_ascii=False, indent=2)+'\n'
+    files['downloads/cost-reference.json'] = json.dumps(base_cost, ensure_ascii=False, indent=2)+'\n'
+    for model in base_data['models']:
+        for mode, suffix in [('partial', ''), ('capability', '-capability'), ('strict', '-strict')]:
+            for condition, tail in [('single_attempt', ''), ('nonlogical_retry_3', '-retry')]:
+                score = (model['combined'] if condition == 'single_attempt' else model['retry']['combined']) if mode == 'partial' else model[mode][condition]
+                files['downloads/'+model['id']+'-combined'+suffix+tail+'.json'] = json.dumps(score, ensure_ascii=False, indent=2)+'\n'
+    prepared = prepare_edition_publication(files, root, base_data)
+    notes_script = next(name for name in prepared if name.startswith('assets/versioned/edition-notes.') and name.endswith('.js'))
+    # Move the full old six-view downloads without renaming their source reports.
+    for name in list(prepared):
+        if name == 'data.json' or name in {'downloads/timing-reference.json', 'downloads/cost-reference.json'} or re.fullmatch(r'downloads/[^/]+-combined(?:-capability|-strict)?(?:-retry)?\.json', name):
+            prepared['versions/1.1.0/'+name] = prepared.pop(name)
+    prepared['data.json'] = json.dumps(display_harness_labels(current_data), ensure_ascii=False, indent=2)+'\n'
+    prepared['downloads/timing-reference.json'] = json.dumps(current_timing, ensure_ascii=False, indent=2)+'\n'
+    prepared['downloads/cost-reference.json'] = json.dumps(current_cost, ensure_ascii=False, indent=2)+'\n'
+    prepared['downloads/continuation-resources.json'] = json.dumps(load_resources(root), ensure_ascii=False, indent=2)+'\n'
+    projections = {}
+    for model in current_data['models']:
+        adoption = load_public(root, model['neutral_revision']['manifest'])
+        projections[model['id']] = adoption['_public_tasks']
+        for mode, suffix in [('partial', ''), ('capability', '-capability'), ('strict', '-strict')]:
+            prepared['downloads/'+model['id']+'-combined'+suffix+'-retry.json'] = evidence_bytes(root, adoption['scores'][mode])
+    scenes = chart_scenes(current_data)
+    evidence_sections = _neutral_evidence_sections(root, current_data)
+    config_pattern = re.compile(r'(<script type="application/json" id="edition-config">)([\s\S]*?)(</script>)')
+    for page, value in list(prepared.items()):
+        if not page.endswith('.html'):
+            continue
+        match = config_pattern.search(value)
+        if match is None:
+            continue
+        config = json.loads(match[2])
+        base_target = 'data/editions/1.1.0/'+page.removesuffix('.html')+'.json'
+        base_envelope = json.loads(prepared[base_target])
+        payload = _neutral_payload(page, base_envelope['data'], current_data, projections)
+        payload['edition_paths'] = {'download_prefix': ''}
+        if page == 'index.html':
+            payload['chart_scenes'] = scenes
+        extra = edition_supplemental(base_envelope['supplemental'], historical=True,
+            unavailable=payload.get('edition_unavailable', False), timing=current_timing, cost=current_cost)
+        if page == 'index.html':
+            logos = {model['id']: model['logo'] for model in base_envelope['data']['models']}
+            for name, id_key in [('timing-reference-data', 'id'), ('cost-reference-data', 'model_id')]:
+                if extra.get(name):
+                    for model in extra[name]['models']:
+                        model['logo'] = copy.deepcopy(logos[model[id_key]])
+        # Rewrite the 1.1 route annotation; the source report bytes are unchanged.
+        base_envelope['data']['edition_paths'] = {'download_prefix': 'versions/1.1.0/'}
+        if page=='index.html' and base_envelope['supplemental'].get('timing-reference-data'):
+            base_envelope['supplemental']['timing-reference-data']['data_link'] = 'versions/1.1.0/downloads/timing-reference.json'
+        for version, envelope in [('1.1.0', base_envelope), ('1.2.0', {
+                'schema':'math-gauge.edition-page-data/v1','edition':'1.2.0','page':page,
+                'data':payload,'supplemental':extra})]:
+            body = encoded(envelope)
+            key = hashlib.sha256(body.encode()).hexdigest()
+            script = 'assets/data/'+key+'.js'
+            prepared['data/editions/'+version+'/'+page.removesuffix('.html')+'.json'] = body+'\n'
+            prepared[script] = 'window.MGEditionData('+encoded(key)+','+body+');\n'
+            config['versions'][version] = {'key':key,'payload':relative(page,script),
+                'label':{'zh':version,'en':version},'status':{'zh':'','en':''}}
+        config['latest'] = '1.2.0'
+        config['scripts'].append(relative(page, notes_script))
+        value = config_pattern.sub(lambda m:m[1]+encoded(config)+m[3], value)
+        if page in evidence_sections:
+            section = lazy_prose(page, evidence_sections[page], prepared)
+            value = value.replace('</main>', section+'</main>', 1)
+        prepared[page] = value
+    catalog = json.loads(prepared['editions.json'])
+    catalog['latest'] = '1.2.0'
+    catalog['editions'][0].update(kind='before_neutral_revision', data='versions/1.1.0/data.json')
+    catalog['editions'].insert(0, {'version':'1.2.0','kind':'current_partial_adoption','data':'data.json'})
+    catalog['source_neutral_revision_transition'] = json.loads((root/'benchmark.json').read_bytes())['neutral_revision_transition']
+    prepared['editions.json'] = json.dumps(catalog, ensure_ascii=False, indent=2)+'\n'
     return prepared

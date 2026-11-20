@@ -1,0 +1,196 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "kimi-3.1-pro-max",
+  "case_id": "MG-AR003",
+  "response_sha256": "d79982f57da271d734389b29dc32af97cf6b84667e931471d3a990a594d78d0f",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 95,
+  "RMC": 90,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "mapping_identification",
+      "earned": 30,
+      "reason": "明确纠正固定目标映射集应C(X,Y)，并保留全Y结论。",
+      "quote": "这一般不成立。原连续映射 \\(f:X\\to Y\\) 在 S2 的同构下对应的是",
+      "evidence_file": "answer.md",
+      "max": 30
+    },
+    {
+      "id": "exponential_law",
+      "earned": 15,
+      "reason": "识别S1的局部紧变量错位并认可原稿后续CGHaus独立路线。",
+      "quote": "在该指数结构下，原答卷随后关于连续求值、任意 Hausdorff \\(Z\\) 的伴随同构，以及 \\(X,Y\\) 中连续映射的自然性，方向与公式均正确。需要修正的是第 4 步的依据，而不是 \\(M(X,Y)\\) 的选取或最终表示性结论。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "ultrafilter",
+      "earned": 5,
+      "reason": "识别恰有一个过强，至少一个足够。",
+      "quote": "正确且足够的事实是：由于 \\(A_1\\cap A_2=\\varnothing\\)，它们**不可能同时属于** \\(\\mathcal U\\)，故至少一个不属于。记该集为 \\(A_1\\)，则",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "retained_results",
+      "earned": 10,
+      "reason": "保留原全Y充要命题、有效非k反例、求值与复合结果。",
+      "quote": "在该指数结构下，原答卷随后关于连续求值、任意 Hausdorff \\(Z\\) 的伴随同构，以及 \\(X,Y\\) 中连续映射的自然性，方向与公式均正确。需要修正的是第 4 步的依据，而不是 \\(M(X,Y)\\) 的选取或最终表示性结论。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "mapping_evidence",
+      "earned": 15,
+      "reason": "用非k空间上的恒等映射给合法反例，区分固定Y与全Y。",
+      "quote": "例如，若 \\(X\\) 非紧生成，恒等映射 \\(\\mathrm{id}_X:X\\to X\\) 当然原拓扑连续，并诱导恒等自然变换；但",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "exponential_scope",
+      "earned": 10,
+      "reason": "正确要求kX局部紧，不以参数S的局部紧代替；后续独立标准定理条件适合。",
+      "quote": "S1 中被柯里化、并作为紧开拓扑定义域的变量必须局部紧；在这里该变量是 \\(kX\\)，而题目没有假设 \\(kX\\) 局部紧。若把 S1 的局部紧变量取为 \\(S\\)，得到的反而是",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "ultrafilter_scope",
+      "earned": 5,
+      "reason": "说明两个不交部分可都不在超滤子，保留开覆盖。",
+      "quote": "这不正确。二者可能都不属于 \\(\\mathcal U\\)，因为它们不是互补集合。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "beta_size",
+      "earned": 5,
+      "reason": "补出betaD可表示为双重幂集子集，不误判宇宙越界。",
+      "quote": "\\(\\beta D\\) 的 \\(U\\)-小型性也没有障碍：其底集可实现为 \\(D\\) 上超滤子的集合，即 \\(\\mathcal P(\\mathcal P(D))\\) 的子集；由 \\(D\\in U\\) 及宇宙的封闭性可得。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "mapping_space_size",
+      "earned": 0,
+      "reason": "未指出或验证M的U小性。",
+      "quote": "是正确的实现。其底集为 \\(C(kX,kY)\\)。",
+      "evidence_file": "answer.md",
+      "max": 5
+    }
+  ],
+  "claim_deductions": [
+    {
+      "root_cause": "closed_point_distance_misrejection",
+      "level": "local",
+      "points": 5,
+      "quote": "**正距离问题。** 一般由“\\(K\\) 闭且 \\(q\\notin K\\)”不能推出",
+      "reason": "在当前度量空间Q里，q不属于闭K即有补集开球B(q,r)不交K，故dist(q,K)>=r>0；无需紧性。新答误称原文这一步不准确。它是可分离的局部审阅误拒，不否定求值反例的核心。",
+      "counterexample_or_refutation": "取度量空间中q∉闭K，按补集开定义有r>0使B(q,r)⊂Q\\K，直接给正距离。",
+      "task_zero_cap": false
+    }
+  ],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。"
+  },
+  "strict_reason": "漏M的U小验证，且有错误点距批评。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 3,
+      "reason": "必需审计核心判断和反例均成立；另有一条可分离的点距误拒。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "在该指数结构下，原答卷随后关于连续求值、任意 Hausdorff \\(Z\\) 的伴随同构，以及 \\(X,Y\\) 中连续映射的自然性，方向与公式均正确。需要修正的是第 4 步的依据，而不是 \\(M(X,Y)\\) 的选取或最终表示性结论。"
+        }
+      ],
+      "core_status": "local_gap"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "在该指数结构下，原答卷随后关于连续求值、任意 Hausdorff \\(Z\\) 的伴随同构，以及 \\(X,Y\\) 中连续映射的自然性，方向与公式均正确。需要修正的是第 4 步的依据，而不是 \\(M(X,Y)\\) 的选取或最终表示性结论。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 3,
+      "reason": "关键真伪与影响范围准确；尚漏M大小核查且对闭点正距作局部误拒。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "这一般不成立。原连续映射 \\(f:X\\to Y\\) 在 S2 的同构下对应的是"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "通过探针、紧子集限制与指数伴随建立结构性的核验和修复；额外范围锐化有成立证明。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "S1 中被柯里化、并作为紧开拓扑定义域的变量必须局部紧；在这里该变量是 \\(kX\\)，而题目没有假设 \\(kX\\) 局部紧。若把 S1 的局部紧变量取为 \\(S\\)，得到的反而是"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "主要审阅和补证闭合；缺M大小检查并有可分离局部误拒。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "在该指数结构下，原答卷随后关于连续求值、任意 Hausdorff \\(Z\\) 的伴随同构，以及 \\(X,Y\\) 中连续映射的自然性，方向与公式均正确。需要修正的是第 4 步的依据，而不是 \\(M(X,Y)\\) 的选取或最终表示性结论。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.323373+00:00",
+    "source_review_sha256": "19ca6b6c7283e2418d59ab65717aae1eba6eb87ef01595a7ecb1908c431b854b",
+    "source_review_path": "grading/audit_background_written/kimi-3.1-pro-max--MG-AR003.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.95,
+      "upper": 0.95,
+      "exact": 0.95
+    },
+    "generic_deduction": 0.05,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.05,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.9,
+      "upper": 0.9,
+      "exact": 0.9
+    },
+    "actual_loss": 0.05,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "claim-1"
+    ]
+  }
+}

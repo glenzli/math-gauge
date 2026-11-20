@@ -24,7 +24,8 @@ def configured(root, edition, source):
     entries = edition.get(FIELD, {})
     require(isinstance(entries, dict), 'Initial admissions must be an explicit model mapping')
     if FIELD in edition:
-        require(edition.get('version') == EDITION, 'Initial admissions belong only to edition 1.1.0')
+        require(edition.get('version') in {EDITION, '1.2.0'},
+                'Initial admissions require the retained edition 1.1 assessment layer')
     legacy = set(source.get('selected_result_models', [])) | {'dot-underlying-model-20261108'}
     require(not legacy.intersection(entries), 'Initial admission cannot replace a historical model')
     for mid, ref in entries.items():

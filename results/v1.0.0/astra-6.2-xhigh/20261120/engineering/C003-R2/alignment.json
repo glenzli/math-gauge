@@ -1,0 +1,2208 @@
+{
+  "case_id": "MG-C003",
+  "version": "0.1.1",
+  "items": [
+    {
+      "id": "CH03-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Chapter.lean",
+          "name": "C3.components"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.component_sets"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.Const"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.Ident"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.Active"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.partition"
+        }
+      ],
+      "representation": "给定算子和合法限制域，三元组按常值、排除常值后的逐点零移、其余指标构成三个集合。partition 证明每个分量恰属一类，取 U=dom F 即全域情形。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.subD"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.sub_zero"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.fiber_spec"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.finite_max"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.fiber_absent"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.blocks"
+        }
+      ],
+      "representation": "fiber 对任意目标取 U 内输出零距的原像。对非空有限 J，subD 的上确界由分量取得，零值等价于逐分量零距。像目标经 Set.image 自动去重。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.eqRel"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.zeroRel"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.relations_on"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.zero_relations_on"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.zeroRel_fiber"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.imageSetoid"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.cls"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.finer"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.finer_iff_blocks"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.img"
+        }
+      ],
+      "representation": "在共同合法域 U 上，eqRel、zeroRel 的子类型点对与原空间中的受限点对逐点对应。imageSetoid 在实际像上取族零距商。finer 的关系包含当且仅当第一算子的每个全子族纤维块包含于第二算子的某个纤维块，该等价也覆盖空域。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-D04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Textbook.lean",
+          "name": "C3.pointRadius"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.legal"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.rad"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.legal_ball"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.rad_empty"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.rad_notation"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.legal_iff_le_pointRadius"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.pointRadius_top_iff"
+        }
+      ],
+      "representation": "pointRadius 的基点属于合法域 U。legal_ball 将有限正半径的逐点条件化为开球与 U 的交包含于像目标纤维。r 合法当且仅当 r 有限正且 r≤上确界；空集上确界为零，半径为顶当且仅当所有有限正 r 都合法。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-D05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Textbook.lean",
+          "name": "C3.uniformRadius"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.radius_representations"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.N"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.matrix_spec"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.radius_notation"
+        }
+      ],
+      "representation": "uniform p q f A U 的下确界指标为基点子类型 A，球始终在 U 内评估。N 的参数先输出行 j 后输入列 i，取 A=U。单元素子族与单分量相同，取 U=dom F 即全域记法。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-D06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.Scale"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.diameter"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.diamScale"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.bits"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.channel"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.threshold_spec"
+        }
+      ],
+      "representation": "Scale 的定义域是非空子集，mono 表示逐分量包含单调性。diamScale 用点对上确界实现直径。有限正阈值下，两个布尔值分别表示输入尺度严格小于阈值、矩阵条目大于等于阈值。",
+      "dependencies": [
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.internal_spec"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.coverage_meaning"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.cov"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.ent"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.TB"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.tb_spec"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.finite_entropy"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.center_one"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.center_two"
+        }
+      ],
+      "representation": "中心 Finset 包含在原集合中，严格距离不等式等价于内部开球覆盖。存在有限覆盖时得到最小基数，无覆盖时为顶，空集为零。熵是冻结的扩展二进制对数，全有界对每个有限正尺度量化。 共用引理 finite_entropy 从非空性和有限覆盖数得到实值熵，center_one 与 center_two 分别给出一中心和两中心的精确基数判据。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.Defined"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.delta"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.mappingEntropy"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.mapping_spec"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.delta_cases"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.delta_signs"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.singleton_delta"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.singleton_mapping"
+        }
+      ],
+      "representation": "mappingEntropy 以非空合法域、两端非空子族、有限正精度及至少一端覆盖数有限为参数，取两端 EReal 熵之差。delta_cases 和 delta_signs 给出无穷分支、有限分支及符号判据。singleton_mapping 证明单通道差值与此受限定义相等。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P01-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.zero_row"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.row_constraints"
+        }
+      ],
+      "representation": "对任意受限点对，常值输出距离为零，以有限和表示的全零行同样为零。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.zero_entry"
+        }
+      ],
+      "representation": "对存在正输入距离点对的任意源分量，把该见证和常值输出等式代入冻结的 co-Lip 条目判据。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.ident_dist"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.zero_left"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.zero_right"
+        }
+      ],
+      "representation": "同一分量零距的两个点与第三点等距。对恒等分量分别替换两个端点得到所需等式，允许距离无穷。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P02-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.comp_active"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.comp_domains"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.composition_sets"
+        }
+      ],
+      "representation": "复合有效蕴含内侧在 U 有效或外侧在 f 的实际像集有效。comp_domains 从复合域条件推出两步各自合法。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P01-03",
+        "CH03-P02-03",
+        "CH03-P04-01"
+      ]
+    },
+    {
+      "id": "CH03-P02-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.stepActive"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.chain_active"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.stages"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.stages_spec"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.valid_stages"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.zero_step"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.chain_sets"
+        }
+      ],
+      "representation": "列表按作用次序排列，冻结 OperatorChain 接收反转列表。每一阶段的域递推为前一步的像；有效分量属于某个实际阶段，空列表没有有效分量。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P02-01"
+      ]
+    },
+    {
+      "id": "CH03-P02-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.comp_ident"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.composition_sets"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.comp_domains"
+        }
+      ],
+      "representation": "逐点传递零距；外侧恒等保距把假设的复合常值传回内侧，排除常值优先分支。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P03-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Models.lean",
+          "name": "C3.Swap.model"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.Swap.image_dom"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.Swap.calc_swap"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.swap_strict"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.swap_domains"
+        }
+      ],
+      "representation": "Option Bool 表示两点和吸收元。换位保持两点域，每步有效且非恒等，复合恒等且非有效。单指标的两个真包含同时否定逆命题。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P04-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.outer_const"
+        }
+      ],
+      "representation": "外侧在 f '' U 上两两零距，代入 U 中两点的像即得复合常值。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Models.lean",
+          "name": "C3.Seven.p"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.Seven.F"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.Seven.G"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.Seven.model"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.Seven.example_seven"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.seven_readings"
+        }
+      ],
+      "representation": "Option (Fin 6) 的 0 至 5 依次代表 a,b,p,q,r,s。Bool 的两个读数给出合并 p,q 和完全离散两分量；两个偏定义算子、复合域及距离 0、1 均已验证。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P05-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.diag_const"
+        }
+      ],
+      "representation": "在内侧实际像上使用外层 Lip 矩阵的指定单输入行；对角系数乘零为零，包括系数取顶。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P06-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_target"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.subfamily_fiber_target"
+        }
+      ],
+      "representation": "对非空子族 J，从各分量扩展伪度量公理得到 subD d J 的伪度量性质。固定 U⊆dom F，任意两个目标在该子族上零距，即可替换距离中的目标并得到纤维相等。目标无需属于像集。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P06-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_cover"
+        }
+      ],
+      "representation": "每个像目标由 U 中的原像提供纤维成员；所有去重后的像目标纤维的集合并为 U。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_disjoint"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.subfamily_partition"
+        }
+      ],
+      "representation": "若两个纤维有公共成员则目标间零距，进而纤维相同。非空性、覆盖和相等或不交合并为子族纤维分划定理。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P01-03",
+        "CH03-P06-01",
+        "CH03-P06-02"
+      ]
+    },
+    {
+      "id": "CH03-P06-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_inter"
+        },
+        {
+          "file": "Components.lean",
+          "name": "C3.sub_zero"
+        }
+      ],
+      "representation": "把子族上确界为零展开为对每个 j∈J 的零距。J 非空保证交集中的点属于 U。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_anti"
+        }
+      ],
+      "representation": "J 包含于 K 时，限制 K 的逐分量条件到 J 即得反向纤维包含。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_edges"
+        }
+      ],
+      "representation": "单元素子族的距离化为该分量；全子族的零距蕴含任意指定分量的零距。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_ident"
+        }
+      ],
+      "representation": "对任意目标，替换与输入零距的输出，得到 U 中的输入零距类。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P06-08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Components.lean",
+          "name": "C3.fiber_const"
+        }
+      ],
+      "representation": "选取像目标的原像证明该纤维为 U；若另一目标与它距离为正，共有纤维成员将导致矛盾。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P07-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.Factor"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.point_iff"
+        }
+      ],
+      "representation": "T 的定义域是实际像。以同一像点的两个输入表示代入 T 的规定值，得到点值关系包含。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.factor_iff"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.img"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.img_onto"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.point_iff"
+        }
+      ],
+      "representation": "对每个实际像点从满射选择代表元，并以另一个算子的值定义 T，关系包含保证赋值公式。该构造也适用于空 U。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.point_both"
+        }
+      ],
+      "representation": "对调 f、g 应用点值因子化等价式，并以集合反对称性得到关系相等。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-01",
+        "CH03-P07-02"
+      ]
+    },
+    {
+      "id": "CH03-P07-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.factor_lip"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.factor_lip_of_matrices"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.singleton_lip_iff"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.singleton_colip_iff"
+        }
+      ],
+      "representation": "对单元素指标集，冻结的 Lip 矩阵证书等价于相应对角条目的标量上界。co-Lip 矩阵证书等价于 U 非空、U 包含在定义域中且该条目给出标量下界。两向等价均已证明。把有限正 K 和有限 L 的两项标量界代入代表元公式，得到 T 在实际像上的 L/K 界，包括 L=0 和无限点距。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-02"
+      ]
+    },
+    {
+      "id": "CH03-P08-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.QFactor"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.cls_onto"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.cls_eq"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.quotient_iff"
+        }
+      ],
+      "representation": "实际像集按照族零距取 Quotient。从输入到像商的满射和商类相等判据构造指定赋值的商映射，并推出其必要条件。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-02"
+      ]
+    },
+    {
+      "id": "CH03-P08-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.quotient_both"
+        }
+      ],
+      "representation": "把单向商映射判据应用于两个方向，得到零距点对集合相等。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P08-01"
+      ]
+    },
+    {
+      "id": "CH03-P08-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.separated"
+        },
+        {
+          "file": "Factors.lean",
+          "name": "C3.separated_criteria"
+        }
+      ],
+      "representation": "仅假定两个实际像集各自在族零距下分离，证明各自两种关系相等，并据此替换单向、双向判据。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-01",
+        "CH03-P07-02",
+        "CH03-P08-01"
+      ]
+    },
+    {
+      "id": "CH03-P09-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.finer_preorder"
+        }
+      ],
+      "representation": "固定公共域，包含关系的自反性和传递性给出纤维预序。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P09-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.finer_chain"
+        }
+      ],
+      "representation": "长度 n 的相邻比较在 Fin (n+1) 上推出 Monotone，因而任意有序的两层满足包含。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P09-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Factors.lean",
+          "name": "C3.finer_strict"
+        }
+      ],
+      "representation": "从某一步的真包含选取新增点对，沿单调链证明它在末层而不在首层，并给出首末真包含。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P09-02"
+      ]
+    },
+    {
+      "id": "CH03-P10-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.step_model"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.step"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.punct"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.liftDist"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.lift_metric"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.run"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.line_metric"
+        }
+      ],
+      "representation": "Option ℝ 的 none 是吸收元，两种混合距离为顶。实点取通常距离，run step 实现指定阶跃，开闭端点、域包含与非空性均在声明中。 其他实例复用这里列出的吸收元延拓构造及其合法性引理。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P10-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Chapter.lean",
+          "name": "C3.step_interval"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.step_legal"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.step_radius"
+        }
+      ],
+      "representation": "每个固定 y 的实际合法半径集是 Ioc 0 (ofReal |y|)。大于边界时从异侧选点，等号处开球仍合法；由上确界得到 |y|>0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P10-01",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P10-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.step_uniform"
+        }
+      ],
+      "representation": "对每个实数 t>0 在同一个 punct 中选 min(1,t/2)，以此基点的半径压住下确界并推出零。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P10-01",
+        "CH03-P10-02",
+        "CH03-P14-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P11-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.sub_const"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.const_full"
+        }
+      ],
+      "representation": "输出子族逐分量常值给出复合距离的两两零距，所以以任意 f(y)、y∈U 为目标的纤维等于 U。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P11-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.const_top"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.subfamily_constant_radii"
+        }
+      ],
+      "representation": "常值使任意有限正半径合法，点态上确界和统一下确界均为顶；输入距离任意。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P11-01",
+        "CH03-P14-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P11-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Models.lean",
+          "name": "C3.InfiniteInput.d"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.InfiniteInput.model"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.InfiniteInput.both"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.id_on_option"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.swap_domains"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.infinite_input_balls"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.infinite_input_radius"
+        }
+      ],
+      "representation": "两点域上的恒等算子以 false 为输入指标，输出 j 可取同一指标或另一指标。每个有限正输入球与域的交恰为基点单点，点态半径和矩阵条目均为顶，两种 j 的输出均非常值。域非空、定义域包含和两个分量的伪度量公理均有证明。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P03-01",
+        "CH03-P10-01",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P12-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.ident_base"
+        }
+      ],
+      "representation": "把恒等分量的保距公式用于两个输入，将目标 f(y) 的纤维写为 y 在 U 内的零距类。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P12-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.ident_rad"
+        }
+      ],
+      "representation": "借助像目标纤维等式，把给定有限正 r 的球包含转成合法半径见证，得到 r≤rad 与 0<r。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-P12-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.rad_sub"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.attained_min"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.subfamily_minima"
+        }
+      ],
+      "representation": "严格半径判据给出点态子族半径等于各分量半径的 iInf。subfamily_minima 的第一项在非空有限子族上证明 IsLeast，既有下界也有取得该值的实际指标。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P13-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform_sub"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.attained_min"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.subfamily_minima"
+        }
+      ],
+      "representation": "交换基点和输出指标的 iInf 得到统一半径公式。subfamily_minima 的第二项证明该值是矩阵固定输入列在 J 上的 IsLeast，覆盖取值为零或顶的情形。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P13-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform_sub_anti"
+        }
+      ],
+      "representation": "把小子族的每个分量嵌入大子族，比较同一列条目的下确界。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D05",
+        "CH03-P13-02"
+      ]
+    },
+    {
+      "id": "CH03-P14-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.fiber_cut"
+        }
+      ],
+      "representation": "纤维成员给出反向输出距离为零，利用对称性得到原文方向。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P14-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.below_rad"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.point_cut"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.rad_notation"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.cut_alternatives"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.fiber_cut_on_domain"
+        }
+      ],
+      "representation": "严格低于上确界时取更大的合法有限正半径并使用对称性。fiber_cut_on_domain 以两个 U 子类型点和 U⊆dom F 写出纤维成员或严格距离的完整判据。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P14-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.comp_cut"
+        }
+      ],
+      "representation": "两个输入均在上游定义域，两个像点均在下游评估域，后者包含于下游定义域；代入下游纤维命题得到复合输出零距。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P15-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.comp_zero"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.matrix_composition"
+        }
+      ],
+      "representation": "将内层统一半径的严格阈值送入实际像域的零距保持假设，再用统一半径的双向判据证明复合下界。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P15-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.comp_lip"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.scaled_lt"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.matrix_composition"
+        }
+      ],
+      "representation": "有限正 L 给出 a<M/L 与 L*a<M 等价；在内层实际像域应用外层统一半径判据。M 取零或顶仍适用。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P16-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.bits_cases"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.four_types"
+        }
+      ],
+      "representation": "四对布尔值分别等价于表中四组不等式，两个比较同时确定唯一的布尔对。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.scale_threshold"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.threshold_sets"
+        }
+      ],
+      "representation": "任意通道中，第一位在较小输入阈值取真时，在较大输入阈值仍取真。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.null_threshold"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.threshold_sets"
+        }
+      ],
+      "representation": "任意通道中，第二位在较大零化阈值取真时，在较小阈值仍取真。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.scale_restrict"
+        }
+      ],
+      "representation": "对任意 Scale 的两个非空域使用包含单调性，同时推出严格小于固定阈值的传递。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.rad_restrict"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.restrict_radii"
+        }
+      ],
+      "representation": "固定基点缩小开球评估域后，先前保证输出零距的全部严格输入距离仍满足判据。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P17-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform_restrict"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.restrict_radii"
+        }
+      ],
+      "representation": "基点和比较点都属于 B 时也都属于 A，用 A 上的统一判据推出 B 上的下界。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P17-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.scale_counter"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.scale_counter_domains"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.line_metric"
+        }
+      ],
+      "representation": "在加吸收元实线和恒等算子上核实 B={0} 非空且包含于 A={0,1}。两直径分别为 0 和 1，阈值 1/2 给出逆向判断的反例。",
+      "dependencies": [
+        "CH03-D06",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform_zero"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.le_uniform"
+        }
+      ],
+      "representation": "对每个基点使用严格半径判据并取下确界，得到 A 内输入点对距离严格低于统一半径时输出零距。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P18-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.positive_sep"
+        }
+      ],
+      "representation": "输出正距离排除严格低于统一半径的输入距离，包括无穷输入或输出距离。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform_witness"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.separation_witness"
+        }
+      ],
+      "representation": "对每个大于统一半径的 α 反用全点对判据构造见证。取 ε=min(1,输出距离)，即使输出为顶也是有限正数；可直接限制 α<τN。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.threshold_ball"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.cover_constraints"
+        }
+      ],
+      "representation": "对球与 A 的交中的任意点使用严格距离和非严格阈值界，得到以中心像为目标的纤维成员关系。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.push_net"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.push_cover"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.threshold_cover"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.cover_constraints"
+        }
+      ],
+      "representation": "把 B 的任一内部中心集 S 送到 Finset.image f S 并验证覆盖和基数界。对中心集取下确界包含空 B 及没有有限中心集的情形。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D07",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.log_mono"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.threshold_entropy"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.cover_constraints"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.log_strictMono"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.cover_entropy_iff"
+        }
+      ],
+      "representation": "将冻结的扩展二进制对数施于实际覆盖数上界得到熵上界。该对数在含零和顶的 ENNReal 上严格单调，故两个不等式等价，特别适用于非空 B。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P20-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.step_two"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.step_no_uniform_cover"
+        }
+      ],
+      "representation": "对每个有限正 τ，取 a=min(1,τ.toReal/4)，证明 2a<τ、两点集包含于同一 punct 域、输入覆盖数为 1、输出在 1/2 的覆盖数为 2。再与该域上处处点态正半径合并，否定存在对所有子集有效的正覆盖尺度。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D07",
+        "CH03-P10-01",
+        "CH03-P10-02"
+      ]
+    },
+    {
+      "id": "CH03-P21-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.small_iff"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.small_domain_type"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.small_image"
+        }
+      ],
+      "representation": "在精确条件 diam<t≤u 下，统一半径≥u 等价于全部输出点对零距。small_domain_type 在非空合法域及两个有限正阈值下把该等价写回通道分类，第一位为真，第二位恰判定整体零距。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P11-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P21-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.small_cover"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.one_cover"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.small_image"
+        }
+      ],
+      "representation": "非空域取一个实际像点作为中心，全部输出零距给上界 1，非空给下界 1。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-D07",
+        "CH03-P21-01"
+      ]
+    },
+    {
+      "id": "CH03-P22-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.finite_ends"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.finite_cover"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.finite_entropy"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.finite_mapping_entropy"
+        }
+      ],
+      "representation": "非空有限 U 及其像在相应非空子族上各以自身作中心集，两端覆盖数正且有限、熵均为实数。finite_mapping_entropy 给出可代入原定义的良定性证明及等于该差值的实数。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.const_delta"
+        }
+      ],
+      "representation": "常值非空像的覆盖数为 1、熵为 0，输出端有限即保证差值有定义。所得等式允许输入熵为顶。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P21-02"
+      ]
+    },
+    {
+      "id": "CH03-P23-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.ident_cover"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.pull_net"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.push_net"
+        }
+      ],
+      "representation": "恒等分量保距，一向取中心的像，一向为每个内部像中心选原像。两个覆盖数相等，应用同一对数得熵相等。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-P01-03",
+        "CH03-P19-02",
+        "CH03-P25-01"
+      ]
+    },
+    {
+      "id": "CH03-P23-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.ident_delta"
+        }
+      ],
+      "representation": "以 Defined 为差值存在的前提；相等的覆盖数因此都有限，非空性给实熵，再作实数自减。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P23-02"
+      ]
+    },
+    {
+      "id": "CH03-P24-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.lip_cover"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.push_net"
+        },
+        {
+          "file": "Radii.lean",
+          "name": "C3.scaled_lt"
+        }
+      ],
+      "representation": "L 有限正时，输入距离严格小于 ε/L 保证输出距离严格小于 ε；内部中心的像仍内部且基数不增。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P24-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.lip_delta"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.lip_mapping_bound"
+        }
+      ],
+      "representation": "在合法非空域上，冻结标量 Lip 界将 ε/L 的输入内覆盖推到 ε 的输出内覆盖。全有界性给两个输入尺度的有限熵并经覆盖界给有限输出熵，得单元素子族 mappingEntropy 的原文下界。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P19-03",
+        "CH03-P24-01"
+      ]
+    },
+    {
+      "id": "CH03-P25-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.colip_cover"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.pull_net"
+        },
+        {
+          "file": "Entropy.lean",
+          "name": "C3.pull_cover"
+        }
+      ],
+      "representation": "从冻结 co-Lip 矩阵的有限非负和取正有限条目，对内部像中心选择原像，证明 ε/K 内覆盖及中心数不增，右端为顶也成立。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P15-02"
+      ]
+    },
+    {
+      "id": "CH03-P25-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Entropy.lean",
+          "name": "C3.colip_delta"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.colip_mapping_bound"
+        }
+      ],
+      "representation": "冻结 co-Lip 矩阵的正有限条目给覆盖数下界。全有界只施加于输入；两个输入熵有限。colip_mapping_bound 给出单元素子族差值的良定性和上界，并证明输出覆盖数为顶时差值为负无穷。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P19-03",
+        "CH03-P25-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.affine"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.affine_values"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.affine_first"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.line_metric"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.pair01"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.magnitude"
+        }
+      ],
+      "representation": "用绝对值读数的拉回距离和保吸收元仿射算子，证明定义域包含 U={0,1}。两像为 -1、1，所求纤维为 U，该分量为常值。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P10-01",
+        "CH03-P11-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.affine_second"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.affine_values"
+        }
+      ],
+      "representation": "在同一 U 核实复合定义域，二次值为 -3、1，目标 -3 的纤维为 {0}。排除常值与恒等，得到有效分量。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P10-01",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.constant_twice"
+        }
+      ],
+      "representation": "对 U 上同取实值 c 的任意算子，二次输出都等于 F(c)。若 F(c) 为吸收元，复合定义域与 U 不交；否则所有目标纤维为 U 或空。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P27-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.point_gap"
+        }
+      ],
+      "representation": "对任意正 co-Lip 条目，将严格小于点态半径的输出零距反射到输入，排除开区间中的距离；条目可为顶。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P27-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Radii.lean",
+          "name": "C3.uniform_gap"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.distance_gap"
+        }
+      ],
+      "representation": "低于统一半径时由正条目反射出输入零距，其余输入距离至少为统一半径；特别适用于题设正统一半径。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P28-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.translate_blocks"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.transF"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.line_metric"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.translation_domains"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.fourMag"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.magnitude"
+        }
+      ],
+      "representation": "绝对值读数模型中，恒等纤维块为 {-3}、{-2,2}、{0}，平移块为 {-3}、{-2,0}、{2}。blocks 的集合等式列出全部块；translation_domains 证明 U 非空且包含在恒等算子与平移算子的公共定义域内。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P28-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.translate_cover"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.center_one"
+        },
+        {
+          "file": "FiniteExamples.lean",
+          "name": "C3.center_two"
+        }
+      ],
+      "representation": "精度 3/2 的输入用 -2、0 两中心且任一内部单中心均失败；像用 -2 一中心足够。覆盖数为 2 和 1，二进制熵差为 1。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P10-01",
+        "CH03-P28-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_model"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_half"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.floor_type_spec"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.floor_domains"
+        }
+      ],
+      "representation": "带吸收元实线上取整，D=[0,1/2] 直径 1/2，输出全零使统一半径为顶，分类为 (1,1)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P11-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_model"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_narrow"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_cross"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.floor_type_spec"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.floor_domains"
+        }
+      ],
+      "representation": "D=[9/10,11/10] 直径 1/5。从整数 1 左侧任意逼近，输入距离趋零而取整值不同，故统一半径 0、分类 (1,0)。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P18-01",
+        "CH03-P18-02"
+      ]
+    },
+    {
+      "id": "CH03-P29-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_model"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_pair"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.floor_type_spec"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.floor_domains"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.radius_boundary"
+        }
+      ],
+      "representation": "在合法非空域 D={0,2} 上，直径和统一半径均为 2，类型为 (0,1)。radius_boundary 进一步在基点 0 验证点态半径、到点 2 的输入距离和相应输出距离均为 2，给出边界不能保证零距的实例。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P14-02",
+        "CH03-P18-01",
+        "CH03-P18-02"
+      ]
+    },
+    {
+      "id": "CH03-P29-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_model"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_wide"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_cross"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.floor_type_spec"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.floor_domains"
+        }
+      ],
+      "representation": "D=[0,2] 的直径是 2，跨越整数 1 的任意近点对使统一半径为 0，分类 (0,0)。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P18-01",
+        "CH03-P18-02"
+      ]
+    },
+    {
+      "id": "CH03-P29-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_counter"
+        },
+        {
+          "file": "RealExamples.lean",
+          "name": "C3.floor_pair"
+        },
+        {
+          "file": "Textbook.lean",
+          "name": "C3.floor_domains"
+        }
+      ],
+      "representation": "两点域的统一半径 2 大于等于 1，但取整输出在这两点不同；下界来自不同输入间的距离间隙。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P29-03"
+      ]
+    },
+    {
+      "id": "CH03-P30-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.cover"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.midpoint"
+        },
+        {
+          "file": "Models.lean",
+          "name": "C3.line_metric"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.p"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.U"
+        }
+      ],
+      "representation": "所有有限正 ε 分为 ε≤1、1<ε≤2、2<ε 三段，覆盖数依次为 4、2、1。半径 7/4 的外部点 3/2 虽能覆盖所有点却不属于 U。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P30-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.restrictOp"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.values"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.images"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.image_delta"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.F"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.G"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.perm"
+        }
+      ],
+      "representation": "两张值表各给出合法算子，域外输出吸收元。两定义域和像集均为 U，因此任意有限正精度像覆盖数等于源覆盖数且两个差值都为 0。 有限性步骤引用 finite_cover 和 finite_entropy，在有限实熵上作自减。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P10-01",
+        "CH03-P22-01",
+        "CH03-P30-01"
+      ]
+    },
+    {
+      "id": "CH03-P30-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.Lip"
+        },
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.optimal"
+        },
+        {
+          "file": "Chapter.lean",
+          "name": "C3.scalar_spec"
+        }
+      ],
+      "representation": "在指定四点域上验证 F 的 1-Lip 和 G 的 3-Lip，并以输入 0、1 的像距证明任一合法系数至少为 1、3，写成 IsLeast。",
+      "dependencies": [
+        "CH03-P30-01",
+        "CH03-P30-02"
+      ]
+    },
+    {
+      "id": "CH03-P30-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Rearrangement.lean",
+          "name": "C3.Rearrange.bounds"
+        }
+      ],
+      "representation": "以两个最小系数实际调用单通道覆盖上界，在 ε=7/4 得 2≤2 和 2≤4；两个实际像覆盖数均为 2。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P24-01",
+        "CH03-P30-01",
+        "CH03-P30-02",
+        "CH03-P30-03"
+      ]
+    }
+  ]
+}

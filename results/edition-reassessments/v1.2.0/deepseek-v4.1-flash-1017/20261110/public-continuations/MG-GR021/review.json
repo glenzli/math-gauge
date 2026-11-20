@@ -1,0 +1,289 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "deepseek-v4.1-flash-1017",
+  "case_id": "MG-GR021",
+  "task_id": "R011",
+  "response_sha256": "b43f663e995a18181e37a2d93685d21e7cd3b0a79b10c21e59319a89189f9f02",
+  "reviewer_id": "Codex coordinator / source-bound mathematical review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "score_scale": 100,
+  "MC": 50.0,
+  "RMC": 0.0,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "original_input_and_feasibility",
+      "earned_points": 5,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "closed_total_counts",
+      "earned_points": 5,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "actual_image_test",
+      "earned_points": 0,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "exact_fixed_class_description",
+      "earned_points": 7.5,
+      "max_points": 15,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "closed_fixed_and_orbit_counts",
+      "earned_points": 5,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "all_images_and_fibers",
+      "earned_points": 7.5,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "fixed_lifts_and_towers",
+      "earned_points": 5,
+      "max_points": 5,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "best_universal_and_pointwise_precision",
+      "earned_points": 5,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    },
+    {
+      "id": "actual_sharpness_examples_and_exact_boundary",
+      "earned_points": 5,
+      "max_points": 10,
+      "reason": "保留所给正确公式或构造中的有效部分；完整证明/固定R计数/实际提升检查存在下列缺陷。",
+      "evidence": []
+    }
+  ],
+  "claim_deductions": [
+    {
+      "id": "false-actual-lift-verifier",
+      "root_cause": "false-actual-lift-verifier",
+      "severity": "critical",
+      "kind": "false_verification",
+      "reason": "3.11与原有限正交条件相同，不能区分C和R。取单块n=1,M=3,Ubar=5，5²=1 mod8，且3.11成立，但真正O1整数解只有±1，模8为1、7。将此称为精确可核验判据，是核心关键核验的错误放行，RMC最高0。",
+      "strict_blocking": true,
+      "core_endorsement": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "X_i^T+X_i+2X_i^TX_i=0\\pmod{2^{M-1}}.",
+          "utf8_byte_start": 7293,
+          "utf8_byte_end": 7329,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ]
+    },
+    {
+      "id": "wrong-fixed-R-count",
+      "root_cause": "wrong-fixed-R-count",
+      "severity": "critical",
+      "kind": "false_assertion",
+      "reason": "对n=2、M=4，两扩域的实际固定类都为32，4.9/4.10给64；一层固定R纤维也在M=2→3给错。枚举原有限方程加列范数提升障碍独立核对。",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "\\begin{cases}1,&M=1,\\\\2^{1+2A_n},&M=2,\\\\2^{1+(2M-3)A_n},&M\\ge3.\\end{cases}}",
+          "utf8_byte_start": 9814,
+          "utf8_byte_end": 9889,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ]
+    },
+    {
+      "id": "invalid-two-adic-exponential",
+      "root_cause": "invalid-two-adic-exponential",
+      "severity": "material",
+      "kind": "false_verification",
+      "reason": "2进指数在2M_n上不普遍收敛或同构，需更深滤过。exp(2X)项的估值沿2幂指标不趋无穷，不能支撑原有限群计数与舍入证明。",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "对 $K$，令 $K=\\mathbb Q_2(\\pi)$，$2=\\pi^2u$。近单位正交群中的 Lie 代数是斜伴矩阵 $\\mathfrak{so}_n(\\mathcal O_K)$。指数映射在 $\\pi^2M_n$ 上给出同构，模 $2^M\\mathcal O_K=\\pi^{2M}\\mathcal O_K$ 后自由秩为",
+          "utf8_byte_start": 3335,
+          "utf8_byte_end": 3573,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ]
+    }
+  ],
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.5,
+      "upper": 0.5,
+      "exact": 0.5
+    },
+    "generic_deduction": 0.2,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.2,
+    "core_endorsement_cap": true,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": true,
+    "net_completion": {
+      "lower": 0.0,
+      "upper": 0.0,
+      "exact": 0.0
+    },
+    "actual_loss": 0.5,
+    "findings": 3,
+    "distinct_charged_roots": 3,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "false-actual-lift-verifier",
+      "wrong-fixed-R-count",
+      "invalid-two-adic-exponential"
+    ]
+  },
+  "mathematical_checks": [
+    "90分数学目标先独立计45分，再按45/90归一；移除10分独立可靠性储备，不作为正向数学成果。",
+    "近标准投影的可行性结论有有效方向，但所援引一般奇幺模格只有两类的分类不成立，也未实际给有限mod4不变量的完整推导。",
+    "C与R的总数在M≥2写对，多项证明依赖不成立的边界指数同构，仅给部分信用。",
+    "n=1,M=3的5类明确反驳3.11；n=2,M=4固定R类32反驳64，均为原允许参数。",
+    "pi^(2M-1)的指数锐性例在M≥2确收敛，首非基域项真实；mu=-1时sigma(pi)≠-pi，故所写验证仍需修正。",
+    "同一核心核验错误不再从移除的可靠性储备重复扣分；当前普通扣罚上限20，核心关键核验封顶单独按共享函数应用。"
+  ],
+  "strict_reason": "实际提升判据与固定R计数存在确证反例，且关键2进指数论证不适用。",
+  "profile_axes": {
+    "proof": {
+      "grade": 2,
+      "reason": "实际提升判据及固定R计数均有明确反例，必需核心尚未建立，其他正确总数公式不抵补核心失败。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "X_i^T+X_i+2X_i^TX_i=0\\pmod{2^{M-1}}.",
+          "utf8_byte_start": 7293,
+          "utf8_byte_end": 7329,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ],
+      "core_status": "unresolved_core"
+    },
+    "fidelity": {
+      "grade": 3,
+      "reason": "仍研究原分块、模2O而非剩余域、两个扩域与全部精度；下界证明却局部只写Z2[sqrt2]而未完整返回另一扩域。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "**下界.** 取 $U_0\\in\\mathscr S_F(A)$。写 $U=U_0\\prod_iV_i$。这里 $V_i$ 先属于整系数正交群 $O_{n_i}(\\mathbb O)$，$\\mathbb O=\\mathbb Z_2[\\sqrt2]$；直接把它当作“$\\pm I$ 乘以指数”会漏掉可能存在的无限阶整格元素，因此后面的指数计算只对近单位主同余部分作陈述，不能无条件套到整个 $O_{n_i}(\\mathbb O)$。",
+          "utf8_byte_start": 14551,
+          "utf8_byte_end": 14927,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 0,
+      "reason": "声称已纠正计数并完成全部核验，仍认可与C方程同一的假提升测试及错误固定点公式。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "这不是“模解”式的空洞判据；$X_i$ 是有限环上的实际矩阵变量。",
+          "utf8_byte_start": 7344,
+          "utf8_byte_end": 7431,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 2,
+      "reason": "幂等谱格、块内正交群、有限固定环以及最优下降目标给出有效结构认识，但一般2进Lie参数化不能按所述使用。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "在 $R_M$ 中 $2\\varepsilon_M=0$，$\\varepsilon_M^2=0$，$\\sigma(\\varepsilon_M)=\\varepsilon_M$。固定子环是",
+          "utf8_byte_start": 8031,
+          "utf8_byte_end": 8143,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 2,
+      "reason": "部分总数、固定C与实际固定解基域结论成立；提升、固定R及下降下界证明没有完整闭合。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "这不是“模解”式的空洞判据；$X_i$ 是有限环上的实际矩阵变量。",
+          "utf8_byte_start": 7344,
+          "utf8_byte_end": 7431,
+          "file_sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [
+    {
+      "name": "final-answer.md",
+      "bytes": 18933,
+      "sha256": "66ff971341fbfb3705ed0e1aa15faf5e4d4795071593c632984aa89f68a1e0c6",
+      "delivery_quote": "已完成本轮修订稿：[final-answer.md](</Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R011/fresh-context/final-answer.md>)。",
+      "recovered_after_collection": true,
+      "source_kind": "original_workspace_recovery",
+      "original_return_attachment_missing": true
+    }
+  ],
+  "unresolved_questions": [],
+  "no_hidden_reasoning_used_as_answer": true,
+  "original_math_unmodified": true,
+  "reviewed_at": "2026-11-21T00:19:13.916883+00:00",
+  "review_boundary": "Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.",
+  "source_materials": [
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR021/task.md",
+      "bytes": 3052,
+      "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR021/rubric.json",
+      "bytes": 1018,
+      "sha256": "a7175cd036b1e6c972d733e4a689dbb874f6db947b093dd9e11255ff4baba979"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR021/reference.md",
+      "bytes": 12214,
+      "sha256": "b5de32d25059d2cbdfcbe90ffc7f3af86e366f5e90f5bc3435fd555b83291a1c"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR021/contract.json",
+      "bytes": 4056,
+      "sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2"
+    }
+  ],
+  "first_response_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5",
+  "first_review_sha256": "e727bddd22e424bc9fec4d3db08ba075dbb221e468443d4b4093239730be79a0"
+}

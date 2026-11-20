@@ -47,6 +47,11 @@ def _source_and_transition(root, edition):
         edition = json.loads((Path(root) / 'benchmark.json').read_bytes())
     if not isinstance(edition, dict):
         raise ValueError('Invalid benchmark edition')
+    if edition.get('version') == '1.2.0':
+        if edition.get('neutral_revision_transition') is None:
+            raise ValueError('Assessment transition is supported only for benchmark 1.1.0 unless its source-bound neutral revision transition is supplied')
+        from .neutral_revision import source_assessment_edition
+        edition = source_assessment_edition(root, edition)
     if edition.get('version') != ASSESSMENT_EDITION:
         if (TRANSITION_FIELDS | {INITIAL_ADMISSION_FIELD}).intersection(edition):
             raise ValueError('Assessment transition is supported only for benchmark 1.1.0')

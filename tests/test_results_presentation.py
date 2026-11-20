@@ -5,6 +5,7 @@ from pathlib import Path
 import unittest
 
 from scripts.results_presentation import project_payload
+from scripts.results_publication import prepare_publication
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -65,7 +66,13 @@ class BrowserProjectionTests(unittest.TestCase):
         projected = project_payload(data)
         self.assertEqual(data, before)
         self.assertNotIn('private-fixture-do-not-project', json.dumps(projected))
-        self.assertLess(len(json.dumps(projected)), len(json.dumps(data)) / 5)
+        self.assertTrue(all('revision_resources' not in model for model in projected['models']))
+        # Measure the payload shipped to the browser after provider logo assets
+        # have been resolved to their versioned URLs.
+        opening, closing = '<script id="data">', '</script>'
+        page = prepare_publication({'index.html': opening + json.dumps(projected) + closing}, ROOT)['index.html']
+        browser_payload = json.loads(page.removeprefix(opening).removesuffix(closing))
+        self.assertLess(len(json.dumps(browser_payload)), len(json.dumps(data)) / 5)
 
     def test_public_case_view_keeps_partial_unknown_and_strict_separate(self):
         value = {'completion': {'exact': None, 'lower': 0, 'upper': 1},

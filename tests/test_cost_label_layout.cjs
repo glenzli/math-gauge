@@ -153,3 +153,26 @@ test('transient connectors keep clustered names local without covering points or
   assert.ok(gap<=point.height*6,label.id+' drifts too far from its point');
  }
 });
+
+test('tight bounds retain a direct leader when it cannot pass the neighboring point',()=>{
+ const named={id:'named',cx:30,cy:50,r:4,width:70,height:20,required:true};
+ const neighbor={id:'neighbor',cx:70,cy:50,r:5,width:30,height:15};
+ const options={bounds:{left:100,top:40,right:170,bottom:60},mode:'selected',interactiveConnectors:true};
+ const [blocked]=layout([named,neighbor],options);
+ assert.equal(blocked.visible,true);
+ assert.equal(blocked.connector.needed,true);
+ assert.deepEqual([blocked.connector.x2,blocked.connector.y2],[100,50]);
+
+ const [clear]=layout([named,{...neighbor,cy:80}],options);
+ assert.deepEqual(clear.connector,blocked.connector);
+ assert.deepEqual([clear.x,clear.y],[blocked.x,blocked.y]);
+});
+
+test('a short alternate attachment avoids a neighboring point when space allows',()=>{
+ const named={id:'named',cx:30,cy:50,r:4,width:70,height:36,required:true};
+ const neighbor={id:'neighbor',cx:70,cy:50,r:5,width:30,height:15};
+ const [label]=layout([named,neighbor],{
+  bounds:{left:100,top:32,right:170,bottom:68},mode:'selected',interactiveConnectors:true});
+ assert.equal(label.connector.needed,true);
+ assertLeadersClear([label],[named,neighbor]);
+});

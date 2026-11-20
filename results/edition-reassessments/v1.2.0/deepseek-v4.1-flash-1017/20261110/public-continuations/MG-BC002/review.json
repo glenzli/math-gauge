@@ -1,0 +1,204 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "deepseek-v4.1-flash-1017",
+  "case_id": "MG-BC002",
+  "task_id": "R006",
+  "response_sha256": "d4fe4a27bcf822f26889a4162c72b28e91095d07b4b10f59f018eaba5c470738",
+  "reviewer_id": "Codex coordinator / source-bound mathematical review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "score_scale": 100,
+  "MC": 100.0,
+  "RMC": 95.0,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "diagnosis",
+      "earned_points": 33.333333333333336,
+      "max_points": 33.333333333333336,
+      "reason": "正确分开强凸流和近端表示。",
+      "evidence": []
+    },
+    {
+      "id": "model_specific_certificate",
+      "earned_points": 33.333333333333336,
+      "max_points": 33.333333333333336,
+      "reason": "z0=(0,1)上的三阶Jacobian反对称项确实非零。",
+      "evidence": []
+    },
+    {
+      "id": "complete_correction",
+      "earned_points": 33.333333333333336,
+      "max_points": 33.333333333333336,
+      "reason": "流的全局估计、条件近端证书、反例范围和部署边界成立。",
+      "evidence": []
+    }
+  ],
+  "claim_deductions": [
+    {
+      "id": "moreau-gradient-identification",
+      "root_cause": "moreau-gradient-identification",
+      "severity": "local",
+      "kind": "false_assertion",
+      "reason": "给定e_r=inf(r(u)+|u-z|²/2)，实际∇e_r=z−prox_r，不是prox_r。可改为prox_r=∇(|z|²/2−e_r)；所用近端映射Jacobian对称性是正确的标准必要条件，三阶模型特定障碍独立核验成立，故不作核心封顶。",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "T(z)=\\nabla e_r(z),\\qquad",
+          "utf8_byte_start": 7071,
+          "utf8_byte_end": 7096,
+          "file_sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208"
+        }
+      ]
+    }
+  ],
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.05,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.05,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.95,
+      "upper": 0.95,
+      "exact": 0.95
+    },
+    "actual_loss": 0.05,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "moreau-gradient-identification"
+    ]
+  },
+  "mathematical_checks": [
+    "z′=(-1,-3),z″=(13,18),H0=[[4,3],[3,5]],H′=-24·11ᵀ,H″=282·11ᵀ；J12−J21=-4t³+O(t⁴)，候选系数正确。",
+    "只排除所有充分小正步长的近端表示，不把局部展开升成所有t的结论。",
+    "强凸给全局流、距离e^-t及能量e^-2t界；三点证书为明示条件下的真命题。"
+  ],
+  "strict_reason": "附加Moreau恒等式错误；不按候选误用TX式R3门槛判本背景题。",
+  "profile_axes": {
+    "proof": {
+      "grade": 3,
+      "reason": "流估计、条件证书及本模型非近端Taylor障碍完整；Moreau势公式需局部修正。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "T(z)=\\nabla e_r(z),\\qquad",
+          "utf8_byte_start": 7071,
+          "utf8_byte_end": 7096,
+          "file_sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208"
+        }
+      ],
+      "core_status": "local_gap"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保留给定势、流及条件近端表示，不将隐式Euler当精确流。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "The cubic term already has unequal off-diagonal entries \\(-174\\ne-170\\), so the skew term is \\(-4\\tau^3+O(\\tau^4)\\). Hence, for every sufficiently small \\(\\tau>0\\), \\(D\\Phi_\\tau(z_0)\\) is not symmetric in a neighborhood of \\(z_0\\). A proximal map's derivative is symmetric almost everywhere. This contradiction rules out (A26) for those \\(\\tau\\) and, in particular, rules out a universal “exact convex proximal block” interpretation. The exact flow remains valid as a contraction and a dissipative map; it is the unconditional proximal interpretation that fails.",
+          "utf8_byte_start": 8558,
+          "utf8_byte_end": 9124,
+          "file_sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 2,
+      "reason": "识别真实背景漏洞，但附加Moreau公式未核实。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "T(z)=\\nabla e_r(z),\\qquad",
+          "utf8_byte_start": 7071,
+          "utf8_byte_end": 7096,
+          "file_sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "显式完成平方和Jacobian三阶非交换障碍提供机制证书。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "The cubic term already has unequal off-diagonal entries \\(-174\\ne-170\\), so the skew term is \\(-4\\tau^3+O(\\tau^4)\\). Hence, for every sufficiently small \\(\\tau>0\\), \\(D\\Phi_\\tau(z_0)\\) is not symmetric in a neighborhood of \\(z_0\\). A proximal map's derivative is symmetric almost everywhere. This contradiction rules out (A26) for those \\(\\tau\\) and, in particular, rules out a universal “exact convex proximal block” interpretation. The exact flow remains valid as a contraction and a dissipative map; it is the unconditional proximal interpretation that fails.",
+          "utf8_byte_start": 8558,
+          "utf8_byte_end": 9124,
+          "file_sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "实质目标可由正确标准必要条件和已算Taylor项闭合，原稿势身份仍有局部错误。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "T(z)=\\nabla e_r(z),\\qquad",
+          "utf8_byte_start": 7071,
+          "utf8_byte_end": 7096,
+          "file_sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [
+    {
+      "name": "final-answer.md",
+      "bytes": 12527,
+      "sha256": "80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208",
+      "delivery_quote": "The complete final manuscript is in [final-answer.md](/Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R006/fresh-context/delivered/final-answer.md).",
+      "recovered_after_collection": true,
+      "source_kind": "original_workspace_recovery",
+      "original_return_attachment_missing": true
+    }
+  ],
+  "unresolved_questions": [],
+  "no_hidden_reasoning_used_as_answer": true,
+  "original_math_unmodified": true,
+  "reviewed_at": "2026-11-21T00:28:51.374996+00:00",
+  "review_boundary": "Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.",
+  "source_materials": [
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC002/task.md",
+      "bytes": 1993,
+      "sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af"
+    },
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC002/rubric.json",
+      "bytes": 630,
+      "sha256": "a9664da66d113b6ac0098ba8997a6fa247281873ebad84f726f3757f6216fd59"
+    },
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC002/reference.md",
+      "bytes": 6153,
+      "sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3"
+    },
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC002/contract.json",
+      "bytes": 2038,
+      "sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+    }
+  ],
+  "first_response_sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+  "first_review_sha256": "11efeb22d3ad2b9c22e381ce1a3a54bb808a57dc248a31997ba2ff51c96e3618"
+}

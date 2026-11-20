@@ -1,0 +1,3070 @@
+{
+  "schema": "math-gauge.formalization-engineering-review/v1",
+  "model_label": "Astra 6.2 xHigh (OpenAI API)",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+  "post_observation": true,
+  "new_candidate_calls": 0,
+  "cases": [
+    {
+      "case_id": "LCH01",
+      "case_version": "0.1.0",
+      "slot_id": "LCH01:A1",
+      "original_response_sha256": "7c9bf1d868940b81d195a0498606cd40eea74ddba02a1b304f8b27948be993f2",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "cb49191303d1b65b41843d1f960417c655b71805e349f02794c4a3ad8bb25867",
+      "source_manifest": {
+        "path": "engineering/LCH01/manifest.json",
+        "bytes": 1081,
+        "sha256": "0b8c8591742aed04301bcb7db1ba12ef2e745b77f18d0c39a046683a773ff12d"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "verification/lean/receipts/LCH01-A1/shared-verification/report.json",
+        "bytes": 41028,
+        "sha256": "89f3a1c2d0e05c757f93182728efd7316408fdeb2bbe2bae53a24bb181360c89"
+      },
+      "compiled_sources": {
+        "ChannelBounds.lean": "5f78da9965d58c9a8b26cc97ef69682c8e12b0bd5501324d49dd6d4d241a04fd",
+        "Main.lean": "1930f3c1010523c8f6d14c8bbb74d3b3380e15e669d8cacf4c8e22d75dc723ad"
+      },
+      "source_files": {
+        "ChannelBounds.lean": {
+          "path": "engineering/LCH01/ChannelBounds.lean",
+          "bytes": 4969,
+          "sha256": "5f78da9965d58c9a8b26cc97ef69682c8e12b0bd5501324d49dd6d4d241a04fd"
+        },
+        "Main.lean": {
+          "path": "engineering/LCH01/Main.lean",
+          "bytes": 21,
+          "sha256": "1930f3c1010523c8f6d14c8bbb74d3b3380e15e669d8cacf4c8e22d75dc723ad"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/LCH01/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/LCH01/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/LCH01.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.IsLip"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.IsLipOn"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.lipFamily"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.lipFamilyOn"
+            }
+          ],
+          "notes": "IsLipOn为U包含于dom加全x,y属于U/全输出j的有限ENNReal行和上界；IsLip严格取U=dom，两种family均收集全部合法矩阵。与原定义仅作透明命名/行求和展开，无额外非空、有限值或分离条件。Gauge.metric只打包原给定扩展伪度量，不把所求通道结论放入字段。"
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.IsCoLipOn"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.coLipFamilyOn"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.coLip_term_le"
+            }
+          ],
+          "notes": "IsCoLipOn精确加入U.Nonempty和U包含于dom，量化任意U内点对及每个输出分量，并取行和不大于像距；coLipFamilyOn为全部该证书。coLip_term_le以非负有限和取单项，非目标假设。"
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.CoeffMatrix"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.entry"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.entry_mul"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.rowValue"
+            }
+          ],
+          "notes": "CoeffMatrix为Matrix I I ENNReal；entry M i j定义为M j i，输入列/输出行一致。entry_mul直接展开标准矩阵乘法，得到先A后B的B*A在i到j上的sum_k B(k到j)*A(i到k)，没有转置或次序反转。"
+        },
+        {
+          "id": "CH02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.Channel"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.OnlyInput"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.IsDiagonal"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.zero_channel_term"
+            }
+          ],
+          "notes": "Channel=I×I保留有序输入/输出。OnlyInput恰约束输出行除指定输入外的项为零，不要求保留项非零；IsDiagonal逐行取(i,i)。zero_channel_term对任意ENNReal输入以zero_mul证明零贡献，包含0*top。"
+        },
+        {
+          "id": "CH02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.rowValue_onlyInput"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.lip_onlyInput"
+            },
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.lip_diagonal"
+            }
+          ],
+          "notes": "rowValue_onlyInput对任意向量用sum_eq_single得到整行精确化简，lip_onlyInput实例化原点对向量得到单输入上界；lip_diagonal对每一输出j用其对角稀疏性，覆盖原文对角特例。原域/全称量词保留。"
+        },
+        {
+          "id": "CH02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.positive_channel"
+            }
+          ],
+          "notes": "positive_channel以合法co-Lip单项下界和ENNReal.mul_pos_iff推导输出距离严格为正，条件仅为指定K项>0及输入分量距离>0，没有增加矩阵或距离有限性。"
+        },
+        {
+          "id": "CH02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.reflects_gauge_zero"
+            }
+          ],
+          "notes": "reflects_gauge_zero量化所有正对角条目，从像族零距反证各原分量非零，实际调用positive_channel。结论使用冻结GaugeZeroRelated，仍是族零距，没有偷偷假定分离性或加强为x=y。"
+        },
+        {
+          "id": "CH02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "ChannelBounds.lean",
+              "name": "LCH01.diagonal_two_sided"
+            }
+          ],
+          "notes": "diagonal_two_sided只对指定Lip输出行要求OnlyInput L(j,j)，co-Lip K无需对角。对同一phi/U上的任意L、K与任意x,y属于U，将coLip_term_le下界和lip_onlyInput上界组成合取，精确覆盖习题的双侧标量式。"
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "verification/lean/receipts/LCH01-A1/source-binding.json",
+          "bytes": 4081,
+          "sha256": "5d69220c4447495e713ef795efe6affbb4d172417e7baaefb99e17d15750d97f"
+        },
+        {
+          "path": "verification/lean/receipts/LCH01-A1/delivered-original.md",
+          "bytes": 10780,
+          "sha256": "7c9bf1d868940b81d195a0498606cd40eea74ddba02a1b304f8b27948be993f2"
+        },
+        {
+          "path": "verification/lean/receipts/LCH01-A1/shared-verification/manifest.json",
+          "bytes": 1718,
+          "sha256": "c2108d78b52e8e5106e7fef815c331d0d5d283f285f33d5192ebef9002cc0da1"
+        },
+        {
+          "path": "reviews/LCH01.json",
+          "bytes": 9655,
+          "sha256": "e323bc363e74825997a46bb6fcdba3354e7408e3e080bba50984e20940d872c2"
+        }
+      ]
+    },
+    {
+      "case_id": "LCH02",
+      "case_version": "0.1.0",
+      "slot_id": "LCH02:A1",
+      "original_response_sha256": "a4245d53f20b3974e9b1e69863de472f56799c44653ffc8d539f69e1d5c67e4d",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "c49d83f7f14490525c1b02892de1f83b28e0b42e7d5d0704643a6c71055d88dd",
+      "source_manifest": {
+        "path": "engineering/LCH02/manifest.json",
+        "bytes": 1355,
+        "sha256": "c1c02d206d92577e2c9f48904dfe86ea61cd84070aa96e8228a571fd8f4d3d25"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "verification/lean/receipts/LCH02-A1/shared-verification/report.json",
+        "bytes": 56543,
+        "sha256": "e78ebed8b507f0d363fa029628d60d938c69f00c289b89112610ffcf70726860"
+      },
+      "compiled_sources": {
+        "Main.lean": "aaaa184e4a164ca37bcbb53914e4a06bfe58d8715784e7efdccd855754559319",
+        "LCH02/Bounds.lean": "2de25b6b23d4ea466ef12aae274c7cf897dc892d46abdfaee3b46aade2ffaad7",
+        "LCH02/Chains.lean": "b1670edc7441fe6c3bd26ee926c5ac124e824ac996b839dc032382e863da2920",
+        "LCH02/Paths.lean": "8b08159a41c1697c3cb7b2b755ebc07872a2275070675bb9066a6e90b0680a88"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "engineering/LCH02/Main.lean",
+          "bytes": 59,
+          "sha256": "aaaa184e4a164ca37bcbb53914e4a06bfe58d8715784e7efdccd855754559319"
+        },
+        "LCH02/Bounds.lean": {
+          "path": "engineering/LCH02/LCH02/Bounds.lean",
+          "bytes": 5283,
+          "sha256": "2de25b6b23d4ea466ef12aae274c7cf897dc892d46abdfaee3b46aade2ffaad7"
+        },
+        "LCH02/Chains.lean": {
+          "path": "engineering/LCH02/LCH02/Chains.lean",
+          "bytes": 3265,
+          "sha256": "b1670edc7441fe6c3bd26ee926c5ac124e824ac996b839dc032382e863da2920"
+        },
+        "LCH02/Paths.lean": {
+          "path": "engineering/LCH02/LCH02/Paths.lean",
+          "bytes": 2394,
+          "sha256": "8b08159a41c1697c3cb7b2b755ebc07872a2275070675bb9066a6e90b0680a88"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/LCH02/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/LCH02/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/LCH02.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.LipOn"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.IsLip"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lipFamilyOn"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lipFamily"
+            }
+          ],
+          "notes": "LipOn展开向量点态序与mulVec即原所有输出j的有限加权和不等式，保留U包含dom及所有x,y属于U。IsLip取dom，family收集全部证书。Gauge只打包原有限非空规范族，未假设目标结论或最优矩阵。"
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.CoLipOn"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLipFamilyOn"
+            }
+          ],
+          "notes": "CoLipOn精确加入U.Nonempty和U包含dom，向量不等式方向为矩阵输入距不大于像距；coLipFamilyOn为全部证书，不额外要求条目有限或分离。"
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.Mat"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.entry"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.entry_mul"
+            }
+          ],
+          "notes": "Mat为标准ENNReal方阵，entry M i j=M j i对应输入列/输出行。entry_mul展开B*A为sum_k B(k到j)*A(i到k)，次序与先A后B一致。"
+        },
+        {
+          "id": "CH02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.unit_entry"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.orderedProduct"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.product_nil"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.product_cons"
+            }
+          ],
+          "notes": "orderedProduct使用与冻结OperatorChain一致的末步在表头列表，空积1且cons左乘；unit_entry证明对角1/非对角0。与原M(n)...M(1)只是明确反向列表表示。"
+        },
+        {
+          "id": "CH02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.Step"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chainMatrix"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.reached"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_nil"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_cons"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.reached_nil"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.reached_cons"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.Along"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.along_iff"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.step_domains"
+            }
+          ],
+          "notes": "Step只配对算子和单步矩阵，chain/chainMatrix同序投影；reached_cons证明当前精确像递推。Along只有每一步证书，along_iff按位置n展开为已执行后缀drop(n+1)的像域，step_domains从全复合域实际证明各步合法；没有把最终链证书藏入结构。"
+        },
+        {
+          "id": "CH02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.Interior"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.factors"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.PositivePath"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.factors_length"
+            }
+          ],
+          "notes": "Interior I n是n个内部指标的嵌套乘积，即原有限元组(k(n-1),...,k1)，两端i/j外置固定。factors逐层列出正确相邻端点条目，factors_length证明恰n个因子；零内部指标为Unit，单步仍含首矩阵的(i,j)条目。不是仅有相近路径谓词。"
+        },
+        {
+          "id": "CH02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.singleton_lip"
+            }
+          ],
+          "notes": "singleton_lip在非空单元素指标族上把唯一行和化为一个标量项，双向证明全域Lip与原逐点标量式等价；未改任意dom点对范围。"
+        },
+        {
+          "id": "CH02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_restrict"
+            }
+          ],
+          "notes": "lip_restrict对整个矩阵族在U包含V包含dom条件下逐点限制原V内不等式，得到族的反包含，允许U空。"
+        },
+        {
+          "id": "CH02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_comp"
+            }
+          ],
+          "notes": "lip_comp在U合法复合域上对原f(U)内两个真实像点用外层B，再以ENNReal非负mulVec单调性代入内层A。Matrix.mulVec_mulVec给B*A的实际桥，完整中间域和次序均保留。"
+        },
+        {
+          "id": "CH02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_restrict"
+            }
+          ],
+          "notes": "coLip_restrict明确要求较小U非空，结合包含传递及所有点对限制给正确反包含；没有自动给空集co-Lip证书。"
+        },
+        {
+          "id": "CH02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_zero_entry"
+            }
+          ],
+          "notes": "coLip_zero_entry从指定输入项不超过有限行和、行和不超过零像距推出乘积为0，再以输入距正排除该因子为0，得系数0；允许该系数或其他距为top。"
+        },
+        {
+          "id": "CH02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_comp"
+            }
+          ],
+          "notes": "coLip_comp以B乘内层下界，再使用外层在f(U)的下界，给B*A；U非空从实际内层co-Lip证书取出，域条件同原文而未偷偷缩小。"
+        },
+        {
+          "id": "CH02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.unit_lip"
+            }
+          ],
+          "notes": "unit_lip保留原零步注中的非空U及恒等域合法性，以one_mulVec等式证明空矩阵积为恒等算子Lip证书；非空假设是原文共同范围。"
+        },
+        {
+          "id": "CH02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.unit_coLip"
+            }
+          ],
+          "notes": "unit_coLip对相同原非空合法U给单位矩阵下界，显式交付co-Lip所需非空部分，没有从Lip自动推co-Lip。"
+        },
+        {
+          "id": "CH02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.product_positive_iff"
+            }
+          ],
+          "notes": "product_positive_iff对任意首矩阵与全部后续矩阵归纳，实际用有限非负和正值及ENNReal乘积正值等价，构造/拆解中间指标元组。later=[]分支对应n=1唯一空内部路径，单因子仍正确。"
+        },
+        {
+          "id": "CH02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_from_dom"
+            }
+          ],
+          "notes": "lip_from_dom把lip_restrict的V取真实dom，得到任意U包含dom的全域证书限制；族成员与IsLip展开一致。"
+        },
+        {
+          "id": "CH02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.coLip_from_dom"
+            }
+          ],
+          "notes": "coLip_from_dom把coLip_restrict的V取dom，并保留原U非空/包含条件，得到全域co-Lip证书到受限族的完整包含。"
+        },
+        {
+          "id": "CH02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.finite_lip"
+            }
+          ],
+          "notes": "finite_lip以a::s覆盖所有正长度链，Along仅提供每步在已执行后缀实际像上的Lip证书；长度归纳中用split_domain和lip_comp构造最终连乘证书，未输入最终上界。"
+        },
+        {
+          "id": "CH02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.finite_coLip"
+            }
+          ],
+          "notes": "finite_coLip同样由实际中间域的逐步下界归纳、用coLip_comp建立整条正长度链证书；结论的U非空由单步证书而非额外未证字段取得。"
+        },
+        {
+          "id": "CH02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.product_zero_iff"
+            }
+          ],
+          "notes": "product_zero_iff将已证正路径等价取否定，并在ENNReal中证明所有因子正当且仅当列表不含0；因此零值恰每条内部路径至少一个零因子。适用于top因子与n=1，不漏零乘top规则。"
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "verification/lean/receipts/LCH02-A1/source-binding.json",
+          "bytes": 6026,
+          "sha256": "f685a26181f0b8f20a2beffaf0655e3bad6fb4930de99aab3cff1e61a432822e"
+        },
+        {
+          "path": "verification/lean/receipts/LCH02-A1/delivered-original.md",
+          "bytes": 21690,
+          "sha256": "a4245d53f20b3974e9b1e69863de472f56799c44653ffc8d539f69e1d5c67e4d"
+        },
+        {
+          "path": "verification/lean/receipts/LCH02-A1/shared-verification/manifest.json",
+          "bytes": 2220,
+          "sha256": "f077e2becedfbb7315485516063f62fe829d1b09f6155bb5e3dd40020509732a"
+        },
+        {
+          "path": "reviews/LCH02.json",
+          "bytes": 17960,
+          "sha256": "b2af874d88f613d396cb2466130c643f26f01e277ecccbe8f5cf2c4d1e4bdfbc"
+        }
+      ]
+    },
+    {
+      "case_id": "HCH02",
+      "case_version": "0.1.0",
+      "slot_id": "HCH02:A1",
+      "original_response_sha256": "8503cfd078f4604105ba0cb25c8b3596a72e3b70a872a980bf6b94dd95f3bcda",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "9ad0cd912dfa4be2c535b9c29d35c9d6667af215c4d0d50fc0e321111c0476ce",
+      "source_manifest": {
+        "path": "engineering/HCH02/manifest.json",
+        "bytes": 1341,
+        "sha256": "6c32155a414ee65703ef5a81ca1fd3936e3f8bc08dc3ebfb3eff7a6c81b73e3c"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "verification/lean/receipts/HCH02-A1/shared-verification/report.json",
+        "bytes": 72318,
+        "sha256": "7dfd7712c27960d5f87284ee0deb66975a2a3209dc7ea63e80be6f5d0f8fa888"
+      },
+      "compiled_sources": {
+        "Main.lean": "ff269483eee3efc72df4cb0aaac5d5f6c312436821a31dc5c5c91a90bb7a83bb",
+        "Bounds.lean": "6f8704bbd7280ebffce616841548c108db93b43066b3588ac93aa54963dd0c2d",
+        "Chains.lean": "eb9323a6fab644103a00b39cb7729f9662a53970655eec55fc0691dfa965e656",
+        "Channels.lean": "2e80a9b6069f33b9bb2a573ba176c4c2e8778f9d11c34adc7ceca672a7a359f3"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "engineering/HCH02/Main.lean",
+          "bytes": 44,
+          "sha256": "ff269483eee3efc72df4cb0aaac5d5f6c312436821a31dc5c5c91a90bb7a83bb"
+        },
+        "Bounds.lean": {
+          "path": "engineering/HCH02/Bounds.lean",
+          "bytes": 6355,
+          "sha256": "6f8704bbd7280ebffce616841548c108db93b43066b3588ac93aa54963dd0c2d"
+        },
+        "Chains.lean": {
+          "path": "engineering/HCH02/Chains.lean",
+          "bytes": 7821,
+          "sha256": "eb9323a6fab644103a00b39cb7729f9662a53970655eec55fc0691dfa965e656"
+        },
+        "Channels.lean": {
+          "path": "engineering/HCH02/Channels.lean",
+          "bytes": 6927,
+          "sha256": "2e80a9b6069f33b9bb2a573ba176c4c2e8778f9d11c34adc7ceca672a7a359f3"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/HCH02/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/HCH02/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 11333,
+          "sha256": "336ba7b68faebb4a79a39f0327ead65285bc519316503f209ed992e527b8b549"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/HCH02.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646"
+      },
+      "obligations": [
+        {
+          "id": "HC02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.Gauge"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.globalLip"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.infinite_term"
+            }
+          ],
+          "notes": "Gauge只存原有限非空规范族的真实扩展伪度量背景，lip/globalLip为全域/受限族的原全点对和全输出ENNReal有限和上界。infinite_term正确说明top乘0为0、乘正值为top，未要求分量分离或最优矩阵存在。"
+        },
+        {
+          "id": "HC02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.coLip"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_term"
+            }
+          ],
+          "notes": "coLip的成员严格保留非空U、U包含dom及所有点对/输出的行和下界；co_term由非负和提取任意单输入项，0/top系数都允许。"
+        },
+        {
+          "id": "HC02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.Mat"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mul"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display_mul"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.act"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.act_mul"
+            }
+          ],
+          "notes": "输入优先存A i j，display转为普通矩阵A(j,i)；display_mul证明原复合求和对应标准B*A，act_mul另证对输入距离向量的作用，输入/输出方向及施行次序均有桥。"
+        },
+        {
+          "id": "HC02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.eye"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_one"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_order"
+            }
+          ],
+          "notes": "eye是Kronecker单位，product空元组取eye、product_one证单矩阵不变；product_order证明施行顺序元组对应反序普通矩阵积，不把前后步骤颠倒。"
+        },
+        {
+          "id": "HC02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.comp"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.comp_domain"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_order"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage_zero"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.stage_next"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.final_image"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.step_domains"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.Steps"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.steps_from"
+            }
+          ],
+          "notes": "chain_order连接冻结OperatorChain，stage_zero/next/final_image证明全部实际像域递推和最终像，step_domains由复合域证明每一步合法。Steps仅含逐步证书，steps_from对任意满足原递推的域列证明同一表示，未假设最终复合界。"
+        },
+        {
+          "id": "HC02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.Path"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.edges"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.edges_indexed"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.weight"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.hasZero"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.allPos"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.one_path"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.expansion"
+            }
+          ],
+          "notes": "Path=Fin n到I遍历所有n个内部指标，无正性限制；edges_indexed以cons/snoc把固定两端i/j及每层边逐项接回原序列。weight/hasZero/allPos是真实边积/含零/全正，one_path给n=0唯一内部序列，expansion实际证明路径求和展开。"
+        },
+        {
+          "id": "HC02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Channel"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Row"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Col"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Diagonal"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.RowDec"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.ColDec"
+            }
+          ],
+          "notes": "Channel为有序I×I；Row/Col分别固定输出行/输入列并允许任意保留位置，也允许全零。RowDec/ColDec先量化合法Lip证书再量化保留指标；Diagonal恰全部非对角项0。"
+        },
+        {
+          "id": "HC02-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Region"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.scalars"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.best"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.best_empty"
+            }
+          ],
+          "notes": "Region携带原U包含dom，scalars量化全部U内点对且只用指定输入/输出分量；best是该族sInf，best_empty证空族为top。对象与矩阵中任一条目明确分开，没有把通道最优值偷当矩阵最优条目。"
+        },
+        {
+          "id": "HC02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.singleton_lip"
+            }
+          ],
+          "notes": "singleton_lip在非空Subsingleton指标族把唯一求和化为标量，双向证明全域Lip成员资格与原标量式等价。"
+        },
+        {
+          "id": "HC02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.restrict_global"
+            }
+          ],
+          "notes": "restrict_global取真实dom上的族，逐点限制至任意合法U，保留原全域和受限区别。"
+        },
+        {
+          "id": "HC02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.restrict_lip"
+            }
+          ],
+          "notes": "restrict_lip从原V族成员中同时限制定义域和任意点对不等式，得到缩域后证书族扩大；不把证书族直接视为唯一矩阵。"
+        },
+        {
+          "id": "HC02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.entryInf"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.entryInf_le"
+            }
+          ],
+          "notes": "entryInf定义为条目评价在完整Lip族的像集下确界；entryInf_le由族反包含和sInf反单调性证明缩域时各条目下确界不增，即使族为空亦合法。"
+        },
+        {
+          "id": "HC02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_comp"
+            }
+          ],
+          "notes": "lip_comp对外层在实际operator_image p U上的界，用act_mono代入内层再以act_mul还原mul B A。原复合合法U和精确中间像均保留，乘积次序正确。"
+        },
+        {
+          "id": "HC02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_degenerate"
+            }
+          ],
+          "notes": "co_degenerate从co_term和指定输出距0得到单项乘积0，再以输入距正排除该因子为0，故系数0；域为原dom p，无额外有限性。"
+        },
+        {
+          "id": "HC02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.co_comp"
+            }
+          ],
+          "notes": "co_comp在相同实际像域把内层下界经非负act单调后接外层下界，复合非空U由内层合法co-Lip取出。"
+        },
+        {
+          "id": "HC02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.CloseOn"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.close_swap"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb"
+            }
+          ],
+          "notes": "CloseOn只打包原公共域及逐点扰动上界，不存目标点对结论；perturb真实用两次三角与close_swap得到正向像距加两份delta，所有x,y与输出j任意。"
+        },
+        {
+          "id": "HC02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_rev"
+            }
+          ],
+          "notes": "perturb_rev由原逐点误差的对称性交换算子，再调用已证正向界，误差项仍非负ENNReal两份delta，不作非法减法。"
+        },
+        {
+          "id": "HC02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_lip"
+            }
+          ],
+          "notes": "perturb_lip将第一个算子的原合法矩阵上界代入perturb，给第二个算子像距的加性界；任意两个算子可用close_swap对换。"
+        },
+        {
+          "id": "HC02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_co"
+            }
+          ],
+          "notes": "perturb_co把第一算子co-Lip下界与反向扰动界连接，方向为矩阵行和<=第二像距+2delta，未误称第二算子的纯co-Lip证书。"
+        },
+        {
+          "id": "HC02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_lip"
+            }
+          ],
+          "notes": "chain_lip对任意有限长度从原每步实际stage域的Steps归纳建立product M全复合上界。零步单位基例已证，正长度原命题是其精确实例，未输入最终界。"
+        },
+        {
+          "id": "HC02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_co"
+            }
+          ],
+          "notes": "chain_co对正长度从首步证书推出U非空，chain_co_aux在尾链实际像保持非空并归纳合成全部下界，非空并非未证明结构前提。"
+        },
+        {
+          "id": "HC02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.eye_act"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.empty_lip"
+            }
+          ],
+          "notes": "eye_act证明单位矩阵确实保留整个输入距离向量，empty_lip据此给零步恒等链上界，覆盖原非空合法U且无更强前提。"
+        },
+        {
+          "id": "HC02-P15",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.empty_co"
+            }
+          ],
+          "notes": "empty_co明确取合法且非空U，以同一单位作用等式构造完整下界族成员。"
+        },
+        {
+          "id": "HC02-P16",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_zero"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.certified_zero"
+            }
+          ],
+          "notes": "expansion给全部完整路径真实有限求和，product_zero由非负和为0及列表乘积为0得每路径含零；certified_zero恢复历史原文同一算子链、实际域、两类逐步证书的适用条件，单步唯一边未漏。"
+        },
+        {
+          "id": "HC02-P17",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.product_pos"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.certified_pos"
+            }
+          ],
+          "notes": "product_pos对product_zero取否定并把无零边等价为全边正，给存在真实完整路径的双向判据；certified_pos恢复原co-Lip链条件，top因子按ENNReal处理。"
+        },
+        {
+          "id": "HC02-P18",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.obstructed"
+            }
+          ],
+          "notes": "obstructed对原合法U中的输入零距/输出正距点对逐一反驳任何ENNReal r，包括top，因为r*0=0，继而best_empty给下确界top。不是只选坏证书。"
+        },
+        {
+          "id": "HC02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.attained"
+            }
+          ],
+          "notes": "attained在best正且有限时先由finite_iff得非空可行族，再以正inf排除ENNReal乘inf的零例外，合法交换iInf与乘固定距离，逐点证明best本身可行。没有假设目标取到性或要求输入距离有限。"
+        },
+        {
+          "id": "HC02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.scalar_up"
+            }
+          ],
+          "notes": "scalar_up对每对原域点使用右端系数的乘法单调性，证明任一可行r之上的t也可行，包含top。"
+        },
+        {
+          "id": "HC02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.above_best"
+            }
+          ],
+          "notes": "above_best由sInf_lt_iff实际取小于给定r的可行t，再scalar_up得r可行；是原正有限best语境下结论的更一般有效证明，r=top也包含。"
+        },
+        {
+          "id": "HC02-P22",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.zero_best"
+            }
+          ],
+          "notes": "zero_best以a=0代入above_best，得每个严格正r可行，因而全部有限正r均满足；没有顺便断言r=0可行。"
+        },
+        {
+          "id": "HC02-P23",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.discreteD"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.exampleGauge"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.exampleId"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.exampleU"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.unattained_zero"
+            }
+          ],
+          "notes": "exampleGauge逐字段证明Fin3上不同点距top的合法扩展伪度量，0为吸收元，恒等算子域含1/2非空。unattained_zero证明每个正r可行、inf=0，并用点对1/2排除r=0，完整合法反例满足原要求。"
+        },
+        {
+          "id": "HC02-P24",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.finite_iff"
+            }
+          ],
+          "notes": "finite_iff用sInf严格小于top的完整线序判据双向等价于存在某个有限可行系数；没有把inf有限误等同为inf必取到。"
+        },
+        {
+          "id": "HC02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.erase_term"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.lip_erase"
+            }
+          ],
+          "notes": "erase_term对任意ENNReal向量证零条目乘积0并给删除该输入项后的精确行和，lip_erase接回合法证书上界，包含输入距top。"
+        },
+        {
+          "id": "HC02-P26",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.row_bound"
+            }
+          ],
+          "notes": "row_bound用任意指定输入i的单行稀疏条件化简有限和，得原全部域内点对的单输入上界；未限制i=j。"
+        },
+        {
+          "id": "HC02-P27",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.col_term"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.column_contribution"
+            }
+          ],
+          "notes": "col_term/column_contribution只说明所选合法证书中固定输入i向各k不等于j的贡献为0，未过度推断实际算子不依赖其他输入或其他项为0。"
+        },
+        {
+          "id": "HC02-P28",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.diagonal_upper"
+            }
+          ],
+          "notes": "diagonal_upper从对角矩阵的每行Row条件推出每个输出j的同分量标量上界，保留全部x,y属于U。"
+        },
+        {
+          "id": "HC02-P29",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.ScalarBounds"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.bilateral"
+            }
+          ],
+          "notes": "bilateral从合法K提取对角单项下界并与合法A的指定输出行上界合并，ScalarBounds为结论的透明谓词而非假设字段；K没有被额外要求对角。"
+        },
+        {
+          "id": "HC02-P30",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.all_bilateral"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.finite_bilateral"
+            }
+          ],
+          "notes": "all_bilateral把逐行稀疏条件实例化到任意j，finite_bilateral在原两类对角系数有限条件下构造NNReal系数及转换等式，再恢复同一双侧界；未增加正下界条件。"
+        },
+        {
+          "id": "HC02-P31",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.distinguish"
+            }
+          ],
+          "notes": "distinguish用正co-Lip项与正输入距的非零乘积及co_term传至输出严格正，系数或距离为无穷也允许。"
+        },
+        {
+          "id": "HC02-P32",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.reflect_zero"
+            }
+          ],
+          "notes": "reflect_zero对每个正对角项使用distinguish反证输入分量非零，得冻结GaugeZeroRelated原族零距；没有增加分离性或把结论加强成x=y。"
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "verification/lean/receipts/HCH02-A1/source-binding.json",
+          "bytes": 5999,
+          "sha256": "d4ffd1db524d26b5288f119f236a816976cc394c3c83cb8ee41cd77246932247"
+        },
+        {
+          "path": "verification/lean/receipts/HCH02-A1/delivered-original.md",
+          "bytes": 40490,
+          "sha256": "8503cfd078f4604105ba0cb25c8b3596a72e3b70a872a980bf6b94dd95f3bcda"
+        },
+        {
+          "path": "verification/lean/receipts/HCH02-A1/shared-verification/manifest.json",
+          "bytes": 2190,
+          "sha256": "a862236b9a87dffa6e9455e3306d11c6376b9945cf4324bf06b710bb5b188a12"
+        },
+        {
+          "path": "reviews/HCH02.json",
+          "bytes": 32618,
+          "sha256": "066f157043288c93c6997329554e9f58ca5ab9176c0a98b98722099aee0075f4"
+        }
+      ]
+    },
+    {
+      "case_id": "MG-C003",
+      "case_version": "0.1.1",
+      "slot_id": "MG-C003:A1",
+      "original_response_sha256": "f1c3eb33edb582ab7f357190799ad648108fd45e05f0b954ac76d56ad4315b02",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "5cdc5cfad10b902a540915ce275d113749c79feca3b272a06f8c48ef6ded9fd8",
+      "source_manifest": {
+        "path": "engineering/MG-C003/manifest.json",
+        "bytes": 2295,
+        "sha256": "9c46292a02dc0940654284dfa302295b1e77a3f8b696010b890bf275766cfa53"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "verification/lean/receipts/MG-C003-A1/shared-verification/report.json",
+        "bytes": 147719,
+        "sha256": "0b6317b94323fd9ce77490c452cbfb996a7e88e355a0980fb17e2c64ea75052a"
+      },
+      "compiled_sources": {
+        "Main.lean": "ed5f0f2edfe18438c3201c87cee7ae83c9852df64f8605d781627f52169b2e50",
+        "Components.lean": "1a0f792b402b6949deb69026c6c06144c2fbd9cb21181e8c4fb6aaaf9b9d52a4",
+        "Factors.lean": "22306d48bae58237f8cede2feac7de26a213026377ff820f1787c2161491a918",
+        "Radii.lean": "fb6edd6f99c9155e6462d2afe17779dd33e488bcde6a28259be8c2f843e7f14f",
+        "Entropy.lean": "425d3ae0f4cab73b1e541d94c0d525d68fd7877a8e0e4a8c7110b65087933930",
+        "Models.lean": "90728dcc74004ade9ec2c95f7f47985afb745ab68d739dac4fe0a7cc622890f4",
+        "RealExamples.lean": "d66e12330eb01315ee55132ef6829fecf7d281fce9a4ae4070e30b4ade14701e",
+        "FiniteExamples.lean": "6c048a51019ef3584729c550e72f7a3b088cd29f19863e1c128c9adbb267e8b5",
+        "Rearrangement.lean": "ae935626cdb8b9bc397e1d65573dd150dce1da868bd8582c892895c8bbc21684",
+        "Chapter.lean": "3d83f2bb9943eebf46e8557bc130daf04e4605aa076d0ded8d3e8e16737880c2",
+        "Textbook.lean": "aecb133eddd874b4302ee51e8dc1ac1c0f813b552529f73b04b6a87e49902772"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "engineering/MG-C003/Main.lean",
+          "bytes": 169,
+          "sha256": "ed5f0f2edfe18438c3201c87cee7ae83c9852df64f8605d781627f52169b2e50"
+        },
+        "Components.lean": {
+          "path": "engineering/MG-C003/Components.lean",
+          "bytes": 6994,
+          "sha256": "1a0f792b402b6949deb69026c6c06144c2fbd9cb21181e8c4fb6aaaf9b9d52a4"
+        },
+        "Factors.lean": {
+          "path": "engineering/MG-C003/Factors.lean",
+          "bytes": 5388,
+          "sha256": "22306d48bae58237f8cede2feac7de26a213026377ff820f1787c2161491a918"
+        },
+        "Radii.lean": {
+          "path": "engineering/MG-C003/Radii.lean",
+          "bytes": 9020,
+          "sha256": "fb6edd6f99c9155e6462d2afe17779dd33e488bcde6a28259be8c2f843e7f14f"
+        },
+        "Entropy.lean": {
+          "path": "engineering/MG-C003/Entropy.lean",
+          "bytes": 9493,
+          "sha256": "425d3ae0f4cab73b1e541d94c0d525d68fd7877a8e0e4a8c7110b65087933930"
+        },
+        "Models.lean": {
+          "path": "engineering/MG-C003/Models.lean",
+          "bytes": 6743,
+          "sha256": "90728dcc74004ade9ec2c95f7f47985afb745ab68d739dac4fe0a7cc622890f4"
+        },
+        "RealExamples.lean": {
+          "path": "engineering/MG-C003/RealExamples.lean",
+          "bytes": 9016,
+          "sha256": "d66e12330eb01315ee55132ef6829fecf7d281fce9a4ae4070e30b4ade14701e"
+        },
+        "FiniteExamples.lean": {
+          "path": "engineering/MG-C003/FiniteExamples.lean",
+          "bytes": 8546,
+          "sha256": "6c048a51019ef3584729c550e72f7a3b088cd29f19863e1c128c9adbb267e8b5"
+        },
+        "Rearrangement.lean": {
+          "path": "engineering/MG-C003/Rearrangement.lean",
+          "bytes": 5468,
+          "sha256": "ae935626cdb8b9bc397e1d65573dd150dce1da868bd8582c892895c8bbc21684"
+        },
+        "Chapter.lean": {
+          "path": "engineering/MG-C003/Chapter.lean",
+          "bytes": 10503,
+          "sha256": "3d83f2bb9943eebf46e8557bc130daf04e4605aa076d0ded8d3e8e16737880c2"
+        },
+        "Textbook.lean": {
+          "path": "engineering/MG-C003/Textbook.lean",
+          "bytes": 4538,
+          "sha256": "aecb133eddd874b4302ee51e8dc1ac1c0f813b552529f73b04b6a87e49902772"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "bytes": 11435,
+          "sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean",
+          "bytes": 4007,
+          "sha256": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean",
+          "bytes": 9743,
+          "sha256": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": {
+          "path": "engineering/MG-C003/background/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean",
+          "bytes": 681,
+          "sha256": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465"
+        }
+      },
+      "case_contract": {
+        "path": "admission/contracts/MG-C003.json",
+        "bytes": 122710,
+        "sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527"
+      },
+      "obligations": [
+        {
+          "id": "CH03-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chapter.lean",
+              "name": "C3.components"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.component_sets"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.Const"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.Ident"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.Active"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.partition"
+            }
+          ],
+          "notes": "Const的全点对零距优先；Ident显式排除Const并要求逐点输出/输入零距；Active为两者否定。components与component_sets恢复原三集合及补集，partition证互斥穷尽；合法U参数未换为全域。"
+        },
+        {
+          "id": "CH03-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.subD"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.sub_zero"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.fiber_spec"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.finite_max"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.fiber_absent"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.blocks"
+            }
+          ],
+          "notes": "fiber为任意目标z的严格零距原像并保留x属于U。subD是冻结子族iSup，sub_zero逐分量等价；有限非空时finite_max给真实取得的最大分量。fiber_absent覆盖不在像零距类中的空纤维，blocks按像目标去重。"
+        },
+        {
+          "id": "CH03-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.eqRel"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.zeroRel"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.relations_on"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.zero_relations_on"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.zeroRel_fiber"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.imageSetoid"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.cls"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.finer"
+            }
+          ],
+          "notes": "eqRel与zeroRel在U子类型积上分别表达点值相等和全族零距，relations_on两桥恢复X内受限点对。imageSetoid从冻结等价关系证明构造，不假定分离；cls是真实像商，zeroRel_fiber及finer给纤维/预序对应。"
+        },
+        {
+          "id": "CH03-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Textbook.lean",
+              "name": "C3.pointRadius"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.legal"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.rad"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.legal_ball"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.rad_empty"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.rad_notation"
+            }
+          ],
+          "notes": "legal仅允许PosFin r且用严格p(x,y)<r约束U内点；legal_ball证明与开球交U包含于目标纤维等价。rad是其sSup，rad_empty给空集0，rad_notation提取严格上确界见证。pointRadius以合法域及y:U保留原数学适用范围，结果允许top。"
+        },
+        {
+          "id": "CH03-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Textbook.lean",
+              "name": "C3.uniformRadius"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.radius_representations"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.N"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.matrix_spec"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.radius_notation"
+            }
+          ],
+          "notes": "uniform仅在基点子类型A取iInf，评估点仍属于U；uniformRadius显式要求A非空、A包含于U及U合法，radius_representations证明双域读出。N d f U j i与matrix_spec显示输出j行/输入i列，singleton notation正确。"
+        },
+        {
+          "id": "CH03-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.Scale"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.diameter"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.diamScale"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.bits"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.channel"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.threshold_spec"
+            }
+          ],
+          "notes": "Scale输入为非空子集、mono恰为原任意尺度族的单调条件；diamScale从真实直径iSup证明实例单调性。bits/channel分别编码严格小于尺度阈值与非严格大于等于N阈值，threshold_spec恢复合法域和两个PosFin阈值。没有把任意尺度偷偷改成直径。"
+        },
+        {
+          "id": "CH03-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.internal_spec"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.coverage_meaning"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.cov"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.ent"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.TB"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.tb_spec"
+            }
+          ],
+          "notes": "cov/ent透明复用冻结内部中心定义；internal_spec保持中心在原集合与严格开球覆盖。coverage_meaning给有限覆盖最小基数、无覆盖top、空集0及二进制扩展熵。TB与tb_spec量化每个有限正r，不改为外中心。"
+        },
+        {
+          "id": "CH03-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.Defined"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.delta"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.mappingEntropy"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.mapping_spec"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.delta_cases"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.delta_signs"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.singleton_delta"
+            }
+          ],
+          "notes": "mappingEntropy保留合法非空U、两端非空子族、PosFin精度和至少一端覆盖数有限；delta透明为扩展实熵差。mapping_spec、delta_cases、delta_signs和singleton_delta证明原公式/分支/符号与单通道对应，排除top-top而未擅取0。"
+        },
+        {
+          "id": "CH03-P01-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.zero_row"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.row_constraints"
+            }
+          ],
+          "notes": "zero_row在原U任意点对以Const输出0，row_constraints另证全零有限行和等于0，保留完整(i)的等式与不等式。"
+        },
+        {
+          "id": "CH03-P01-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.zero_entry"
+            }
+          ],
+          "notes": "zero_entry从存在正输入距离的具体点对和常值输出代入冻结co-Lip单项判据，推出指定源项K(k,i)=0；未额外要求K有限或整个输入规范分离。"
+        },
+        {
+          "id": "CH03-P01-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.ident_dist"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.zero_left"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.zero_right"
+            }
+          ],
+          "notes": "zero_left/zero_right由双向三角和对称得到零距替换下的距离相等，ident_dist分别替换两端，得到所有U内点对保距；距离可为无穷，不强化为点值恒等。"
+        },
+        {
+          "id": "CH03-P02-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.comp_active"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.comp_domains"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.composition_sets"
+            }
+          ],
+          "notes": "comp_domains由复合合法性推出U包含内层域及实际像包含外层域。comp_active用外层非Const和其恒等分支证明非有效组合不产生有效；composition_sets恢复原集合包含，外层读在F(U)上。"
+        },
+        {
+          "id": "CH03-P02-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.stepActive"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.chain_active"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.stages"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.stages_spec"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.valid_stages"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.zero_step"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.chain_sets"
+            }
+          ],
+          "notes": "stages逐步以当前算子的真实像更新域，valid_stages由最终复合域归纳证明每一步合法。chain_active对作用次序列表归纳，OperatorChain只作反转表示桥；零步明确排除Active，chain_sets给实际阶段并集。"
+        },
+        {
+          "id": "CH03-P02-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.comp_ident"
+            }
+          ],
+          "notes": "comp_ident逐点传递零距，且用外层恒等保距将假设的复合Const传回内层，与内层非Const矛盾。常值优先的排除项有证明，并非仅证逐点不动。"
+        },
+        {
+          "id": "CH03-P03-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Models.lean",
+              "name": "C3.Swap.model"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.Swap.image_dom"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.Swap.calc_swap"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.swap_strict"
+            }
+          ],
+          "notes": "Swap用Option Bool和拉回离散距离建立合法三点吸收元模型，image_dom证明实际像仍U。calc_swap逐点证明两步Active/非Ident及复合Ident/非Active；swap_strict明确给两种严格包含，真实否定两条逆向。"
+        },
+        {
+          "id": "CH03-P04-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.outer_const"
+            }
+          ],
+          "notes": "outer_const量化U内任意点对，像点在f(U)给出的见证立即允许使用外层Const，外层适用域未扩大或取错。"
+        },
+        {
+          "id": "CH03-P04-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Models.lean",
+              "name": "C3.Seven.p"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.Seven.F"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.Seven.G"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.Seven.model"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.Seven.example_seven"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.seven_readings"
+            }
+          ],
+          "notes": "Seven的Option(Fin6)是七点，两个离散读数仅在第一分量合并2/3；lift_metric实际证明扩展伪度量。F/G域分别对应{a,b}/{p,q}，example_seven和seven_readings核对复合合法、内层零距、复合距1及第二分量距1。"
+        },
+        {
+          "id": "CH03-P05-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.diag_const"
+            }
+          ],
+          "notes": "diag_const使用外层实际像上的合法Lip矩阵，只约束指定输出行的非同分量项为0；冻结单输入行界加内层Const使L(j,j)*0=0，系数为top仍合法。"
+        },
+        {
+          "id": "CH03-P06-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_target"
+            }
+          ],
+          "notes": "fiber_target对任意零距目标z,w用zero_right保留到任一输出的距离，双向成员等价；代入合法子族距离即原J版本，无目标属于像的多余限制。"
+        },
+        {
+          "id": "CH03-P06-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_cover"
+            }
+          ],
+          "notes": "blocks目标集为真实像，任一块由其原像和自距0证非空；fiber_cover两向成员构造证所有块的集合并恰U，包括U空时空块族。"
+        },
+        {
+          "id": "CH03-P06-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_disjoint"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.subfamily_partition"
+            }
+          ],
+          "notes": "fiber_disjoint由交点推出目标零距，再用fiber_target得相等；subfamily_partition把非空子族的真实伪度量实例与非空/覆盖/相等或不交结论合并，去重确实是Set.image。"
+        },
+        {
+          "id": "CH03-P06-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_inter"
+            },
+            {
+              "file": "Components.lean",
+              "name": "C3.sub_zero"
+            }
+          ],
+          "notes": "fiber_inter先展开sub_zero；J.Nonempty给反向交集中至少一个分量的U成员证明，故没有把空指标交误当受限域。"
+        },
+        {
+          "id": "CH03-P06-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_anti"
+            }
+          ],
+          "notes": "fiber_anti把K中所有零距条件限制到J，保持同一U和任意目标，包含方向正确。"
+        },
+        {
+          "id": "CH03-P06-06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_edges"
+            }
+          ],
+          "notes": "fiber_edges以冻结singleton子族距离等式给单分量相等，univ逐分量零距给全族纤维包含；两项子结论俱有。"
+        },
+        {
+          "id": "CH03-P06-07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_ident"
+            }
+          ],
+          "notes": "fiber_ident把输出与输入零距代入zero_left，保留任意目标z而非只像目标，得到U内输入零距类。"
+        },
+        {
+          "id": "CH03-P06-08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Components.lean",
+              "name": "C3.fiber_const"
+            }
+          ],
+          "notes": "fiber_const先取像目标原像证整U纤维，再用任意共同纤维成员与Const推目标距离0，与正距条件矛盾；另一目标不受像内限制。"
+        },
+        {
+          "id": "CH03-P07-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.Factor"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.point_iff"
+            }
+          ],
+          "notes": "Factor中T的域是f(U)，赋值在每个x:U成立。point_iff必要方向通过同一像点上的函数值相等推出eqRel包含，未把零距等同相等。"
+        },
+        {
+          "id": "CH03-P07-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.factor_iff"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.img"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.img_onto"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.point_iff"
+            }
+          ],
+          "notes": "img_onto证明真实像满射，factor_iff充分方向以所选原像给T并以关系包含证规定赋值，point_iff完成原具体关系桥。空U无额外inhabited假设，选择函数在空实际像上仍合法。"
+        },
+        {
+          "id": "CH03-P07-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.point_both"
+            }
+          ],
+          "notes": "point_both对同一公共U的两个方向分别用point_iff，再用集合反对称，得到恰等价于点值关系相等。"
+        },
+        {
+          "id": "CH03-P07-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.factor_lip"
+            }
+          ],
+          "notes": "factor_lip只要求K正且有限、L有限非负、实际给定T满足赋值和两原单通道界；对任意两个实际像点选原像，以ENNReal.div_mul_cancel正确消去K，得到L/K放缩。没有点对距离有限的额外假设。"
+        },
+        {
+          "id": "CH03-P08-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.QFactor"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.cls_onto"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.cls_eq"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.quotient_iff"
+            }
+          ],
+          "notes": "imageSetoid用全族零距的真实等价证明构造实际像商；cls_onto和cls_eq给满射/商类判据，quotient_iff通过factor_iff构造代表无关规定商映射并证必要性。无需全局分离。"
+        },
+        {
+          "id": "CH03-P08-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.quotient_both"
+            }
+          ],
+          "notes": "quotient_both双向使用单向商映射判据和关系反对称，得到zeroRel相等；未偷换点值双射。"
+        },
+        {
+          "id": "CH03-P08-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.separated"
+            },
+            {
+              "file": "Factors.lean",
+              "name": "C3.separated_criteria"
+            }
+          ],
+          "notes": "separated仅假定各自真实像集上的相对分离性，证eqRel=zeroRel；separated_criteria分别用两个像的条件，给单向和双向点值/商值判据等价。没有要求全X分离。"
+        },
+        {
+          "id": "CH03-P09-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.finer_preorder"
+            }
+          ],
+          "notes": "finer_preorder固定同一U，直接以零距点对集包含的自反和传递性给预序，方向与原记号一致。"
+        },
+        {
+          "id": "CH03-P09-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.finer_chain"
+            }
+          ],
+          "notes": "finer_chain从Fin(n+1)上各相邻包含证明整列Monotone，故任意a<b的包含可实例化；所有层共享原U。"
+        },
+        {
+          "id": "CH03-P09-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Factors.lean",
+              "name": "C3.finer_strict"
+            }
+          ],
+          "notes": "finer_strict从指定一步真包含提取新增点对，经首到该步/该步到末的单调性证它属于末而不属首，并与首末包含一起构成严格包含。差集见证显式交付。"
+        },
+        {
+          "id": "CH03-P10-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.step_model"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.step"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.punct"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.liftDist"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.lift_metric"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.run"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.line_metric"
+            }
+          ],
+          "notes": "lift_metric逐项证明Option ℝ的吸收元隔离与原通常距离公理，run step保持none，step_model证明原punct=[-1,0)并(0,1]非空且在域内，未更换评估域。"
+        },
+        {
+          "id": "CH03-P10-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chapter.lean",
+              "name": "C3.step_interval"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.step_legal"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.step_radius"
+            }
+          ],
+          "notes": "step_legal对每个原punct中的y双向证明合法有限正r当且仅当r<=|y|；过界时在异号一侧实际选min点反驳，等号保持开球合法。step_interval和step_radius恢复(0,|y|]与点半径恰|y|>0。"
+        },
+        {
+          "id": "CH03-P10-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.step_uniform"
+            }
+          ],
+          "notes": "step_uniform在同一固定punct内对每个实t>0取正a=min(1,t/2)，用该基点的半径上界使统一inf小于t，再用zero_tests证0；不是随t更换整体U。"
+        },
+        {
+          "id": "CH03-P11-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.sub_const"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.const_full"
+            }
+          ],
+          "notes": "sub_const证明各j属于J的Const给子族距离Const；const_full对每个y属于U证以f(y)为目标的纤维等U，原非空J和合法域可直接实例化。"
+        },
+        {
+          "id": "CH03-P11-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.const_top"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.subfamily_constant_radii"
+            }
+          ],
+          "notes": "const_top借le_rad/le_uniform对所有有限正半径给合法性，得到各点及统一半径top；subfamily_constant_radii显式恢复非空J/U及合法域，没有要求输入距离无界。"
+        },
+        {
+          "id": "CH03-P11-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Models.lean",
+              "name": "C3.InfiniteInput.d"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.InfiniteInput.model"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.InfiniteInput.both"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.id_on_option"
+            }
+          ],
+          "notes": "InfiniteInput对Option Bool的输入分量取异点距top，输出j遍历Bool覆盖同/异指标。both证恒等算子的N条目top但输出仍非Const，模型与实际恒等/域桥俱在。"
+        },
+        {
+          "id": "CH03-P12-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.ident_base"
+            }
+          ],
+          "notes": "ident_base把ident_dist用于U内x,y，直接得到像目标纤维等输入零距类，保留原伪度量而不加强为点相等类。"
+        },
+        {
+          "id": "CH03-P12-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.ident_rad"
+            }
+          ],
+          "notes": "ident_rad明确给r的PosFin及原球交U零距包含，利用ident_base和legal_ball构造合法半径见证，得r<=rad与r>0两部分。"
+        },
+        {
+          "id": "CH03-P13-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.rad_sub"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.attained_min"
+            }
+          ],
+          "notes": "rad_sub通过严格小于半径的等价判据证明子族半径等逐分量iInf；attained_min另以有限非空J给真实取得的最小值，合起来精确恢复原min公式，未假定有限半径或取到sup。"
+        },
+        {
+          "id": "CH03-P13-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform_sub"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.attained_min"
+            }
+          ],
+          "notes": "uniform_sub展开两层iInf并以iInf_comm交换基点与输出分量，列项确为N(j,i)；配合有限非空attained_min得原矩阵列最小值，不把min/inf交换当额外前提。"
+        },
+        {
+          "id": "CH03-P13-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform_sub_anti"
+            }
+          ],
+          "notes": "uniform_sub_anti用J包含于K把J子类型嵌入K，比较同一输入列的iInf，得到扩大输出子族使统一半径不增。"
+        },
+        {
+          "id": "CH03-P14-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.fiber_cut"
+            }
+          ],
+          "notes": "fiber_cut从纤维成员给反向像距0，再以输出伪度量对称恢复题面方向，未删U成员条件。"
+        },
+        {
+          "id": "CH03-P14-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.below_rad"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.point_cut"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.rad_notation"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.cut_alternatives"
+            }
+          ],
+          "notes": "below_rad由lt_sSup_iff实际提取更大合法有限正rho，point_cut处理输入/输出对称方向；cut_alternatives给纤维或严格低于半径的完整析取。没有把严格<改成<=。"
+        },
+        {
+          "id": "CH03-P14-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.comp_cut"
+            }
+          ],
+          "notes": "comp_cut显式保留上游两输入在dom、下游U合法及两像在U，以纤维成员调用下游判据，最终值确为(G*F)实际复合。"
+        },
+        {
+          "id": "CH03-P15-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.comp_zero"
+            }
+          ],
+          "notes": "comp_zero把内层统一严格阈值送到f(U)中两个真实像点，再用原零距保持条件给复合零距，le_uniform证明完整半径下界。Textbook.matrix_composition恢复原U非空及复合域条件。"
+        },
+        {
+          "id": "CH03-P15-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.comp_lip"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.scaled_lt"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.matrix_composition"
+            }
+          ],
+          "notes": "scaled_lt严格使用0<L<top证明a<M/L与L*a<M等价；comp_lip对任意U内点对在下游实际f(U)上使用统一判据，推出N下界。M为0/top均未排除，Textbook矩阵行列/域桥正确。"
+        },
+        {
+          "id": "CH03-P16-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.bits_cases"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.four_types"
+            }
+          ],
+          "notes": "bits_cases逐一给四种布尔组合与严格/非严格不等式等价，four_types证明存在唯一组合；保留两个独立判断。"
+        },
+        {
+          "id": "CH03-P16-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.scale_threshold"
+            }
+          ],
+          "notes": "scale_threshold以a<t<=tprime推第一项真值集合包含，Textbook.threshold_sets推广到所有实际(i,j)通道，方向不减正确。"
+        },
+        {
+          "id": "CH03-P16-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.null_threshold"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.threshold_sets"
+            }
+          ],
+          "notes": "null_threshold用u<=uprime<=N推出较低阈值真值，threshold_sets给全通道集合的反向包含，第二项随阈值增加不增。"
+        },
+        {
+          "id": "CH03-P17-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.scale_restrict"
+            }
+          ],
+          "notes": "scale_restrict针对任意Scale及两个非空域用其定义单调性同时证数值比较和固定严格阈值推论；未限定为diamScale。"
+        },
+        {
+          "id": "CH03-P17-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.rad_restrict"
+            }
+          ],
+          "notes": "rad_restrict只缩小评估集合，固定同一基点y；所有旧域中保证零距的严格点对在新域仍成立，得点态半径不减。"
+        },
+        {
+          "id": "CH03-P17-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform_restrict"
+            }
+          ],
+          "notes": "uniform_restrict同时要求两比较点和基点属于B再经B包含A应用旧统一判据，正确处理同时缩小inf基点集和球评估域。"
+        },
+        {
+          "id": "CH03-P17-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.scale_counter"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.scale_counter_domains"
+            }
+          ],
+          "notes": "scale_counter在合法吸收元实线计算B={0}直径0、A={0,1}直径1，阈值1/2；scale_counter_domains证非空、包含与恒等域条件，确实否定反向判断。"
+        },
+        {
+          "id": "CH03-P18-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform_zero"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.le_uniform"
+            }
+          ],
+          "notes": "uniform_zero由le_uniform的全点对形式将严格距离低于原域统一半径推出输出零距，基点和比较点均在原U。"
+        },
+        {
+          "id": "CH03-P18-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.positive_sep"
+            }
+          ],
+          "notes": "positive_sep取uniform_zero逆否得到N<=输入距离，保留输出严格正；无穷距离无需排除。"
+        },
+        {
+          "id": "CH03-P18-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform_witness"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.separation_witness"
+            }
+          ],
+          "notes": "uniform_witness对每个大于统一半径的r反用le_uniform构造U内两点，选epsilon=min(1,输出距离)实际证明有限且正。separation_witness恢复原规定alpha区间，含输出top分支。"
+        },
+        {
+          "id": "CH03-P19-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.threshold_ball"
+            }
+          ],
+          "notes": "threshold_ball对任一原域中心，开球的严格距离配非严格tau<=N给输出零距纤维成员，结论严格为球交U。"
+        },
+        {
+          "id": "CH03-P19-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.push_net"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.push_cover"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.threshold_cover"
+            }
+          ],
+          "notes": "push_net把任意B的内部中心Finset送到其像并证明中心仍内部、覆盖与card不增；push_cover对所有有限中心取inf，因此空B及无有限覆盖top情形均覆盖。threshold_cover保留B包含A及原统一阈值。"
+        },
+        {
+          "id": "CH03-P19-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.log_mono"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.threshold_entropy"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.cover_constraints"
+            }
+          ],
+          "notes": "log_mono分0/top/正有限支证明冻结log2_ereal单调，threshold_entropy应用真实覆盖数不等式；Textbook.cover_constraints恢复B非空时的原熵结论。"
+        },
+        {
+          "id": "CH03-P20-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.step_two"
+            }
+          ],
+          "notes": "step_two针对每个任意PosFin tau构造a=min(1,tau.toReal/4)，证a正<=1、2a<tau和两异号点在原punct；内部输入一中心上/下界及输出半径1/2双中心上下界给精确1<2。"
+        },
+        {
+          "id": "CH03-P21-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.small_iff"
+            }
+          ],
+          "notes": "small_iff保留diam<t<=u，全部原域点对距离因而严格低于N；反向由Const给统一半径top。原零距结论未加强为输出点相等。"
+        },
+        {
+          "id": "CH03-P21-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.small_cover"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.one_cover"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.small_image"
+            }
+          ],
+          "notes": "one_cover从非空U选真实像中心，Const给任意正精度覆盖，上界1结合非空下界1得恰1；small_cover和small_image把它接入原直径/阈值条件。"
+        },
+        {
+          "id": "CH03-P22-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.finite_ends"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.finite_cover"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.finite_entropy"
+            }
+          ],
+          "notes": "finite_cover用集合自己的有限中心和自距0证有限覆盖；finite_ends对任意两端非空子族及非空有限U同时证两端正有限覆盖、实熵及Defined。两端规范可不同。"
+        },
+        {
+          "id": "CH03-P23-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.const_delta"
+            }
+          ],
+          "notes": "const_delta使用原常值/非空与正精度，证像覆盖1、熵0，并以输出端有限建立Defined后得差值等输入熵，容许输入熵top。"
+        },
+        {
+          "id": "CH03-P23-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.ident_cover"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.pull_net"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.push_net"
+            }
+          ],
+          "notes": "ident_cover以ident_dist得到像距与原距相等，两向分别用push_cover和pull_cover；后者为每个内部像中心实际选U内原像，未假定f点值单射。对数给熵相等。"
+        },
+        {
+          "id": "CH03-P23-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.ident_delta"
+            }
+          ],
+          "notes": "ident_delta明确要求Defined，结合两端覆盖相等推出二者有限，并用U非空得实熵后合法自减为0；未给top-top赋值。"
+        },
+        {
+          "id": "CH03-P24-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.lip_cover"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.push_net"
+            },
+            {
+              "file": "Radii.lean",
+              "name": "C3.scaled_lt"
+            }
+          ],
+          "notes": "lip_cover以PosFin L和原全点对标量上界，把严格输入距离<epsilon/L送到严格输出距离<epsilon；push_net保留内部中心及基数不增。"
+        },
+        {
+          "id": "CH03-P24-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.lip_delta"
+            }
+          ],
+          "notes": "lip_delta用原输入全有界在epsilon及epsilon/L取得有限覆盖，再由lip_cover得输出有限；非空给实熵，扩展实减法单调推出所需下界并构造Defined。"
+        },
+        {
+          "id": "CH03-P25-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.colip_cover"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.pull_net"
+            },
+            {
+              "file": "Entropy.lean",
+              "name": "C3.pull_cover"
+            }
+          ],
+          "notes": "colip_cover从合法co-Lip的有限非负行和取正有限指定条目，以内部像中心选择原像并用scaled_lt得epsilon/K内覆盖；pull_net基数不增，输出无有限覆盖时的top也包含。"
+        },
+        {
+          "id": "CH03-P25-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Entropy.lean",
+              "name": "C3.colip_delta"
+            }
+          ],
+          "notes": "colip_delta只凭输入全有界构造Defined，使用colip_cover对数下界及减法反单调给原上界。没有额外要求输出熵有限，输出top时差值为负无穷仍合法。"
+        },
+        {
+          "id": "CH03-P26-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.affine"
+            },
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.affine_values"
+            },
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.affine_first"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.line_metric"
+            }
+          ],
+          "notes": "line_metric abs实际证明绝对值读数伪度量及吸收元扩展，affine_values算-1/1，affine_first证原U={0,1}合法、目标纤维整U和Const分量。"
+        },
+        {
+          "id": "CH03-P26-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.affine_second"
+            },
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.affine_values"
+            }
+          ],
+          "notes": "affine_second保持相同pair01，证明二次域合法、值-3/1、以-3为目标纤维{0}；分别反驳Const与Ident给Active，不偷用点值可区分替代读数差。"
+        },
+        {
+          "id": "CH03-P26-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.constant_twice"
+            }
+          ],
+          "notes": "constant_twice对任意合法算子F在原U点值同c的条件给所有二次值同F(c)。F(c)=none时精确证明U与复合域不交；否则目标纤维整U或空，未在非法域上套分量分类。"
+        },
+        {
+          "id": "CH03-P27-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.point_gap"
+            }
+          ],
+          "notes": "point_gap将严格低于点态半径的输出零距代入正co-Lip条目反射判据，与输入正距矛盾；K无需有限，恰等于半径的边界未被排除。"
+        },
+        {
+          "id": "CH03-P27-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Radii.lean",
+              "name": "C3.uniform_gap"
+            },
+            {
+              "file": "Textbook.lean",
+              "name": "C3.distance_gap"
+            }
+          ],
+          "notes": "uniform_gap对任意U内点对分是否N<=输入距离，另一支用严格统一零距加正co-Lip反射得到输入0；distance_gap另证N正时两集合不交，包含N=top。"
+        },
+        {
+          "id": "CH03-P28-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.translate_blocks"
+            },
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.transF"
+            },
+            {
+              "file": "Models.lean",
+              "name": "C3.line_metric"
+            }
+          ],
+          "notes": "translate_blocks使用原绝对值读数模型，证明平移域合法；blocks集合等式分别列全恒等纤维{-3},{-2,2},{0}与平移纤维{-3},{-2,0},{2}，不是仅举几个块。"
+        },
+        {
+          "id": "CH03-P28-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.translate_cover"
+            },
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.center_one"
+            },
+            {
+              "file": "FiniteExamples.lean",
+              "name": "C3.center_two"
+            }
+          ],
+          "notes": "translate_cover在精确3/2下，输入中心-2/0给上界2且任一内部单中心失败给下界；实际像中心-2给恰1。以真实覆盖数计算log2差为1，不把纤维数当覆盖数。"
+        },
+        {
+          "id": "CH03-P29-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_model"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_half"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.floor_type_spec"
+            }
+          ],
+          "notes": "floor_model给通常距离吸收元结构与实际域；floor_half对闭区间[0,1/2]证明取整Const，求diam=1/2、N=top及布尔(1,1)，floor_type_spec连接原Type。"
+        },
+        {
+          "id": "CH03-P29-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_model"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_narrow"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_cross"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.floor_type_spec"
+            }
+          ],
+          "notes": "floor_cross在原区间跨1处取任意近的两点、输出距正以迫统一N为0；floor_narrow求[9/10,11/10]直径1/5及(1,0)，未删临界点。"
+        },
+        {
+          "id": "CH03-P29-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_model"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_pair"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.floor_type_spec"
+            }
+          ],
+          "notes": "floor_pair保持两点域{0,2}，用所有严格距离<2点对同点得N>=2，正输出点对给N<=2；因此diam=2、N=2与(0,1)，开球等号端点归属正确。"
+        },
+        {
+          "id": "CH03-P29-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_model"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_wide"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_cross"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.floor_type_spec"
+            }
+          ],
+          "notes": "floor_wide对整个闭区间[0,2]由真实端点求diam=2、由跨整数1的近点对求N=0，分类(0,0)；实际类型桥已给。"
+        },
+        {
+          "id": "CH03-P29-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_counter"
+            },
+            {
+              "file": "RealExamples.lean",
+              "name": "C3.floor_pair"
+            }
+          ],
+          "notes": "floor_counter直接从原(i)两点域N=2>=1且非Const反驳无直径条件的错误推断；floor_pair的下界证明显示正半径来自输入距间隙而非整体零化。"
+        },
+        {
+          "id": "CH03-P30-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.cover"
+            },
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.midpoint"
+            }
+          ],
+          "notes": "Rearrange.cover对每个PosFin epsilon分e<=1、1<e<=2、e>2给精确4/2/1，端点1和2均正确；midpoint同时证3/2不在U但半径7/4能作外部覆盖，故不能作为内部中心。"
+        },
+        {
+          "id": "CH03-P30-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.restrictOp"
+            },
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.values"
+            },
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.images"
+            },
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.image_delta"
+            }
+          ],
+          "notes": "restrictOp在原四点域外全取none；values和images证明两算子完整取值、dom均U且像均U。image_delta对任意有限正精度证覆盖数相等、两熵差均0，并构造合法Defined。"
+        },
+        {
+          "id": "CH03-P30-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.Lip"
+            },
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.optimal"
+            },
+            {
+              "file": "Chapter.lean",
+              "name": "C3.scalar_spec"
+            }
+          ],
+          "notes": "optimal在原四点域验证F的1-Lip和G的3-Lip，均以输入0/1的真实输出距离迫任意合法L分别>=1/3，IsLeast包含达到与必要下界；scalar_spec连接原单通道证书。"
+        },
+        {
+          "id": "CH03-P30-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Rearrangement.lean",
+              "name": "C3.Rearrange.bounds"
+            }
+          ],
+          "notes": "bounds实际用lip_cover及已证最优系数1/3给普适上界，在epsilon=7/4精确算F为2<=2、G为2<=4，两像真实覆盖均2；不是仅数值猜测上界。"
+        }
+      ],
+      "review_evidence": [
+        {
+          "path": "verification/lean/receipts/MG-C003-A1/source-binding.json",
+          "bytes": 8501,
+          "sha256": "71bb63f00f067ecea0325e694cfdde3d7b4eb301e2822cce78b6552aaa76af8c"
+        },
+        {
+          "path": "verification/lean/receipts/MG-C003-A1/delivered-original.md",
+          "bytes": 134649,
+          "sha256": "f8035e3c960d537b57b5305808d154cb5d34b5ba35eda7a728bc62db76b022b2"
+        },
+        {
+          "path": "verification/lean/receipts/MG-C003-A1/shared-verification/manifest.json",
+          "bytes": 5269,
+          "sha256": "704b4e77e528cb125570cdfd1cd09851865aa50073371bab855dbfb55832f733"
+        },
+        {
+          "path": "reviews/MG-C003.json",
+          "bytes": 73897,
+          "sha256": "1784fdbaab69f36db158c222074a051e354d6f838ebde0f112dea5017e2558d7"
+        }
+      ]
+    }
+  ]
+}

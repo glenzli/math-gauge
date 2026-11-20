@@ -1,0 +1,117 @@
+{
+  "case_id": "MG-TX002",
+  "response_sha256": "74d9ce82e4028310ac2728eb65e421200179a6288d39986abf27b52269b44062",
+  "reviewer": "GPT-6.1 Sol Max; primary independent AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "partial",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "B2：理想各列高度下降给出A的第i坐标占用当且仅当R(A)第i+1坐标占用；轨道均匀分布得到全部第一坐标频率p、全部第二坐标频率q相同，边界给p+q=1，再由ap=bq求出所需平均。此实际逐状态/逐坐标细化符合R1。未陈述并证明周期、不变量、固定点数或轮转共轭，R2/R3未达。",
+  "findings": [],
+  "group_contract_sha256": "82cf04537aee2d5f4d626edf4f5c1c8b89ffb9adae3d40a5694e31fadfac6053",
+  "criteria": [
+    {
+      "criterion_id": "local-refinement",
+      "score": 1,
+      "notes": "实际证明逐状态相邻列占用更新和首列/末行互补，进而得到各坐标相同频率；联立现成关系普通代数即读出p=b/(a+b)、q=a/(a+b)，是有用局部细化。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 18,
+          "utf8_start": 132,
+          "utf8_end": 1235,
+          "quote": "令 \\(h_i\\) 为 \\(I(A)\\) 中第一坐标为 \\(i\\) 的点的最大第二坐标，空列取 \\(h_i=0\\)。因为 \\(I(A)\\) 是下闭集，所以 \\(h_1\\ge\\cdots\\ge h_a\\)。对每个 \\(1\\le i<a\\)，有\n\\[\n\\begin{aligned}\nA\\text{ 中出现第一坐标 }i\n&\\iff h_i>h_{i+1}\\\\\n&\\iff R(A)\\text{ 中出现第一坐标 }i+1.\n\\end{aligned}\n\\]\n这是因为 \\(A\\) 恰由 \\(I(A)\\) 的极大元素组成。两列高度下降时，\\((i,h_i)\\) 是 \\(I(A)\\) 的极大元素，而 \\((i+1,h_{i+1}+1)\\) 是补集的极小元素。两列等高时，第 \\(i\\) 列没有这样的极大元素，第 \\(i+1\\) 列也没有这样的极小元素。\n\n由 \\(A\\) 与 \\(R(A)\\) 同分布，各个第一坐标在 \\(A\\) 中出现的概率都相同，记为 \\(p\\)。交换两个坐标可知，各个第二坐标出现的概率也都相同，记为 \\(q\\)。再看第一列，\\(R(A)\\) 中出现第一坐标 \\(1\\) 当且仅当 \\(h_1<b\\)，也就是 \\(A\\) 中没有出现第二坐标 \\(b\\)。因此 \\(p=1-q\\)。\n\n反链中任意两点的第一坐标互异，第二坐标也互异，所以按两种坐标分别计数得到\n\\[\n\\mathbb E|A|=ap=bq.\n\\]\n"
+        }
+      ]
+    },
+    {
+      "criterion_id": "substantive-extension",
+      "score": 0,
+      "notes": "未交付一般a,b非平凡周期定理、具有区分力的轨道不变量、部分固定点计数或新的对象族定理。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 13,
+          "line_end": 22,
+          "utf8_start": 749,
+          "utf8_end": 1323,
+          "quote": "由 \\(A\\) 与 \\(R(A)\\) 同分布，各个第一坐标在 \\(A\\) 中出现的概率都相同，记为 \\(p\\)。交换两个坐标可知，各个第二坐标出现的概率也都相同，记为 \\(q\\)。再看第一列，\\(R(A)\\) 中出现第一坐标 \\(1\\) 当且仅当 \\(h_1<b\\)，也就是 \\(A\\) 中没有出现第二坐标 \\(b\\)。因此 \\(p=1-q\\)。\n\n反链中任意两点的第一坐标互异，第二坐标也互异，所以按两种坐标分别计数得到\n\\[\n\\mathbb E|A|=ap=bq.\n\\]\n结合 \\(p+q=1\\)，便有\n\\[\n\\frac1{|O|}\\sum_{A\\in O}|A|=\\mathbb E|A|=\\frac{ab}{a+b}.\n\\]"
+        }
+      ]
+    },
+    {
+      "criterion_id": "complete-structure",
+      "score": 0,
+      "notes": "没有给出固定重量词的编码双射与单步共轭，也没有完整精确固定点/轨道类型计数；相邻坐标更新本身未被装配为已陈述的全动力学结构。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 1,
+          "line_end": 22,
+          "utf8_start": 0,
+          "utf8_end": 1323,
+          "quote": "从轨道 \\(O\\) 中均匀选取一个反链 \\(A\\)。由于 \\(R\\) 在 \\(O\\) 上是置换，\\(R(A)\\) 也在 \\(O\\) 中均匀分布。\n\n令 \\(h_i\\) 为 \\(I(A)\\) 中第一坐标为 \\(i\\) 的点的最大第二坐标，空列取 \\(h_i=0\\)。因为 \\(I(A)\\) 是下闭集，所以 \\(h_1\\ge\\cdots\\ge h_a\\)。对每个 \\(1\\le i<a\\)，有\n\\[\n\\begin{aligned}\nA\\text{ 中出现第一坐标 }i\n&\\iff h_i>h_{i+1}\\\\\n&\\iff R(A)\\text{ 中出现第一坐标 }i+1.\n\\end{aligned}\n\\]\n这是因为 \\(A\\) 恰由 \\(I(A)\\) 的极大元素组成。两列高度下降时，\\((i,h_i)\\) 是 \\(I(A)\\) 的极大元素，而 \\((i+1,h_{i+1}+1)\\) 是补集的极小元素。两列等高时，第 \\(i\\) 列没有这样的极大元素，第 \\(i+1\\) 列也没有这样的极小元素。\n\n由 \\(A\\) 与 \\(R(A)\\) 同分布，各个第一坐标在 \\(A\\) 中出现的概率都相同，记为 \\(p\\)。交换两个坐标可知，各个第二坐标出现的概率也都相同，记为 \\(q\\)。再看第一列，\\(R(A)\\) 中出现第一坐标 \\(1\\) 当且仅当 \\(h_1<b\\)，也就是 \\(A\\) 中没有出现第二坐标 \\(b\\)。因此 \\(p=1-q\\)。\n\n反链中任意两点的第一坐标互异，第二坐标也互异，所以按两种坐标分别计数得到\n\\[\n\\mathbb E|A|=ap=bq.\n\\]\n结合 \\(p+q=1\\)，便有\n\\[\n\\frac1{|O|}\\sum_{A\\in O}|A|=\\mathbb E|A|=\\frac{ab}{a+b}.\n\\]"
+        }
+      ]
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/nonlean/MG-TX002/delivery.v1.json",
+      "bytes": 3074,
+      "sha256": "7f185d0f35aabc54554246c42e0971c3aacb2d5d7329fd8c8bcd0b6bd8807732"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "original_final": {
+      "path": "sessions/MG-TX002/physical-1/output/response.md",
+      "bytes": 1323,
+      "sha256": "74d9ce82e4028310ac2728eb65e421200179a6288d39986abf27b52269b44062"
+    },
+    "full_candidate_prompt": {
+      "path": "sessions/MG-TX002/physical-1/input/task.md",
+      "bytes": 884,
+      "sha256": "2e499a6a924181afa9d13db24f78bdd25ca6e266a25c8f14c2cc93aa059153de"
+    },
+    "original_seal": {
+      "path": "sessions/MG-TX002/physical-1/runtime/seal.json",
+      "bytes": 848,
+      "sha256": "96446745837553605b94194e65f845b74e8cf3ed74613c35f79375edd6417231"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-TX002/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 829,
+      "sha256": "c76a1315f76456452aa5e7afe2b9f2b2d7ae06303e5ab54557da38fa04c21290"
+    },
+    "acquisition_plan_sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1",
+    "native_final_sha256": "74d9ce82e4028310ac2728eb65e421200179a6288d39986abf27b52269b44062",
+    "collection_sha256": "64f3e3723b58b3a1fce88c2ef64b7987167fd8a46f81bf9191ad76c3f5db1523",
+    "task_sha256": "2e499a6a924181afa9d13db24f78bdd25ca6e266a25c8f14c2cc93aa059153de",
+    "rubric_sha256": "71f24269061f30969a82c05bc03291e53dfb80a58c456771f58269c19327961c",
+    "reference_sha256": "116cf87ac1bd7f9d9f2399b42b1dbcabae47026d8a34559cc050b28acb1f81a7"
+  },
+  "assembly_original_review": {
+    "path": "grading/nonlean/MG-TX002/review.v1.json",
+    "bytes": 6938,
+    "sha256": "17b9deeb7b845b47c092c739b010f16fa68a3d48d483b416614dfab3fb8ff16b"
+  },
+  "assessment": {
+    "theorem_extension": {
+      "baseline_B": 2,
+      "research_R": 1,
+      "notes": "B2：理想各列高度下降给出A的第i坐标占用当且仅当R(A)第i+1坐标占用；轨道均匀分布得到全部第一坐标频率p、全部第二坐标频率q相同，边界给p+q=1，再由ap=bq求出所需平均。此实际逐状态/逐坐标细化符合R1。未陈述并证明周期、不变量、固定点数或轮转共轭，R2/R3未达。"
+    }
+  }
+}

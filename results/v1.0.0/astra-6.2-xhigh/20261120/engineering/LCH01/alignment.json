@@ -1,0 +1,91 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.IsLip"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.IsLipOn"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.lipFamily"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.lipFamilyOn"}
+      ],
+      "representation": "Gauge 的 dist 是有限非空指标族上的扩展伪度量，φ 使用冻结的 Operator。IsLipOn 要求 U ⊆ dom φ，且对所有 x,y ∈ U 和输出 j，像距至多为第 j 行作用于输入距离向量的和。U 可以为空。IsLip 取 U = dom φ，两种 family 分别收集满足相应谓词的全部矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.IsCoLipOn"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.coLipFamilyOn"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.coLip_term_le"}
+      ],
+      "representation": "K 属于 coLipFamilyOn G φ U 当且仅当 U 非空、U ⊆ dom φ，且对任意 x,y ∈ U 和 j，第 j 行的加权输入距离和至多为第 j 分量像距。coLip_term_le 从该定义推出每个输入项也受该像距控制。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.CoeffMatrix"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.entry"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.entry_mul"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.rowValue"}
+      ],
+      "representation": "CoeffMatrix I 是 ENNReal 方阵。entry M i j = M j i，i 表示输入列，j 表示输出行。对任意 B,A,i,j，先 A 后 B 的乘积条目为 ∑ k, entry B k j * entry A i k。rowValue M v j 是该行与 v 的有限加权和。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.Channel"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.OnlyInput"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.IsDiagonal"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.zero_channel_term"}
+      ],
+      "representation": "Channel I 是输入、输出的有序对 (i,j)。OnlyInput M (i,j) 要求所有 k ≠ i 的第 j 行条目为零，允许保留的条目也为零。IsDiagonal 要求每一行 j 均满足 OnlyInput M (j,j)。零系数对任意扩展非负输入值的贡献均为零。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.rowValue_onlyInput"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.lip_onlyInput"},
+        {"file": "ChannelBounds.lean", "name": "LCH01.lip_diagonal"}
+      ],
+      "representation": "第 j 行只保留输入 i 时，对任意向量 v，行和等于 entry L i j * v i。取 v k = G.dist k x y，对受限 Lip 族中任意 L 和任意 x,y ∈ U 得到单项上界。若 L 对角，则对每个 j 得到输入与输出同为 j 的上界。",
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.positive_channel"}
+      ],
+      "representation": "对任意合法受限 co-Lip 矩阵 K、通道指标 i,j 和 x,y ∈ U，若 entry K i j 与输入分量距离 G.dist i x y 均严格为正，则第 j 分量的像距严格为正。乘法在 ENNReal 中进行，包含无穷值。",
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.reflects_gauge_zero"}
+      ],
+      "representation": "若合法 K 的每个对角条目严格为正，则对任意 x,y ∈ U，像点之间的 GaugeZeroRelated 蕴含原点对的 GaugeZeroRelated。两处均使用冻结定义，即所有分量距离为零。",
+      "dependencies": ["CH02-D02", "CH02-D03", "CH02-P20"]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {"file": "ChannelBounds.lean", "name": "LCH01.diagonal_two_sided"}
+      ],
+      "representation": "任取同一 φ、U 上的合法 L 和 K，以及满足 OnlyInput L (j,j) 的指定行 j。对每对 x,y ∈ U，以合取表达标量双侧界：第 j 分量像距介于 entry K j j * G.dist j x y 与 entry L j j * G.dist j x y 之间。下界来自 coLip_term_le，上界来自 lip_onlyInput。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D07", "CH02-P19"]
+    }
+  ]
+}

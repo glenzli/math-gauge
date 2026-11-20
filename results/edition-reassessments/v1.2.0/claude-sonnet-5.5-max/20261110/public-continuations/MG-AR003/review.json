@@ -1,0 +1,184 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-sonnet-5.5-max",
+  "case_id": "MG-AR003",
+  "response_sha256": "e7d9319a5aa380ede51d27a069a0e575c1f432b806095509a23658e25ac3e99a",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 100,
+  "RMC": 100,
+  "SMC": true,
+  "positive_criteria": [
+    {
+      "id": "mapping_identification",
+      "earned": 30,
+      "reason": "明确纠正固定目标映射集应C(X,Y)，并保留全Y结论。",
+      "quote": "- **中等（1 处）**：S2 第 3 小节把“由原拓扑连续映射诱导的自然变换”等同为 C(X,kY)，一般不成立（问题 2）。结论和核心推导可以救回。",
+      "evidence_file": "answer.md",
+      "max": 30
+    },
+    {
+      "id": "exponential_law",
+      "earned": 15,
+      "reason": "识别S1的局部紧变量错位并认可原稿后续CGHaus独立路线。",
+      "quote": "- 答卷在 S3.2 引用的 CGHaus 指数律（取 Z=S）也能补上这一步。所以这是局部缺口，不是结构性错误。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "ultrafilter",
+      "earned": 5,
+      "reason": "识别恰有一个过强，至少一个足够。",
+      "quote": "- **S5**：「恰有一个集合不属于 𝒰」一般不成立。当 K∩ℕ∉𝒰 时，A₁、A₂ 都不属于 𝒰。后文只需“至少一个不属于 𝒰”。这成立，因为 A₁∩A₂=∅∉𝒰。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "retained_results",
+      "earned": 10,
+      "reason": "保留原全Y充要命题、有效非k反例、求值与复合结果。",
+      "quote": "- 答卷在 S3.2 引用的 CGHaus 指数律（取 Z=S）也能补上这一步。所以这是局部缺口，不是结构性错误。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "mapping_evidence",
+      "earned": 15,
+      "reason": "用非k空间上的恒等映射给合法反例，区分固定Y与全Y。",
+      "quote": "- 反例：取 S5 的超滤空间 Z。id_Z∈C(Z,Z)，但 id_Z∉C(Z,kZ)，因为 kZ 离散而 Z 不离散。id_Z 诱导恒等自然变换，它不在“C(X,kY)”里。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "exponential_scope",
+      "earned": 10,
+      "reason": "正确要求kX局部紧，不以参数S的局部紧代替；后续独立标准定理条件适合。",
+      "quote": "- 代入 (Z,X,Y)=(S,kX,kY)，需要 **kX** 局部紧。S3 中 X 任意，kX 一般不局部紧。例如 X=ℚ：由答卷自己的 S4.2，kℚ=ℚ，而 ℚ 不局部紧。S 局部紧不使 S1 适用。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "ultrafilter_scope",
+      "earned": 5,
+      "reason": "说明两个不交部分可都不在超滤子，保留开覆盖。",
+      "quote": "- **S5**：「恰有一个集合不属于 𝒰」一般不成立。当 K∩ℕ∉𝒰 时，A₁、A₂ 都不属于 𝒰。后文只需“至少一个不属于 𝒰”。这成立，因为 A₁∩A₂=∅∉𝒰。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "beta_size",
+      "earned": 5,
+      "reason": "补出betaD可表示为双重幂集子集，不误判宇宙越界。",
+      "quote": "- **S2.1**：未交代 βD∈U。βD 可实现为 D 上超滤的集合，⊂P(P(D))∈U。另外 π 满射来自 π(βD) 紧、因而闭且含 π(D)=K，不是来自“D 稠密”。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "mapping_space_size",
+      "earned": 5,
+      "reason": "指出M大小遗漏或补出底集界；将其作为可补缺口而非越界。",
+      "quote": "- M(X,Y) 的 U 小性没有交代。底集⊂Y^X∈U。",
+      "evidence_file": "answer.md",
+      "max": 5
+    }
+  ],
+  "claim_deductions": [],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。"
+  },
+  "strict_reason": "完整识别并证明三类问题，保留全部独立有效主结果，补足大小边界；新增数学没有已证实质错误。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "固定目标识别、局部紧输入错位、超滤子边界均正确，独立CGHaus主路线得到保留；大小遗漏仅补充覆盖。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 答卷在 S3.2 引用的 CGHaus 指数律（取 Z=S）也能补上这一步。所以这是局部缺口，不是结构性错误。"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 答卷在 S3.2 引用的 CGHaus 指数律（取 Z=S）也能补上这一步。所以这是局部缺口，不是结构性错误。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 4,
+      "reason": "准确区分固定Y中间假等同、最终全Y真命题、无效引用与独立标准定理，大小遗漏未夸为越界。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- **中等（1 处）**：S2 第 3 小节把“由原拓扑连续映射诱导的自然变换”等同为 C(X,kY)，一般不成立（问题 2）。结论和核心推导可以救回。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "通过探针、紧子集限制与指数伴随建立结构性的核验和修复；额外范围锐化有成立证明。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 代入 (Z,X,Y)=(S,kX,kY)，需要 **kX** 局部紧。S3 中 X 任意，kX 一般不局部紧。例如 X=ℚ：由答卷自己的 S4.2，kℚ=ℚ，而 ℚ 不局部紧。S 局部紧不使 S1 适用。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 4,
+      "reason": "交出的审阅证据、补充论证及影响范围完整闭合。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 答卷在 S3.2 引用的 CGHaus 指数律（取 Z=S）也能补上这一步。所以这是局部缺口，不是结构性错误。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.304230+00:00",
+    "source_review_sha256": "b9bd492b6e648879d152cab9a1ce5071bd7ba3a593e2130a656b1b2e1b1fd674",
+    "source_review_path": "grading/audit_background_written/claude-sonnet-5.5-max--MG-AR003.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}

@@ -8,14 +8,14 @@ const ids=['astra-6-max','sol-6.2-max','astra-6-xhigh','sol-6.1-max','sol-6.1-xh
  'claude-sonnet-5.5-max','gemini-4-carbon-medium','gemini-4-hydrogen-xhigh','gemini-4-carbon-high',
  'gemini-4-argon','gemini-3.8-flash-high','kimi-3.1-pro-max','deepseek-v4.1-flash-1017','glm-5.3-max'];
 const compare=(a,b)=>b.rmc-a.rmc||a.id.localeCompare(b.id);
-function dataFixture(version='0.1.0'){
+function dataFixture(version='0.4.0'){
  const models=ids.map((id,index)=>({id,label:'Model '+id,rmc:100-index,
   logo:{label:id.startsWith('claude-')?'Anthropic':id.startsWith('gemini-')?'Google':id.startsWith('kimi-')?'Kimi':id.startsWith('deepseek-')?'DeepSeek':id.startsWith('glm-')?'Z.ai':'OpenAI',data_url:'assets/'+id+'.svg'}}));
  const axes=ui.AXES.map(id=>({id,label:{zh:'中'+id,en:'English '+id},description:{zh:'说明 '+id,en:'Description '+id}}));
- const planned=version==='0.2.0'?35:12;
+
  const profile={schema:'math-gauge.mathematical-profile/v1',version,benchmark_version:'1.1.0',
   axes,models:models.map((model,index)=>({id:model.id,metrics:Object.fromEntries(axes.map((axis,i)=>[axis.id,
-   {exact:80-index-i,confirmed:80-index-i,lower:80-index-i,upper:80-index-i,reviewed_families:planned,planned_families:planned}]))})),reviewer_kind:'ai',human_review:'pending'};
+   {exact:80-index-i,confirmed:80-index-i,lower:80-index-i,upper:80-index-i,coverage:{unit:axis.id==='completion'?'benchmark_subcategory':'mathematical_family',planned:axis.id==='completion'?8:35,reviewed:axis.id==='completion'?8:35}}]))})),reviewer_kind:'ai',human_review:'pending'};
  return {benchmark_version:'1.1.0',models,mathematical_profile:profile};
 }
 function nodesBelow(node){return [node,...node.children.flatMap(nodesBelow)]}
@@ -31,12 +31,15 @@ function fixture(data=dataFixture(),query='?edition=1.1.0&lang=zh&score=capabili
   addEventListener(key,callback){if(!this.listeners.has(key))this.listeners.set(key,[]);this.listeners.get(key).push(callback)}
   fire(key){for(const callback of this.listeners.get(key)||[])callback({target:this})}
  }
- for(const name of ['', '-title','-description','-review','-controls','-count','-picker-title','-choices',
+ for(const name of ['', '-title','-description','-review','-continuation-control','-continuation','-continuation-label',
+  '-controls','-count','-picker','-picker-title','-choices',
   '-chart','-note','-legend','-focus-note','-empty','-values-title','-coverage-note','-values',
   '-meanings','-meanings-title','-meanings-scope','-meanings-list']){
   const element=new Element('div');element.id='mathematical-profile'+name;documentNodes.set(element.id,element);
  }
  const section=documentNodes.get('mathematical-profile');section.setAttribute('data-assessment-only','1.1.0');
+ documentNodes.get('mathematical-profile-choices').hidden=true;
+ documentNodes.get('mathematical-profile-picker').setAttribute('aria-expanded','false');
  const location=new URL('https://example.test/math-gauge/index.html'+query);
  const win={location,document:{getElementById:id=>documentNodes.get(id)||null,createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag)},
   MG:{d:data,state:{score:'capability'},compareScores:(a,b,mode)=>{comparisons.push(mode);return compare(a,b)}},
@@ -48,11 +51,11 @@ function fixture(data=dataFixture(),query='?edition=1.1.0&lang=zh&score=capabili
  return {win,controller,el,changes,comparisons,series:()=>nodesBelow(el('chart')).filter(node=>node.getAttribute('class')==='mp-series')};
 }
 
-test('default representatives choose the RMC winner per brand, limited to the top five brands',()=>{
+test('default representatives choose the SMC winner per brand, limited to the top five brands',()=>{
  const data=dataFixture(),expected=['astra-6-max','claude-opus-5.5-max','gemini-4-carbon-medium','kimi-3.1-pro-max','deepseek-v4.1-flash-1017'];
  assert.deepEqual(ui.representatives(data.models,compare),expected);
  assert.deepEqual(ui.representatives([...data.models].reverse(),compare),expected);
- const f=fixture(data);assert.deepEqual(f.controller.selected(),expected);assert.ok(f.comparisons.every(mode=>mode==='partial'));
+ const f=fixture(data);assert.deepEqual(f.controller.selected(),expected);assert.ok(f.comparisons.every(mode=>mode==='strict'));
  f.win.MG.state.score='strict';f.win.fire('mg:updated');assert.deepEqual(f.controller.selected(),expected,'independent axes do not follow the main score selector');
 });
 
@@ -72,9 +75,9 @@ test('same-brand dash/marker styles are unique for retained configurations and i
 
 test('unknown evidence is a gap or interval rather than an invented zero vertex',()=>{
  const data=dataFixture(),axes=data.mathematical_profile.axes,metrics=data.mathematical_profile.models[0].metrics;
- metrics.proof={exact:0,confirmed:0,lower:0,upper:0,reviewed_families:12,planned_families:12};
- metrics.completion={exact:null,confirmed:0,lower:0,upper:100,reviewed_families:0,planned_families:12};
- metrics.depth={exact:null,confirmed:35,lower:20,upper:80,reviewed_families:6,planned_families:12};
+ metrics.proof={exact:0,confirmed:0,lower:0,upper:0,coverage:{unit:'mathematical_family',reviewed:35,planned:35}};
+ metrics.completion={exact:null,confirmed:0,lower:0,upper:100,coverage:{unit:'benchmark_subcategory',reviewed:0,planned:8}};
+ metrics.depth={exact:null,confirmed:35,lower:20,upper:80,coverage:{unit:'mathematical_family',reviewed:6,planned:35}};
  const shape=ui.geometry(axes,metrics);assert.equal(shape.complete,false);assert.equal(shape.vertices[2],null);assert.equal(shape.vertices[5],null);
  assert.equal(shape.vertices[0].value,0,'an actual reviewed zero remains an actual zero');
  assert.deepEqual(shape.intervals.map(interval=>[interval.axis,interval.lower,interval.upper]),[['depth',20,80]]);
@@ -86,7 +89,7 @@ test('unknown evidence is a gap or interval rather than an invented zero vertex'
  assert.equal(line.getAttribute('fill'),'none');assert.ok(!line.getAttribute('d').endsWith('Z'));
  const table=f.el('values'),row=table.children[2].children[0];
  assert.equal(row.children[3].className,'mp-uncertain');assert.equal(row.children[3].children[0].textContent,'0.0–100.0');
- assert.equal(row.children[6].children[2].textContent,'6/12 家族');
+ assert.equal(row.children[6].children[2].textContent,'6/35 家族已结算');
 });
 
 test('explicit empty or unknown URL selection does not silently select default models',()=>{
@@ -97,7 +100,13 @@ test('explicit empty or unknown URL selection does not silently select default m
 });
 
 test('presets and all-model multiselect preserve URL context and retain checkbox focus targets',()=>{
- const f=fixture();const originalCheckboxes=nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox');
+ const f=fixture(),picker=f.el('picker');
+ assert.equal(f.el('continuation-control').hidden,true);
+ assert.equal(f.el('choices').hidden,true);
+ picker.fire('click');
+ assert.equal(f.el('choices').hidden,false);
+ assert.equal(picker.getAttribute('aria-expanded'),'true');
+ const originalCheckboxes=nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox');
  assert.equal(originalCheckboxes.length,18);
  const presets=f.el('controls').children;
  presets.find(button=>button.dataset.profilePreset==='leader').fire('click');assert.deepEqual(f.controller.selected(),['astra-6-max']);
@@ -108,6 +117,9 @@ test('presets and all-model multiselect preserve URL context and retain checkbox
  const url=new URL(f.win.location.href);assert.equal(url.searchParams.get('edition'),'1.1.0');assert.equal(url.searchParams.get('score'),'capability');
  assert.equal(url.searchParams.get('sort-research'),'strict');assert.equal(url.searchParams.get('lang'),'zh');assert.equal(url.hash,'#mathematical-profile');
  presets.find(button=>button.dataset.profilePreset==='brands').fire('click');assert.equal(f.controller.selected().length,5);
+ picker.fire('click');
+ assert.equal(f.el('choices').hidden,true);
+ assert.equal(picker.getAttribute('aria-expanded'),'false');
 });
 
 test('keyboard focus and pinning emphasize one model and fade the other curves',()=>{
@@ -123,7 +135,7 @@ test('language and history events update labels, coverage and selections while p
  f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
  assert.equal(f.el('title').textContent,'Mathematical profile');
  assert.deepEqual(f.el('legend').children.map(button=>button.children.at(-1).children[0].textContent),names);
- const row=f.el('values').children[2].children[0];assert.equal(row.children[1].children[1].textContent,'12/12 families');
+ const row=f.el('values').children[2].children[0];assert.equal(row.children[1].children[1].textContent,'35/35 families settled');
  f.win.location.searchParams.set('profile-models','glm-5.3-max');f.win.fire('popstate');assert.deepEqual(f.controller.selected(),['glm-5.3-max']);
 });
 
@@ -151,11 +163,11 @@ test('Sol xHigh has a ninth explicit same-brand identity while all retained styl
  assert.equal(nodesBelow(series).filter(node=>node.tagName==='polygon'&&node.getAttribute('class')==='mp-marker').length,7);
 });
 
-test('v0.2 settles known zero deliveries and shows true missing evidence without a zero-of-seven legend',()=>{
- const data=dataFixture('0.2.0'),profiles=data.mathematical_profile.models;
- profiles[0].metrics.proof={exact:0,confirmed:0,lower:0,upper:0,reviewed_families:35,planned_families:35};
+test('current profile settles known zero deliveries and shows true missing evidence without a zero-of-seven legend',()=>{
+ const data=dataFixture(),profiles=data.mathematical_profile.models;
+ profiles[0].metrics.proof={exact:0,confirmed:0,lower:0,upper:0,coverage:{unit:'mathematical_family',reviewed:35,planned:35}};
  const glm=profiles.find(model=>model.id==='glm-5.3-max');
- for(const metric of Object.values(glm.metrics))Object.assign(metric,{exact:null,confirmed:50,lower:50,upper:50+100/70,reviewed_families:34});
+ for(const [axis,metric]of Object.entries(glm.metrics)){Object.assign(metric,{exact:null,confirmed:50,lower:50,upper:50+100/70});metric.coverage.reviewed=axis==='completion'?7:34}
  const f=fixture(data,'?edition=1.1.0&profile-models=astra-6-max,glm-5.3-max');
  const labels=f.el('legend').children.map(button=>button.children.at(-1).children[1].textContent);
  assert.deepEqual(labels,['35/35 家族已结算','34/35 家族已结算']);
@@ -164,15 +176,15 @@ test('v0.2 settles known zero deliveries and shows true missing evidence without
  assert.equal(rows[0].children[1].children[1].textContent,'35/35 家族已结算');
  assert.equal(rows[1].children[1].className,'mp-uncertain');
  assert.equal(rows[1].children[1].children[2].textContent,'34/35 家族已结算');
- assert.ok(f.el('description').textContent.includes('同一35个数学家族'));
- assert.ok(f.el('note').textContent.includes('截止前内容可得部分分'));
- assert.ok(f.el('note').textContent.includes('真正未运行或缺证据'));
+ assert.ok(f.el('description').textContent.includes('主榜SMC'));
+ assert.ok(f.el('note').textContent.includes('截止前内容按实际论证评估'));
+ assert.ok(f.el('note').textContent.includes('真正未知'));
  f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
  assert.equal(f.el('legend').children[1].children.at(-1).children[1].textContent,'34/35 families settled');
 });
 
-test('v0.2 meanings use supplied bilingual axes and preserve the native disclosure on language changes',()=>{
- const data=dataFixture('0.2.0'),axes=data.mathematical_profile.axes;
+test('current meanings use supplied bilingual axes and preserve the native disclosure on language changes',()=>{
+ const data=dataFixture(),axes=data.mathematical_profile.axes;
  axes.find(axis=>axis.id==='depth').label={zh:'数学深度',en:'Mathematical depth'};
  axes.find(axis=>axis.id==='closure').label={zh:'成果闭合度',en:'Result closure'};
  const f=fixture(data),list=f.el('meanings-list');
@@ -181,7 +193,7 @@ test('v0.2 meanings use supplied bilingual axes and preserve the native disclosu
  assert.deepEqual(list.children.map(item=>item.children[1].textContent),axes.map(axis=>axis.description.zh));
  assert.ok(f.el('meanings-scope').textContent.includes('39道初答与3轮自查'));
  assert.ok(f.el('meanings-scope').textContent.includes('不限六道命题拓展题'));
- assert.equal(list.children[2].children[1].children[0].textContent,'衡量原任务要求的完整目标。');
+ assert.equal(list.children[2].children[1].children[0].textContent,'沿用主榜SMC的全部严格完成门槛，不另算家族平均完成率。');
  f.el('meanings').open=true;f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
  assert.equal(f.el('meanings').open,true);
  assert.deepEqual(list.children.map(item=>item.children[0].textContent),axes.map(axis=>axis.label.en));
@@ -189,28 +201,32 @@ test('v0.2 meanings use supplied bilingual axes and preserve the native disclosu
  assert.ok(f.el('meanings-scope').textContent.includes('39 initial answers and 3 rounds'));
 });
 
-test('v0.2 legend reports a settled-family range when supplied axis coverage differs',()=>{
- const data=dataFixture('0.2.0'),metrics=data.mathematical_profile.models[0].metrics;
- metrics.proof.reviewed_families=33;metrics.completion.reviewed_families=34;
+test('six-axis legend reports a settled-family range when supplied axis coverage differs',()=>{
+ const data=dataFixture(),metrics=data.mathematical_profile.models[0].metrics;
+ metrics.proof.coverage.reviewed=33;metrics.completion.coverage.reviewed=7;
  const f=fixture(data,'?edition=1.1.0&profile-models=astra-6-max');
  assert.equal(f.el('legend').children[0].children.at(-1).children[1].textContent,'33–35/35 家族已结算');
  const rows=f.el('values').children[2].children;
  assert.equal(rows[0].children[1].children[1].textContent,'33/35 家族已结算');
- assert.equal(rows[0].children[3].children[1].textContent,'34/35 家族已结算');
+ assert.equal(rows[0].children[3].children[1].textContent,'主榜SMC · 7/8');
 });
 
-test('legacy profile copy and exact-axis legend stay compatible while unknown versions are rejected',()=>{
- const f=fixture();assert.equal(f.el('description').textContent,'七个独立维度 · 每轴0–100');
- assert.equal(f.el('legend').children[0].children.at(-1).children[1].textContent,'7/7 轴完整计分');
- assert.equal(f.el('meanings').hidden,true);
- const unsupported=dataFixture('0.3.0');assert.equal(ui.prepare(unsupported,compare),null);
- const wrongPlan=dataFixture('0.2.0');
- for(const model of wrongPlan.mathematical_profile.models)for(const metric of Object.values(model.metrics))metric.planned_families=36;
- assert.equal(ui.prepare(wrongPlan,compare),null);
+test('only the current profile is accepted and SMC coverage stays separate from family coverage',()=>{
+ const f=fixture();assert.ok(f.el('description').textContent.includes('主榜SMC'));
+ assert.equal(f.el('legend').children[0].children.at(-1).children[1].textContent,'35/35 家族已结算');
+ for(const version of ['0.1.0','0.2.0','0.3.0'])assert.equal(ui.prepare(dataFixture(version),compare),null);
+ const wrong=dataFixture();wrong.mathematical_profile.models.forEach(model=>{model.metrics.completion.coverage={unit:'mathematical_family',planned:35,reviewed:35}});
+ assert.equal(ui.prepare(wrong,compare),null);
+ const data=dataFixture(),model=data.mathematical_profile.models[0];model.metrics.completion.exact=32.833333333333336;
+ model.metrics.completion.confirmed=model.metrics.completion.lower=model.metrics.completion.upper=model.metrics.completion.exact;
+ const selected=fixture(data,'?profile-models=astra-6-max'),row=selected.el('values').children[2].children[0];
+ assert.equal(row.children[3].children[0].textContent,'32.8');assert.equal(row.children[3].children[1].textContent,'主榜SMC · 8/8');
+ selected.win.MG.state.score='capability';selected.win.fire('mg:updated');
+ assert.equal(selected.el('values').children[2].children[0].children[3].children[0].textContent,'32.8');
 });
 
 test('all21 model choices preserve retained styles and give Opus xHigh its own Claude variant',()=>{
- const data=dataFixture('0.2.0');
+ const data=dataFixture();
  for(const [id,label]of [['sol-6.2-xhigh','Sol 6.2 (xHigh)'],['astra-6.2-max','Astra 6.2 (Max)'],['claude-opus-5.5-xhigh','Opus 5.5 (xHigh)']]){
   const model={...data.models[0],id,label,logo:{label:id.startsWith('claude-')?'Anthropic':'OpenAI',data_url:'assets/'+id+'.svg'}};
   data.models.push(model);data.mathematical_profile.models.push({...data.mathematical_profile.models[0],id});
@@ -225,4 +241,137 @@ test('all21 model choices preserve retained styles and give Opus xHigh its own C
  assert.equal(fresh.getAttribute('data-profile-marker'),'triangle');assert.equal(fresh.getAttribute('data-profile-dash'),'2 3');
  const choices=nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox');assert.equal(choices.length,21);
  assert.ok(choices.some(node=>node.value==='claude-opus-5.5-xhigh'));
+});
+
+function revisionFixture(){
+ const data=dataFixture();data.benchmark_version='1.2.0';
+ data.profile_models=data.models.map(model=>({...model}));
+ data.profile_models.find(model=>model.id==='glm-5.3-max').presentation_eligibility={ranked:false};
+ data.models=data.models.slice(0,7).map(model=>({...model,
+  neutral_revision_completion:{selected:6,full_rate:{exact:.5}},neutral_revision_delta:{strict:2.5}}));
+ const profile=structuredClone(data.mathematical_profile);
+ profile.schema='math-gauge.mathematical-profile-revision/v1';profile.version='0.1.0';profile.benchmark_version='1.2.0';
+ profile.models=profile.models.slice(0,7);
+ for(const model of profile.models){const metric=model.metrics.proof;metric.exact=metric.confirmed=metric.lower=metric.upper=40;}
+ data.mathematical_profile_revision=profile;
+ return data;
+}
+
+test('edition1.2 switches between all reviewed first answers and only adopted continuation profiles',()=>{
+ const data=revisionFixture(),f=fixture(data,'?edition=1.2.0&lang=zh&score=partial#mathematical-profile');
+ const control=f.el('continuation');
+ assert.equal(f.controller.stage(),'revision');
+ assert.equal(control.checked,true);
+ assert.equal(f.el('continuation-control').hidden,false);
+ assert.equal(nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox').length,7);
+ assert.equal(f.el('').hidden,false);assert.equal(f.el('').getAttribute('data-assessment-only'),null);
+ assert.equal(f.el('values').children[2].children[0].children[1].children[0].textContent,'40.0');
+ assert.ok(f.el('legend').children[0].children.at(-1).children[2].textContent.includes('6 续答'));
+ control.checked=false;control.fire('change');
+ assert.equal(f.controller.stage(),'first');
+ assert.equal(control.checked,false);
+ assert.equal(nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox').length,17);
+ assert.ok(!nodesBelow(f.el('choices')).some(node=>node.value==='glm-5.3-max'));
+ assert.ok(f.controller.selected().includes('claude-opus-5.5-max'),'pending models retain their original reviewed profile');
+ assert.equal(new URL(f.win.location.href).searchParams.get('profile-stage'),'first');
+ assert.equal(new URL(f.win.location.href).searchParams.get('score'),'partial');
+ assert.ok(f.comparisons.every(mode=>mode==='strict'));
+ f.win.location.searchParams.set('profile-stage','revision');f.win.fire('popstate');
+ assert.equal(f.controller.stage(),'revision');
+ assert.equal(control.checked,true);
+});
+
+test('a pending first-answer selection never inherits an unreviewed continuation value',()=>{
+ const data=revisionFixture(),f=fixture(data,'?edition=1.2.0&profile-stage=first&profile-models=claude-opus-5.5-max');
+ const control=f.el('continuation');
+ assert.deepEqual(f.controller.selected(),['claude-opus-5.5-max']);
+ control.checked=true;control.fire('change');
+ assert.equal(f.controller.stage(),'revision');assert.deepEqual(f.controller.selected(),[]);assert.equal(f.series().length,0);
+ control.checked=false;control.fire('change');
+ assert.deepEqual(f.controller.selected(),['claude-opus-5.5-max']);
+ f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
+ assert.equal(control.checked,false);
+});
+
+test('current first-answer stage uses the explicit corrected baseline while archived0.4 values stay intact',()=>{
+ const data=revisionFixture(),original=data.mathematical_profile.models[0].metrics.proof.exact;
+ const baseline=structuredClone(data.mathematical_profile);
+ Object.assign(baseline,{schema:'math-gauge.mathematical-profile-baseline/v1',version:'0.1.0',benchmark_version:'1.2.0'});
+ const metric=baseline.models[0].metrics.proof;metric.exact=metric.confirmed=metric.lower=metric.upper=original-1;
+ data.mathematical_profile_baseline=baseline;
+ const f=fixture(data,'?edition=1.2.0&profile-stage=first&profile-models=astra-6-max');
+ assert.equal(f.el('values').children[2].children[0].children[1].children[0].textContent,(original-1).toFixed(1));
+ assert.equal(data.mathematical_profile.models[0].metrics.proof.exact,original);
+ data.benchmark_version='1.1.0';const historical=fixture(data,'?edition=1.1.0&profile-models=astra-6-max');
+ assert.equal(historical.el('values').children[2].children[0].children[1].children[0].textContent,original.toFixed(1));
+});
+
+
+function researchFixture(){
+ const data=dataFixture();data.benchmark_version='1.2.0';
+ const metric=value=>({exact:value,confirmed:value,lower:value,upper:value,unknown_weight:0,
+  coverage:{unit:'open_research_family',planned:5,reviewed:5}});
+ data.open_research={schema:'math-gauge.open-research/v1',version:'0.1.0',benchmark_version:'1.2.0',
+  axis:{id:'open_research',label:{zh:'开放研究能力',en:'Open research capability'},
+   description:{zh:'五个共同开放任务上的实际研究成果',en:'Delivered work on five common open tasks'}},
+  pending_metric:{exact:null,confirmed:0,lower:0,upper:100,unknown_weight:100,coverage:{unit:'open_research_family',planned:5,reviewed:0}},
+  models:data.models.map(model=>({id:model.id,first:metric(80),revision:metric(85)}))};
+ data.mathematical_profile_revision={...structuredClone(data.mathematical_profile),
+  schema:'math-gauge.mathematical-profile-revision/v1',version:'0.1.0',benchmark_version:'1.2.0'};
+ return data;
+}
+
+test('current research capability augments rather than rewrites the seven retained axes',()=>{
+ const data=researchFixture(),original=structuredClone(data.mathematical_profile);
+ const prepared=ui.prepare(data,compare,'first');
+ assert.equal(prepared.axes.length,8);
+ assert.deepEqual(prepared.axes.slice(-2).map(axis=>axis.id),['open_research','initiative']);
+ assert.equal(prepared.axes.at(-1).label.zh,'研究主动性');
+ assert.equal(prepared.models[0].profile_metrics.open_research.exact,80);
+ assert.equal(prepared.models[0].profile_metrics.open_research.coverage.planned,5);
+ for(const axis of ui.AXES)assert.deepEqual(prepared.models[0].profile_metrics[axis],original.models[0].metrics[axis]);
+ assert.deepEqual(data.mathematical_profile,original);
+});
+
+test('a pending research continuation stays an unknown interval instead of inheriting first-answer capability',()=>{
+ const data=researchFixture();data.open_research.models[0].revision=null;
+ const prepared=ui.prepare(data,compare,'revision'),model=prepared.models.find(row=>row.id===ids[0]);
+ assert.equal(model.profile_metrics.open_research.exact,null);
+ assert.deepEqual([model.profile_metrics.open_research.lower,model.profile_metrics.open_research.upper],[0,100]);
+ const shape=ui.geometry(prepared.axes,model.profile_metrics);
+ assert.equal(shape.vertices.length,8);assert.equal(shape.complete,false);
+ assert.equal(shape.vertices[6],null);assert.ok(shape.vertices[7]);
+});
+
+test('eight-axis stage and language switching preserve initiative and independent coverage units',()=>{
+ const data=researchFixture(),f=fixture(data,'?edition=1.2.0&profile-models=astra-6-max&profile-stage=first&score=partial');
+ let points=nodesBelow(f.el('chart')).filter(node=>node.getAttribute('data-profile-point'));
+ assert.equal(points.length,8);
+ assert.equal(points.find(node=>node.getAttribute('data-profile-point')==='open_research').getAttribute('data-value'),'80');
+ const initiative=points.find(node=>node.getAttribute('data-profile-point')==='initiative').getAttribute('data-value');
+ f.el('continuation').checked=true;f.el('continuation').fire('change');
+ points=nodesBelow(f.el('chart')).filter(node=>node.getAttribute('data-profile-point'));
+ assert.equal(points.find(node=>node.getAttribute('data-profile-point')==='open_research').getAttribute('data-value'),'85');
+ assert.equal(points.find(node=>node.getAttribute('data-profile-point')==='initiative').getAttribute('data-value'),initiative);
+ assert.equal(f.el('values').children[2].children[0].children.length,9);
+ assert.match(f.el('values').children[2].children[0].children[7].children[1].textContent,/5\/5/);
+ assert.equal(new URL(f.win.location.href).searchParams.get('score'),'partial');
+ f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
+ assert.match(f.el('meanings-title').textContent,/eight/);
+});
+
+test('old editions keep seven axes and an invalid new research denominator is rejected',()=>{
+ const data=researchFixture();data.benchmark_version='1.1.0';
+ assert.equal(ui.prepare(data,compare).axes.length,7);
+ data.benchmark_version='1.2.0';data.open_research.models[0].first.coverage.planned=35;
+ assert.equal(ui.prepare(data,compare),null);
+});
+
+test('the newly admitted Astra configuration has its own stable same-brand style',()=>{
+ const models=['astra-6-max','astra-6-xhigh','sol-6.2-max','sol-6.1-max','sol-6.1-xhigh',
+  'terra-6.1-max','terra-6.1-xhigh','dot-underlying-model-20261108','sol-6.2-xhigh','astra-6.2-max','astra-6.2-xhigh'];
+ const styles=models.map(id=>ui.styleFor({id}));
+ assert.equal(new Set(styles.map(style=>style.dash+'|'+style.marker)).size,11);
+ assert.equal(styles.at(-1).index,10);
+ assert.deepEqual(styles.slice(0,10).map(style=>style.index),[0,1,2,3,4,5,6,7,8,9]);
 });

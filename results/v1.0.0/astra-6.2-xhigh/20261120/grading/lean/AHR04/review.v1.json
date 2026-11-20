@@ -1,0 +1,103 @@
+{
+  "case_id": "AHR04",
+  "response_sha256": "ef1538defcbc6017998ad189d04521ca65024b1bb23309334a050b36d7fc4b4c",
+  "reviewer": "GPT-6.1 Sol Max; primary independent Lean semantic reviewer",
+  "reviewer_kind": "ai",
+  "decision": "partial",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "判断和已给出的两包含关系证明对应正确，没有实质数学错判或虚构修复。但本次审计对条件化路径Lip/公共目标Lip前提及共同锚点定义的范围说明不完整：四维35/15/25/15，整体partial。调用允许使用的局部引理本身合法，不要求重推其三角不等式/确界证明；扣分仅落在冻结维度明确要求而原答未交代的两项对应。",
+  "findings": [
+    "关键证书前提范围的解释缺失：条件化路径Lq与公共V*目标L*未交代。",
+    "共同锚点同一xs先求和再inf的定义对应未交代。"
+  ],
+  "group_contract_sha256": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0",
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "所审两包含式的aligned判断正确，正文/源码量词、x属于U与真实代理误差结论均核对，推理不只依赖编译。没有把正确版本判为仍缺全路径证书。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 1,
+          "line_end": 7,
+          "utf8_start": 0,
+          "utf8_end": 2727,
+          "quote": "**所给 Lean 实现准确、完整地证明了推论 `h-93b9c20ea18b4e59` 的两个包含式。** 两式右端都保留了 \\(x\\in U\\)，并约束代理与目标在 \\(x\\) 处的真实偏差。目标文件及其附件依赖已用 Lean 4.29.1 编译通过。[正文推论](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/source.md:242)\n\n1. **分量形式。** `path_component_guarantee_union_subset_proxy_error` 将受限并集的成员条件写成“存在一条可达路径 \\(q\\)，使 \\(S_{q,j}=S_j\\cap U_q\\) 非空，且 \\(x\\in U_{q,j}(\\tau_j)\\)”。保证域使用的矩阵是 \\(L_q+L^*\\)，残差是同一路径的 \\(\\hat\\varepsilon_{q,j}\\)。证明取出见证 \\(q\\)，由保证域成员条件得到 \\(x\\in U_q\\subseteq U\\)，再由 `proxy_path_component_guarantee_error_bound` 得到 \\(d_j(\\phi(x),\\phi^\\natural(x))\\leq\\tau_j\\)。这就给出了右端要求的两个条件。[分量定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520)\n\n2. **联合形式。** `path_joint_guarantee_union_subset_proxy_error` 先取**同一条**满足 \\(J\\subseteq I_{\\rm res}(q)\\) 的路径 \\(q\\)，再对每个 \\(j\\in J\\) 应用 `path_joint_guarantee_error_bound`。该局部界约束路径链 \\(c_q(x)\\)。源码用网络表示假设和 \\(x\\in U_q\\) 得到 \\(c_q(x)=\\phi(x)\\)，从而把每个分量的界转成正文要求的代理误差界。Lean 的联合保证域把 \\(x\\in U_q\\) 写一次，再要求所有 \\(j\\in J\\) 的证书不等式成立。这与正文的交集写法等价，因为 \\(J\\ne\\varnothing\\)，从交集中任取一个分量的成员条件即可取回 \\(x\\in U_q\\)。[联合定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:553) · [联合保证域定义](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean:35)\n\n`path_guarantee_union_subset_proxy_error_text` 已将两式合并，并显式列出全局可评估性、有限阈值及 \\(J\\) 非空。证明中部分前提只以 `have _ := …` 出现，是因为两个底层定理在更宽的参数范围内就能推出相应包含式。上面对受限并集和非空交集的解释是审阅时的定义对照；两个误差包含式本身均已有源码证明，无需补充引理。[正文形式的封装](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:590)\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 15,
+      "notes": "正确说明路径可评估、同一q联合分量、代理表示桥、有限阈值和非空J wrapper。但没有核明关键证书前提：路径Lq仅在相应可评估路径需要，目标L*则在公共V*有效。扣5为前提范围说明不完整，不是实际错认全路径证书或另加前提。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 7,
+          "utf8_start": 369,
+          "utf8_end": 2727,
+          "quote": "1. **分量形式。** `path_component_guarantee_union_subset_proxy_error` 将受限并集的成员条件写成“存在一条可达路径 \\(q\\)，使 \\(S_{q,j}=S_j\\cap U_q\\) 非空，且 \\(x\\in U_{q,j}(\\tau_j)\\)”。保证域使用的矩阵是 \\(L_q+L^*\\)，残差是同一路径的 \\(\\hat\\varepsilon_{q,j}\\)。证明取出见证 \\(q\\)，由保证域成员条件得到 \\(x\\in U_q\\subseteq U\\)，再由 `proxy_path_component_guarantee_error_bound` 得到 \\(d_j(\\phi(x),\\phi^\\natural(x))\\leq\\tau_j\\)。这就给出了右端要求的两个条件。[分量定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520)\n\n2. **联合形式。** `path_joint_guarantee_union_subset_proxy_error` 先取**同一条**满足 \\(J\\subseteq I_{\\rm res}(q)\\) 的路径 \\(q\\)，再对每个 \\(j\\in J\\) 应用 `path_joint_guarantee_error_bound`。该局部界约束路径链 \\(c_q(x)\\)。源码用网络表示假设和 \\(x\\in U_q\\) 得到 \\(c_q(x)=\\phi(x)\\)，从而把每个分量的界转成正文要求的代理误差界。Lean 的联合保证域把 \\(x\\in U_q\\) 写一次，再要求所有 \\(j\\in J\\) 的证书不等式成立。这与正文的交集写法等价，因为 \\(J\\ne\\varnothing\\)，从交集中任取一个分量的成员条件即可取回 \\(x\\in U_q\\)。[联合定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:553) · [联合保证域定义](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean:35)\n\n`path_guarantee_union_subset_proxy_error_text` 已将两式合并，并显式列出全局可评估性、有限阈值及 \\(J\\) 非空。证明中部分前提只以 `have _ := …` 出现，是因为两个底层定理在更宽的参数范围内就能推出相应包含式。上面对受限并集和非空交集的解释是审阅时的定义对照；两个误差包含式本身均已有源码证明，无需补充引理。[正文形式的封装](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:590)\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 25,
+      "notes": "明确Sqj=Sj交Uq、Lq+L*、同路径残差、联合保证域与非空交集、实际路径链到代理桥，并合法调用题面允许使用的局部上界。无需重证三角不等式或确界推理；但没有给出共同锚点的关键定义对应，即同一xs上先加权求和、再对xs取inf，故扣5。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 5,
+          "utf8_start": 369,
+          "utf8_end": 2118,
+          "quote": "1. **分量形式。** `path_component_guarantee_union_subset_proxy_error` 将受限并集的成员条件写成“存在一条可达路径 \\(q\\)，使 \\(S_{q,j}=S_j\\cap U_q\\) 非空，且 \\(x\\in U_{q,j}(\\tau_j)\\)”。保证域使用的矩阵是 \\(L_q+L^*\\)，残差是同一路径的 \\(\\hat\\varepsilon_{q,j}\\)。证明取出见证 \\(q\\)，由保证域成员条件得到 \\(x\\in U_q\\subseteq U\\)，再由 `proxy_path_component_guarantee_error_bound` 得到 \\(d_j(\\phi(x),\\phi^\\natural(x))\\leq\\tau_j\\)。这就给出了右端要求的两个条件。[分量定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520)\n\n2. **联合形式。** `path_joint_guarantee_union_subset_proxy_error` 先取**同一条**满足 \\(J\\subseteq I_{\\rm res}(q)\\) 的路径 \\(q\\)，再对每个 \\(j\\in J\\) 应用 `path_joint_guarantee_error_bound`。该局部界约束路径链 \\(c_q(x)\\)。源码用网络表示假设和 \\(x\\in U_q\\) 得到 \\(c_q(x)=\\phi(x)\\)，从而把每个分量的界转成正文要求的代理误差界。Lean 的联合保证域把 \\(x\\in U_q\\) 写一次，再要求所有 \\(j\\in J\\) 的证书不等式成立。这与正文的交集写法等价，因为 \\(J\\ne\\varnothing\\)，从交集中任取一个分量的成员条件即可取回 \\(x\\in U_q\\)。[联合定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:553) · [联合保证域定义](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean:35)\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "准确说本范围无需补充引理，不虚构缺陷。结论只限保证域受限并集包含于真实误差域，未推广为全U已保证、等式或全章对齐；底层更一般结果与有限/非空正文范围的区分正确。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 1,
+          "line_end": 7,
+          "utf8_start": 0,
+          "utf8_end": 2727,
+          "quote": "**所给 Lean 实现准确、完整地证明了推论 `h-93b9c20ea18b4e59` 的两个包含式。** 两式右端都保留了 \\(x\\in U\\)，并约束代理与目标在 \\(x\\) 处的真实偏差。目标文件及其附件依赖已用 Lean 4.29.1 编译通过。[正文推论](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/source.md:242)\n\n1. **分量形式。** `path_component_guarantee_union_subset_proxy_error` 将受限并集的成员条件写成“存在一条可达路径 \\(q\\)，使 \\(S_{q,j}=S_j\\cap U_q\\) 非空，且 \\(x\\in U_{q,j}(\\tau_j)\\)”。保证域使用的矩阵是 \\(L_q+L^*\\)，残差是同一路径的 \\(\\hat\\varepsilon_{q,j}\\)。证明取出见证 \\(q\\)，由保证域成员条件得到 \\(x\\in U_q\\subseteq U\\)，再由 `proxy_path_component_guarantee_error_bound` 得到 \\(d_j(\\phi(x),\\phi^\\natural(x))\\leq\\tau_j\\)。这就给出了右端要求的两个条件。[分量定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520)\n\n2. **联合形式。** `path_joint_guarantee_union_subset_proxy_error` 先取**同一条**满足 \\(J\\subseteq I_{\\rm res}(q)\\) 的路径 \\(q\\)，再对每个 \\(j\\in J\\) 应用 `path_joint_guarantee_error_bound`。该局部界约束路径链 \\(c_q(x)\\)。源码用网络表示假设和 \\(x\\in U_q\\) 得到 \\(c_q(x)=\\phi(x)\\)，从而把每个分量的界转成正文要求的代理误差界。Lean 的联合保证域把 \\(x\\in U_q\\) 写一次，再要求所有 \\(j\\in J\\) 的证书不等式成立。这与正文的交集写法等价，因为 \\(J\\ne\\varnothing\\)，从交集中任取一个分量的成员条件即可取回 \\(x\\in U_q\\)。[联合定理及证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:553) · [联合保证域定义](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean:35)\n\n`path_guarantee_union_subset_proxy_error_text` 已将两式合并，并显式列出全局可评估性、有限阈值及 \\(J\\) 非空。证明中部分前提只以 `have _ := …` 出现，是因为两个底层定理在更宽的参数范围内就能推出相应包含式。上面对受限并集和非空交集的解释是审阅时的定义对照；两个误差包含式本身均已有源码证明，无需补充引理。[正文形式的封装](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:590)\n"
+        }
+      ]
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-lean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/lean/AHR04/delivery.v1.json",
+      "bytes": 20522,
+      "sha256": "68ce38c83cbf3caf8f90cacef39e0f66a4df95577c3f1092b2e565cf9500da55"
+    },
+    "original_final": {
+      "path": "sessions/AHR04/physical-1/output/response.md",
+      "bytes": 2915,
+      "sha256": "ef1538defcbc6017998ad189d04521ca65024b1bb23309334a050b36d7fc4b4c"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    }
+  }
+}

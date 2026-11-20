@@ -1,0 +1,218 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "kimi-3.1-pro-max",
+  "case_id": "MG-GR021",
+  "response_sha256": "d29658c3b7ef7f8fabe9a043c4cffa3ed28db9ddd70b88d805194f1a6f728eeb",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 66.66666666666667,
+  "RMC": 46.66666666666667,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "original_input_and_feasibility",
+      "earned": 10,
+      "reason": "对原非幂等对易对称输入构造典范投影；mod4 parity判准正确并适用于三域。",
+      "quote": "三个基域的判准相同。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "closed_total_counts",
+      "earned": 10,
+      "reason": "有限C与实际R总数、M2和不可行空集区分正确。",
+      "quote": "若此条件不成立，则所有 \\(\\mathscr R_{L,M}(A)\\) 均为空，且 \\(M\\ge3\\) 时所有 \\(\\mathscr C_{L,M}(A)\\) 也为空。精度 \\(2\\) 的 \\(\\mathscr C_{L,2}(A)\\) 则总是非空。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "actual_image_test",
+      "earned": 5,
+      "reason": "给正确一级可提升/Cayley对角判据，但good相对方程真实提升只称Newton表明，未交实际积分提升论证。",
+      "quote": "- 对带约束 (1) 的相对方程也有相同结论：一个满足 (3) 的 good 模 \\(4\\) 解可提升为真正解。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "exact_fixed_class_description",
+      "earned": 7.5,
+      "reason": "C固定表示及M>=3/K2的R固定描述正确，K(-1)M2却错误强制常系数为基域实际截断，漏norm coupling。",
+      "quote": "\\mathscr R_{F,M}(A)\\times\\mathfrak a.}",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "closed_fixed_and_orbit_counts",
+      "earned": 10,
+      "reason": "固定点数与Burnside轨道公式仍正确，包括M2的作用恒等。",
+      "quote": "=2^{r+Ms},",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "all_images_and_fibers",
+      "earned": 5,
+      "reason": "非固定C/R及固定R像、纤维正确；固定C像错误写C_F,M而非R_F,M。",
+      "quote": "\\right)=\\mathscr C_{F,M},}",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "fixed_lifts_and_towers",
+      "earned": 2.5,
+      "reason": "固定真解和相容塔须属于R_F,M的结论正确，但与前述固定C一级像矛盾，未给完整相容塔证明。",
+      "quote": "5. 它甚至只需再提升一级为固定类。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "best_universal_and_pointwise_precision",
+      "earned": 5,
+      "reason": "最大N及给定U的M精度条件正确；M2,K(-1)的M-1保证证明引用了假直积描述，虽可独立由共同模2与可行性补齐。",
+      "quote": "M-1,&\\text{至少有一个 }n_j\\ge2.",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "actual_sharpness_examples_and_exact_boundary",
+      "earned": 5,
+      "reason": "M>=3两域Cayley真例及allrank1精确下降正确；M2,K(-1)所给有限类不good，不能提升为真正解。",
+      "quote": "它满足 good 条件 (4)：两个对角方程均为 \\(\\theta^2+\\theta^2=2\\mu=0\\) in \\(O_K/2O_K\\)。正交 Hensel 引理给出它的真正正交提升；该提升模 \\(4\\) 固定，但不与任何有理矩阵模 \\(4\\) 同余。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "assertion_reliability",
+      "earned": 10,
+      "reason": "未另发现独立于必需目标错误的附带数学断言；该10可靠性分不进入现行正向数学分。",
+      "quote": "- 三个原问题均在原定量词范围内处理；没有遗留未完成或不确定的结论。",
+      "evidence_file": "answer.md",
+      "max": 10
+    }
+  ],
+  "claim_deductions": [
+    {
+      "root_cause": "missing_Q2i_M2_norm_coupling",
+      "level": "material",
+      "points": 10,
+      "quote": "\\mathscr R_{F,M}(A)\\times\\mathfrak a.}",
+      "reason": "M2,mu=-1的实际固定类常系数V只须有限解，并以gamma2(V)=deg(B)耦合；错误直积排除了真类又接受假类。M2最优性good检验错误属同根，不重复扣。",
+      "counterexample_or_refutation": "r1,n2,A=I,J=[[0,1],[1,0]]：V=I+2J，B=J，V+2iB列范数1+4(1+i)^2=1+8i，满足mod8提升条件；V非基域真实截断。而I+2iJ列范数=-3，不等于1 mod8，不能提升。",
+      "task_zero_cap": false
+    },
+    {
+      "root_cause": "fixed_C_one_step_image",
+      "level": "material",
+      "points": 10,
+      "quote": "\\right)=\\mathscr C_{F,M},}",
+      "reason": "源精度M+1固定类的theta尾约化消失，基域部分是C_F,M+1，约化只能落R_F,M，不能落全部C_F,M。",
+      "counterexample_or_refutation": "r1,n2,M2,A=I的I+2J属于C_F,2，但列范数5非1 mod8，不能来自固定C_K,3。",
+      "task_zero_cap": false
+    }
+  ],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持非幂等输入、两全分歧整数环、模2O、任意块秩/精度及真实截断与有限解的区分；错误是这些对象内部的结构计算。"
+  },
+  "strict_reason": "两项核心固定结构错误及M2实际反例失效；不能因总数公式正确接受整题。普通不同根因扣罚合计20上限，未自动触发critical任务0。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 2,
+      "reason": "投影、parity与大部分计数机制成立，但M2固定类结构与固定C约化像的必需结论被明确反例否定，最优性真例也缺一必要分支。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "它满足 good 条件 (4)：两个对角方程均为 \\(\\theta^2+\\theta^2=2\\mu=0\\) in \\(O_K/2O_K\\)。正交 Hensel 引理给出它的真正正交提升；该提升模 \\(4\\) 固定，但不与任何有理矩阵模 \\(4\\) 同余。"
+        }
+      ],
+      "core_status": "refuted_core"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持非幂等输入、两全分歧整数环、模2O、任意块秩/精度及真实截断与有限解的区分；错误是这些对象内部的结构计算。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "\\qquad |O_L/2O_L|=2^e."
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 1,
+      "reason": "知道须区分有限与真实/固定，但实际遗漏M2范数耦合并错误认证不可提升见证，仍宣称无未决。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 三个原问题均在原定量词范围内处理；没有遗留未完成或不确定的结论。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "典范投影和主2同余群的奇异提升/计数提供成立的结构进展，未跨过所有ramified固定边界。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "下面给出完整解答。核心点是：先用每个 \\(A_i\\) 的谱投影把问题化为“主 \\(2\\)-同余正交群”的问题，再处理该群在 \\(2\\)-进精度下的奇异性。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 2,
+      "reason": "可行性和总数等成果可独立使用；固定集、约化和M2 sharpness的主交付未闭合。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "\\right)=\\mathscr C_{F,M},}"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "positive_math_points": 60,
+  "positive_math_max": 90,
+  "removed_independent_reliability_points": 10,
+  "scoring_conversion": "MC=100*60/90; RMC=MC-20 ordinary root-deduplicated cap; raw assertion_reliability stays10 but is excluded from positive credit.",
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.330879+00:00",
+    "source_review_sha256": "c79fb912ea7a9598e3b50d88c2f71b2a29ebe6d8d6e7995c1bcc1fafac860e83",
+    "source_review_path": "grading/audit_background_written/kimi-3.1-pro-max--MG-GR021.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.6666666666666667,
+      "upper": 0.6666666666666667,
+      "exact": 0.6666666666666667
+    },
+    "generic_deduction": 0.2,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.2,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.4666666666666667,
+      "upper": 0.4666666666666667,
+      "exact": 0.4666666666666667
+    },
+    "actual_loss": 0.2,
+    "findings": 2,
+    "distinct_charged_roots": 2,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "claim-1",
+      "claim-2"
+    ]
+  }
+}

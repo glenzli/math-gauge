@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.current_results import selected_current_record_paths
 from math_gauge.evidence_retention import read_bytes
 from math_gauge.mathematical_profile import (
-    VERSION, VERSIONS, LEGACY_VERSION, EDITION, ProfileInputs, load_policy, source_bytes,
+    VERSION, VERSIONS, EDITION, ProfileInputs, load_policy, source_bytes,
     project_public, load_public_profiles, index_path,
 )
 from math_gauge.scoring import score_mathematical_profile

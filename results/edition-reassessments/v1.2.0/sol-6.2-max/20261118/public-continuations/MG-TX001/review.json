@@ -1,0 +1,105 @@
+{
+  "schema": "math-gauge.score-feedback-ai-review/v1",
+  "anonymous_id": "E",
+  "response_sha256": "c7f8fbbad3884a74ca0ff4f999802431b3eb9fe9c64593f9d1c447f2c039ddc5",
+  "reviewed_at": "2026-11-20T04:21:43.241699+00:00",
+  "reviewer": "Codex coordinator, independent AI adjudication of collected delivery",
+  "human_review": "pending",
+  "stage": "final_source_and_delivery_bound_AI_review",
+  "model_arm_mapping_read": true,
+  "baseline_B": 2,
+  "research_R": 3,
+  "strict_mathematics": true,
+  "claims": [],
+  "self_assessment": "B2/R3, accurate for the proved mathematics",
+  "mathematical_checks": [
+    {
+      "result": "original baseline",
+      "status": "valid",
+      "reason": "One nonzero coefficient has no circle zero; otherwise selecting two genuinely nonzero coefficients gives a nondegenerate line-circle constraint. Coprimality modulo the original prime power makes the power map injective. The third coefficient may be zero, so all original nonzero coefficient vectors are covered."
+    },
+    {
+      "result": "all-size prime-power balanced-support iff universal interpolation",
+      "status": "valid",
+      "reason": "The integer alternant quotient at all ones has p-valuation equal to the sum over residue layers of convex pair-count excesses above the consecutive support. Each layer excess is nonnegative, and vanishes precisely for balanced counts. Reduction modulo(1-zeta) proves nonvanishing of every minor when balanced. No restriction k<=p was silently retained."
+    },
+    {
+      "result": "explicit rank obstruction at every imbalanced layer",
+      "status": "valid",
+      "reason": "For q|N, complete sample cosets Fourier-separate residue classes; L consecutive u-values have Vandermonde rank min(L,n_h). On their kernel, F_h(L) is independently free exactly when n_h>L. Consecutive partial v-values add Vandermonde rank min(t,#surplus). With k=qL+t the rank is k iff counts are L/L+1. Sampling indices remain distinct under L<=N/q and t>0 implies L<N/q."
+    },
+    {
+      "result": "existence of balanced subsets of all smaller sizes",
+      "status": "valid",
+      "reason": "At levels dividing K any deletion is permitted. From the first level not dividing K onwards, an upper-count residue class has an upper-count child because its count exceeds p floor(K/(pq)). A nested upper-count chain reaches an actual point, whose deletion preserves every layer."
+    },
+    {
+      "result": "local diagonal form for arbitrary sample sets",
+      "status": "valid",
+      "reason": "For 0<d<N, zeta differences have exact pi-exponent p^v_p(d) times a unit, as proved by the product identity and geometric sums. Greedy Newton ordering makes each evaluation column divisible by pi^e_j with unit diagonal; costs strictly increase. Balanced-subset alternant quotients give a unit top t-minor of C. Column elimination for m<=k and row elimination using e_i>=e_j for m>k produce the stated rectangular diagonal form."
+    },
+    {
+      "result": "kernel cardinalities at every pi-adic precision",
+      "status": "valid",
+      "reason": "The localization is a domain with maximal ideal(pi) and residue F_p. Cancellation gives successive quotient size p, hence size p^h, and kernel size p^min(h,e_j); k-t unrestricted coordinates yield the claimed formula. The argument does not need an unproved external Smith classification."
+    }
+  ],
+  "R3_reason": "An independently usable necessary-and-sufficient classification for all support sizes in prime-power order, constructive singular sample sets with exact ranks, and a proved all-precision local sampling structure. The first classification already reaches the frozen complete structural threshold; the further results are also correct. No reference-route, length or theorem-count requirement imposed.",
+  "regression_in_final_baseline": false,
+  "original_answer_delta_assessed": true,
+  "citations": [
+    {
+      "start_byte": 1064,
+      "end_byte": 1358,
+      "quote": "**定理。** 每个系数向量非零的多项式 \\(\\sum_{a\\in A}c_a z^a\\) 在 \\(N\\) 次单位根中至多有 \\(k-1\\) 个零点，当且仅当 \\(A\\) 平衡。等价地，任取 \\(k\\) 个不同的 \\(N\\) 次单位根，在这些点上指定 \\(k\\) 个复数值，都能唯一确定系数向量。"
+    },
+    {
+      "start_byte": 5267,
+      "end_byte": 5821,
+      "quote": "式 (3) 等于 \\(k\\) 的条件是每个 \\(n_{q,h}\\ge L\\)，且至少有 \\(t\\) 个计数大于 \\(L\\)。在前一条件下，所有计数超出 \\(L\\) 的总量恰为 \\(t\\)，所以后一条件成立恰当这些计数都等于 \\(L+1\\)。因此，**任意一层失衡都会使这一组明确给出的 \\(k\\) 个采样点产生秩亏**，其非零核向量即给出有至少 \\(k\\) 个零点的多项式。结合充分性，只需检查 \\(q=p,\\ldots,p^{r-1}\\) 对应的至多 \\(r-1\\) 组固定采样点，就能判定 \\(A\\) 能否在任意 \\(k\\) 点上插值。"
+    },
+    {
+      "start_byte": 7086,
+      "end_byte": 7362,
+      "quote": "其 \\(t\\) 个对角元为\n\\[\n\\pi^{e_0},\\ \\pi^{e_1},\\ \\ldots,\\ \\pi^{e_{t-1}}.\n\\tag{5}\n\\]\n特别地，对每个整数 \\(h\\ge1\\)，在 \\(\\mathcal O/\\pi^h\\mathcal O\\) 上，每组可实现的采样值恰有\n\\[\np^{\\,h(k-t)+\\sum_{j=0}^{t-1}\\min(h,e_j)}\n\\tag{6}\n\\]\n个系数向量。"
+    },
+    {
+      "start_byte": 10693,
+      "end_byte": 10921,
+      "quote": "自评 **B2/R3**。原命题有完整证明。新增结果统一回答了哪些指数集允许任意采样、怎样构造失败采样，以及平衡时给定采样点能在各个模 \\(\\pi^h\\) 精度上确定多少系数信息。"
+    }
+  ],
+  "model_id": "sol-6.2-max",
+  "arm": "neutral",
+  "native_status_sha256": "f1ccb177df73388d9ad559183cf7fc8c4765cd93508efc927e207f7153562f84",
+  "initial_review_sha256": "334f2be4bb4f184d57ae0fb7b13ebca9f926ad83417b886ec13cdc402d57ccc2",
+  "source_comparison": {
+    "old": "只证明原题的三项上界，没有实际陈述的额外成果。",
+    "new": "任意项数的平衡支撑充要分类、分层采样精确秩、任意采样的局部对角形式和各精度原像大小。",
+    "new_research_is_not_original_regrading": true
+  },
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}

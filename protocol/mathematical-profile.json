@@ -1,6 +1,6 @@
 {
   "schema": "math-gauge.mathematical-profile-policy/v1",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "benchmark_version": "1.1.0",
   "condition": "nonlogical_retry_3",
   "reviewer_kind": "ai",
@@ -18,8 +18,8 @@
         "en": "Mathematical reasoning"
       },
       "description": {
-        "zh": "核心推导、构造及证明是否解决关键障碍。",
-        "en": "Valid reasoning across the original mathematical obstacles."
+        "zh": "原题核心证明、反例或审计是否成立；任何必需分支、关键依赖或表示桥未建立，均不能以其他正确内容抵补至高档。",
+        "en": "Whether the original task’s core proof, counterexample or audit is established. Other correct work cannot compensate for an essential unproved branch, dependency or representation bridge at the top grades."
       },
       "planned_families": 35
     },
@@ -38,12 +38,12 @@
     {
       "id": "completion",
       "label": {
-        "zh": "要求完成度",
-        "en": "Requested completion"
+        "zh": "严格完成度",
+        "en": "Strict completion"
       },
       "description": {
-        "zh": "全部可见实质要求整题验收；规定三轮自查整体验收，局部成果不抵补必需缺口。",
-        "en": "Whole-task acceptance of every visible substantive requirement; the prescribed three-round review is accepted as one complete trajectory."
+        "zh": "直接采用规则选定答卷的正式SMC；保留主榜题型权重、研究完成门槛和整条三轮自查验收。",
+        "en": "The official SMC for the rule-selected answers, retaining the main category weights, research completion gates and whole three-round self-review acceptance."
       },
       "planned_families": 35
     },
@@ -97,19 +97,18 @@
     }
   ],
   "planned_families": {
-    "proof": 35,
-    "fidelity": 35,
-    "completion": 35,
-    "discernment": 35,
-    "initiative": 35,
+    "closure": 35,
     "depth": 35,
-    "closure": 35
+    "discernment": 35,
+    "fidelity": 35,
+    "initiative": 35,
+    "proof": 35
   },
   "anchors": {
     "path": "protocol/mathematical-profile.md",
-    "sha256": "d122e39046c59d6be372562b4f3b238ee10915ec0425fcb337d79ec62b25dd31"
+    "sha256": "9e26df212f26edcb3f27928eabda9cb2eb4b103546af56d4c73007dff27bd830"
   },
-  "private_contract_sha256": "6bb3d44a4b51a85936ad39713a281ad216587fee97005fc1bad161a1ec0f899f",
+  "private_contract_sha256": "f87406a06c4750b23f121bc957a11b69aa359f6c5e80195891a6acafb4cb2733",
   "public_task_contracts": [
     {
       "id": "AHR01:A1",
@@ -179,11 +178,16 @@
       "axis_weights": {
         "proof": "1/70",
         "fidelity": "1/70",
-        "completion": "1/70",
         "discernment": "1/70",
         "initiative": "1/70",
         "depth": "1/70",
         "closure": "1/70"
+      },
+      "proof_core": {
+        "required_goals": [
+          "AHR01:complete-audit"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -254,11 +258,16 @@
       "axis_weights": {
         "proof": "1/70",
         "fidelity": "1/70",
-        "completion": "1/70",
         "discernment": "1/70",
         "initiative": "1/70",
         "depth": "1/70",
         "closure": "1/70"
+      },
+      "proof_core": {
+        "required_goals": [
+          "AHR02:complete-audit"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -329,11 +338,16 @@
       "axis_weights": {
         "proof": "1/70",
         "fidelity": "1/70",
-        "completion": "1/70",
         "discernment": "1/70",
         "initiative": "1/70",
         "depth": "1/70",
         "closure": "1/70"
+      },
+      "proof_core": {
+        "required_goals": [
+          "AHR03:complete-audit"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -404,11 +418,16 @@
       "axis_weights": {
         "proof": "1/70",
         "fidelity": "1/70",
-        "completion": "1/70",
         "discernment": "1/70",
         "initiative": "1/70",
         "depth": "1/70",
         "closure": "1/70"
+      },
+      "proof_core": {
+        "required_goals": [
+          "AHR04:complete-audit"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -1055,11 +1074,26 @@
       "axis_weights": {
         "proof": "1/105",
         "fidelity": "1/105",
-        "completion": "1/105",
         "discernment": "1/105",
         "initiative": "1/105",
         "depth": "1/105",
         "closure": "1/105"
+      },
+      "proof_core": {
+        "required_goals": [
+          "HCH02:certificate-object",
+          "HCH02:two-step-lip",
+          "HCH02:colip-degeneracy",
+          "HCH02:two-step-colip",
+          "HCH02:perturbation-bounds",
+          "HCH02:chain-calculus",
+          "HCH02:matrix-path-criterion",
+          "HCH02:optimal-channel-object",
+          "HCH02:sparse-channel-object",
+          "HCH02:two-sided-bounds",
+          "HCH02:discernibility"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -1254,11 +1288,19 @@
       "axis_weights": {
         "proof": "1/105",
         "fidelity": "1/105",
-        "completion": "1/105",
         "discernment": "1/105",
         "initiative": "1/105",
         "depth": "1/105",
         "closure": "1/105"
+      },
+      "proof_core": {
+        "required_goals": [
+          "LCH01:certificate-object",
+          "LCH01:sparse-channel-object",
+          "LCH01:discernibility",
+          "LCH01:two-sided-exercise"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -1605,11 +1647,21 @@
       "axis_weights": {
         "proof": "1/105",
         "fidelity": "1/105",
-        "completion": "1/105",
         "discernment": "1/105",
         "initiative": "1/105",
         "depth": "1/105",
         "closure": "1/105"
+      },
+      "proof_core": {
+        "required_goals": [
+          "LCH02:certificate-object",
+          "LCH02:two-step-lip",
+          "LCH02:colip-degeneracy",
+          "LCH02:two-step-colip",
+          "LCH02:chain-calculus",
+          "LCH02:matrix-path-criterion"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -1825,11 +1877,19 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "A1",
+          "A2",
+          "A3",
+          "A4"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -2005,11 +2065,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "A1",
+          "A2",
+          "A3"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -2193,11 +2260,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "A1",
+          "A2",
+          "A3"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -2407,11 +2481,19 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "A1",
+          "A2",
+          "A3",
+          "A4"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -2500,11 +2582,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "zero-infimum",
+          "nonattainment",
+          "phase-limit"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -2578,11 +2667,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "flow",
+          "conditional-prox",
+          "actual-interpretation"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -4179,11 +4275,45 @@
       "axis_weights": {
         "proof": "1/70",
         "fidelity": "1/70",
-        "completion": "1/70",
         "discernment": "1/70",
         "initiative": "1/70",
         "depth": "1/70",
         "closure": "1/70"
+      },
+      "proof_core": {
+        "required_goals": [
+          "MG-C003:source-P01",
+          "MG-C003:source-P02",
+          "MG-C003:source-P03",
+          "MG-C003:source-P04",
+          "MG-C003:source-P05",
+          "MG-C003:source-P06",
+          "MG-C003:source-P07",
+          "MG-C003:source-P08",
+          "MG-C003:source-P09",
+          "MG-C003:source-P10",
+          "MG-C003:source-P11",
+          "MG-C003:source-P12",
+          "MG-C003:source-P13",
+          "MG-C003:source-P14",
+          "MG-C003:source-P15",
+          "MG-C003:source-P16",
+          "MG-C003:source-P17",
+          "MG-C003:source-P18",
+          "MG-C003:source-P19",
+          "MG-C003:source-P20",
+          "MG-C003:source-P21",
+          "MG-C003:source-P22",
+          "MG-C003:source-P23",
+          "MG-C003:source-P24",
+          "MG-C003:source-P25",
+          "MG-C003:source-P26",
+          "MG-C003:source-P27",
+          "MG-C003:source-P28",
+          "MG-C003:source-P29",
+          "MG-C003:source-P30"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -4358,11 +4488,17 @@
       "axis_weights": {
         "proof": "1/210",
         "fidelity": "1/210",
-        "completion": "1/210",
         "discernment": "1/210",
         "initiative": "1/210",
         "depth": "1/210",
         "closure": "1/210"
+      },
+      "proof_core": {
+        "required_goals": [
+          "MG-C003:R1:complete-repair-delivery",
+          "MG-C003:R1:complete-diagnosis"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -4537,11 +4673,17 @@
       "axis_weights": {
         "proof": "1/210",
         "fidelity": "1/210",
-        "completion": "1/210",
         "discernment": "1/210",
         "initiative": "1/210",
         "depth": "1/210",
         "closure": "1/210"
+      },
+      "proof_core": {
+        "required_goals": [
+          "MG-C003:R2:complete-repair-delivery",
+          "MG-C003:R2:complete-diagnosis"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -4716,11 +4858,17 @@
       "axis_weights": {
         "proof": "1/210",
         "fidelity": "1/210",
-        "completion": "1/210",
         "discernment": "1/210",
         "initiative": "1/210",
         "depth": "1/210",
         "closure": "1/210"
+      },
+      "proof_core": {
+        "required_goals": [
+          "MG-C003:R3:complete-repair-delivery",
+          "MG-C003:R3:complete-diagnosis"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -4945,11 +5093,21 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -5177,11 +5335,21 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -5410,11 +5578,21 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -5647,11 +5825,21 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -5819,11 +6007,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "G1",
+          "G2",
+          "G3"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -6048,11 +6243,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "G1",
+          "G2",
+          "G3"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -6292,11 +6494,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "G1",
+          "G2",
+          "G3"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -6379,11 +6588,18 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "upper-framework",
+          "lower-framework",
+          "indistinguishability"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -6498,11 +6714,17 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "G1",
+          "G2"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -6555,11 +6777,16 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "visible-baseline"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     },
     {
@@ -6612,35 +6839,27 @@
       "axis_weights": {
         "proof": "1/35",
         "fidelity": "1/35",
-        "completion": "1/35",
         "discernment": "1/35",
         "initiative": "1/35",
         "depth": "1/35",
         "closure": "1/35"
+      },
+      "proof_core": {
+        "required_goals": [
+          "visible-baseline"
+        ],
+        "scope": "Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted."
       }
     }
   ],
-  "completion": "all-visible-goals-per-task;whole-three-round-selfcheck;TX-baseline-only",
-  "research_completion": "TX-one-substantive-independent-complete-increment-per-fixed-opportunity;manuscript-original-complete-goals",
-  "research_groups": {
-    "theorem_extension": "1/2",
-    "manuscript_completion": "1/2"
-  },
+  "completion": "official-SMC;nonlogical_retry_3;unchanged-main-weights-and-trajectory",
+  "research_completion": "Official SMC retains the actual research task gates; independent proof judgments assess the original requested core, never an unrequested extension.",
+  "research_groups": {},
   "task_source_identity": "immutable-original-case-and-rule-selected-answer;no-best-of-no-cross-attempt-union",
-  "unknowns": "fixed-denominator-and0to4interval;missing-final-completion0;other-behavior-unknown-without-adequate-evidence",
+  "unknowns": "Six reviewed axes keep fixed35-family denominators and source-evidence unknowns. Completion copies the official SMC interval without recomputation or rescaling.",
   "public_projection": "aggregate-axis-metrics-counts-and-opaque-hashes-only",
-  "axis_scope": "all_39_initial_tasks_and_3_prescribed_rounds",
+  "axis_scope": "Six reviewed traits: all39 initial answers plus3 fixed selfcheck rounds, equal35-family hierarchy. Completion: unchanged official SMC over its8 fixed subcategories.",
   "known_failure_policy": "settled_blank_zero; verified_cutoff_work_only; unknown_only_not_run_or_missing_source",
-  "previous_component": {
-    "version": "0.2.0",
-    "policy": {
-      "path": "protocol/mathematical-profile-v0.2.0.json",
-      "sha256": "b0ed9e2e9f50f248dcc0f060f12b1fcb513869c43d92bddb3936969574770158"
-    },
-    "anchors": {
-      "path": "protocol/mathematical-profile-v0.2.0.md",
-      "sha256": "d19302d80c8ee2441f4f3f33f9e7089cc8d6f6c724a759170a9b693daf8e7268"
-    }
-  },
-  "fidelity_core_gate": "any-required-core-scope-drift-without-delivered-bridge-caps-grade-at2"
+  "fidelity_core_gate": "any-required-core-scope-drift-without-delivered-bridge-caps-grade-at2",
+  "proof_core_gate": "original-required-core;no-refuted-or-essential-unproved-core-at-grade3or4"
 }

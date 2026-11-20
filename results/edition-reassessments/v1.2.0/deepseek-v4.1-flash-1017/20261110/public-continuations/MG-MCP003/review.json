@@ -1,0 +1,226 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "deepseek-v4.1-flash-1017",
+  "case_id": "MG-MCP003",
+  "task_id": "R016",
+  "response_sha256": "6715c357e6629d524a42e6cc3858a0bcfb1d2b6f1cc25bc614709d8a09f7a4c1",
+  "reviewer_id": "Codex coordinator / source-bound mathematical review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "score_scale": 100,
+  "MC": 96.0,
+  "RMC": 86.0,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "M1",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "有效域比较、矩阵方向及三类距离明确。",
+      "evidence": []
+    },
+    {
+      "id": "M2",
+      "earned_points": 20,
+      "max_points": 20,
+      "reason": "有限正距离逐对上界与有条件的全局包络成立。",
+      "evidence": []
+    },
+    {
+      "id": "M3",
+      "earned_points": 20,
+      "max_points": 20,
+      "reason": "无限输入有限输出强制下界0，最大系数和max乘法复合成立。",
+      "evidence": []
+    },
+    {
+      "id": "M4",
+      "earned_points": 18,
+      "max_points": 20,
+      "reason": "多数零/∞处理正确；所给无限距离传播与反例不构成伪度量。",
+      "evidence": []
+    },
+    {
+      "id": "M5",
+      "earned_points": 20,
+      "max_points": 20,
+      "reason": "零类Boolean、集合格范畴矩阵、诱导商和复合正确。",
+      "evidence": []
+    },
+    {
+      "id": "M6",
+      "earned_points": 3,
+      "max_points": 5,
+      "reason": "核心定义可复用，但两个声称已验证的无限距离例子与三角公理及自身计算矛盾。",
+      "evidence": []
+    }
+  ],
+  "claim_deductions": [
+    {
+      "id": "invalid-infinite-distance-examples",
+      "root_cause": "invalid-infinite-distance-examples",
+      "severity": "material",
+      "kind": "false_verification",
+      "reason": "7.2之后及7.4把若干点对距离设∞、所有其他非对角距离设1；经任意第三点即违反∞≤1+1。映射的“所有有限对压零”等计算亦不成立；7.2后还把定义6.1应为∞的包络写成1。这两个例子同属没有核验所选距离/映射的根因，合记10，不由评审替换成另一个合法反例。核心定义、条件复合及零/下矩阵证明另有独立正确论证，不封顶0。",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "**有限部分之外的无限距离。** 下面的检查说明无限输入在复合中的传播。取 \\(|I|=1\\)，令所有非对角距离为 \\(1\\)，只在输入点 \\(c,d\\) 上改取",
+          "utf8_byte_start": 15605,
+          "utf8_byte_end": 15788,
+          "file_sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478"
+        }
+      ]
+    }
+  ],
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.96,
+      "upper": 0.96,
+      "exact": 0.96
+    },
+    "generic_deduction": 0.1,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.1,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.86,
+      "upper": 0.86,
+      "exact": 0.86
+    },
+    "actual_loss": 0.1,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "invalid-infinite-distance-examples"
+    ]
+  },
+  "mathematical_checks": [
+    "有限正距离分母的上下确界都可取得为扩展最优系数；下界的无限边界处理正确。",
+    "0∞乘法在非负扩展半环仍单调/结合；7.1与7.2经已有逐点界成立，7.2末“取下确界”是显然应为上确界的局部书写失误。",
+    "任何d(c,d)=∞而d(c,p)=d(p,d)=1的设定都不是扩展伪度量。",
+    "无法用一个错误构造证明反例；保留其他独立有效成果，不因不用联合矩阵而扣分。"
+  ],
+  "strict_reason": "两个实质反例及其计算不成立，Strict失败。",
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "所需上、下、∞统一及不可分辨描述由独立定义和正确基本性质完成；两个附加反例不是这些定义与条件复合的依赖。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "### 定理 7.3（不可分辨矩阵的复合）",
+          "utf8_byte_start": 16862,
+          "utf8_byte_end": 16909,
+          "file_sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "允许逐对而非联合矩阵路线，已明确该表示的表达能力、有效域和三类边界。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "## 2. 有限距离上的精确上斜率矩阵",
+          "utf8_byte_start": 2848,
+          "utf8_byte_end": 2893,
+          "file_sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 1,
+      "reason": "注意0∞边界但没有检查反例甚至是否满足三角公理。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "**有限部分之外的无限距离。** 下面的检查说明无限输入在复合中的传播。取 \\(|I|=1\\)，令所有非对角距离为 \\(1\\)，只在输入点 \\(c,d\\) 上改取",
+          "utf8_byte_start": 15605,
+          "utf8_byte_end": 15788,
+          "file_sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "有限斜率、全局包络及范畴格复合形成多层机制。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "4. 用来处理零距离与无限距离边界的**全局上控包络**。",
+          "utf8_byte_start": 404,
+          "utf8_byte_end": 477,
+          "file_sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "主要定义与所需基本性质可用，附加无限距离见证未闭合。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "**有限部分之外的无限距离。** 下面的检查说明无限输入在复合中的传播。取 \\(|I|=1\\)，令所有非对角距离为 \\(1\\)，只在输入点 \\(c,d\\) 上改取",
+          "utf8_byte_start": 15605,
+          "utf8_byte_end": 15788,
+          "file_sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [
+    {
+      "name": "final-answer.md",
+      "bytes": 24249,
+      "sha256": "43dbe2ebef539519576b84be459cfbfb49aee3a47371c3db09c6d608b3047478",
+      "delivery_quote": "审阅已完成，终稿写入 [final-answer.md](/Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R016/fresh-context/final-answer.md)。",
+      "recovered_after_collection": true,
+      "source_kind": "original_workspace_recovery",
+      "original_return_attachment_missing": true
+    }
+  ],
+  "unresolved_questions": [],
+  "no_hidden_reasoning_used_as_answer": true,
+  "original_math_unmodified": true,
+  "reviewed_at": "2026-11-21T00:32:57.640893+00:00",
+  "review_boundary": "Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.",
+  "source_materials": [
+    {
+      "repository": "public",
+      "path": "cases/manuscript-completion/MG-MCP003/task.md",
+      "bytes": 2550,
+      "sha256": "394108946a8285599803d21c03ef6d62faddf3144691a09b6f30161be28229ce"
+    },
+    {
+      "repository": "public",
+      "path": "cases/manuscript-completion/MG-MCP003/rubric.json",
+      "bytes": 7700,
+      "sha256": "c4b75963d5fcc90128d7e74776bc5a5cbd0eebc6d299b7556d412ff68823a920"
+    },
+    {
+      "repository": "public",
+      "path": "cases/manuscript-completion/MG-MCP003/reference.md",
+      "bytes": 9979,
+      "sha256": "12198e644f09e3050e91292336e79b347265791ce04edbacba842e268afa2c2d"
+    },
+    {
+      "repository": "public",
+      "path": "cases/manuscript-completion/MG-MCP003/contract.json",
+      "bytes": 3536,
+      "sha256": "c033cb125bb4030ca0de329b2bc0ad5534588d5168495ca168ed8c68bde5a58d"
+    }
+  ],
+  "first_response_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+  "first_review_sha256": "f8a1c10d2535259448c5f939e664843f2e0c8a0c818cb8c14c9720d9e75e4e84"
+}

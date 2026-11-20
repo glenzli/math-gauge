@@ -1,6 +1,7 @@
 """Current display consumes retained records without a parallel scoring method."""
 import copy
 import importlib.util
+import hashlib
 import json
 from html.parser import HTMLParser
 from pathlib import Path
@@ -66,6 +67,14 @@ class CurrentSiteTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.data = SITE.build_data()
+        cls.source_data = SITE.build_data(assessment_version='1.1.0')
+
+    @staticmethod
+    def initial_admission_display_score(source):
+        """Only admission metadata changes; every retained score field stays equal."""
+        return dict(source, benchmark_version='1.1.0',
+                    source_score_contract_version=source['benchmark_version'],
+                    source_task_version='1.0.0', assessment_kind='initial')
 
     def selected_layer_score(self, model, mode, condition, original):
         """Assert against the selected artifact, preserving the older source view."""
@@ -78,25 +87,44 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertEqual(manifest['assessment_kind'], 'initial')
             self.assertNotIn('base_reports', manifest)
             self.assertNotIn('source_assessment_version', manifest)
-            expected = dict(original, benchmark_version='1.1.0',
-                source_score_contract_version=original['benchmark_version'],
-                source_task_version='1.0.0', assessment_kind='initial')
+            expected = self.initial_admission_display_score(original)
             bound = json.loads(evidence_bytes(ROOT, manifest['scores'][mode][condition]))
             self.assertIn(bound, (original, expected))
-            return expected
-        metadata = model.get('tx_calibration')
-        if metadata is None:
-            return original
-        from math_gauge.records import evidence_bytes
-        manifest = json.loads(evidence_bytes(ROOT, metadata['manifest']))
-        self.assertEqual(manifest['source_record']['path'], model['source_record'])
-        self.assertEqual(manifest['model_id'], model['id'])
-        self.assertEqual(manifest['benchmark_version'], self.data['benchmark_version'])
-        current = json.loads(evidence_bytes(ROOT, manifest['scores'][mode][condition]))
-        base = json.loads(evidence_bytes(ROOT, manifest['base_reports'][mode][condition]))
-        self.assertEqual(base, original)
-        self.assertEqual(current['metrics']['written'], base['metrics']['written'])
-        self.assertEqual(current['metrics']['lean'], base['metrics']['lean'])
+            current = expected
+        else:
+            metadata = model.get('tx_calibration')
+            if metadata is None:
+                current = original
+            else:
+                from math_gauge.records import evidence_bytes
+                manifest = json.loads(evidence_bytes(ROOT, metadata['manifest']))
+                self.assertEqual(manifest['source_record']['path'], model['source_record'])
+                self.assertEqual(manifest['model_id'], model['id'])
+                self.assertEqual(manifest['benchmark_version'], self.source_data['benchmark_version'])
+                current = json.loads(evidence_bytes(ROOT, manifest['scores'][mode][condition]))
+                base = json.loads(evidence_bytes(ROOT, manifest['base_reports'][mode][condition]))
+                self.assertEqual(base, original)
+                self.assertEqual(current['metrics']['written'], base['metrics']['written'])
+                self.assertEqual(current['metrics']['lean'], base['metrics']['lean'])
+        revision = model.get('neutral_revision')
+        if revision is not None:
+            from math_gauge.records import evidence_bytes
+            manifest = json.loads(evidence_bytes(ROOT, revision['manifest']))
+            self.assertEqual(manifest['source_scoring_edition'], self.source_data['benchmark_version'])
+            self.assertEqual(manifest['benchmark_version'], self.data['benchmark_version'])
+            self.assertEqual(manifest['source_record']['path'], model['source_record'])
+            self.assertEqual(manifest['model_id'], model['id'])
+            self.assertEqual(manifest['attempt_condition'], 'nonlogical_retry_3')
+            base = json.loads(evidence_bytes(ROOT, manifest['base_reports'][mode][condition]))
+            displayed_base = self.initial_admission_display_score(base) if initial is not None else base
+            self.assertEqual(displayed_base, current,
+                             'A continuation cannot replace its retained first-answer source')
+            if condition == 'nonlogical_retry_3':
+                revised = json.loads(evidence_bytes(ROOT, manifest['scores'][mode]))
+                self.assertEqual(revised['neutral_revision']['base_report_sha256'],
+                                 current['source_bindings']['private_report_sha256'])
+                self.assertEqual(revised['metrics']['lean'], current['metrics']['lean'])
+                return revised
         return current
 
     def test_progress_tracks_pending_built_tasks_not_failures_or_unbuilt_weight(self):
@@ -118,10 +146,23 @@ class CurrentSiteTests(unittest.TestCase):
         current = json.loads((ROOT/'benchmark.json').read_bytes()).get('current_assessment_admissions', {})
         self.assertFalse(selected.intersection(current), 'Initial admission cannot replace a historical model')
         selected.update(current)
-        displayed = {model['id'] for model in self.data['models']
+        displayed = {model['id'] for model in self.source_data['models']
                      if model.get('record_kind') != 'native_harness'}
         self.assertEqual(displayed, selected)
-        for model in self.data["models"]:
+        from math_gauge.neutral_revision import load_transition
+        transition = load_transition(ROOT)
+        source_ids = {model['id'] for model in self.source_data['models']}
+        self.assertEqual({model['id'] for model in self.data['models']}, set(transition['adoptions']))
+        self.assertEqual(set(transition['adoptions']) | set(transition['pending_models']), source_ids)
+        partial_ids = {model['id'] for model in self.data['partial_models']}
+        from scripts.results_eligibility import eligibility
+        self.assertEqual(partial_ids, {mid for mid in source_ids if not eligibility(mid)['ranked']})
+        self.assertTrue(all(model['presentation_eligibility']['ranked'] is False
+                            for model in self.data['partial_models']))
+        self.assertEqual({model['id'] for model in self.data['pending_models']},
+                         set(transition['pending_models']) - partial_ids)
+        self.assertFalse(partial_ids.intersection(model['id'] for model in self.data['models']))
+        for model in [*self.source_data['models'], *self.data['models']]:
             path = ROOT / Path(model["source_record"]).parent
             original = json.loads((path / "combined-aggregate.json").read_bytes())
             self.assertEqual(model["combined"], self.selected_layer_score(
@@ -179,22 +220,77 @@ class CurrentSiteTests(unittest.TestCase):
             downloads = {
                 "downloads/" + model["id"] + "-" + scope + suffix + ".json"
                 for model in self.data["models"] for scope in ["combined"]
-                for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"]}
+                for suffix in ["-retry", "-strict-retry", "-capability-retry"]}
             downloads.add('downloads/timing-reference.json')
             downloads.add('downloads/cost-reference.json')
+            downloads.add('downloads/continuation-resources.json')
             if SITE.load_execution_anomalies(SITE.ROOT) is not None:
                 downloads.add('downloads/execution-anomalies.json')
             if SITE.load_attempt_history(SITE.ROOT) is not None:
                 downloads.add('downloads/execution-attempts.json')
+            # Explicitly delivered same-round source files are public downloads
+            # too. Accept only files linked by the selected original answer and
+            # authenticate every byte through that answer's retained manifest.
+            from math_gauge.records import evidence_bytes
+            for model in self.source_data['models']:
+                folder = ROOT / Path(model['source_record']).parent
+                record = json.loads((ROOT / model['source_record']).read_bytes())
+                delivery = model.get('c003_continuation', {}).get('delivery_evidence')
+                if delivery:
+                    rounds = delivery
+                elif model.get('record_kind') in {'native_harness', 'paper_observation'}:
+                    rounds = record['selfcheck_rounds']
+                else:
+                    rounds = [row for row in record['records'] if
+                        row['id'].startswith('MG-C003:alignment:') or
+                        row['id'] in {'MG-C003:R1', 'MG-C003:R2', 'MG-C003:R3'}]
+                for row in rounds:
+                    source = row.get('source', {}).get('engineering_manifest')
+                    if source is None:
+                        continue
+                    response = row.get('final_text') if delivery else row.get('response')
+                    original = evidence_bytes(folder, response)
+                    manifest = json.loads(evidence_bytes(folder, source))
+                    self.assertEqual(manifest['original_response_sha256'], hashlib.sha256(original).hexdigest())
+                    self.assertIs(manifest['source_repaired'], False)
+                    self.assertIs(manifest['cross_round_union'], False)
+                    answer = original.decode('utf-8')
+                    for name, item in manifest['files'].items():
+                        if '(' + name + ')' not in answer and '(./' + name + ')' not in answer:
+                            continue
+                        target = 'downloads/engineering/' + source['sha256'] + '/' + name
+                        downloads.add(target)
+                        self.assertEqual(before[target], evidence_bytes(folder, item))
             self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
+            from math_gauge.records import evidence_bytes
+            for model in self.data['models']:
+                manifest = json.loads(evidence_bytes(ROOT, model['neutral_revision']['manifest']))
+                for mode, suffix in [('partial',''), ('capability','-capability'), ('strict','-strict')]:
+                    path='downloads/'+model['id']+'-combined'+suffix+'-retry.json'
+                    self.assertEqual(before[path], evidence_bytes(ROOT, manifest['scores'][mode]))
+            source_downloads=set()
+            for model in self.source_data['models']:
+                for mode, suffix in [('partial',''), ('capability','-capability'), ('strict','-strict')]:
+                    for condition, tail in [('single_attempt',''), ('nonlogical_retry_3','-retry')]:
+                        path='versions/1.1.0/downloads/'+model['id']+'-combined'+suffix+tail+'.json'
+                        source_downloads.add(path)
+                        score=(model['combined'] if condition=='single_attempt' else model['retry']['combined']) if mode=='partial' else model[mode][condition]
+                        self.assertEqual(json.loads(before[path]), score)
+            self.assertEqual({path for path in before if path.startswith('versions/1.1.0/downloads/')
+                              and '-combined' in path}, source_downloads)
             timings=json.loads(before['downloads/timing-reference.json'])
             self.assertEqual(timings,SITE.build_reference(SITE.ROOT,display_data=self.data))
             owned = json.loads(before['generated-pages.json'])
             self.assertEqual(set(before), set(owned)|{'generated-pages.json'})
             self.assertIn('method.html',owned)
-            for model in self.data['models']:
+            for model in self.source_data['models']:
                 self.assertIn('models/'+model['id']+'/index.html',owned)
                 self.assertIn('models/'+model['id']+'/cases/MG-PS001.html',owned)
+            for model in self.data['pending_models']+self.data['partial_models']:
+                envelope=json.loads(before['data/editions/1.2.0/models/'+model['id']+'/index.json'])
+                self.assertTrue(envelope['data']['edition_unavailable'])
+                self.assertEqual(envelope['data']['edition_fallback'], '1.1.0')
+                self.assertNotIn('model', envelope['data'], 'Pending models must not inherit first-answer scores in1.2')
             self.assertFalse(any('MG-GR103' in path for path in owned))
 
     def test_retired_public_only_downloads_are_removed_without_deleting_unrelated_files(self):
@@ -202,7 +298,7 @@ class CurrentSiteTests(unittest.TestCase):
             root = Path(directory)
             downloads = root / "downloads"
             downloads.mkdir()
-            retired = [downloads / (m["id"] + suffix) for m in self.data["models"]
+            retired = [downloads / (m["id"] + suffix) for m in self.source_data["models"]
                        for suffix in ("-public.json", "-public-retry.json")]
             for path in retired:
                 path.write_text("previous generated public-only score")
@@ -229,7 +325,7 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertNotIn('data-condition="single_attempt"', page)
 
     def test_rule_selected_lower_retry_is_shown_instead_of_best_score(self):
-        data = copy.deepcopy(self.data)
+        data = copy.deepcopy(self.source_data)
         model = next(m for m in data['models'] if m['id'].startswith('deepseek'))
         lower = SITE.earned_value(model['combined']) - 1
         model['retry']['combined']['metrics']['earned']['confirmed'] = lower
@@ -243,7 +339,7 @@ class CurrentSiteTests(unittest.TestCase):
         for category in self.data['category_leaderboards']:
             chart = ChartBars(page, score_scope=category['id'])
             self.assertEqual([g['data-model'] for g in chart.groups],
-                             [row['model_id'] for row in category['views']['partial']])
+                             [row['model_id'] for row in category['views']['strict']])
             self.assertEqual(len(chart.bars), len(self.data['models']) * 3)
             for mode, rows in category['views'].items():
                 for row in rows:
@@ -285,7 +381,7 @@ class CurrentSiteTests(unittest.TestCase):
         chart = ChartBars(SITE.render(self.data))
         gaps = {r['model_id']: r['value'] for r in diagnostic['tables'][0]['rows']}
         ordered = sorted(self.data['models'], key=lambda m: (
-            gaps[m['id']] is None, abs(gaps[m['id']]) if gaps[m['id']] is not None else 0, m['id']))
+            gaps[m['id']] is None, abs(gaps[m['id']]) if gaps[m['id']] is not None else 0, SITE.model_display_key(m)))
         self.assertEqual(chart.gap_groups, [m['id'] for m in ordered])
         self.assertEqual(len(chart.gap_bars), 2*len(self.data["models"]))
         for table in diagnostic['tables']:
@@ -308,7 +404,7 @@ class CurrentSiteTests(unittest.TestCase):
         data = copy.deepcopy(self.data)
         before = ChartBars(SITE.render(data))
         for index, model in enumerate(data['models']):
-            model['retry']['combined']['metrics']['earned']['confirmed'] = index
+            model['strict']['nonlogical_retry_3']['metrics']['earned']['confirmed'] = index
         after = ChartBars(SITE.render(data))
         self.assertNotEqual([g['data-model'] for g in before.groups],
                             [g['data-model'] for g in after.groups])
@@ -393,7 +489,7 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data["attempt_conditions"], ["single_attempt", "nonlogical_retry_3"])
         page = SITE.render(self.data)
         self.assertNotIn('button data-condition=', page)
-        for model in self.data["models"]:
+        for model in self.source_data["models"]:
             for scope in ["combined"]:
                 first, retry = model[scope]['coverage'], model['retry'][scope]['coverage']
                 for key in ('initial_slots', 'parent_families', 'public_tasks', 'private_tasks', 'alignment_rounds'):
@@ -448,8 +544,21 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
                     self.assertEqual(model["retry"][scope].get("retry_summary", {}).get("slots_with_reruns", 0), 0)
 
+        source = {model['id']:model for model in self.source_data['models']}
+        from math_gauge.records import evidence_bytes
+        for model in self.data['models']:
+            self.assertEqual(model['combined'], source[model['id']]['combined'])
+            manifest=json.loads(evidence_bytes(ROOT, model['neutral_revision']['manifest']))
+            for mode in ('capability','partial','strict'):
+                first=source[model['id']]['combined'] if mode=='partial' else source[model['id']][mode]['single_attempt']
+                displayed=model['combined'] if mode=='partial' else model[mode]['single_attempt']
+                self.assertEqual(displayed,first, 'The primary-parent revision must not migrate into single_attempt')
+                base = json.loads(evidence_bytes(ROOT,manifest['base_reports'][mode]['nonlogical_retry_3']))
+                displayed_base = self.initial_admission_display_score(base) if model.get('initial_assessment') else base
+                self.assertEqual(displayed_base, SITE.selected_result(source[model['id']],mode))
+
     def test_unreviewed_fixed_rounds_keep_the_source_coverage_unknown(self):
-        model = next(m for m in self.data['models'] if m['id'] == 'gemini-4-argon')
+        model = next(m for m in self.source_data['models'] if m['id'] == 'gemini-4-argon')
         result = copy.deepcopy(model['retry']['combined'])
         self.assertFalse(SITE.evaluation_progress(result)['incomplete'])
         result['alignment_selfcheck']['rounds'][0]['score']['exact'] = None

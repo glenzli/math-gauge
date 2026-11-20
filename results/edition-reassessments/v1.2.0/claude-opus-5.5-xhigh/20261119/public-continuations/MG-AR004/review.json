@@ -1,0 +1,188 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "case_id": "MG-AR004",
+  "response_sha256": "5ec38a262022261079b394bf29acc307764ae5183e73e31f2a6c649a9c5d7afc",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 80,
+  "RMC": 70,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "global_injectivity",
+      "earned": 25,
+      "reason": "正确反驳全局稠密开单射及F总分离。",
+      "quote": "### 1. \"稠密开浸入单射性定理\"是错的",
+      "evidence_file": "answer.md",
+      "max": 25
+    },
+    {
+      "id": "localization_claim",
+      "earned": 10,
+      "reason": "识别正维即非有限生成断言为假，保留不必开目标。",
+      "quote": "**(a) \"概形层面\"的断言是错的。** 答卷断言：$\\dim\\mathcal O_{X,x_i}\\ge1$ 时，$\\mathcal O_{X,x_i}$ 不是有限生成的 $\\mathcal O_{X,\\Sigma}$-代数。反例如下。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "actual_closed_points",
+      "earned": 0,
+      "reason": "未识别S5任意Sigma可含可比较素理想，未给删冗余点后按实际闭点归纳的归约。",
+      "quote": "- \"$x_i$ 是 $S$ 的闭点\"意味着诸 $\\mathfrak p_i$ 两两互不包含。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "target_and_retention",
+      "earned": 10,
+      "reason": "区分原证明失败与半局部目标真假，保留独立各阶段。",
+      "quote": "注意，在这个例子里 $\\operatorname{Pic}(S)=\\operatorname{Pic}(\\mathcal O_{X,\\Sigma})=0=F_{\\mathrm{Zar}}(S)$，$\\eta_S$ 是同构。所以这个反例否定的是答卷的中间断言，而不是 S5 的目标结论。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "legal_counterexample_dependency",
+      "earned": 15,
+      "reason": "Pic/CH1同伦不变及有限对应转移得到说明，P1→A1合法；定位错误对交上单射的实际依赖。",
+      "quote": "- **$\\eta_T$ 单射，$T=S_1\\times_S S_2$（以及归纳中的 $S'\\times_S S_n$）。** 唯一的依据是错误的分离性，因此没有证明。而且 $T$ 一般不是半局部的，所以半局部定理也不能直接给出：在 $\\mathbb A^2$ 上取 $x_1=(0,0)$、$x_2=(1,0)$，$T$ 的点包括过这两点的所有不可约曲线（例如 $y=x^m(x-1)$，$m\\ge1$）的一般点，有无穷多个闭点。这个前提在一般情形下是否成立，本审阅不作判定。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "localization_scope",
+      "earned": 10,
+      "reason": "A1两点反例合法，区分原维数条件，并用不连通曲面反驳另段过强前提。",
+      "quote": "- 任一不被 $t$ 整除的多项式都可写成 $(t-1)^m g$，其中 $g\\in M$。所以 $\\mathcal O_{X,0}=\\mathcal O_{X,\\Sigma}[1/(t-1)]$，是有限生成的。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "source_hypotheses",
+      "earned": 0,
+      "reason": "把度零层化与高次比较所需域条件混在一起；未准确区分任意域的半局部度零定理。",
+      "quote": "题目允许任意域 $k$。答卷援引的 Voevodsky 结论（$F_{\\mathrm{Zar}}$ 带转移、同伦不变、$F_{\\mathrm{Zar}}=F_{\\mathrm{Nis}}$、半局部单射性），通常的陈述都以 $k$ 完满为前提；标准三元组一类的论证还用到 $k$ 无限，有限域要另作转移论证。答卷对此只字未提。就我所知，文献中有到非完满域的推广（Suslin 关于非完满域上 motivic 复形的工作），但答卷既未援引，也未论证。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "other_stages",
+      "earned": 10,
+      "reason": "对等化子、图追、余终性、稠密开反例及同调余极限均给实质核验。",
+      "quote": "- 余极限为 $\\mathbb Z[1/2]\\xrightarrow{2}\\mathbb Z[1/2]$，这是同构，所以余极限复形正合。",
+      "evidence_file": "answer.md",
+      "max": 10
+    }
+  ],
+  "claim_deductions": [
+    {
+      "root_cause": "degree_zero_perfect_field_misrestriction",
+      "level": "material",
+      "points": 10,
+      "quote": "题目允许任意域 $k$。答卷援引的 Voevodsky 结论（$F_{\\mathrm{Zar}}$ 带转移、同伦不变、$F_{\\mathrm{Zar}}=F_{\\mathrm{Nis}}$、半局部单射性），通常的陈述都以 $k$ 完满为前提；标准三元组一类的论证还用到 $k$ 无限，有限域要另作转移论证。答卷对此只字未提。就我所知，文献中有到非完满域的推广（Suslin 关于非完满域上 motivic 复形的工作），但答卷既未援引，也未论证。",
+      "reason": "将任意域成立的度零层化/半局部比较也说成经典标准定理通常限perfect域；高次上同调的perfect条件不能搬来限制当前度零命题。",
+      "counterexample_or_refutation": "冻结参考绑定MVW22.1–22.3/22.12的度零与半局部比较适用于任意域，13.9高次比较的perfect条件有不同作用域。",
+      "task_zero_cap": false
+    }
+  ],
+  "scope_fidelity": {
+    "judgment": "core_scope_failure",
+    "reason": "S5允许任意有限点集；审阅沿用实际闭点语境处理归纳，未检查可比较点和不改邻域的归约。"
+  },
+  "strict_reason": "漏任意Sigma中可比较点归约；另外有来源条件或局部化普遍性误断。Pic反例正确反驳原全局加强，未误称半局部目标为假。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 2,
+      "reason": "全局假引理及依赖审计成立，但必需的任意Sigma/实际闭点归纳分支未检查；新增若干范围判断也过强。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- **$\\eta_T$ 单射，$T=S_1\\times_S S_2$（以及归纳中的 $S'\\times_S S_n$）。** 唯一的依据是错误的分离性，因此没有证明。而且 $T$ 一般不是半局部的，所以半局部定理也不能直接给出：在 $\\mathbb A^2$ 上取 $x_1=(0,0)$、$x_2=(1,0)$，$T$ 的点包括过这两点的所有不可约曲线（例如 $y=x^m(x-1)$，$m\\ge1$）的一般点，有无穷多个闭点。这个前提在一般情形下是否成立，本审阅不作判定。"
+        }
+      ],
+      "core_status": "unresolved_core"
+    },
+    "fidelity": {
+      "grade": 2,
+      "reason": "S5允许任意有限点集；审阅沿用实际闭点语境处理归纳，未检查可比较点和不改邻域的归约。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- \"$x_i$ 是 $S$ 的闭点\"意味着诸 $\\mathfrak p_i$ 两两互不包含。"
+        }
+      ],
+      "core_scope_failure": true
+    },
+    "discernment": {
+      "grade": 2,
+      "reason": "准确否定全局加强、保留合法独立阶段；漏任意Sigma边界并对局部化/外部定理范围作过强判断。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "题目允许任意域 $k$。答卷援引的 Voevodsky 结论（$F_{\\mathrm{Zar}}$ 带转移、同伦不变、$F_{\\mathrm{Zar}}=F_{\\mathrm{Nis}}$、半局部单射性），通常的陈述都以 $k$ 完满为前提；标准三元组一类的论证还用到 $k$ 无限，有限域要另作转移论证。答卷对此只字未提。就我所知，文献中有到非完满域的推广（Suslin 关于非完满域上 motivic 复形的工作），但答卷既未援引，也未论证。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "有限对应下Pic机制、局部化开性及素避免给出成立结构解释；其作用范围需严格限制。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 任一不被 $t$ 整除的多项式都可写成 $(t-1)^m g$，其中 $g\\in M$。所以 $\\mathcal O_{X,0}=\\mathcal O_{X,\\Sigma}[1/(t-1)]$，是有限生成的。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "主要反例和独立阶段核验闭合；整体审阅仍缺任意Sigma归约且含范围错误。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "注意，在这个例子里 $\\operatorname{Pic}(S)=\\operatorname{Pic}(\\mathcal O_{X,\\Sigma})=0=F_{\\mathrm{Zar}}(S)$，$\\eta_S$ 是同构。所以这个反例否定的是答卷的中间断言，而不是 S5 的目标结论。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.291876+00:00",
+    "source_review_sha256": "c083c4010cfa7373281d75cba22cfdc940c93f6becac1cbfc45a22dda48fc63c",
+    "source_review_path": "grading/audit_background_written/claude-opus-5.5-xhigh--MG-AR004.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.8,
+      "upper": 0.8,
+      "exact": 0.8
+    },
+    "generic_deduction": 0.1,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.1,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.7,
+      "upper": 0.7,
+      "exact": 0.7
+    },
+    "actual_loss": 0.1,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "claim-1"
+    ]
+  }
+}

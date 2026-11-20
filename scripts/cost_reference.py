@@ -33,7 +33,17 @@ def selected_cost_source(folder, model, base):
     return matches[0], document
 
 
-def build_reference(root, *, display_data, timing_reference):
+def build_reference(root, *, display_data, timing_reference, base_reference=None):
+    if display_data.get('benchmark_version') == '1.2.0':
+        if base_reference is None:
+            baseline = Path(root) / 'site/versions/1.1.0/data.json'
+            if not baseline.is_file():
+                raise ValueError('Continuation costs need the retained first-answer display')
+            from scripts.timing_reference import build_reference as build_time
+            first_data = json.loads(baseline.read_bytes())
+            first_time = build_time(root, display_data=first_data)
+            base_reference = build_reference(root, display_data=first_data, timing_reference=first_time)
+        return revision_reference(root, display_data, timing_reference, base_reference)
     edition = source_edition(root)
     path = Path(root) / DATA_PATH
     if not path.is_file():
@@ -67,6 +77,7 @@ def build_reference(root, *, display_data, timing_reference):
                     "estimate_range_usd", "coverage", "pricing_basis")}
         item.update(label=model["label"], theme=model["theme"], logo=model["logo"], scores={},
                     seconds=timings[model["id"]]["summaries"]["daily"]["weighted_mean_seconds"])
+        item['presentation_eligibility'] = model.get('presentation_eligibility', {})
         if companion is not None:
             selected = model["c003_continuation"]["cost_source"]
             overrides[model["id"]] = dict(selected, path=(folder / selected["path"]).relative_to(root).as_posix(),
@@ -90,12 +101,53 @@ def build_reference(root, *, display_data, timing_reference):
     frontiers = {}
     for mode in ("capability", "partial", "strict"):
         points = [{**row, "score": row["scores"][mode]["value"],
-                   "score_complete": row["scores"][mode]["complete"]} for row in rows]
+                   "score_complete": row["scores"][mode]["complete"]} for row in rows
+                  if row.get('presentation_eligibility', {}).get('ranked', True)]
         frontiers[mode] = {axis: pareto_frontier(points, axis=axis) for axis in ("cost", "time")}
     return {"schema": "math-gauge.cost-presentation/v1", "version": "0.1.0", "currency": "USD",
             "as_of": document["as_of"], "models": rows, "frontiers": frontiers,
             "source": DATA_PATH, "source_evidence_sha256": document["private_source_sha256"],
             "prices": document["prices"], **({"source_overrides": overrides} if overrides else {})}
+
+
+def revision_reference(root, display_data, timing_reference, base_reference):
+    """Project the full additive candidate cost; score blending is source-owned."""
+    import copy
+    from scripts.results_revision_resources import load_public, DATA_PATH, INDEX_PATH
+    resources = load_public(root)
+    by_id = {row['id']: row for row in resources['models']}
+    display = {model['id']: model for model in display_data['models']}
+    clocks = {model['id']: model for model in timing_reference['models']}
+    result = copy.deepcopy(base_reference)
+    result['benchmark_version'] = '1.2.0'
+    result['base_assessment_version'] = '1.1.0'
+    result['resource_source'] = INDEX_PATH if (Path(root) / INDEX_PATH).is_file() else DATA_PATH
+    result['time_sample_count'] = len(timing_reference['daily_case_ids'])
+    result['models'] = [row for row in result['models'] if row['model_id'] in display]
+    for row in result['models']:
+        mid = row['model_id']
+        model, resource = display[mid], by_id[mid]
+        row.update(copy.deepcopy({key: resource['combined'][key] for key in
+                                  ('status', 'total_usd', 'known_usd', 'estimate_range_usd')}))
+        row['revision_resources'] = copy.deepcopy(resource)
+        row['seconds'] = clocks[mid]['summaries']['daily']['weighted_mean_seconds']
+        revision = resource['revision']
+        planned = revision['planned_calls']
+        complete = revision.get('usage_complete_calls', planned if revision['total_usd'] is not None else 0)
+        row['coverage']['planned'] += planned
+        row['coverage']['complete'] += complete
+        row['coverage']['missing'] += planned - complete
+        for mode in ('capability', 'partial', 'strict'):
+            score = model['retry']['combined'] if mode == 'partial' else model[mode]['nonlogical_retry_3']
+            row['scores'][mode] = {'value': score['metrics']['earned']['confirmed'],
+                                  'complete': score['metrics']['overall']['exact'] is not None}
+    result['frontiers'] = {}
+    for mode in ('capability', 'partial', 'strict'):
+        points = [{**row, 'score': row['scores'][mode]['value'],
+                   'score_complete': row['scores'][mode]['complete']} for row in result['models']
+                  if row.get('presentation_eligibility', {}).get('ranked', True)]
+        result['frontiers'][mode] = {axis: pareto_frontier(points, axis=axis) for axis in ('cost', 'time')}
+    return result
 
 
 def render_panel(data):

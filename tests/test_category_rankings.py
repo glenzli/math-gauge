@@ -94,13 +94,13 @@ class CategoryRankingsTests(unittest.TestCase):
                 self.assertEqual([r['model_id']for r in board['views'][mode]],order)
                 self.assertEqual([r['rank']for r in board['views'][mode]],[1,2,3])
 
-    def test_identical_published_scores_preserve_source_order_without_changing_values(self):
+    def test_identical_published_scores_share_places_without_changing_values(self):
         models=[uniform('b',metric(80.004)),uniform('a',metric(80.003)),uniform('c',metric(79.99))]
         rows=self.project(models)[0]['views']['partial']
-        self.assertEqual([(r['model_id'],r['rank'])for r in rows],[('b',1),('a',2),('c',3)])
-        self.assertEqual([r['value']for r in rows],[80.004,80.003,79.99])
+        self.assertEqual([(r['model_id'],r['rank'])for r in rows],[('a',1),('b',1),('c',3)])
+        self.assertEqual([r['value']for r in rows],[80.003,80.004,79.99])
 
-    def test_ties_use_other_scores_then_known_test_date_for_each_category(self):
+    def test_ties_use_other_scores_then_model_order_for_each_category(self):
         def triple(mid,mc,rmc,smc,day=None):
             m=model(mid,{mode:{g['id']:metric(value)for g in GROUPS}
                          for mode,value in zip(MODES,[mc,rmc,smc])})
@@ -108,12 +108,17 @@ class CategoryRankingsTests(unittest.TestCase):
         models=[triple('older',90,80,70,'2026-11-04'),triple('newer',90,80,70,'2026-11-18'),
                 triple('better-smc',90,80,75,'2026-11-19'),triple('better-rmc',90,85,70,'2026-11-19'),
                 triple('better-mc',95,80,70),triple('unknown-date',90,80,70)]
-        expected={'capability':['better-mc','better-rmc','better-smc','older','newer','unknown-date'],
-                  'partial':['better-rmc','better-smc','better-mc','older','newer','unknown-date'],
-                  'strict':['better-smc','better-rmc','better-mc','older','newer','unknown-date']}
+        for item, label in zip(models[:2], ('Astra 6 (max)', 'Astra 6.2 (xhigh)')):
+            item['label'] = label
+        models[-1]['label'] = 'Sol 6.1 (max)'
+        expected={'capability':['better-mc','better-smc','better-rmc','newer','older','unknown-date'],
+                  'partial':['better-rmc','better-smc','better-mc','newer','older','unknown-date'],
+                  'strict':['better-smc','better-rmc','better-mc','newer','older','unknown-date']}
         before=digest(models)
         for board in self.project(models):
-            for mode,ids in expected.items():self.assertEqual([r['model_id']for r in board['views'][mode]],ids)
+            for mode, ids in expected.items():
+                self.assertEqual([r['model_id'] for r in board['views'][mode]], ids)
+                self.assertEqual([r['rank'] for r in board['views'][mode]], [1,2,3,4,4,4])
         self.assertEqual(digest(models),before)
 
     def test_date_uses_only_bound_known_initial_clocks_in_local_timezone(self):
@@ -137,12 +142,28 @@ class CategoryRankingsTests(unittest.TestCase):
             root=Path(directory)/'20261101';root.mkdir()
             self.assertIsNone(recorded_test_order(root,{'record_id':'20261101'})['date'])
 
-    def test_same_day_uses_actual_timestamp_when_it_is_known(self):
-        later=uniform('later-first-in-source',metric(80));earlier=uniform('earlier',metric(80))
-        for item,time in [(later,'2026-11-08T23:30:00+00:00'),(earlier,'2026-11-08T23:00:00+00:00')]:
-            item['test_order']={'date':'2026-11-09','started_at':time}
-        self.assertEqual([r['model_id']for r in self.project([later,earlier])[0]['views']['partial']],
-                         ['earlier','later-first-in-source'])
+    def test_model_directory_groups_vendors_versions_and_efforts(self):
+        models = [
+            dict(id='sol-low', label='Sol 6.2 (xHigh)', logo={'label': 'OpenAI'}),
+            dict(id='sol-old', label='Sol 6.1 (max)', logo={'label': 'OpenAI'}),
+            dict(id='claude', label='Claude Opus 5.5 (xHigh)', logo={'label': 'Anthropic'}),
+            dict(id='sol-high', label='Sol 6.2 (max)', logo={'label': 'OpenAI'}),
+            dict(id='gemini-old', label='Gemini 3.8 Flash (high)', logo={'label': 'Google'}),
+            dict(id='gemini-new', label='Gemini 4 Carbon (medium)', logo={'label': 'Google'}),
+        ]
+        rankings.set_model_display_order(models)
+        self.assertEqual([m['id'] for m in sorted(models, key=lambda m: m['display_order'])],
+                         ['claude', 'gemini-new', 'gemini-old', 'sol-high', 'sol-low', 'sol-old'])
+
+    def test_default_total_ranking_uses_smc_and_preserves_partial_places(self):
+        first, second, partial, third = [uniform(mid, metric(80)) for mid in ('b', 'a', 'partial', 'third')]
+        for model, strict, complete in ((first, 80, True), (second, 80, True),
+                                        (partial, 80, False), (third, 79, True)):
+            for mode in MODES:
+                selected(model, mode)['metrics']['earned'] = metric(
+                    strict if mode == 'strict' else 95 if model is third else 80, exact=complete)
+        self.assertEqual([(m['id'], rank) for m, rank in rankings.overall_places([third, first, partial, second])],
+                         [('a', 1), ('b', 1), ('partial', 3), ('third', 4)])
 
 
 if __name__=='__main__':unittest.main()

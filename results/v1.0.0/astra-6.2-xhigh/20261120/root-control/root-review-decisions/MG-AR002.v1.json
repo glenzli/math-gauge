@@ -1,0 +1,146 @@
+{
+  "schema": "math-gauge.root-case-mathematical-decision/v1",
+  "case_id": "MG-AR002",
+  "model": "gpt-6.2-astra",
+  "effort": "xhigh",
+  "reviewer_id": "root-final-mathematical-review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "recorded_utc": "2026-11-20T15:05:39.387496+00:00",
+  "complete_frozen_material_and_actual_answer_read": true,
+  "answer_sha256": "d612fa827bfffc4c8af06969f4a8a910c86d2b479c850c057ed48f8973e1997e",
+  "physical_attempt": 1,
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "dimension_scores": {
+    "core_judgment": 60,
+    "evidence_scope": 30,
+    "completeness": 10
+  },
+  "checks": [
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "body",
+      "score": 20,
+      "reason": "认可并实质核查S1–S6代数延拓、全解/纤维、分类和计数，额外澄清“非平凡行组合”应是所得向量非零，与原正确条件一致；不把编辑性范围建议升级成主证错误。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "- **S1、S2。** 取特解 \\(x_0\\)，解集为 \\(x_0+W^\\perp\\)。固定 \\(A\\) 坐标后，非空纤维的方向空间为 \\(W^\\perp\\cap U_A^\\perp=(W+U_A)^\\perp\\)。给定 \\(y\\) 可延拓，恰当且仅当它与方程组给定的泛函 \\(\\beta\\) 在 \\(W\\cap U_A\\) 上一致。记 \\(n=|I|\\)、\\(r=\\dim W\\)、\\(t=\\dim(W+U_A)\\)，则解数、可实现坐标数、每个可实现坐标的完成数依次为 \\(q^{n-r},q^{t-r},q^{n-t}\\)，与答卷一致。"
+        },
+        {
+          "source_id": "answer",
+          "quote": "- **S4。** 每个有限行关系 \\(\\sum_j c_ja_j=0\\) 与相应有限子系统的解配对，都给出 \\(\\sum_j c_jb_j=0\\)，故 \\(\\beta\\) 良定义。ZFC 下的基扩充给出整体解。指定 \\(y\\) 后，\\(\\beta\\) 与 \\(y\\) 在 \\(W\\cap U_A\\) 上一致，就能拼成 \\(W+U_A\\) 上的泛函并延拓到 \\(V=k^{(I)}\\)。其全部延拓构成一个方向空间为 \\((V/(W+U_A))^*\\) 的仿射纤维。这也验证了分类表：商空间非零时有非零泛函，故单射恰当且仅当 \\(W+U_A=V\\)；交中有非零 \\(w\\) 时，改变其支撑内一个非零系数对应的坐标即可违反像方程，故满射恰当且仅当 \\(W\\cap U_A=0\\)。表中“非平凡线性组合”应明确为**组合所得的行向量非零**。例如两行同为 \\(x_2=0\\) 时，\\(a_1-a_2=0\\) 是非平凡行关系，但 \\(x_1\\) 仍可任取。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "closure",
+      "score": 15,
+      "reason": "保留任意离散域坐标像闭性，明确正文有限支撑方程路线及闭包点加入坐标约束后用S4延拓的路线独立成立。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "- **S6 及本轮核查前两点。** 像恰由 \\(\\langle w,y\\rangle=\\beta(w)\\)（\\(w\\in W\\cap U_A\\)）刻画。这里支撑**有限**来自 \\(w\\in k^{(I)}\\)，支撑**包含于 \\(A\\)** 来自 \\(w\\in U_A\\)。本轮第 2 点的“每一线性组合”须按该交集的量词理解。每个方程只依赖有限个离散坐标，因而定义开闭集，其交为闭集。本轮第 1 点从闭包点出发加入坐标方程的证明也成立，所用的任意域延拓步骤由 ZFC 下的代数基扩充保证。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "affine_boundary",
+      "score": 25,
+      "reason": "精确指出current-check第三点把非齐次仿射解集当线性子空间；没有因另有正确主证就认可原第三点。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "**审阅结论：继承正文给出了 S1–S6 所要求的结果，各项判定和公式均正确。** 本轮 `KEEP` 可以维持，但“所有证明均无任何漏洞”的评价过强。最明确的问题在本轮核查第 3 点，另有两处表述需要限定。"
+        },
+        {
+          "source_id": "answer",
+          "quote": "**本轮核查第 3 点把仿射解集当成了线性子空间。** 取 \\(k=\\mathbb Q\\)、\\(I=J=A=\\{1\\}\\)，唯一方程为 \\(x_1=1\\)。此时 \\(\\mathcal S=\\pi_A(\\mathcal S)=\\{1\\}\\)，二者都不含零向量，不能直接套用关于线性紧子空间的定理。修正方法是取特解 \\(x_0\\)，令 \\(H=W^\\circ\\)。\\(H\\) 是线性紧空间 \\(k^I\\) 的闭线性子空间，其连续线性像 \\(\\pi_A(H)\\) 在 Hausdorff 线性拓扑空间 \\(k^A\\) 中闭。因此平移 \\(\\pi_A(x_0)+\\pi_A(H)=\\pi_A(\\mathcal S)\\) 也闭。这个问题只影响第三条论证，S6 的闭性已有独立证明。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence_scope",
+      "check_id": "closure_evidence",
+      "score": 10,
+      "reason": "由W交U_A给出的精确像方程及有限支撑说明每个方程开闭，任意交闭；解释闭包点扩充方程为何由ZFC基扩充可解。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "- **S6 及本轮核查前两点。** 像恰由 \\(\\langle w,y\\rangle=\\beta(w)\\)（\\(w\\in W\\cap U_A\\)）刻画。这里支撑**有限**来自 \\(w\\in k^{(I)}\\)，支撑**包含于 \\(A\\)** 来自 \\(w\\in U_A\\)。本轮第 2 点的“每一线性组合”须按该交集的量词理解。每个方程只依赖有限个离散坐标，因而定义开闭集，其交为闭集。本轮第 1 点从闭包点出发加入坐标方程的证明也成立，所用的任意域延拓步骤由 ZFC 下的代数基扩充保证。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence_scope",
+      "check_id": "affine_evidence",
+      "score": 10,
+      "reason": "Q上单点方程x1=1的解/像均为{1}不含零，完整符合原条件并确实反驳线性子空间类型。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "**本轮核查第 3 点把仿射解集当成了线性子空间。** 取 \\(k=\\mathbb Q\\)、\\(I=J=A=\\{1\\}\\)，唯一方程为 \\(x_1=1\\)。此时 \\(\\mathcal S=\\pi_A(\\mathcal S)=\\{1\\}\\)，二者都不含零向量，不能直接套用关于线性紧子空间的定理。修正方法是取特解 \\(x_0\\)，令 \\(H=W^\\circ\\)。\\(H\\) 是线性紧空间 \\(k^I\\) 的闭线性子空间，其连续线性像 \\(\\pi_A(H)\\) 在 Hausdorff 线性拓扑空间 \\(k^A\\) 中闭。因此平移 \\(\\pi_A(x_0)+\\pi_A(H)=\\pi_A(\\mathcal S)\\) 也闭。这个问题只影响第三条论证，S6 的闭性已有独立证明。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence_scope",
+      "check_id": "limited_impact",
+      "score": 10,
+      "reason": "明确仅第三条论证须修复，提出选x0后平移到H=W的零化子并用正确线性紧性定理，再平移回；不追认原稿已完成修复。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "**本轮核查第 3 点把仿射解集当成了线性子空间。** 取 \\(k=\\mathbb Q\\)、\\(I=J=A=\\{1\\}\\)，唯一方程为 \\(x_1=1\\)。此时 \\(\\mathcal S=\\pi_A(\\mathcal S)=\\{1\\}\\)，二者都不含零向量，不能直接套用关于线性紧子空间的定理。修正方法是取特解 \\(x_0\\)，令 \\(H=W^\\circ\\)。\\(H\\) 是线性紧空间 \\(k^I\\) 的闭线性子空间，其连续线性像 \\(\\pi_A(H)\\) 在 Hausdorff 线性拓扑空间 \\(k^A\\) 中闭。因此平移 \\(\\pi_A(x_0)+\\pi_A(H)=\\pi_A(\\mathcal S)\\) 也闭。这个问题只影响第三条论证，S6 的闭性已有独立证明。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "completeness",
+      "check_id": "field_range",
+      "score": 5,
+      "reason": "有限域用通常乘积紧性，任意域用有限支撑代数延拓和基扩充；线性紧性并未与通常紧性混同。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "- **S3。** 有限离散域的任意乘积紧且 Hausdorff。各行有限支撑，故行方程和单坐标约束都定义闭集。答卷先对行方程使用有限交性质，再对加入指定坐标的方程族使用同一性质，分别得到整体解和所要求的有限可实现性刻画。坐标像因紧而闭。解集的连通子集在每个离散坐标上的投影都是单点或空集，故解集全不连通。"
+        },
+        {
+          "source_id": "answer",
+          "quote": "- **S6 及本轮核查前两点。** 像恰由 \\(\\langle w,y\\rangle=\\beta(w)\\)（\\(w\\in W\\cap U_A\\)）刻画。这里支撑**有限**来自 \\(w\\in k^{(I)}\\)，支撑**包含于 \\(A\\)** 来自 \\(w\\in U_A\\)。本轮第 2 点的“每一线性组合”须按该交集的量词理解。每个方程只依赖有限个离散坐标，因而定义开闭集，其交为闭集。本轮第 1 点从闭包点出发加入坐标方程的证明也成立，所用的任意域延拓步骤由 ZFC 下的代数基扩充保证。"
+        },
+        {
+          "source_id": "answer",
+          "quote": "**本轮核查第 3 点把仿射解集当成了线性子空间。** 取 \\(k=\\mathbb Q\\)、\\(I=J=A=\\{1\\}\\)，唯一方程为 \\(x_1=1\\)。此时 \\(\\mathcal S=\\pi_A(\\mathcal S)=\\{1\\}\\)，二者都不含零向量，不能直接套用关于线性紧子空间的定理。修正方法是取特解 \\(x_0\\)，令 \\(H=W^\\circ\\)。\\(H\\) 是线性紧空间 \\(k^I\\) 的闭线性子空间，其连续线性像 \\(\\pi_A(H)\\) 在 Hausdorff 线性拓扑空间 \\(k^A\\) 中闭。因此平移 \\(\\pi_A(x_0)+\\pi_A(H)=\\pi_A(\\mathcal S)\\) 也闭。这个问题只影响第三条论证，S6 的闭性已有独立证明。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "completeness",
+      "check_id": "support_range",
+      "score": 5,
+      "reason": "完整核验截断全一序列给任意有限行集的有限支撑解、空集零解，全系统全一仍无限支撑，仅反驳有限支撑而不否定全积。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "quote": "- **S5。** 对非空有限行集 \\(F\\)，在前 \\(\\max F\\) 项取 \\(1\\)、其余取 \\(0\\)，确实给出有限支撑解。空行集可取零解。全系统则迫使每项都为 \\(1\\)，在任意域上均有无限支撑，反例满足全部前提。"
+        }
+      ]
+    }
+  ],
+  "major_error": false,
+  "major_error_notes": "准确区分原主证明与可修复附加路线；无错误核心背书/否决，无错误反例。",
+  "claim_findings": [],
+  "claim_review_notes": "实际审阅中的新增数学断言均成立；完整核查后未发现独立错误承诺或错误全完成宣告。",
+  "strict_pass": true,
+  "mathematical_total": 100,
+  "note": "Math judgments are root-owned;mechanical source/citation/schema assembly may use shared Sol support without changing these judgments.",
+  "new_candidate_calls": 0
+}

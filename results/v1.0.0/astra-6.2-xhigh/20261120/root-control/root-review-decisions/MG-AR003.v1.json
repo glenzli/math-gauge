@@ -1,0 +1,210 @@
+{
+  "schema": "math-gauge.root-case-mathematical-decision/v1",
+  "case_id": "MG-AR003",
+  "model": "gpt-6.2-astra",
+  "effort": "xhigh",
+  "reviewer_id": "root-final-mathematical-review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "recorded_utc": "2026-11-20T15:17:23.590420+00:00",
+  "complete_frozen_material_and_actual_answer_read": true,
+  "answer_sha256": "d9180d5d8690e020f5b4057e5c1d06cf2213bdf4563e93d87348caeb675a5933",
+  "physical_attempt": 1,
+  "decision": "partial",
+  "dimension_scores": {
+    "core_judgment": 60,
+    "evidence_scope": 30,
+    "completeness": 5
+  },
+  "checks": [
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "mapping_identification",
+      "score": 30,
+      "notes": "准确给出C(X,kY)⊆C(X,Y)⊆C(kX,kY)，原拓扑连续映射之像是中间项。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 7,
+          "line_end": 11,
+          "utf8_start": 1026,
+          "utf8_end": 1666,
+          "quote": "第三部分称原拓扑连续映射对应于 \\(C(X,kY)\\)。按底集函数识别，正确关系是\n\\[\nC(X,kY)\\subseteq C(X,Y)\\subseteq C(kX,kY),\n\\]\n其中原拓扑连续映射的像是中间一项。取 S5 的非紧生成空间 \\(Z\\)，则 \\(\\mathrm{id}_Z\\in C(Z,Z)\\)，而 \\(\\mathrm{id}_Z\\notin C(Z,kZ)\\)，可直接看出差别。题目的充要条件仍成立。若 \\(X=kX\\)，每个 \\(g:kX\\to kY\\) 与连续映射 \\(kY\\to Y\\) 复合即可。反之，取 \\(Y=kX\\)，若 \\(\\mathrm{id}_{kX}\\) 对应的自然变换由原连续映射诱导，在单点探针上取值便知该映射只能是 \\(\\mathrm{id}:X\\to kX\\)，故两拓扑相等。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "exponential_law",
+      "score": 15,
+      "notes": "指出S1要求kX局部紧而非参数S，后文CGHaus指数律独立适用；用S紧和kX紧生成使普通积为k积完整说明。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 13,
+          "line_end": 22,
+          "utf8_start": 1667,
+          "utf8_end": 2555,
+          "quote": "**S3　构造和伴随结论正确，第一部分第 4 步误用 S1。** 要直接由 S1 得到 \\(C(S\\times kX,kY)\\cong C(S,C_{co}(kX,kY))\\)，局部紧性须由函数空间的定义域 \\(kX\\) 满足。已知 \\(S\\) 紧，只能直接用 S1 将 \\(S\\) 柯里化到函数空间的定义域位置。\n\n答卷第二部分已援引紧生成 Hausdorff 空间的指数律，这足以补上第 4 步。具体地，\n\\[\nC(S,C_{co}(kX,kY))\n= C(S,M(X,Y))\n\\cong C(S\\times_k kX,kY)\n= C(S\\times kX,kY).\n\\]\n第一处等号用到紧 Hausdorff 探针 \\(S\\) 映入一个空间及其 \\(k\\)-化时有相同的连续映射。中间的双射适用于紧生成 Hausdorff 空间 \\(S,kX,kY\\)。最后一处等号用到局部紧 Hausdorff 空间 \\(S\\) 与 \\(k\\)-空间 \\(kX\\) 的通常积已是 \\(k\\)-空间。由此，所给实现、逐点求值、对任意 \\(Z\\) 的伴随以及 \\(X,Y\\) 中的自然性均成立。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "ultrafilter",
+      "score": 5,
+      "notes": "恰有一个应为至少一个；开覆盖只需选一个不属于超滤子的无限部分。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 26,
+          "line_end": 26,
+          "utf8_start": 3226,
+          "utf8_end": 3924,
+          "quote": "**S5　反例成立，“恰有一个集合不属于 \\(\\mathcal U\\)”应改为“至少一个”。** \\(A_1,A_2\\) 不交，故至多一个属于 \\(\\mathcal U\\)。它们的并仅为 \\(K\\cap\\mathbb N\\)，单凭超滤子性质不能断定恰有一个属于 \\(\\mathcal U\\)；若并集的补集属于 \\(\\mathcal U\\)，则两者都不属于它。原证明只需选一个 \\(A_i\\notin\\mathcal U\\)，其补集就给出所需的 \\(p\\) 的邻域，开覆盖论证随即成立。因此所有紧子集均有限，每个紧 Hausdorff 探针都通过有限离散像分解，\\(kZ\\) 确为离散空间。恒等映射 \\(kZ\\to Z\\) 诱导探针同构，而其逆映射因 \\(\\{p\\}\\) 在 \\(Z\\) 中不开而不连续。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "core_judgment",
+      "check_id": "retained_results",
+      "score": 10,
+      "notes": "保留全Y充要条件、普通求值/第一可数/复合等结果，且不把局部错误传播为非k空间反例整体失败。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 5,
+          "utf8_start": 281,
+          "utf8_end": 1025,
+          "quote": "**S1　正确。** 局部紧 Hausdorff 性保证可以选取开邻域 \\(V\\)，使 \\(x_0\\in V\\subseteq\\overline V\\subseteq f_0^{-1}(W)\\) 且 \\(\\overline V\\) 紧，因此 \\([\\overline V,W]\\times V\\) 确实给出求值连续性所需的邻域。反向柯里化用管道引理验证了每个紧开子基集的原像为开集，三个变量的自然性等式也成立。\n\n**S2　前两部分正确，第三部分首句有误。** 离散底集 \\(D\\) 的 Stone–Čech 紧化可用 \\(D\\) 上的超滤子实现，因而是 \\(U\\)-小的 profinite 空间。连续满射 \\(\\beta D\\to K\\) 是商映射，足以证明两类探针给出相同拓扑。随后沿点映射 \\(*\\to S\\) 使用自然性，也确实得到 \\(\\mathrm{Nat}(h_X,h_Y)\\cong C(kX,kY)\\)。\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 11,
+          "line_end": 11,
+          "utf8_start": 1175,
+          "utf8_end": 1666,
+          "quote": "其中原拓扑连续映射的像是中间一项。取 S5 的非紧生成空间 \\(Z\\)，则 \\(\\mathrm{id}_Z\\in C(Z,Z)\\)，而 \\(\\mathrm{id}_Z\\notin C(Z,kZ)\\)，可直接看出差别。题目的充要条件仍成立。若 \\(X=kX\\)，每个 \\(g:kX\\to kY\\) 与连续映射 \\(kY\\to Y\\) 复合即可。反之，取 \\(Y=kX\\)，若 \\(\\mathrm{id}_{kX}\\) 对应的自然变换由原连续映射诱导，在单点探针上取值便知该映射只能是 \\(\\mathrm{id}:X\\to kX\\)，故两拓扑相等。\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 24,
+          "line_end": 28,
+          "utf8_start": 2556,
+          "utf8_end": 4495,
+          "quote": "**S4　两项判断均正确。** 在零函数处，有限个紧开子基邻域的交总包含一个 \\([K,(-\\epsilon,\\epsilon)]\\)，可取各紧集的并并添入 \\(\\{0\\}\\)。答卷中“\\(K\\) 在 \\(\\mathbb Q\\) 中亦无内点”可补明理由：\\(K\\) 在 \\(\\mathbb R\\) 中紧且闭，若它包含某个非空开区间 \\(I\\) 的全部有理点，就会包含这些点的闭包，从而包含 \\(I\\)，与 \\(K\\subseteq\\mathbb Q\\) 矛盾。因此可以取 \\(q\\in V\\setminus K\\)，答卷构造的函数确实在 \\(K\\) 上为零而在 \\(q\\) 处取值 \\(2\\)。第二项以收敛序列连同极限点构成紧 Hausdorff 探针，正确证明了第一可数蕴含紧生成。\n\n**S5　反例成立，“恰有一个集合不属于 \\(\\mathcal U\\)”应改为“至少一个”。** \\(A_1,A_2\\) 不交，故至多一个属于 \\(\\mathcal U\\)。它们的并仅为 \\(K\\cap\\mathbb N\\)，单凭超滤子性质不能断定恰有一个属于 \\(\\mathcal U\\)；若并集的补集属于 \\(\\mathcal U\\)，则两者都不属于它。原证明只需选一个 \\(A_i\\notin\\mathcal U\\)，其补集就给出所需的 \\(p\\) 的邻域，开覆盖论证随即成立。因此所有紧子集均有限，每个紧 Hausdorff 探针都通过有限离散像分解，\\(kZ\\) 确为离散空间。恒等映射 \\(kZ\\to Z\\) 诱导探针同构，而其逆映射因 \\(\\{p\\}\\) 在 \\(Z\\) 中不开而不连续。\n\n**S6　正确，结合律的“严格相等”需注明定义域的识别。** 两次连续求值再取伴随，得到的连续映射在底集上就是 \\((g,f)\\mapsto g\\circ f\\)。结合律等式的两边分别以 \\((A\\times_k B)\\times_k C\\) 和 \\(A\\times_k(B\\times_k C)\\) 为定义域，经典范结合同构识别后，逐点等式即为所需证明。单位律无误。S2 的点态对应保持复合与恒等，故 \\(h_f\\) 可逆当且仅当 \\(k(f):kX\\to kY\\) 为同胚。当 \\(X,Y\\) 都第一可数时，S4 给出 \\(kX=X,\\ kY=Y\\)，于是 \\(f\\) 本身就是同胚。"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence_scope",
+      "check_id": "mapping_evidence",
+      "score": 15,
+      "notes": "使用原合法非k空间Z的恒等映射：id:Z→Z连续而Z→kZ不连续；反向全Y命题取Y=kX并用点探针，范围正确。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 11,
+          "line_end": 11,
+          "utf8_start": 1175,
+          "utf8_end": 1666,
+          "quote": "其中原拓扑连续映射的像是中间一项。取 S5 的非紧生成空间 \\(Z\\)，则 \\(\\mathrm{id}_Z\\in C(Z,Z)\\)，而 \\(\\mathrm{id}_Z\\notin C(Z,kZ)\\)，可直接看出差别。题目的充要条件仍成立。若 \\(X=kX\\)，每个 \\(g:kX\\to kY\\) 与连续映射 \\(kY\\to Y\\) 复合即可。反之，取 \\(Y=kX\\)，若 \\(\\mathrm{id}_{kX}\\) 对应的自然变换由原连续映射诱导，在单点探针上取值便知该映射只能是 \\(\\mathrm{id}:X\\to kX\\)，故两拓扑相等。\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 26,
+          "line_end": 26,
+          "utf8_start": 3226,
+          "utf8_end": 3924,
+          "quote": "**S5　反例成立，“恰有一个集合不属于 \\(\\mathcal U\\)”应改为“至少一个”。** \\(A_1,A_2\\) 不交，故至多一个属于 \\(\\mathcal U\\)。它们的并仅为 \\(K\\cap\\mathbb N\\)，单凭超滤子性质不能断定恰有一个属于 \\(\\mathcal U\\)；若并集的补集属于 \\(\\mathcal U\\)，则两者都不属于它。原证明只需选一个 \\(A_i\\notin\\mathcal U\\)，其补集就给出所需的 \\(p\\) 的邻域，开覆盖论证随即成立。因此所有紧子集均有限，每个紧 Hausdorff 探针都通过有限离散像分解，\\(kZ\\) 确为离散空间。恒等映射 \\(kZ\\to Z\\) 诱导探针同构，而其逆映射因 \\(\\{p\\}\\) 在 \\(Z\\) 中不开而不连续。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence_scope",
+      "check_id": "exponential_scope",
+      "score": 10,
+      "notes": "准确追踪输入kX条件并以独立CGHaus路线恢复参数化双射和复合，非追认原错误引用有效。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 13,
+          "line_end": 22,
+          "utf8_start": 1667,
+          "utf8_end": 2555,
+          "quote": "**S3　构造和伴随结论正确，第一部分第 4 步误用 S1。** 要直接由 S1 得到 \\(C(S\\times kX,kY)\\cong C(S,C_{co}(kX,kY))\\)，局部紧性须由函数空间的定义域 \\(kX\\) 满足。已知 \\(S\\) 紧，只能直接用 S1 将 \\(S\\) 柯里化到函数空间的定义域位置。\n\n答卷第二部分已援引紧生成 Hausdorff 空间的指数律，这足以补上第 4 步。具体地，\n\\[\nC(S,C_{co}(kX,kY))\n= C(S,M(X,Y))\n\\cong C(S\\times_k kX,kY)\n= C(S\\times kX,kY).\n\\]\n第一处等号用到紧 Hausdorff 探针 \\(S\\) 映入一个空间及其 \\(k\\)-化时有相同的连续映射。中间的双射适用于紧生成 Hausdorff 空间 \\(S,kX,kY\\)。最后一处等号用到局部紧 Hausdorff 空间 \\(S\\) 与 \\(k\\)-空间 \\(kX\\) 的通常积已是 \\(k\\)-空间。由此，所给实现、逐点求值、对任意 \\(Z\\) 的伴随以及 \\(X,Y\\) 中的自然性均成立。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "evidence_scope",
+      "check_id": "ultrafilter_scope",
+      "score": 5,
+      "notes": "并集补集属于超滤子时两部分均不属于，理由合法；原修正版开覆盖保持有效。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 26,
+          "line_end": 26,
+          "utf8_start": 3226,
+          "utf8_end": 3924,
+          "quote": "**S5　反例成立，“恰有一个集合不属于 \\(\\mathcal U\\)”应改为“至少一个”。** \\(A_1,A_2\\) 不交，故至多一个属于 \\(\\mathcal U\\)。它们的并仅为 \\(K\\cap\\mathbb N\\)，单凭超滤子性质不能断定恰有一个属于 \\(\\mathcal U\\)；若并集的补集属于 \\(\\mathcal U\\)，则两者都不属于它。原证明只需选一个 \\(A_i\\notin\\mathcal U\\)，其补集就给出所需的 \\(p\\) 的邻域，开覆盖论证随即成立。因此所有紧子集均有限，每个紧 Hausdorff 探针都通过有限离散像分解，\\(kZ\\) 确为离散空间。恒等映射 \\(kZ\\to Z\\) 诱导探针同构，而其逆映射因 \\(\\{p\\}\\) 在 \\(Z\\) 中不开而不连续。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "completeness",
+      "check_id": "beta_size",
+      "score": 5,
+      "notes": "明确以D上超滤子实现解释U小，依据宇宙幂集闭包足够，不要求冗长重做标准闭包推演。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 5,
+          "line_end": 5,
+          "utf8_start": 648,
+          "utf8_end": 1025,
+          "quote": "**S2　前两部分正确，第三部分首句有误。** 离散底集 \\(D\\) 的 Stone–Čech 紧化可用 \\(D\\) 上的超滤子实现，因而是 \\(U\\)-小的 profinite 空间。连续满射 \\(\\beta D\\to K\\) 是商映射，足以证明两类探针给出相同拓扑。随后沿点映射 \\(*\\to S\\) 使用自然性，也确实得到 \\(\\mathrm{Nat}(h_X,h_Y)\\cong C(kX,kY)\\)。\n"
+        }
+      ]
+    },
+    {
+      "dimension_id": "completeness",
+      "check_id": "mapping_space_size",
+      "score": 0,
+      "notes": "全文无M底集函数集合及其紧开/k细化拓扑仍属U的核验或缺口指出；仅断言表示/伴随正确不能替代此项。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 1,
+          "line_end": 28,
+          "utf8_start": 0,
+          "utf8_end": 4495,
+          "quote": "**审阅结论：六个阶段的最终结论均正确，S3 构造的映射空间和 S4、S5 的反例都有效。** 原答卷覆盖了全部题目，但 S2 有一处映射集识别错误，S3 有一次指数律误用，S5 有一句错误的超滤子断言。三处均可修正。\n\n**S1　正确。** 局部紧 Hausdorff 性保证可以选取开邻域 \\(V\\)，使 \\(x_0\\in V\\subseteq\\overline V\\subseteq f_0^{-1}(W)\\) 且 \\(\\overline V\\) 紧，因此 \\([\\overline V,W]\\times V\\) 确实给出求值连续性所需的邻域。反向柯里化用管道引理验证了每个紧开子基集的原像为开集，三个变量的自然性等式也成立。\n\n**S2　前两部分正确，第三部分首句有误。** 离散底集 \\(D\\) 的 Stone–Čech 紧化可用 \\(D\\) 上的超滤子实现，因而是 \\(U\\)-小的 profinite 空间。连续满射 \\(\\beta D\\to K\\) 是商映射，足以证明两类探针给出相同拓扑。随后沿点映射 \\(*\\to S\\) 使用自然性，也确实得到 \\(\\mathrm{Nat}(h_X,h_Y)\\cong C(kX,kY)\\)。\n\n第三部分称原拓扑连续映射对应于 \\(C(X,kY)\\)。按底集函数识别，正确关系是\n\\[\nC(X,kY)\\subseteq C(X,Y)\\subseteq C(kX,kY),\n\\]\n其中原拓扑连续映射的像是中间一项。取 S5 的非紧生成空间 \\(Z\\)，则 \\(\\mathrm{id}_Z\\in C(Z,Z)\\)，而 \\(\\mathrm{id}_Z\\notin C(Z,kZ)\\)，可直接看出差别。题目的充要条件仍成立。若 \\(X=kX\\)，每个 \\(g:kX\\to kY\\) 与连续映射 \\(kY\\to Y\\) 复合即可。反之，取 \\(Y=kX\\)，若 \\(\\mathrm{id}_{kX}\\) 对应的自然变换由原连续映射诱导，在单点探针上取值便知该映射只能是 \\(\\mathrm{id}:X\\to kX\\)，故两拓扑相等。\n\n**S3　构造和伴随结论正确，第一部分第 4 步误用 S1。** 要直接由 S1 得到 \\(C(S\\times kX,kY)\\cong C(S,C_{co}(kX,kY))\\)，局部紧性须由函数空间的定义域 \\(kX\\) 满足。已知 \\(S\\) 紧，只能直接用 S1 将 \\(S\\) 柯里化到函数空间的定义域位置。\n\n答卷第二部分已援引紧生成 Hausdorff 空间的指数律，这足以补上第 4 步。具体地，\n\\[\nC(S,C_{co}(kX,kY))\n= C(S,M(X,Y))\n\\cong C(S\\times_k kX,kY)\n= C(S\\times kX,kY).\n\\]\n第一处等号用到紧 Hausdorff 探针 \\(S\\) 映入一个空间及其 \\(k\\)-化时有相同的连续映射。中间的双射适用于紧生成 Hausdorff 空间 \\(S,kX,kY\\)。最后一处等号用到局部紧 Hausdorff 空间 \\(S\\) 与 \\(k\\)-空间 \\(kX\\) 的通常积已是 \\(k\\)-空间。由此，所给实现、逐点求值、对任意 \\(Z\\) 的伴随以及 \\(X,Y\\) 中的自然性均成立。\n\n**S4　两项判断均正确。** 在零函数处，有限个紧开子基邻域的交总包含一个 \\([K,(-\\epsilon,\\epsilon)]\\)，可取各紧集的并并添入 \\(\\{0\\}\\)。答卷中“\\(K\\) 在 \\(\\mathbb Q\\) 中亦无内点”可补明理由：\\(K\\) 在 \\(\\mathbb R\\) 中紧且闭，若它包含某个非空开区间 \\(I\\) 的全部有理点，就会包含这些点的闭包，从而包含 \\(I\\)，与 \\(K\\subseteq\\mathbb Q\\) 矛盾。因此可以取 \\(q\\in V\\setminus K\\)，答卷构造的函数确实在 \\(K\\) 上为零而在 \\(q\\) 处取值 \\(2\\)。第二项以收敛序列连同极限点构成紧 Hausdorff 探针，正确证明了第一可数蕴含紧生成。\n\n**S5　反例成立，“恰有一个集合不属于 \\(\\mathcal U\\)”应改为“至少一个”。** \\(A_1,A_2\\) 不交，故至多一个属于 \\(\\mathcal U\\)。它们的并仅为 \\(K\\cap\\mathbb N\\)，单凭超滤子性质不能断定恰有一个属于 \\(\\mathcal U\\)；若并集的补集属于 \\(\\mathcal U\\)，则两者都不属于它。原证明只需选一个 \\(A_i\\notin\\mathcal U\\)，其补集就给出所需的 \\(p\\) 的邻域，开覆盖论证随即成立。因此所有紧子集均有限，每个紧 Hausdorff 探针都通过有限离散像分解，\\(kZ\\) 确为离散空间。恒等映射 \\(kZ\\to Z\\) 诱导探针同构，而其逆映射因 \\(\\{p\\}\\) 在 \\(Z\\) 中不开而不连续。\n\n**S6　正确，结合律的“严格相等”需注明定义域的识别。** 两次连续求值再取伴随，得到的连续映射在底集上就是 \\((g,f)\\mapsto g\\circ f\\)。结合律等式的两边分别以 \\((A\\times_k B)\\times_k C\\) 和 \\(A\\times_k(B\\times_k C)\\) 为定义域，经典范结合同构识别后，逐点等式即为所需证明。单位律无误。S2 的点态对应保持复合与恒等，故 \\(h_f\\) 可逆当且仅当 \\(k(f):kX\\to kY\\) 为同胚。当 \\(X,Y\\) 都第一可数时，S4 给出 \\(kX=X,\\ kY=Y\\)，于是 \\(f\\) 本身就是同胚。"
+        }
+      ]
+    }
+  ],
+  "major_error": false,
+  "major_error_notes": "无核心错误背书或错误否决；仅补充大小检查遗漏，不自动视为重大误判。",
+  "claim_findings": [],
+  "claim_review_notes": "已核查新增数学主张；没有独立错误承诺或对错误核心的接受。缺交项目仅按量规漏项计分。",
+  "strict_pass": false,
+  "mathematical_total": 95,
+  "notes": "核心映射识别错误、指数律输入条件错位、超滤子措辞均定位准确，并保留独立有效CGHaus路线和最终结论。beta D用超滤子实现补足大小说明；没有指出或核验M的底集及拓扑U小，这一明确补充检查缺交，扣5分，不作重大误判或另加承诺罚。",
+  "new_candidate_calls": 0
+}

@@ -9,7 +9,7 @@ const templates=path.resolve(__dirname,'../scripts/templates');
 test('language and metric visibility reuse views; history restores independent sorts and ignores retired filters',()=>{
  const events=new Map();let renders=0;
  const url='https://example.test/nested/gauge/?lang=zh';
- const link={href:'https://example.test/nested/gauge/models/fixture/index.html?score=strict&lang=zh'};
+ const link={href:'https://example.test/nested/gauge/models/fixture/index.html?score=strict&lang=zh',hasAttribute:()=>false};
  const context=vm.createContext({URL,URLSearchParams,Event,CustomEvent,location:new URL(url),
   history:{replaceState(){}},MGI18n:{apply(){}},
   document:{baseURI:url,getElementById:id=>id==='data'?{textContent:JSON.stringify({
@@ -32,6 +32,9 @@ test('language and metric visibility reuse views; history restores independent s
  context.location.searchParams.set('profile-models','fixture,another-model');
  assert.equal(new URL(display.href('models/fixture/index.html')).searchParams.get('profile-models'),'fixture,another-model');
  assert.equal(new URL(display.href('method.html')).searchParams.get('profile-models'),'fixture,another-model');
+ context.location.searchParams.set('profile-stage','first');
+ assert.equal(new URL(display.href('models/fixture/index.html')).searchParams.get('profile-stage'),'first');
+ assert.equal(new URL(display.href('method.html')).searchParams.get('profile-stage'),'first');
  context.location.searchParams.set('sort-written','capability');events.get('popstate')();
  assert.equal(renders,2);
  context.location.searchParams.set('category','research');events.get('popstate')();

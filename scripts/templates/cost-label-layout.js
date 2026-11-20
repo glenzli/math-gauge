@@ -59,6 +59,29 @@
   return t>EPSILON&&t<1-EPSILON&&u>EPSILON&&u<1-EPSILON;
  }
 
+ function routeLeader(point,box,line,placed,points,frontiers){
+  const obstructed=segment=>
+   placed.some(other=>other.point!==point&&segmentHitsBox(segment,other.box,1))||
+   points.some(other=>other!==point&&segmentHitsPoint(segment,other,1))||
+   frontiers.some(frontier=>segmentsCross(segment,frontier));
+  if(!line.needed||!obstructed(line))return line;
+
+  // Try nearby endpoints along the same label before falling back to the direct link.
+  let best=line;
+  let limit=Math.hypot(line.x2-line.x1,line.y2-line.y1)+point.r+point.height;
+  for(const fraction of [0,.25,.5,.75,1]){
+   const x=box.x+box.width*fraction,y=box.y+box.height*fraction;
+   for(const [x2,y2] of [[x,box.y],[x,box.y+box.height],[box.x,y],[box.x+box.width,y]]){
+    const dx=x2-point.cx,dy=y2-point.cy,distance=Math.hypot(dx,dy);
+    if(distance<=point.r||distance>=limit)continue;
+    const segment={x1:point.cx+dx*point.r/distance,y1:point.cy+dy*point.r/distance,x2,y2,needed:true};
+    if(segmentHitsBox(segment,box,0))continue;
+    if(!obstructed(segment)){best=segment;limit=distance;}
+   }
+  }
+  return best;
+ }
+
  function compare(a,b){
   for(let i=0;i<a.length;i++)if(Math.abs(a[i]-b[i])>EPSILON)return a[i]-b[i];
   return 0;
@@ -121,10 +144,10 @@
   }
   const distance=Math.hypot(line.x2-point.cx,line.y2-point.cy)-point.r;
   const proximity=distance*distance+plotHits*900+Math.abs(box.y+box.height/2-point.cy)*0.1;
-  // Transient connectors do not justify moving a permanent name far from its
-  // point. Keep collision avoidance hard, but make leader routing a soft cost.
+  // Keep names and points clear. Penalize leader crossings alongside length
+  // so a single crossing does not send a name across the plot.
   const score=interactiveConnectors?
-   [labelHits+pointHits,pointHits,area,proximity+leaderLabels*36+leaderPoints*36+crossings*12]:
+   [labelHits+pointHits,pointHits,area,proximity+leaderLabels*576+leaderPoints*900+crossings*324]:
    [labelHits+pointHits,pointHits,area,leaderLabels,leaderPoints,crossings,proximity];
   return {box,line,unsafeLeader:leaderLabels+leaderPoints,score};
  }
@@ -191,8 +214,9 @@
     for(const label of placed.slice().sort((a,b)=>pointGap(b.point,b.box)-pointGap(a.point,a.box))){
      if(pointGap(label.point,label.box)<36)continue;
      let best=null;
-     for(const other of placed){
-      if(other===label)continue;
+     const neighbors=placed.filter(other=>other!==label).sort((a,b)=>
+      pointGap(label.point,a.box)-pointGap(label.point,b.box)).slice(0,6);
+     for(const other of neighbors){
       const rest=placed.filter(item=>item!==label&&item!==other);
       const oldA=evaluate(label.point,label.box,placed.filter(item=>item!==label),points,options.lines,options.padding,true);
       const oldB=evaluate(other.point,other.box,placed.filter(item=>item!==other),points,options.lines,options.padding,true);
@@ -209,9 +233,9 @@
   return points.map(point=>{
    const visible=byIndex.has(point.index);
    const label=byIndex.get(point.index)||choose(point,placed,points,options);
-   const box=label.box,line=label.line;
+   const box=label.box;
    return {id:point.id,x:box.x,y:box.y,width:point.width,height:point.height,visible,
-    connector:{x1:line.x1,y1:line.y1,x2:line.x2,y2:line.y2,needed:line.needed}};
+    connector:routeLeader(point,box,label.line,placed,points,options.lines)};
   });
  }
 

@@ -1,0 +1,460 @@
+{
+  "schema": "math-gauge.lean-primary-case-support/v1",
+  "case_id": "AHR03",
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-lean",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "candidate_feedback": false,
+  "complete_native_final_read": true,
+  "explicit_delivered_attachments": [],
+  "unsubmitted_work_used": false,
+  "candidate_source_repaired": false,
+  "frozen_case_sources": {
+    "task.md": {
+      "original": {
+        "path": "/private/tmp/math-gauge-release-v1-20261117/source/math-gauge/cases/lean-audit/AHR03/task.md",
+        "bytes": 626,
+        "sha256": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6"
+      },
+      "snapshot": {
+        "path": "grading/lean/source-materials/AHR03/task.md",
+        "bytes": 626,
+        "sha256": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6"
+      }
+    },
+    "rubric.json": {
+      "original": {
+        "path": "/private/tmp/math-gauge-release-v1-20261117/source/math-gauge/cases/lean-audit/AHR03/rubric.json",
+        "bytes": 2927,
+        "sha256": "9f5bdba6529aa953322bad6b46c29bcc99f8df11a487983c8dd7275cbe72b2d7"
+      },
+      "snapshot": {
+        "path": "grading/lean/source-materials/AHR03/rubric.json",
+        "bytes": 2927,
+        "sha256": "9f5bdba6529aa953322bad6b46c29bcc99f8df11a487983c8dd7275cbe72b2d7"
+      }
+    },
+    "reference.md": {
+      "original": {
+        "path": "/private/tmp/math-gauge-release-v1-20261117/source/math-gauge/cases/lean-audit/AHR03/reference.md",
+        "bytes": 6837,
+        "sha256": "52c13ed322d591fca9321f11d5f013096801559082ee39076c9ae23cb553e118"
+      },
+      "snapshot": {
+        "path": "grading/lean/source-materials/AHR03/reference.md",
+        "bytes": 6837,
+        "sha256": "52c13ed322d591fca9321f11d5f013096801559082ee39076c9ae23cb553e118"
+      }
+    },
+    "group-contract.json": {
+      "original": {
+        "path": "/private/tmp/math-gauge-release-v1-20261117/source/math-gauge/cases/lean-audit/AHR03/group-contract.json",
+        "bytes": 3932,
+        "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac"
+      },
+      "snapshot": {
+        "path": "grading/lean/source-materials/AHR03/group-contract.json",
+        "bytes": 3932,
+        "sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac"
+      }
+    },
+    "provenance.json": {
+      "original": {
+        "path": "/private/tmp/math-gauge-release-v1-20261117/source/math-gauge/cases/lean-audit/AHR03/provenance.json",
+        "bytes": 15027,
+        "sha256": "418346f17bded5fa31087e9ea291503bd6a58dd10d050c36ecf6f008a0f825a3"
+      },
+      "snapshot": {
+        "path": "grading/lean/source-materials/AHR03/provenance.json",
+        "bytes": 15027,
+        "sha256": "418346f17bded5fa31087e9ea291503bd6a58dd10d050c36ecf6f008a0f825a3"
+      }
+    }
+  },
+  "evidence_sources": {
+    "answer": {
+      "path": "sessions/AHR03/physical-1/output/response.md",
+      "bytes": 7709,
+      "sha256": "1152d94dec93782a00b797600e711ead891487e7722e3e459f286c4cf9c2fa91"
+    },
+    "original_text": {
+      "path": "sessions/AHR03/physical-1/sealed/source.md",
+      "bytes": 64623,
+      "sha256": "c84ed7d2b8ece9f3dee76212dd246160df77053cc27aa798566b58229d1ce28c"
+    },
+    "precise_relation": {
+      "path": "sessions/AHR03/physical-1/sealed/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean",
+      "bytes": 23067,
+      "sha256": "115dcece3aab027a1b877b3c09271efc9c3aabb8fe6da44928637828a483423c"
+    },
+    "construction": {
+      "path": "sessions/AHR03/physical-1/sealed/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean",
+      "bytes": 19993,
+      "sha256": "f52f6ecf241d9e9b64b06c48814956e3f9b9c2e0fd0c52986a0ccffe86664e9b"
+    },
+    "pruning": {
+      "path": "sessions/AHR03/physical-1/sealed/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean",
+      "bytes": 7024,
+      "sha256": "b24e2bd1f2425143b798051304832258691aca79458b964111e322d4c3489e5c"
+    }
+  },
+  "obligation_mapping": [
+    {
+      "target": "judgment",
+      "assessment": "fully satisfied",
+      "notes": "明确在题定节点域加细及外延分支内判完整，区分弱Operational辅助关系与含全保留边域等式的精确NodeDomainRefinement。判断建立在字段与构造桥而非编译或历史版本名。",
+      "original_answer_evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 1,
+          "line_end": 1,
+          "utf8_start": 0,
+          "utf8_end": 813,
+          "quote": "**附件完整覆盖了正文的节点域加细定义，以及该情形下一步加细保持外延等价的命题。** `NetworkRefinement.node_domain` 要求保留节点之间的完整边域满足正文的交集公式。给定正文所列的分划和局域算子，`NodePartitionData.network_refinement` 构造出满足这一要求的网络。用 Lean 4.29.1 重新编译了该构造及其依赖，共 24 个附件模块，编译通过。[一步加细关系](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:407) · [构造满足该关系的证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:449)\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 11,
+          "line_end": 15,
+          "utf8_start": 2598,
+          "utf8_end": 3801,
+          "quote": "3. **边域，包括自环与未使用的边。** 记 \\(I'_v=f'_v(U'_v)\\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求\n   \\[\n   D'_{v\\to w}=D_{\\pi v\\to\\pi w}\\cap I'_v\\cap U'_w.\n   \\]\n   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \\(U_{\\beta,a}\\)；仅源被拆时只需交 \\(f_{\\beta,a}(U_{\\beta,a})\\)；原自环则同时交源块输出像与目标块输入域，允许 \\(a=b\\) 或 \\(a\\ne b\\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)\n"
+        }
+      ]
+    },
+    {
+      "target": "valid_parts",
+      "assessment": "fully satisfied",
+      "notes": "覆盖分划和限制算子、旧节点保留与精确入口交集、未使用保留边/自环、重复发生按当前输入选片、删点前后终止域及实际构造至精确关系的桥；轨迹与外延证明得到正确承认。",
+      "original_answer_evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 19,
+          "utf8_start": 814,
+          "utf8_end": 5637,
+          "quote": "1. **分划与局域算子。** `NodePartitionData` 用 `Fin count`、`count_pos`、`nonempty`、`disjoint` 和 `cover` 表达有限正数个非空块，两两不交，且并集恰为目标节点的**整个**定义域 \\(U_\\beta\\)。`local_domain` 给出 \\(\\operatorname{dom}(f_{\\beta,a})=U_{\\beta,a}\\)，`local_eq` 给出块内逐点相等。块外因不属于定义域，算子值必为 \\(\\bot\\)，所以 `local_op_eq_restrict` 证明了全算子等式 \\(f_{\\beta,a}=f_\\beta|_{U_{\\beta,a}}\\)。一块分划也在允许范围内。[分划数据与限制算子定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12)\n\n2. **节点与入口。** 设 \\(\\pi\\) 将子节点投回 \\(\\beta\\)，将其余标签投回对应旧节点。`source_injective` 排除重复副本，`old_node_present` 和 `old_node_op_compat` 保证每个未拆旧节点恰有一个对应节点，算子相等。`same_input_domain` 给出 \\(U'=U\\)。由入口投影、入口点属于所在节点域，以及同一旧节点的不同子域互斥，`entry_domain_eq` 证明\n   \\[\n   U'^{\\mathrm{in}}_v=U^{\\mathrm{in}}_{\\pi v}\\cap U'_v.\n   \\]\n   对子节点，这正是正文的入口交集。对其余节点，旧入口片已包含于节点域，交集就等于旧入口片。空交集表示该节点没有入口输入，它仍可能由前驱到达。[节点与入口条件](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:85) · [入口交集定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:283)\n\n3. **边域，包括自环与未使用的边。** 记 \\(I'_v=f'_v(U'_v)\\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求\n   \\[\n   D'_{v\\to w}=D_{\\pi v\\to\\pi w}\\cap I'_v\\cap U'_w.\n   \\]\n   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \\(U_{\\beta,a}\\)；仅源被拆时只需交 \\(f_{\\beta,a}(U_{\\beta,a})\\)；原自环则同时交源块输出像与目标块输入域，允许 \\(a=b\\) 或 \\(a\\ne b\\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)\n\n4. **轨迹与删点。** `colour_path` 在每次经过 \\(\\beta\\) 时，用**该次发生的当前输入**选择唯一子块。因而即使一条路径反复经过 \\(\\beta\\)，每次也可选择不同子节点。`coloured_terminal`、`coloured_eval` 和 `colour_path_length` 分别证明新路径合法终止、输出相等、长度相等，故原统一长度界可直接使用。随后 `piece_label_reached_iff` 证明，子块恰在某条原入口轨迹的一次 \\(\\beta\\) 发生收到该块中的输入时保留。`prune` 删除其余标签及关联边，`network_path_projection` 证明删点后的实际路径逐项投影回原路径。[逐次选块与求值证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:168) · [子块保留判据](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:310)\n\n**终止域须区分删点前后。** 正文在删点前使用 \\(T^{\\mathrm{pre}}_{\\beta_a}=I'_{\\beta_a}\\cap T_\\beta\\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 23,
+          "line_end": 23,
+          "utf8_start": 6288,
+          "utf8_end": 7359,
+          "quote": "**源码已证明的外延结论。** 对任意正式加细见证，`path_projection` 由实际路由投影和确定性终止路径的唯一性得到路径对应，`eval_projected` 由各步算子在当前输入上相等得到求值对应。`refinement_preserves_local_equivalence` 据此证明正文所写的 \\(\\phi_{N'}\\equiv_U\\phi_N\\)。对从分划数据构造的网络，`network_extensional_eq` 还直接证明了全空间上的算子等式。对任意关系见证，全空间等式也由同域、域内逐点相等、域外同取 \\(\\bot\\) 直接推出。删点前的终止域交集式和实际最大深度相等可以另列为推论；所问定义与外延命题本身无需修复。[一般局部等价定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:453) · [具体构造的全算子等式](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:258)\n"
+        }
+      ]
+    },
+    {
+      "target": "evidence",
+      "assessment": "fully satisfied",
+      "notes": "给出真实声明类型和全局域边公式，明确network_refinement不是假设最终结论；辅助四点示例正确展示未使用边仍须保留及指向删除子节点的边可删。原native还真实编译24模块，但语义论证独立成立。",
+      "original_answer_evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 1,
+          "line_end": 21,
+          "utf8_start": 0,
+          "utf8_end": 6287,
+          "quote": "**附件完整覆盖了正文的节点域加细定义，以及该情形下一步加细保持外延等价的命题。** `NetworkRefinement.node_domain` 要求保留节点之间的完整边域满足正文的交集公式。给定正文所列的分划和局域算子，`NodePartitionData.network_refinement` 构造出满足这一要求的网络。用 Lean 4.29.1 重新编译了该构造及其依赖，共 24 个附件模块，编译通过。[一步加细关系](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:407) · [构造满足该关系的证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:449)\n\n1. **分划与局域算子。** `NodePartitionData` 用 `Fin count`、`count_pos`、`nonempty`、`disjoint` 和 `cover` 表达有限正数个非空块，两两不交，且并集恰为目标节点的**整个**定义域 \\(U_\\beta\\)。`local_domain` 给出 \\(\\operatorname{dom}(f_{\\beta,a})=U_{\\beta,a}\\)，`local_eq` 给出块内逐点相等。块外因不属于定义域，算子值必为 \\(\\bot\\)，所以 `local_op_eq_restrict` 证明了全算子等式 \\(f_{\\beta,a}=f_\\beta|_{U_{\\beta,a}}\\)。一块分划也在允许范围内。[分划数据与限制算子定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12)\n\n2. **节点与入口。** 设 \\(\\pi\\) 将子节点投回 \\(\\beta\\)，将其余标签投回对应旧节点。`source_injective` 排除重复副本，`old_node_present` 和 `old_node_op_compat` 保证每个未拆旧节点恰有一个对应节点，算子相等。`same_input_domain` 给出 \\(U'=U\\)。由入口投影、入口点属于所在节点域，以及同一旧节点的不同子域互斥，`entry_domain_eq` 证明\n   \\[\n   U'^{\\mathrm{in}}_v=U^{\\mathrm{in}}_{\\pi v}\\cap U'_v.\n   \\]\n   对子节点，这正是正文的入口交集。对其余节点，旧入口片已包含于节点域，交集就等于旧入口片。空交集表示该节点没有入口输入，它仍可能由前驱到达。[节点与入口条件](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:85) · [入口交集定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:283)\n\n3. **边域，包括自环与未使用的边。** 记 \\(I'_v=f'_v(U'_v)\\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求\n   \\[\n   D'_{v\\to w}=D_{\\pi v\\to\\pi w}\\cap I'_v\\cap U'_w.\n   \\]\n   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \\(U_{\\beta,a}\\)；仅源被拆时只需交 \\(f_{\\beta,a}(U_{\\beta,a})\\)；原自环则同时交源块输出像与目标块输入域，允许 \\(a=b\\) 或 \\(a\\ne b\\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)\n\n4. **轨迹与删点。** `colour_path` 在每次经过 \\(\\beta\\) 时，用**该次发生的当前输入**选择唯一子块。因而即使一条路径反复经过 \\(\\beta\\)，每次也可选择不同子节点。`coloured_terminal`、`coloured_eval` 和 `colour_path_length` 分别证明新路径合法终止、输出相等、长度相等，故原统一长度界可直接使用。随后 `piece_label_reached_iff` 证明，子块恰在某条原入口轨迹的一次 \\(\\beta\\) 发生收到该块中的输入时保留。`prune` 删除其余标签及关联边，`network_path_projection` 证明删点后的实际路径逐项投影回原路径。[逐次选块与求值证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:168) · [子块保留判据](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:310)\n\n**终止域须区分删点前后。** 正文在删点前使用 \\(T^{\\mathrm{pre}}_{\\beta_a}=I'_{\\beta_a}\\cap T_\\beta\\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)\n\n例如，取 \\(\\mathcal X=\\{\\bot,a,b,c\\}\\)，节点 \\(\\alpha,\\beta\\) 都用恒等算子，入口片分别为 \\(\\{a\\},\\{b\\}\\)，唯一边域为 \\(D_{\\alpha\\to\\beta}=\\{b,c\\}\\)。两个入口输入都一步终止。将 \\(\\beta\\) 分成 \\(\\{a,b\\}\\) 和 \\(\\{c\\}\\) 后，第一块因入口 \\(b\\) 保留，第二块被删。于是从 \\(\\alpha\\) 通往第一块的边域 **\\(\\{b\\}\\) 必须保留**，尽管没有入口轨迹经过这条边。通往第二块的边随节点删除，故 \\(T_\\alpha\\) 从 \\(\\{a\\}\\) 扩大为 \\(\\{a,c\\}\\)。这同时说明了完整边域等式的作用，以及为何删点后只需在实际输出上要求路由投影一致。\n"
+        }
+      ]
+    },
+    {
+      "target": "repair_scope",
+      "assessment": "fully satisfied",
+      "notes": "准确说明本范围无需修复。删点前终止域等式、最大实际深度可列推论而非缺陷或新交付要求；结论没有推广到代数加细、整章其他义务或当前全书。",
+      "original_answer_evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 19,
+          "line_end": 23,
+          "utf8_start": 4828,
+          "utf8_end": 7359,
+          "quote": "**终止域须区分删点前后。** 正文在删点前使用 \\(T^{\\mathrm{pre}}_{\\beta_a}=I'_{\\beta_a}\\cap T_\\beta\\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)\n\n例如，取 \\(\\mathcal X=\\{\\bot,a,b,c\\}\\)，节点 \\(\\alpha,\\beta\\) 都用恒等算子，入口片分别为 \\(\\{a\\},\\{b\\}\\)，唯一边域为 \\(D_{\\alpha\\to\\beta}=\\{b,c\\}\\)。两个入口输入都一步终止。将 \\(\\beta\\) 分成 \\(\\{a,b\\}\\) 和 \\(\\{c\\}\\) 后，第一块因入口 \\(b\\) 保留，第二块被删。于是从 \\(\\alpha\\) 通往第一块的边域 **\\(\\{b\\}\\) 必须保留**，尽管没有入口轨迹经过这条边。通往第二块的边随节点删除，故 \\(T_\\alpha\\) 从 \\(\\{a\\}\\) 扩大为 \\(\\{a,c\\}\\)。这同时说明了完整边域等式的作用，以及为何删点后只需在实际输出上要求路由投影一致。\n\n**源码已证明的外延结论。** 对任意正式加细见证，`path_projection` 由实际路由投影和确定性终止路径的唯一性得到路径对应，`eval_projected` 由各步算子在当前输入上相等得到求值对应。`refinement_preserves_local_equivalence` 据此证明正文所写的 \\(\\phi_{N'}\\equiv_U\\phi_N\\)。对从分划数据构造的网络，`network_extensional_eq` 还直接证明了全空间上的算子等式。对任意关系见证，全空间等式也由同域、域内逐点相等、域外同取 \\(\\bot\\) 直接推出。删点前的终止域交集式和实际最大深度相等可以另列为推论；所问定义与外延命题本身无需修复。[一般局部等价定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:453) · [具体构造的全算子等式](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:258)\n"
+        }
+      ]
+    }
+  ],
+  "original_scope_evidence": [
+    {
+      "source_id": "original_text",
+      "pointer": "",
+      "line_start": 1042,
+      "line_end": 1073,
+      "utf8_start": 45134,
+      "utf8_end": 46558,
+      "quote": "> **注（矩阵界与标量界）**：本命题使用标量 $d_i$-Lip 条件。若从矩阵 Lip 界进入本命题，应先得到所需的有限正标量上界，例如选取第 $i$ 行非对角项为零、对角项有限正的 Lip 证书；也可以改用已定义的聚合伪度量。\n\n### #h-eddd1f2d0a9d3528 网络加细与不可约代表\n\n网络加细通过细分节点的输入域，或把一次局域运算分解为连续的两次运算，得到更细的网络表示。\n\n**定义（网络加细）**：设 $\\mathcal{N}$ 为算子网络。\n\n**(i)（节点域加细）**：将节点 $\\beta$ 的定义域 $U_\\beta=\\mathrm{dom}(f_\\beta)$ 替换为有限非空分划\n\n$$U_\\beta=\\bigsqcup_{a=1}^{q}U_{\\beta,a},$$\n\n并对每个子节点选取局域算子 $f_{\\beta,a}\\in\\mathcal{X}_{\\mathrm{op}}$，满足\n\n$$\n\\mathrm{dom}(f_{\\beta,a})=U_{\\beta,a},\n\\qquad\nf_{\\beta,a}\\equiv_{U_{\\beta,a}} f_\\beta .\n$$\n\n用子节点 $\\beta_a$ 替换 $\\beta$。若 $\\beta$ 为入口节点，则子节点的入口输入片取 $U_\\beta^{\\mathrm{in}}\\cap U_{\\beta,a}$。对原有入边 $\\gamma\\to\\beta$ 和出边 $\\beta\\to\\gamma$（$\\gamma\\neq\\beta$），新边域分别取\n\n$$\nD'_{\\gamma\\to\\beta_a}=D_{\\gamma\\to\\beta}\\cap U_{\\beta,a},\n\\qquad\nD'_{\\beta_a\\to\\gamma}=D_{\\beta\\to\\gamma}\\cap f_{\\beta,a}(U_{\\beta,a}).\n$$\n\n若原节点有自环，则同时按源子节点的输出像与目标子节点的输入域细分：\n\n$$\nD'_{\\beta_a\\to\\beta_b}\n"
+    },
+    {
+      "source_id": "precise_relation",
+      "pointer": "",
+      "line_start": 68,
+      "line_end": 129,
+      "utf8_start": 2766,
+      "utf8_end": 5600,
+      "quote": "structure OperationalNodeDomainRefinement\n    (N : FiniteOperatorNetwork X bot V)\n    (N' : FiniteOperatorNetwork X bot V') where\n  target : V\n  part_count : Nat\n  part_count_pos : 0 < part_count\n  piece : Fin part_count → Set X\n  piece_nonempty : ∀ a : Fin part_count, (piece a).Nonempty\n  piece_disjoint :\n    ∀ {a b : Fin part_count}, a ≠ b → Disjoint (piece a) (piece b)\n  piece_cover : (⋃ a : Fin part_count, piece a) = N.node_dom target\n  local_factor : Fin part_count → Operator X bot\n  local_domain :\n    ∀ a : Fin part_count, dom (local_factor a) = piece a\n  local_equiv :\n    ∀ a : Fin part_count,\n      LocalEquivalent (local_factor a) (N.node_op target) (piece a)\n  source : V' → ({β : V // β ≠ target} ⊕ Fin part_count)\n  source_injective : Function.Injective source\n  old_node_present :\n    ∀ β : {β : V // β ≠ target}, ∃ β' : V', source β' = Sum.inl β\n  piece_node_present_iff_reached :\n    ∀ a : Fin part_count,\n      (∃ β' : V', source β' = Sum.inr a) ↔ NodePieceReached N target piece a\n  old_node_op_compat :\n    ∀ (β' : V') (β : {β : V // β ≠ target}),\n      source β' = Sum.inl β → N'.node_op β' = N.node_op β.val\n  piece_node_op_compat :\n    ∀ (β' : V') (a : Fin part_count),\n      source β' = Sum.inr a → N'.node_op β' = local_factor a\n  same_input_domain : N'.U = N.U\n  entry_projection :\n    ∀ x : N'.U, node_domain_projection target source (N'.entry x) =\n      N.entry (transport_network_input same_input_domain x)\n  -- Pruning may change choices at outputs never reached from the source.\n  choice_projection :\n    ∀ (v : V') (z : X), z ∈ (N'.node_op v).func '' N'.node_actual_input_domain v →\n      map_output_choice (node_domain_projection target source) (N'.choice v z) =\n        N.choice (node_domain_projection target source v) z\n\n\n/--\nOET anchor: h-eddd1f2d0a9d3528\n**定义（网络加细，节点域加细）**\nThe exact relation after unreachable-piece deletion. Every retained edge is\nprescribed on the full local output image, including edges never used by an\nentry trajectory. Intersecting with the source image and destination domain\nsimultaneously covers old edges, incoming/outgoing edges and split self-loops.\nThe actual construction satisfies all fields in `domain_refinement_construction`.\n-/\nstructure NodeDomainRefinement\n    (N : FiniteOperatorNetwork X bot V)\n    (N' : FiniteOperatorNetwork X bot V')\n    extends OperationalNodeDomainRefinement N N' where\n  edge_domain_eq : ∀ v w : V',\n    N'.edge_domain v w =\n      (N.edge_domain (node_domain_projection target source v)\n        (node_domain_projection target source w) ∩ N'.node_image v) ∩ N'.node_dom w\n\n\n/-- A successor entering a replaced node must enter its first factor.\nThe second factor is an internal node and cannot be an external entry. -/\n"
+    },
+    {
+      "source_id": "precise_relation",
+      "pointer": "",
+      "line_start": 283,
+      "line_end": 310,
+      "utf8_start": 12270,
+      "utf8_end": 13426,
+      "quote": "theorem entry_domain_eq (v : V') :\n    N'.entry_domain v = N.entry_domain (h.projection v) ∩ N'.node_dom v := by\n  ext x\n  constructor\n  · rintro ⟨hx, he⟩\n    have hp := h.entry_projection ⟨x, hx⟩\n    rw [he] at hp\n    refine ⟨⟨h.same_input_domain ▸ hx, hp.symm⟩, ?_⟩\n    simpa only [he] using N'.entry_mem ⟨x, hx⟩\n  · rintro ⟨⟨hx, he⟩, hdom⟩\n    have hx' : x ∈ N'.U := h.same_input_domain.symm ▸ hx\n    refine ⟨hx', ?_⟩\n    apply h.label_eq_of_projection_eq_of_mem _ (N'.entry_mem ⟨x, hx'⟩) hdom\n    exact (h.entry_projection ⟨x, hx'⟩).trans he\n\n/-- A retained edge cannot be removed at a point in its full source image and\nfull destination domain, whether or not that point is actually encountered. -/\ntheorem retained_edge_mem {v w : V'} {z : X}\n    (hz : z ∈ N.edge_domain (h.projection v) (h.projection w))\n    (hv : z ∈ N'.node_image v) (hw : z ∈ N'.node_dom w) :\n    z ∈ N'.edge_domain v w := by\n  rw [h.edge_domain_eq]\n  exact ⟨⟨hz, hv⟩, hw⟩\n\nend NodeDomainRefinement\n\nnamespace AlgebraicRefinement\nvariable {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}\n"
+    },
+    {
+      "source_id": "construction",
+      "pointer": "",
+      "line_start": 346,
+      "line_end": 385,
+      "utf8_start": 13871,
+      "utf8_end": 15474,
+      "quote": "theorem network_edge_domain_eq (v w : {v // P.presentation.Reached v}) :\n    P.network.edge_domain v w =\n      (N.edge_domain (P.projection v.val) (P.projection w.val) ∩\n        P.network.node_image v) ∩ P.network.node_dom w := by\n  classical\n  ext z\n  change (z ∈ P.network.node_image v ∧\n    prune_choice P.presentation.Reached P.choice v z = .next w) ↔ _\n  constructor\n  · rintro ⟨hz, hc⟩\n    have hchoice : P.choice v.val z = .next w.val := by\n      unfold prune_choice at hc\n      split at hc\n      · contradiction\n      · rename_i u hu\n        split at hc\n        · cases hc\n          exact hu\n        · contradiction\n    have hproj : N.choice (P.projection v.val) z = .next (P.projection w.val) := by\n      unfold choice map_output_choice at hchoice\n      split at hchoice\n      · contradiction\n      · rename_i u hu\n        have heq := congrArg P.projection (OutputChoice.next.inj hchoice)\n        rw [P.projection_lift] at heq\n        exact heq ▸ hu\n    have himage : z ∈ N.node_image (P.projection v.val) := by\n      rcases hz with ⟨x, hx, rfl⟩\n      exact ⟨x, P.node_domain_subset_original v.val hx,\n        (P.node_apply_eq_original v.val x hx).symm⟩\n    have hw := P.network.edge_domain_subset_node_dom\n      (show z ∈ P.network.edge_domain v w from ⟨hz, hc⟩)\n    exact ⟨⟨⟨himage, hproj⟩, hz⟩, hw⟩\n  · rintro ⟨⟨hz, hv⟩, hw⟩\n    refine ⟨hv, ?_⟩\n    have hchoice : P.choice v.val z = .next w.val := by\n      rw [choice, hz.2, map_output_choice, P.lift_projection_of_mem w.val z hw]\n    simp [prune_choice, hchoice, w.property]\n\n"
+    },
+    {
+      "source_id": "construction",
+      "pointer": "",
+      "line_start": 449,
+      "line_end": 497,
+      "utf8_start": 18251,
+      "utf8_end": 19920,
+      "quote": "def network_refinement : NodeDomainRefinement N P.network where\n  target := target\n  part_count := P.count\n  part_count_pos := P.count_pos\n  piece := P.piece\n  piece_nonempty := P.nonempty\n  piece_disjoint := P.disjoint\n  piece_cover := P.cover\n  local_factor := P.local_op\n  local_domain := P.local_domain\n  local_equiv := P.local_eq\n  source := Subtype.val\n  source_injective := Subtype.val_injective\n  old_node_present := fun v => ⟨⟨.inl v, P.old_label_reached v⟩, rfl⟩\n  piece_node_present_iff_reached := by\n    intro a\n    constructor\n    · rintro ⟨v, hv⟩\n      exact (P.piece_label_reached_iff a).mp (hv ▸ v.property)\n    · intro h\n      exact ⟨⟨.inr a, (P.piece_label_reached_iff a).mpr h⟩, rfl⟩\n  old_node_op_compat := by\n    intro v w h\n    change P.node_op v.val = N.node_op w.val\n    rw [h]\n    rfl\n  piece_node_op_compat := by\n    intro v a h\n    change P.node_op v.val = P.local_op a\n    rw [h]\n    rfl\n  same_input_domain := rfl\n  entry_projection := by\n    intro x\n    rw [P.network_label_projection]\n    exact P.projection_lift (N.entry x) x.val\n  choice_projection := by\n    intro v z hz\n    have hproj : node_domain_projection target Subtype.val =\n        fun w : {v // P.presentation.Reached v} => P.projection w.val :=\n      funext P.network_label_projection\n    simpa only [hproj] using P.network_choice_projection v z hz\n  edge_domain_eq := by\n    intro v w\n    simpa only [P.network_label_projection] using P.network_edge_domain_eq v w\n\n/-- The constructed exact refinement is an allowed one-step network refinement. -/\ndef allowed_network_refinement : NetworkRefinement N P.network :=\n  .node_domain P.network_refinement\n"
+    },
+    {
+      "source_id": "pruning",
+      "pointer": "",
+      "line_start": 35,
+      "line_end": 55,
+      "utf8_start": 1360,
+      "utf8_end": 2249,
+      "quote": "def prune_choice (P : V → Prop) (choice : V → X → OutputChoice V)\n    (v : {v // P v}) (x : X) : OutputChoice {v // P v} := by\n  classical\n  exact match choice v.val x with\n    | .stop => .stop\n    | .next w => if h : P w then .next ⟨w, h⟩ else .stop\n\n/-- Every edge between retained labels is preserved on its entire domain,\nincluding values that never arise during entrance evaluation. -/\ntheorem prune_choice_next_iff (P : V → Prop) (choice : V → X → OutputChoice V)\n    (v w : {v // P v}) (x : X) :\n    prune_choice P choice v x = .next w ↔ choice v.val x = .next w.val := by\n  classical\n  cases hc : choice v.val x with\n  | stop => simp [prune_choice, hc]\n  | next u =>\n    by_cases hu : P u\n    · simp [prune_choice, hc, hu, Subtype.ext_iff]\n    · simp only [prune_choice, hc, dif_neg hu, reduceCtorEq, false_iff,\n        OutputChoice.next.injEq]\n      intro heq\n"
+    }
+  ],
+  "mathematical_facts": {
+    "precise_complete_edge_formula_present": true,
+    "construction_bridge_proved_without_assuming_final_result": true,
+    "valid_operational_relation_distinguished": true,
+    "retained_unused_edges_preserved": true,
+    "pruning_may_enlarge_terminal_domain": true,
+    "same_actual_paths_and_extensional_operator_proved": true,
+    "no_repair_required_within_requested_scope": true
+  },
+  "actual_error_claim_roots": [],
+  "claim_review": {
+    "false_endorsement": false,
+    "false_rejection": false,
+    "false_verification": false,
+    "unsupported_completeness": false
+  },
+  "strict_review": {
+    "requirements_all_met": true,
+    "reason": "All four semantic-audit dimensions complete and correct; not inferred from compilation."
+  },
+  "mechanical_review": {
+    "candidate_lean_required": false,
+    "candidate_compilation": "not required",
+    "unchanged_provided_dependencies_recompiled": false,
+    "native_final_and_sealed_input_bytes_verified": true
+  },
+  "mathematical_review": {
+    "case_id": "AHR03",
+    "response_sha256": "1152d94dec93782a00b797600e711ead891487e7722e3e459f286c4cf9c2fa91",
+    "reviewer": "GPT-6.1 Sol Max; primary independent Lean semantic reviewer",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "在指定节点域加细和相应外延等价范围内，判断正确且证据完整。精确关系全保留边域公式、实际构造桥、输入/分划/路由和剪枝后的量词均核对；没有把操作性辅助关系较弱误判为本范围缺陷，也没有扩大对齐结论。示例及编译自报可由原证据核验。",
+    "findings": [],
+    "group_contract_sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "明确在题定节点域加细及外延分支内判完整，区分弱Operational辅助关系与含全保留边域等式的精确NodeDomainRefinement。判断建立在字段与构造桥而非编译或历史版本名。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 1,
+            "line_end": 1,
+            "utf8_start": 0,
+            "utf8_end": 813,
+            "quote": "**附件完整覆盖了正文的节点域加细定义，以及该情形下一步加细保持外延等价的命题。** `NetworkRefinement.node_domain` 要求保留节点之间的完整边域满足正文的交集公式。给定正文所列的分划和局域算子，`NodePartitionData.network_refinement` 构造出满足这一要求的网络。用 Lean 4.29.1 重新编译了该构造及其依赖，共 24 个附件模块，编译通过。[一步加细关系](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:407) · [构造满足该关系的证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:449)\n"
+          },
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 11,
+            "line_end": 15,
+            "utf8_start": 2598,
+            "utf8_end": 3801,
+            "quote": "3. **边域，包括自环与未使用的边。** 记 \\(I'_v=f'_v(U'_v)\\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求\n   \\[\n   D'_{v\\to w}=D_{\\pi v\\to\\pi w}\\cap I'_v\\cap U'_w.\n   \\]\n   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \\(U_{\\beta,a}\\)；仅源被拆时只需交 \\(f_{\\beta,a}(U_{\\beta,a})\\)；原自环则同时交源块输出像与目标块输入域，允许 \\(a=b\\) 或 \\(a\\ne b\\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)\n"
+          }
+        ]
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "覆盖分划和限制算子、旧节点保留与精确入口交集、未使用保留边/自环、重复发生按当前输入选片、删点前后终止域及实际构造至精确关系的桥；轨迹与外延证明得到正确承认。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 3,
+            "line_end": 19,
+            "utf8_start": 814,
+            "utf8_end": 5637,
+            "quote": "1. **分划与局域算子。** `NodePartitionData` 用 `Fin count`、`count_pos`、`nonempty`、`disjoint` 和 `cover` 表达有限正数个非空块，两两不交，且并集恰为目标节点的**整个**定义域 \\(U_\\beta\\)。`local_domain` 给出 \\(\\operatorname{dom}(f_{\\beta,a})=U_{\\beta,a}\\)，`local_eq` 给出块内逐点相等。块外因不属于定义域，算子值必为 \\(\\bot\\)，所以 `local_op_eq_restrict` 证明了全算子等式 \\(f_{\\beta,a}=f_\\beta|_{U_{\\beta,a}}\\)。一块分划也在允许范围内。[分划数据与限制算子定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12)\n\n2. **节点与入口。** 设 \\(\\pi\\) 将子节点投回 \\(\\beta\\)，将其余标签投回对应旧节点。`source_injective` 排除重复副本，`old_node_present` 和 `old_node_op_compat` 保证每个未拆旧节点恰有一个对应节点，算子相等。`same_input_domain` 给出 \\(U'=U\\)。由入口投影、入口点属于所在节点域，以及同一旧节点的不同子域互斥，`entry_domain_eq` 证明\n   \\[\n   U'^{\\mathrm{in}}_v=U^{\\mathrm{in}}_{\\pi v}\\cap U'_v.\n   \\]\n   对子节点，这正是正文的入口交集。对其余节点，旧入口片已包含于节点域，交集就等于旧入口片。空交集表示该节点没有入口输入，它仍可能由前驱到达。[节点与入口条件](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:85) · [入口交集定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:283)\n\n3. **边域，包括自环与未使用的边。** 记 \\(I'_v=f'_v(U'_v)\\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求\n   \\[\n   D'_{v\\to w}=D_{\\pi v\\to\\pi w}\\cap I'_v\\cap U'_w.\n   \\]\n   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \\(U_{\\beta,a}\\)；仅源被拆时只需交 \\(f_{\\beta,a}(U_{\\beta,a})\\)；原自环则同时交源块输出像与目标块输入域，允许 \\(a=b\\) 或 \\(a\\ne b\\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)\n\n4. **轨迹与删点。** `colour_path` 在每次经过 \\(\\beta\\) 时，用**该次发生的当前输入**选择唯一子块。因而即使一条路径反复经过 \\(\\beta\\)，每次也可选择不同子节点。`coloured_terminal`、`coloured_eval` 和 `colour_path_length` 分别证明新路径合法终止、输出相等、长度相等，故原统一长度界可直接使用。随后 `piece_label_reached_iff` 证明，子块恰在某条原入口轨迹的一次 \\(\\beta\\) 发生收到该块中的输入时保留。`prune` 删除其余标签及关联边，`network_path_projection` 证明删点后的实际路径逐项投影回原路径。[逐次选块与求值证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:168) · [子块保留判据](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:310)\n\n**终止域须区分删点前后。** 正文在删点前使用 \\(T^{\\mathrm{pre}}_{\\beta_a}=I'_{\\beta_a}\\cap T_\\beta\\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)\n"
+          },
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 23,
+            "line_end": 23,
+            "utf8_start": 6288,
+            "utf8_end": 7359,
+            "quote": "**源码已证明的外延结论。** 对任意正式加细见证，`path_projection` 由实际路由投影和确定性终止路径的唯一性得到路径对应，`eval_projected` 由各步算子在当前输入上相等得到求值对应。`refinement_preserves_local_equivalence` 据此证明正文所写的 \\(\\phi_{N'}\\equiv_U\\phi_N\\)。对从分划数据构造的网络，`network_extensional_eq` 还直接证明了全空间上的算子等式。对任意关系见证，全空间等式也由同域、域内逐点相等、域外同取 \\(\\bot\\) 直接推出。删点前的终止域交集式和实际最大深度相等可以另列为推论；所问定义与外延命题本身无需修复。[一般局部等价定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:453) · [具体构造的全算子等式](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:258)\n"
+          }
+        ]
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "给出真实声明类型和全局域边公式，明确network_refinement不是假设最终结论；辅助四点示例正确展示未使用边仍须保留及指向删除子节点的边可删。原native还真实编译24模块，但语义论证独立成立。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 1,
+            "line_end": 21,
+            "utf8_start": 0,
+            "utf8_end": 6287,
+            "quote": "**附件完整覆盖了正文的节点域加细定义，以及该情形下一步加细保持外延等价的命题。** `NetworkRefinement.node_domain` 要求保留节点之间的完整边域满足正文的交集公式。给定正文所列的分划和局域算子，`NodePartitionData.network_refinement` 构造出满足这一要求的网络。用 Lean 4.29.1 重新编译了该构造及其依赖，共 24 个附件模块，编译通过。[一步加细关系](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:407) · [构造满足该关系的证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:449)\n\n1. **分划与局域算子。** `NodePartitionData` 用 `Fin count`、`count_pos`、`nonempty`、`disjoint` 和 `cover` 表达有限正数个非空块，两两不交，且并集恰为目标节点的**整个**定义域 \\(U_\\beta\\)。`local_domain` 给出 \\(\\operatorname{dom}(f_{\\beta,a})=U_{\\beta,a}\\)，`local_eq` 给出块内逐点相等。块外因不属于定义域，算子值必为 \\(\\bot\\)，所以 `local_op_eq_restrict` 证明了全算子等式 \\(f_{\\beta,a}=f_\\beta|_{U_{\\beta,a}}\\)。一块分划也在允许范围内。[分划数据与限制算子定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12)\n\n2. **节点与入口。** 设 \\(\\pi\\) 将子节点投回 \\(\\beta\\)，将其余标签投回对应旧节点。`source_injective` 排除重复副本，`old_node_present` 和 `old_node_op_compat` 保证每个未拆旧节点恰有一个对应节点，算子相等。`same_input_domain` 给出 \\(U'=U\\)。由入口投影、入口点属于所在节点域，以及同一旧节点的不同子域互斥，`entry_domain_eq` 证明\n   \\[\n   U'^{\\mathrm{in}}_v=U^{\\mathrm{in}}_{\\pi v}\\cap U'_v.\n   \\]\n   对子节点，这正是正文的入口交集。对其余节点，旧入口片已包含于节点域，交集就等于旧入口片。空交集表示该节点没有入口输入，它仍可能由前驱到达。[节点与入口条件](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:85) · [入口交集定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:283)\n\n3. **边域，包括自环与未使用的边。** 记 \\(I'_v=f'_v(U'_v)\\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求\n   \\[\n   D'_{v\\to w}=D_{\\pi v\\to\\pi w}\\cap I'_v\\cap U'_w.\n   \\]\n   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \\(U_{\\beta,a}\\)；仅源被拆时只需交 \\(f_{\\beta,a}(U_{\\beta,a})\\)；原自环则同时交源块输出像与目标块输入域，允许 \\(a=b\\) 或 \\(a\\ne b\\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)\n\n4. **轨迹与删点。** `colour_path` 在每次经过 \\(\\beta\\) 时，用**该次发生的当前输入**选择唯一子块。因而即使一条路径反复经过 \\(\\beta\\)，每次也可选择不同子节点。`coloured_terminal`、`coloured_eval` 和 `colour_path_length` 分别证明新路径合法终止、输出相等、长度相等，故原统一长度界可直接使用。随后 `piece_label_reached_iff` 证明，子块恰在某条原入口轨迹的一次 \\(\\beta\\) 发生收到该块中的输入时保留。`prune` 删除其余标签及关联边，`network_path_projection` 证明删点后的实际路径逐项投影回原路径。[逐次选块与求值证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:168) · [子块保留判据](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:310)\n\n**终止域须区分删点前后。** 正文在删点前使用 \\(T^{\\mathrm{pre}}_{\\beta_a}=I'_{\\beta_a}\\cap T_\\beta\\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)\n\n例如，取 \\(\\mathcal X=\\{\\bot,a,b,c\\}\\)，节点 \\(\\alpha,\\beta\\) 都用恒等算子，入口片分别为 \\(\\{a\\},\\{b\\}\\)，唯一边域为 \\(D_{\\alpha\\to\\beta}=\\{b,c\\}\\)。两个入口输入都一步终止。将 \\(\\beta\\) 分成 \\(\\{a,b\\}\\) 和 \\(\\{c\\}\\) 后，第一块因入口 \\(b\\) 保留，第二块被删。于是从 \\(\\alpha\\) 通往第一块的边域 **\\(\\{b\\}\\) 必须保留**，尽管没有入口轨迹经过这条边。通往第二块的边随节点删除，故 \\(T_\\alpha\\) 从 \\(\\{a\\}\\) 扩大为 \\(\\{a,c\\}\\)。这同时说明了完整边域等式的作用，以及为何删点后只需在实际输出上要求路由投影一致。\n"
+          }
+        ]
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 15,
+        "notes": "准确说明本范围无需修复。删点前终止域等式、最大实际深度可列推论而非缺陷或新交付要求；结论没有推广到代数加细、整章其他义务或当前全书。",
+        "evidence": [
+          {
+            "source_id": "answer",
+            "pointer": "",
+            "line_start": 19,
+            "line_end": 23,
+            "utf8_start": 4828,
+            "utf8_end": 7359,
+            "quote": "**终止域须区分删点前后。** 正文在删点前使用 \\(T^{\\mathrm{pre}}_{\\beta_a}=I'_{\\beta_a}\\cap T_\\beta\\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)\n\n例如，取 \\(\\mathcal X=\\{\\bot,a,b,c\\}\\)，节点 \\(\\alpha,\\beta\\) 都用恒等算子，入口片分别为 \\(\\{a\\},\\{b\\}\\)，唯一边域为 \\(D_{\\alpha\\to\\beta}=\\{b,c\\}\\)。两个入口输入都一步终止。将 \\(\\beta\\) 分成 \\(\\{a,b\\}\\) 和 \\(\\{c\\}\\) 后，第一块因入口 \\(b\\) 保留，第二块被删。于是从 \\(\\alpha\\) 通往第一块的边域 **\\(\\{b\\}\\) 必须保留**，尽管没有入口轨迹经过这条边。通往第二块的边随节点删除，故 \\(T_\\alpha\\) 从 \\(\\{a\\}\\) 扩大为 \\(\\{a,c\\}\\)。这同时说明了完整边域等式的作用，以及为何删点后只需在实际输出上要求路由投影一致。\n\n**源码已证明的外延结论。** 对任意正式加细见证，`path_projection` 由实际路由投影和确定性终止路径的唯一性得到路径对应，`eval_projected` 由各步算子在当前输入上相等得到求值对应。`refinement_preserves_local_equivalence` 据此证明正文所写的 \\(\\phi_{N'}\\equiv_U\\phi_N\\)。对从分划数据构造的网络，`network_extensional_eq` 还直接证明了全空间上的算子等式。对任意关系见证，全空间等式也由同域、域内逐点相等、域外同取 \\(\\bot\\) 直接推出。删点前的终止域交集式和实际最大深度相等可以另列为推论；所问定义与外延命题本身无需修复。[一般局部等价定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:453) · [具体构造的全算子等式](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:258)\n"
+          }
+        ]
+      }
+    ],
+    "reviewer_id": "sol-6.1-max-astra62-xhigh-lean",
+    "human_review": "pending",
+    "formal_comparison_eligible": false,
+    "source_bindings": {
+      "delivery": {
+        "path": "grading/lean/AHR03/delivery.v1.json",
+        "bytes": 14387,
+        "sha256": "d983e2a519c72ce7e18afc8b2c4d0482b87d20ef977494bff99907bf0ee9ca2d"
+      },
+      "original_final": {
+        "path": "sessions/AHR03/physical-1/output/response.md",
+        "bytes": 7709,
+        "sha256": "1152d94dec93782a00b797600e711ead891487e7722e3e459f286c4cf9c2fa91"
+      },
+      "actual_acquisition_plan": {
+        "path": "plan.json",
+        "bytes": 45143,
+        "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+      }
+    }
+  },
+  "supporting_finite_model": {
+    "kind": "Finite supporting illustration, not a counterexample to alignment or a Lean record instance.",
+    "candidate_evidence": {
+      "source_id": "answer",
+      "pointer": "",
+      "line_start": 21,
+      "line_end": 21,
+      "utf8_start": 5638,
+      "utf8_end": 6287,
+      "quote": "例如，取 \\(\\mathcal X=\\{\\bot,a,b,c\\}\\)，节点 \\(\\alpha,\\beta\\) 都用恒等算子，入口片分别为 \\(\\{a\\},\\{b\\}\\)，唯一边域为 \\(D_{\\alpha\\to\\beta}=\\{b,c\\}\\)。两个入口输入都一步终止。将 \\(\\beta\\) 分成 \\(\\{a,b\\}\\) 和 \\(\\{c\\}\\) 后，第一块因入口 \\(b\\) 保留，第二块被删。于是从 \\(\\alpha\\) 通往第一块的边域 **\\(\\{b\\}\\) 必须保留**，尽管没有入口轨迹经过这条边。通往第二块的边随节点删除，故 \\(T_\\alpha\\) 从 \\(\\{a\\}\\) 扩大为 \\(\\{a,c\\}\\)。这同时说明了完整边域等式的作用，以及为何删点后只需在实际输出上要求路由投影一致。\n"
+    },
+    "checks": {
+      "all_original_nodes_reachable": true,
+      "original_node_domains_nonempty": true,
+      "old_edge_in_full_source_image_and_target_domain": true,
+      "actual_inputs_stop_in_one_step": true,
+      "partition_nonempty": true,
+      "partition_disjoint": true,
+      "partition_covers": true,
+      "retained_exactly_A": true,
+      "unused_retained_edge_preserved": true,
+      "edge_to_deleted_B_removed": true,
+      "original_alpha_terminal": true,
+      "pruned_alpha_terminal": true
+    },
+    "all_original_node_operators": "identity, including bot",
+    "old_input_domain": [
+      "a",
+      "b"
+    ],
+    "old_entry": {
+      "a": "alpha",
+      "b": "beta"
+    },
+    "old_alpha_to_beta": [
+      "b",
+      "c"
+    ],
+    "retained_split_nodes": [
+      "A"
+    ],
+    "deleted_split_nodes": [
+      "B"
+    ],
+    "alpha_to_A_after_pruning": [
+      "b"
+    ],
+    "alpha_terminal_before": [
+      "a"
+    ],
+    "alpha_terminal_after": [
+      "a",
+      "c"
+    ]
+  },
+  "native_compilation_claim": {
+    "events_source": {
+      "path": "sessions/AHR03/physical-1/output/events.ndjson",
+      "bytes": 69831,
+      "sha256": "3f3144c42a2edbc59f4bf6e017c6f1acf5603f02c66332ac31554dc5b9a79846"
+    },
+    "event_index": 24,
+    "item_id": "item_12",
+    "exit_code": 0,
+    "stdout": "Lean (version 4.29.1, arm64-apple-darwin24.6.0, commit f72c35b3f637c8c6571d353742168ab66cc22c00, Release)\nChecked 24 supplied modules through formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction.\n'formal_oet.vol_01.ch_05_operator_networks.NodePartitionData.network_refinement' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'formal_oet.vol_01.ch_05_operator_networks.NodePartitionData.network_extensional_eq' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'formal_oet.vol_01.ch_05_operator_networks.FiniteOperatorNetwork.refinement_preserves_local_equivalence' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "claim_verified": true,
+    "evaluator_recompiled_unchanged_sources": false
+  },
+  "delivery": {
+    "path": "grading/lean/AHR03/delivery.v1.json",
+    "bytes": 14387,
+    "sha256": "d983e2a519c72ce7e18afc8b2c4d0482b87d20ef977494bff99907bf0ee9ca2d"
+  }
+}

@@ -1,0 +1,214 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "deepseek-v4.1-flash-1017",
+  "case_id": "MG-BC001",
+  "task_id": "R005",
+  "response_sha256": "026462cae5d21e472a7759735842be76067acf80bc11b0ffe8267db51207e6a1",
+  "reviewer_id": "Codex coordinator / source-bound mathematical review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "score_scale": 100,
+  "MC": 66.66666666666667,
+  "RMC": 0.0,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "diagnosis",
+      "earned_points": 33.333333333333336,
+      "max_points": 33.333333333333336,
+      "reason": "识别两两无秩一连线不能推出正能隙。",
+      "evidence": []
+    },
+    {
+      "id": "model_specific_certificate",
+      "earned_points": 33.333333333333336,
+      "max_points": 33.333333333333336,
+      "reason": "明确有限T4循环、权重、余质量及正确非取到/相分数机制；有模型特定反证证书，但位移实现另审。",
+      "evidence": []
+    },
+    {
+      "id": "complete_correction",
+      "earned_points": 0.0,
+      "max_points": 33.333333333333336,
+      "reason": "零迹且统一梯度界的实际构造没有交出；全为对角凸组合的过渡断言与非零零迹位移矛盾。",
+      "evidence": []
+    }
+  ],
+  "claim_deductions": [
+    {
+      "id": "diagonal-boundary-gluing",
+      "root_cause": "diagonal-boundary-gluing",
+      "severity": "critical",
+      "kind": "false_verification",
+      "reason": "所有树节点均为对角矩阵。若所称全部过渡梯度仍为其凸组合，则全部梯度对角；零迹迫使u1只依x1且在上下边为0，u2只依x2且在左右边为0，故u=0，不能逼近四井。有限层合生成定理本身可用，但所交一维坡形不在完整边界匹配父仿射值，且未给带交叉导数的正确截止/频率误差控制。该实际验证是原题核心，RMC封顶0。",
+      "strict_blocking": true,
+      "core_endorsement": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "本题的实质要求均已交付，没有仍未完成的数学步骤。关于具体几何构造，下面再明确一次：各层只要求处在互不重叠的相对矩形中，按树层级取足够小的纵横尺度；最后一层把根平均矩阵 \\(M_0=0\\) 填成零梯度。外边界附近再取相对宽度为正但趋于零的平滑过渡带。这样位移的宏观线性部分为零，所有过渡梯度仍是若干平均矩阵的凸组合，且总过渡面积任意小。故没有依赖一张未经交代的几何图，也没有以抽象凸组合代替位移。",
+          "utf8_byte_start": 13274,
+          "utf8_byte_end": 13843,
+          "file_sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38"
+        }
+      ]
+    }
+  ],
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.6666666666666666,
+      "upper": 0.6666666666666666,
+      "exact": 0.6666666666666666
+    },
+    "generic_deduction": 0.2,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.2,
+    "core_endorsement_cap": true,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": true,
+    "net_completion": {
+      "lower": 0.0,
+      "upper": 0.0,
+      "exact": 0.0
+    },
+    "actual_loss": 0.6666666666666666,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "diagonal-boundary-gluing"
+    ]
+  },
+  "mathematical_checks": [
+    "M0=0,M1=diag(0,1),M2=diag(1,1),M3=diag(1,0)给有效秩一循环，余质量(1/6)^N。",
+    "对角梯度加四边零迹强制位移恒0；不能用对角矩阵凸组合填充所有边界过渡。",
+    "正确的标准层合生成结果允许小的非对角截止误差；原稿未按这种机制实施其所声称的显式构造。",
+    "由均值和det零约束得井占比(.1,.3,.3,.3)正确；不能由这个有限维混合单独得到实际位移序列。"
+  ],
+  "strict_reason": "实际零迹构造/梯度界是冻结核心，原稿确证了不成立的实现；Strict失败。",
+  "profile_axes": {
+    "proof": {
+      "grade": 2,
+      "reason": "有限T4树和非取到/行列式相分数论证有效；真正零迹、梯度≤4的空间构造核心尚未完成。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "本题的实质要求均已交付，没有仍未完成的数学步骤。关于具体几何构造，下面再明确一次：各层只要求处在互不重叠的相对矩形中，按树层级取足够小的纵横尺度；最后一层把根平均矩阵 \\(M_0=0\\) 填成零梯度。外边界附近再取相对宽度为正但趋于零的平滑过渡带。这样位移的宏观线性部分为零，所有过渡梯度仍是若干平均矩阵的凸组合，且总过渡面积任意小。故没有依赖一张未经交代的几何图，也没有以抽象凸组合代替位移。",
+          "utf8_byte_start": 13274,
+          "utf8_byte_end": 13843,
+          "file_sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38"
+        }
+      ],
+      "core_status": "unresolved_core"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保留零迹方形域、四个具体井和统一梯度约束，未改题。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "> **零迹有限层合生成定理。** 设 \\(\\mathcal B\\subset\\mathbb R^{2\\times2}\\) 有限，概率测度 \\(\\mu\\) 由一个以零为根、各层概率在 \\(\\mathcal B\\) 中的有限秩一层合树产生。若 \\(\\mu\\) 的各支撑点都在球 \\(\\{\\|M\\|\\le R\\}\\) 内，且 \\(R<4\\)，则存在 \\(u_k\\in W^{1,\\infty}_0(\\Omega;\\mathbb R^2)\\) 使",
+          "utf8_byte_start": 4257,
+          "utf8_byte_end": 4599,
+          "file_sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 0,
+      "reason": "正确质疑原背景，但把不可能全对角的边界修补作为已验证事实。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "这提供了题目要求的近最优位移构造：(7) 给出每一层的实际位移，交替嵌套给出完整的空间构造；零迹和界面部分由有限层合生成定理实现。由 (8)，零边界和统一梯度上界均已验证；由 (10)--(12)，能量与相分数可以同时逼近到零和 \\(\\pi^*\\)。按 (10)，可选 \\(k_N\\) 使 \\(E(u_{N,k_N})\\le6r^N\\)；按 (12)，还可要求各 \\(\\pi_i\\) 与 \\((1-r^N)\\pi_i^*\\) 的差不超过 \\(C_Nr^N\\)，其中 \\(C_N\\) 只依赖于固定的 \\(N\\)。",
+          "utf8_byte_start": 7478,
+          "utf8_byte_end": 7985,
+          "file_sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "T4循环、残余权重与行列式零拉格朗日量有实质结构分析。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "> **零迹有限层合生成定理。** 设 \\(\\mathcal B\\subset\\mathbb R^{2\\times2}\\) 有限，概率测度 \\(\\mu\\) 由一个以零为根、各层概率在 \\(\\mathcal B\\) 中的有限秩一层合树产生。若 \\(\\mu\\) 的各支撑点都在球 \\(\\{\\|M\\|\\le R\\}\\) 内，且 \\(R<4\\)，则存在 \\(u_k\\in W^{1,\\infty}_0(\\Omega;\\mathbb R^2)\\) 使",
+          "utf8_byte_start": 4257,
+          "utf8_byte_end": 4599,
+          "file_sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 2,
+      "reason": "相分数和不取到闭合，近极小位移的核心实现没有闭合。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "本题的实质要求均已交付，没有仍未完成的数学步骤。关于具体几何构造，下面再明确一次：各层只要求处在互不重叠的相对矩形中，按树层级取足够小的纵横尺度；最后一层把根平均矩阵 \\(M_0=0\\) 填成零梯度。外边界附近再取相对宽度为正但趋于零的平滑过渡带。这样位移的宏观线性部分为零，所有过渡梯度仍是若干平均矩阵的凸组合，且总过渡面积任意小。故没有依赖一张未经交代的几何图，也没有以抽象凸组合代替位移。",
+          "utf8_byte_start": 13274,
+          "utf8_byte_end": 13843,
+          "file_sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [
+    {
+      "name": "final-answer.md",
+      "bytes": 14168,
+      "sha256": "bc1dbd09b38b6136eca1a395eee890dd3bd1cea4895099d7e6831b5df8f6ee38",
+      "delivery_quote": "- [final-answer.md](/Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R005/fresh-context/final-answer.md)",
+      "recovered_after_collection": true,
+      "source_kind": "original_workspace_recovery",
+      "original_return_attachment_missing": true
+    },
+    {
+      "name": "verification-summary.md",
+      "bytes": 420,
+      "sha256": "2c8717ede39daa8ebac5e01fb1b9c4caade56f0322d998de32c115f9c3ad56e6",
+      "delivery_quote": "- [verification-summary.md](/Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R005/fresh-context/verification-summary.md)",
+      "recovered_after_collection": true,
+      "source_kind": "original_workspace_recovery",
+      "original_return_attachment_missing": true
+    }
+  ],
+  "unresolved_questions": [],
+  "no_hidden_reasoning_used_as_answer": true,
+  "original_math_unmodified": true,
+  "reviewed_at": "2026-11-21T00:28:51.373222+00:00",
+  "review_boundary": "Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.",
+  "source_materials": [
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC001/task.md",
+      "bytes": 2021,
+      "sha256": "07bb02318d5fe35f5f7fb005de996ed7b49cbd4a832b0a2fd1e68d68c6ea75a6"
+    },
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC001/rubric.json",
+      "bytes": 609,
+      "sha256": "685afb12d91f53a3f2478f02b3615fcda6b534a22ee461a58f84b19e1de5ab5a"
+    },
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC001/reference.md",
+      "bytes": 6868,
+      "sha256": "eec5e4e01332a1e400946ae708a5f41d0ae54f0b7985cbb249da3a76215b02da"
+    },
+    {
+      "repository": "public",
+      "path": "cases/background-check/MG-BC001/contract.json",
+      "bytes": 2038,
+      "sha256": "8b7cdc0511da4d6e14a9df7322389b3e04722c46916d68b332b342703439c1de"
+    }
+  ],
+  "first_response_sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09",
+  "first_review_sha256": "771936f681bc4da2e193f9ebcc3089741756c233f7f9eed43dc7b8c00219d4a8"
+}

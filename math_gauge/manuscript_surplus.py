@@ -226,7 +226,112 @@ def delivery_context(root, context, scope=None):
                     'path': (archive / item['path']).relative_to(root).as_posix(),
                     'bytes': len(raw), 'sha256': item['sha256']})
                 known.add(item['sha256'])
+    _record_delivery_documents(root, archive, context)
     return context
+
+
+def _record_delivery_documents(root, archive, context):
+    """Extend an opted-in inventory with exact, terminal-bound A1 artifacts.
+
+    This adapter reads only descriptors already retained by the selected record
+    and its validated manuscript component. It never searches a workspace.
+    """
+    from .records import load_manuscript_completion_inputs
+
+    record = read_source(root, context['record'])
+    if record.get('manuscript_completion_inputs') is None:
+        return
+    if not any(item.get('artifacts') for item in record.get('records', [])):
+        return
+    component = load_manuscript_completion_inputs(archive, record)
+    slots = {row['case_id']: row for row in component['slots']}
+    for cid, row in context['cases'].items():
+        if row['source_status'] != 'reviewed':
+            continue
+        originals = [item for item in record.get('records', [])
+                     if item.get('id') == cid + ':A1' and item.get('case_id') == cid
+                     and item.get('kind') == 'independent' and item.get('parent_id') is None]
+        if not originals:
+            continue
+        require(len(originals) == 1, 'Ambiguous selected manuscript A1')
+        original = originals[0]
+        known = {item['sha256'] for item in row['documents']}
+        artifacts = [item for item in original.get('artifacts', [])
+                     if Path(item['path']).suffix.lower() in {'.md', '.tex', '.txt', '.lean'}
+                     and item['sha256'] not in known]
+        selected = slots[cid]
+        source = original.get('source', {})
+        # Other native adapters retain their established document inventories.
+        # This path requires the existing independently collected output seal.
+        if not artifacts or selected.get('execution_result') is None:
+            continue
+        result = read_source(archive, selected['execution_result'])
+        observation_ref = result.get('original_output_observation')
+        if result.get('schema') != 'math-gauge.independent-idea-native-result/v1' or observation_ref is None:
+            continue
+        require(original.get('response', {}).get('sha256') == row['response_sha256']
+                == selected.get('response', {}).get('sha256')
+                and source.get('native_events') == selected.get('native_events')
+                and source.get('native_execution') == selected.get('execution')
+                and source.get('collection') == result.get('original_collection'),
+                'Record artifact belongs to another selected manuscript A1')
+        answer = evidence_bytes(archive, original['response'])
+        collection = read_source(archive, source['collection'])
+        if 'normal_final_locked' not in collection:
+            # Earlier collectors did not expose this lock. Their retained
+            # legacy document inventory is not expanded retrospectively.
+            continue
+        require(collection.get('case_id') == cid
+                and collection.get('normal_final_locked') is True
+                and collection.get('qualified_delivery') is True
+                and collection.get('native_terminal_completed') is True
+                and collection.get('physical_attempt') == selected.get('selected_physical_request')
+                == source.get('selected_physical_request')
+                and collection.get('response_sha256') == row['response_sha256'],
+                'Record artifact lacks its selected normal-final collection')
+        events_raw = evidence_bytes(archive, source['native_events'])
+        events = [json.loads(line) for line in events_raw.splitlines()]
+        terminal = next((i for i, event in enumerate(events)
+                         if event.get('type') in {'turn.completed', 'turn.failed'}), None)
+        require(terminal is not None and events[terminal].get('type') == 'turn.completed',
+                'Record artifact lacks its first successful native terminal')
+        messages = [event['item'].get('text') for event in events[:terminal]
+                    if event.get('type') == 'item.completed'
+                    and event.get('item', {}).get('type') == 'agent_message']
+        require(messages and messages[-1].encode('utf-8') == answer,
+                'Record artifact final differs from its native terminal')
+        observation = read_source(archive, observation_ref)
+        session = Path(selected['native_events']['path']).parent.parent
+        prefix_bytes = observation.get('native_events_prefix_bytes')
+        require(type(prefix_bytes) is int and 0 < prefix_bytes <= len(events_raw),
+                'Record artifact output seal has an invalid native event boundary')
+        prefix = events_raw[:prefix_bytes]
+        require(observation.get('schema') == 'math-gauge.first-terminal-output-observation/v1'
+                and observation.get('session') == session.as_posix()
+                and observation.get('native_event') == events[terminal]
+                and observation.get('native_events_prefix_sha256') == hashlib.sha256(prefix).hexdigest()
+                and events[terminal] in [json.loads(line) for line in prefix.splitlines()],
+                'Record artifact output seal belongs to another terminal or attempt')
+        number = len(row['documents'])
+        for item in artifacts:
+            name = Path(item['path']).name
+            raw = evidence_bytes(archive, item)
+            require(name.encode('utf-8') in answer,
+                    'Record artifact was not named by the selected normal final')
+            matches = [entry for entry in observation.get('files', [])
+                       if entry.get('filename') == name and entry.get('sha256') == item['sha256']
+                       and entry.get('bytes') == len(raw)
+                       and item['path'] in {(session / entry.get(key, '')).as_posix()
+                                            for key in ('snapshot_relative_path', 'original_relative_path')}]
+            require(len(matches) == 1, 'Record artifact is not in this A1 terminal output seal')
+            snapshot = session / matches[0]['snapshot_relative_path']
+            require(evidence_bytes(archive, dict(item, path=snapshot.as_posix())) == raw,
+                    'Record artifact differs from the original terminal snapshot')
+            raw.decode('utf-8')
+            number += 1
+            row['documents'].append({'role': f'record_delivery_{number}',
+                'path': (archive / item['path']).relative_to(root).as_posix(),
+                'bytes': len(raw), 'sha256': item['sha256']})
 
 
 def validate_sources(review, root, context, baseline, policy):

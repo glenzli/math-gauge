@@ -33,8 +33,15 @@ def result_view(result, *, model_page=False):
 
 def model_view(model, *, model_page=False):
     view = pick(model, ("id", "label", "short_label", "theme", "logo", "harness_display_name",
-                        "fully_evaluated", "answer_delivery", "evaluation_progress", "test_order", "ranking_values"))
+                        "fully_evaluated", "answer_delivery", "evaluation_progress", "display_order", "ranking_values", "ranking_complete",
+                        "presentation_eligibility", "neutral_revision_delta"))
     view["harness"] = pick(model.get("harness"), ("name",))
+    if model.get('neutral_revision_completion') is not None:
+        summary = model['neutral_revision_completion']
+        view['neutral_revision_completion'] = pick(summary,
+            ('selected', 'reviewed', 'delivery_failed', 'pending', 'settled'))
+        for key in ('full_count', 'full_rate'):
+            view['neutral_revision_completion'][key] = pick(summary.get(key), ('lower', 'upper', 'exact'))
     view["combined"] = result_view(model["combined"], model_page=model_page)
     view["retry"] = {"combined": result_view(model["retry"]["combined"], model_page=model_page)}
     for mode in ("capability", "strict"):
@@ -47,6 +54,7 @@ def model_view(model, *, model_page=False):
             if result.get('submission_summary') is not None:
                 result['submission_summary']['pending_original_record_review'] = 0
     if model_page:
+        view.update(pick(model, ("neutral_revision",)))
         alignment = model["alignment_selfcheck"]
         view["alignment_selfcheck"] = {
             "rounds": [pick(item, ("complete",)) for item in alignment["rounds"]],
@@ -70,7 +78,8 @@ def model_view(model, *, model_page=False):
 def project_payload(data):
     """Copy exactly the values consumed by each page's runtime, including unknown bounds."""
     shared = pick(data, ("schema", "benchmark_version", "default_score_mode", "score_modes",
-                         "default_attempt_condition", "display_score_modes"))
+                         "default_attempt_condition", "display_score_modes", "edition_status", "pending_models",
+                         "diagnostic_source_edition", "partial_models"))
     shared["source_schema"] = shared["schema"]
     shared["schema"] = SCHEMA
     shared["policy"] = {
@@ -82,17 +91,24 @@ def project_payload(data):
         case = data["case"]
         shared["model"] = pick(data["model"], ("id", "label"))
         shared["case"] = {**pick(case, ("id", "title", "category")), "views": {
-            mode: {condition: pick(view, ("completion", "strict_pass", "response_sha256", "review_sha256"))
+            mode: {condition: pick(view, ("completion", "strict_pass", "response_sha256", "review_sha256", "neutral_revision"))
                    for condition, view in views.items()} for mode, views in case["views"].items()}}
     elif "model" in data:
         shared["model"] = model_view(data["model"], model_page=True)
         shared["cases"] = [{**pick(item, ("id", "title", "category_title")), "views": {
-            mode: {condition: pick(view, ("completion", "strict_pass"))
+            mode: {condition: pick(view, ("completion", "strict_pass", "neutral_revision"))
                    for condition, view in views.items()} for mode, views in item["views"].items()}}
             for item in data["cases"]]
     elif "models" in data:
         if data.get('mathematical_profile') is not None:
             shared['mathematical_profile'] = copy.deepcopy(data['mathematical_profile'])
+            shared['profile_models'] = copy.deepcopy(data.get('profile_models', []))
+        if data.get('mathematical_profile_revision') is not None:
+            shared['mathematical_profile_revision'] = copy.deepcopy(data['mathematical_profile_revision'])
+        if data.get('mathematical_profile_baseline') is not None:
+            shared['mathematical_profile_baseline'] = copy.deepcopy(data['mathematical_profile_baseline'])
+        if data.get('open_research') is not None:
+            shared['open_research'] = copy.deepcopy(data['open_research'])
         shared["models"] = [model_view(model) for model in data["models"]]
         shared["category_leaderboards"] = [pick(board, ("id", "views"))
                                             for board in data["category_leaderboards"]]

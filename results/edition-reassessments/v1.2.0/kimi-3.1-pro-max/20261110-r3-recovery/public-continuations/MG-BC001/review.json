@@ -1,0 +1,151 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "kimi-3.1-pro-max",
+  "case_id": "MG-BC001",
+  "response_sha256": "f9baf34d344bf189def8788b929351af82c57c58333aecb230ebcc5c60955f54",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 100,
+  "RMC": 100,
+  "SMC": true,
+  "positive_criteria": [
+    {
+      "id": "gap-diagnosis",
+      "earned": 1,
+      "reason": "识别两井刚性不能逐相推出四井正间隙，保持原模型。",
+      "quote": "题面中“两两没有秩一连接，因此四相系统仍有严格正间隙”的推断并不成立。两两不相容并不排除经过井外中间矩阵的高阶循环层合。实际结论为",
+      "evidence_file": "answer.md",
+      "max": 1
+    },
+    {
+      "id": "model-specific-certificate",
+      "earned": 1,
+      "reason": "四条确切秩一分裂和Bstar残余质量1/6递推给本模型证据。",
+      "quote": "每进行一轮，残余 \\(B_*\\) 的质量缩小为原来的 \\(1/6\\)。令第 \\(n\\) 轮的层合测度为 \\(\\mu_n\\)，并设",
+      "evidence_file": "answer.md",
+      "max": 1
+    },
+    {
+      "id": "complete-correction",
+      "earned": 1,
+      "reason": "给出截断锯齿实际位移、零迹/统一界/能量衰减；零能不取到和所有最小序列比例也证明。",
+      "quote": "构造只有有限多个细分阶段，所以可以把各阶段新增的截断层面积及相面积误差之和取得任意小。结合 (5)，对任意 \\(\\eta>0\\)，可得到实际位移 \\(u_{n,\\eta}\\in\\mathcal A\\)，满足",
+      "evidence_file": "answer.md",
+      "max": 1
+    }
+  ],
+  "claim_deductions": [],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持四井、零迹、Frobenius界4和最近井分配，并未放宽成独立矩阵场。"
+  },
+  "strict_reason": "背景R3，并且e0、不取到、唯一相分数和实际近最优位移的全部实质要求均通过。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "实际零边界位移构造在固定有限树纯仿射核心内递归，误差可控且梯度≤4；不取到及null-Lagrangian比例唯一性完整。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "构造只有有限多个细分阶段，所以可以把各阶段新增的截断层面积及相面积误差之和取得任意小。结合 (5)，对任意 \\(\\eta>0\\)，可得到实际位移 \\(u_{n,\\eta}\\in\\mathcal A\\)，满足"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持四井、零迹、Frobenius界4和最近井分配，并未放宽成独立矩阵场。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- **未完成/不确定部分**：无。原题三项要求均已给出证明，且近最优构造是具体的零边界位移，而非仅矩阵凸组合。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 4,
+      "reason": "准确区分无井间直接秩一与井外中间状态循环；自评完整受实际证明支持。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "题面中“两两没有秩一连接，因此四相系统仍有严格正间隙”的推断并不成立。两两不相容并不排除经过井外中间矩阵的高阶循环层合。实际结论为"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "跨过多井兼容性障碍，连接残余递减、有限树位移实现与行列式守恒，另有成立的定量稳定性。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- **新增/修正**：明确写出每一层真正所需的两个端点之差为秩一矩阵；给出截断函数、锯齿位移公式及参数选择，并补足截断层面积、相面积误差和统一梯度上界的控制；增加了低能相分数的定量稳定性估计。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 4,
+      "reason": "三个目标全部闭合；位移拼接及截断顺序给实际可用近最优序列。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "构造只有有限多个细分阶段，所以可以把各阶段新增的截断层面积及相面积误差之和取得任意小。结合 (5)，对任意 \\(\\eta>0\\)，可得到实际位移 \\(u_{n,\\eta}\\in\\mathcal A\\)，满足"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "background_R": 3,
+  "substantive_requirements": {
+    "e0_exact": true,
+    "nonattainment": true,
+    "all_minimizing_sequence_fractions": true,
+    "actual_displacement_construction": true,
+    "zero_trace": true,
+    "uniform_gradient_bound": true,
+    "energy_estimate": true
+  },
+  "source_rubric_assessment": {
+    "A": 3,
+    "B": 3,
+    "C": 4
+  },
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.324114+00:00",
+    "source_review_sha256": "4d3ca0f0166d559861615c451036cb3b12a1b9814941c1e4884ddc9c7114c785",
+    "source_review_path": "grading/audit_background_written/kimi-3.1-pro-max--MG-BC001.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}

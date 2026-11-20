@@ -1,0 +1,153 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "kimi-3.1-pro-max",
+  "case_id": "MG-BC002",
+  "response_sha256": "8370c1f7b35306670558bd6b1427421ed57c5b642ee0893144474db8cbf074a0",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 100,
+  "RMC": 100,
+  "SMC": true,
+  "positive_criteria": [
+    {
+      "id": "gap-diagnosis",
+      "earned": 1,
+      "reason": "明确纠正强凸梯度流端点不自动是凸prox，条件证书保留。",
+      "quote": "For this particular \\(f\\), the draft’s proximal assertion is not merely unjustified: it is false for every \\(\\tau>0\\).",
+      "evidence_file": "answer.md",
+      "max": 1
+    },
+    {
+      "id": "model-specific-certificate",
+      "earned": 1,
+      "reason": "在原点计算固定t流的三阶导，以Jacobian对称必要条件得非prox。",
+      "quote": "the relevant third derivatives at the origin are",
+      "evidence_file": "answer.md",
+      "max": 1
+    },
+    {
+      "id": "complete-correction",
+      "earned": 1,
+      "reason": "因a_t-qb_t=(1-q)^3/3>0对全部t>0成立，完整排除所有凸正则子；不只比较prox(tf)。",
+      "quote": "This is impossible for every \\(t>0\\). Hence",
+      "evidence_file": "answer.md",
+      "max": 1
+    }
+  ],
+  "claim_deductions": [],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "原精确流未替换为Euler；τ与prox约定分开，实际部署段落不使用被否定表征。"
+  },
+  "strict_reason": "R3完整纠正实际表征；其合法替代证明排除每个正t，全部原数学和部署目标均通过。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "固定t的Duhamel三阶Taylor系数正确；对称Jacobian要求X_xxy=Y_xxx，被正差(1-q)^3/3否定。并完整证明全局流、收缩/能量、叠加和条件prox证书。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "This is impossible for every \\(t>0\\). Hence"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "原精确流未替换为Euler；τ与prox约定分开，实际部署段落不使用被否定表征。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "Each deployed block evolves the state exactly under \\(\\dot z=-\\nabla f(z)\\) for elapsed time \\(\\tau\\); it is not the implicit-Euler map \\((I+\\tau\\nabla f)^{-1}\\). A block contracts pairwise distances by a factor at most \\(e^{-\\tau}\\) and reduces \\(f\\) by a factor at most \\(e^{-2\\tau}\\). Because \\(n\\) identical blocks equal \\(\\Phi_{n\\tau}\\), they guarantee \\(\\|Z_n\\|\\le e^{-n\\tau}\\|Z_0\\|\\) and \\(f(Z_n)\\le e^{-2n\\tau}f(Z_0)\\). Here \\(\\tau\\) is the continuous evolution time, not the coefficient in the proximal convention, whose quadratic term remains \\(\\frac12\\|u-z\\|^2\\). For this particular flow, no convex proximal representation exists for any \\(\\tau>0\\), so the deployment should not be described as an exact convex regularization step."
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 4,
+      "reason": "将正确流保证、条件prox证书与实际不成立表征严格分开，强于小t的结论有完整不同证明。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "For this particular \\(f\\), the draft’s proximal assertion is not merely unjustified: it is false for every \\(\\tau>0\\)."
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "用按初始值展开而非按时间展开，得到全正时间一致的不可积性障碍，跨过局部时间范围。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "a_t-qb_t"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 4,
+      "reason": "所有附录与实际部署目标闭合；Moreau桥、流光滑性及三阶导矛盾完整。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "This is impossible for every \\(t>0\\). Hence"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "background_R": 3,
+  "substantive_requirements": {
+    "global_forward_flow": true,
+    "equilibrium": true,
+    "distance_contraction": true,
+    "energy_decay": true,
+    "stack_bounds": true,
+    "conditional_three_point_certificate": true,
+    "conditional_firm_nonexpansiveness": true,
+    "actual_proximal_rationale_corrected": true,
+    "deployment_scope_and_tau": true
+  },
+  "source_rubric_assessment": {
+    "D": 4,
+    "U": 3,
+    "S": "S-corrected"
+  },
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.324755+00:00",
+    "source_review_sha256": "84af3097006f09c070c6ecead8f186742eac83612e29e6c9cad8b55c76a32c74",
+    "source_review_path": "grading/audit_background_written/kimi-3.1-pro-max--MG-BC002.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}

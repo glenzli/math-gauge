@@ -1,0 +1,204 @@
+{
+  "case_id": "MG-GP001",
+  "response_sha256": "edf3668a4e4a0fcceb85be21ead55ae502b69f5c5280ac25e385dc11770c98e0",
+  "reviewer": "GPT-6.1 Sol Max; primary independent AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "六个阶段全部闭合。S2给出沿零伦插入锥线的实际互逆构造，S4合法使用闭删除子复形而未在v处延长径向同伦；S6使用两种分支类型不同、悬挂却同为S1楔两个S2的有限单纯复形，替代参考的无环非可缩群展示路线，同样完整有效。未发现独立错误承诺。",
+  "findings": [],
+  "group_contract_sha256": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd",
+  "stages": [
+    {
+      "stage_id": "S1",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "CW对HEP延拓A内收缩，验证两复合；以紧到Hausdorff的满射证明q乘I为商映射，下降同伦连续。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 13,
+          "utf8_start": 31,
+          "utf8_end": 958,
+          "quote": "设 \\(q:Y\\to Y/A\\) 为商映射。取 \\(A\\) 内的收缩 \\(h:A\\times I\\to A\\)，使 \\(h_0=\\mathrm{id}_A\\)，且 \\(h_1\\) 恒等于某个 \\(a_0\\in A\\)。由于 \\(A\\) 是 CW 子复形，\\((Y,A)\\) 具有同伦延拓性质。于是 \\(h\\) 可延拓为 \\(H:Y\\times I\\to Y\\)，满足 \\(H_0=\\mathrm{id}_Y\\)。\n\n因为 \\(H_1\\) 在 \\(A\\) 上取常值，它诱导映射 \\(g:Y/A\\to Y\\)，且\n\\[\ngq=H_1\\simeq\\mathrm{id}_Y.\n\\]\n对每个 \\(t\\)，又有 \\(H_t(A)\\subseteq A\\)，所以 \\(qH_t\\) 在 \\(A\\) 上取常值。因而可以定义\n\\[\n\\overline H(q(y),t)=q(H(y,t)).\n\\]\n这个同伦连续，因为 \\(q\\times\\mathrm{id}_I\\) 是商映射。具体地，有限 CW 复形 \\(Y\\) 紧且 Hausdorff，子复形 \\(A\\) 闭，故 \\(Y/A\\) 也是紧 Hausdorff 空间，\\(q\\times\\mathrm{id}_I\\) 是从紧空间到 Hausdorff 空间的连续满射。\\(\\overline H\\) 的两个端点是 \\(\\mathrm{id}_{Y/A}\\) 和 \\(qg\\)，故 \\(g\\) 是 \\(q\\) 的同伦逆。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S2",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "沿零伦及反向零伦在锥线上显式构造F/G；往返路径收缩给固定D的同伦逆，常值映射的锥为D楔非约化悬挂，楔点及D路径连通下的选择均说明。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 17,
+          "line_end": 33,
+          "utf8_start": 1002,
+          "utf8_end": 2348,
+          "quote": "记 \\(C(f)=D\\cup_f CL\\)，锥坐标 \\(t=0\\) 为锥底，\\(t=1\\) 为锥顶。设 \\(f:L\\hookrightarrow D\\) 是包含映射，取零伦 \\(h:L\\times I\\to D\\)，从 \\(f\\) 到常值映射 \\(c_d\\)。\n\n构造 \\(F:C(f)\\to C(c_d)\\)，使它在 \\(D\\) 上为恒等，在锥上取为\n\\[\nF([x,t])=\n\\begin{cases}\nh(x,2t),&0\\le t\\le \\tfrac12,\\\\\n[x,2t-1]_{C(c_d)},&\\tfrac12\\le t\\le1.\n\\end{cases}\n\\]\n两式在中点都给出 \\(d\\)，在锥底和锥顶也满足相应的粘合关系。用反向同伦构造 \\(G:C(c_d)\\to C(f)\\)。复合 \\(GF\\) 在每条锥线上先沿 \\(h(x,-)\\) 走一遍再返回，最后走原来的锥线。把往返段连续缩短为只走到 \\(h(x,s)\\) 再返回，让 \\(s\\) 从 \\(1\\) 降到 \\(0\\)，然后线性缩去开头的常值时段，就得到 \\(GF\\simeq\\mathrm{id}\\)。这个构造对 \\(x\\) 连续，并始终固定 \\(D\\) 和锥顶。对反向同伦作同样处理得到 \\(FG\\simeq\\mathrm{id}\\)。此论证也说明，沿同伦的两个映射附锥所得的同伦等价可以固定底空间 \\(D\\)。\n\n在 \\(C(c_d)\\) 中，整个锥底被粘到 \\(d\\)，而 \\(CL/L\\) 正是非约化悬挂。因此\n\\[\nY=C(f)\\simeq C(c_d)\\cong D\\vee\\Sigma L.\n\\]\n楔点是 \\(D\\) 中的 \\(d\\) 和 \\(\\Sigma L\\) 中由锥底形成的悬点。由于 \\(D\\) 路径连通，在零伦末尾接上一条路径就能把 \\(d\\) 选为 \\(D\\) 中任意指定的点。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S3",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "实际双锥K与边B均为有限子复形，悬挂去v可缩，半开边与闭边包含为同伦等价；RP2胞腔链和悬挂同调显示有理无约化同调但整数H2为Z/2。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 37,
+          "line_end": 65,
+          "utf8_start": 2380,
+          "utf8_end": 3600,
+          "quote": "取两个新顶点 \\(v,w\\)，令\n\\[\nK=(v*L)\\cup_L(w*L).\n\\]\n选 \\(L\\) 的任一顶点 \\(a\\)，令 \\(B\\) 为闭边 \\([v,a]\\) 及其面。于是 \\(|K|\\cong\\Sigma|L|\\)。取悬挂坐标使 \\(w\\) 在 \\(t=0\\)，\\(v\\) 在 \\(t=1\\)。删去 \\(v\\) 后，\n\\[\n[x,t]\\longmapsto [x,(1-s)t],\\qquad 0\\le s\\le1,\n\\]\n把剩余空间收缩到 \\(w\\)。而 \\(|B|\\setminus\\{v\\}\\) 和 \\(|B|\\) 都能沿边收缩到 \\(a\\)，故包含映射是同伦等价。\n\n对任意非空有限复形 \\(P\\)，分别删去两个悬点得到的两个开集覆盖 \\(\\Sigma|P|\\)。它们都可缩，交集同胚于 \\(|P|\\times(0,1)\\)。约化 Mayer–Vietoris 正合列因此给出\n\\[\n\\widetilde H_{n+1}(\\Sigma|P|;G)\\cong\\widetilde H_n(|P|;G)\n\\qquad(n\\ge0).\n\\]\n此外，悬挂本身路径连通。\n\n这里 \\(|L|\\cong\\mathbb{RP}^2\\)。其实射影平面的标准 CW 分解在维数 \\(0,1,2\\) 各有一个胞腔，二维胞腔的附着映射次数为 \\(2\\)，故整数胞腔链复形为\n\\[\n0\\longrightarrow\\mathbb Z\\xrightarrow{\\,2\\,}\\mathbb Z\n\\xrightarrow{\\,0\\,}\\mathbb Z\\longrightarrow0.\n\\]\n因此 \\(|K|\\) 的约化有理同调全零，而\n\\[\n\\widetilde H_2(|K|;\\mathbb Z)\n\\cong H_1(\\mathbb{RP}^2;\\mathbb Z)\n\\cong\\mathbb Z/2.\n\\]\n这证明了 \\(|K|\\) 不可缩。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S4",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "径向重心公式只在穿孔O上用，得到闭删除子复形D可缩；B同伦条件排除空link。由闭CW对商得到X为非空link的悬挂，双锥实现全部类型。整数增广同调零、悬挂单连通、Hurewicz与Whitehead给充要可缩性，Smith标准形只用允许的有限局部数据。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 74,
+          "line_end": 87,
+          "utf8_start": 3825,
+          "utf8_end": 4855,
+          "quote": "为证明这一点，令 \\(D\\) 为所有不含 \\(v\\) 的单形组成的子复形的实现，令 \\(L=\\operatorname{lk}_K(v)\\)。首先，\\(D\\) 是 \\(O\\) 的强形变收缩核。事实上，若 \\(x\\in O\\) 的重心坐标为 \\((\\lambda_u)\\)，则 \\(\\lambda_v<1\\)。定义 \\(r(x)\\) 的坐标为\n\\[\nr(x)_v=0,\\qquad r(x)_u=\\frac{\\lambda_u}{1-\\lambda_v}\\quad(u\\ne v).\n\\]\n从 \\(x\\) 到 \\(r(x)\\) 的直线段位于同一闭单形内，沿途 \\(v\\) 的坐标始终小于 \\(1\\)，而且 \\(x\\in D\\) 时整段恒为 \\(x\\)。由 \\(O\\) 非空可缩，得 \\(D\\) 非空可缩。\n\n其次，\\(B\\) 中必有一条以 \\(v\\) 为端点的边。否则 \\(\\{v\\}\\) 是 \\(C\\) 的一个孤立分支，包含 \\(O\\cap C\\to C\\) 在路径分支上不满射，与它是同伦等价矛盾。因此 \\(L\\) 至少有一个顶点。由单形分解，\n\\[\nX=D\\cup_{|L|}|v*L|.\n\\]\n对非空可缩子复形 \\(D\\subseteq X\\) 应用 S1。由于 \\(|L|\\ne\\varnothing\\)，压缩 \\(D\\) 后，商点就是锥底被压成的点，故\n\\[\nX\\simeq X/D\\cong |v*L|/|L|\\cong\\Sigma|L|.\n\\]\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 89,
+          "line_end": 102,
+          "utf8_start": 4856,
+          "utf8_end": 6463,
+          "quote": "**全部类型的实现。** 给定任意有顶点的有限单纯复形 \\(P\\)，取 \\(K=(v*P)\\cup_P(w*P)\\)，并取 \\(B=[v,a]\\) 及其面，其中 \\(a\\) 是 \\(P\\) 的任一顶点。S3 中删去 \\(v\\) 后到 \\(w\\) 的收缩，以及两段区间到 \\(a\\) 的收缩，都适用于这个 \\(P\\)。故原条件全部成立，且 \\(|K|\\cong\\Sigma|P|\\)。\n\n**有限局部判据。** 在题设条件下，\n\\[\n\\boxed{\\quad\nX\\text{ 可缩}\n\\quad\\Longleftrightarrow\\quad\n\\widetilde H_n(\\operatorname{lk}_K(v);\\mathbb Z)=0\n\\ \\text{对所有 }n\\ge0 .\n\\quad}\n\\]\n必要性由上面的同伦等价和 S3 的悬挂同调同构得到。反之，若右端成立，则 \\(|L|\\) 非空且 \\(\\widetilde H_0(|L|;\\mathbb Z)=0\\)，所以 \\(|L|\\) 路径连通。S3 中覆盖悬挂的两个可缩开集现在具有路径连通的交集，故由 van Kampen 定理，\\(\\Sigma|L|\\) 单连通。它的约化整数同调也全零。若它有非零同伦群，取最小的此种次数 \\(n\\ge2\\)，则它是 \\((n-1)\\)-连通的，Hurewicz 定理给出 \\(\\pi_n\\cong H_n=0\\)，矛盾。因此从一点到 \\(\\Sigma|L|\\) 的映射是弱同伦等价。两者都是 CW 复形，Whitehead 定理遂给出 \\(\\Sigma|L|\\) 可缩。\n\n实际检验时，严格包含 \\(\\{v\\}\\) 的单形通过 \\(\\sigma\\mapsto\\sigma\\setminus\\{v\\}\\) 与 \\(L\\) 的非空单形一一对应，并保持面关系。因此仅凭题述关联数据，就能给链接顶点任选一个次序，写出带符号的整数边界矩阵及增广映射 \\(C_0(L;\\mathbb Z)\\to\\mathbb Z\\)。用 Smith 标准形检验这个有限增广链复形是否正合，即可判定 \\(X\\) 是否可缩。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S5",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "v属于边时该边可作合法B并回到完整S4；无边时v孤立，X为一点与非空可缩O的不交并，唯一新增S0，并给两孤点实现及路径分支区别。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 106,
+          "line_end": 110,
+          "utf8_start": 6498,
+          "utf8_end": 7033,
+          "quote": "**唯一新增的同伦类型是 \\(S^0\\)。**\n\n若 \\(v\\) 属于某条边，取这条闭边及其面为 \\(B\\)。如 S3 所证，删去端点后的半开边到闭边的包含是同伦等价，故 S4 的分类适用。\n\n若 \\(v\\) 不属于任何边，则 \\(v\\) 是孤立顶点，\\(X=\\{v\\}\\sqcup O\\)。由于 \\(O\\) 非空可缩，\\(X\\simeq S^0\\)。取 \\(K\\) 为两个孤立顶点就实现了这一类型。任何非空空间的非约化悬挂都是路径连通的，而 \\(S^0\\) 有两个路径分支，故这一类型确实是新增的。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S6",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "L1为两圆不交并，L2为双圆楔与一点的不交并，均有实际有限单纯模型且分支同伦型不同。悬挂CW一骨架是两条同端点弧组成S1，两二胞腔附着分别落在可缩弧内而零伦，利用S2已证明的固定底映射锥同伦不变性，二者均为S1楔S2楔S2。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 114,
+          "line_end": 127,
+          "utf8_start": 7071,
+          "utf8_end": 8316,
+          "quote": "**不能推出。** 取有限单纯复形，使其实现分别为\n\\[\n|L_1|=S^1\\sqcup S^1,\\qquad\n|L_2|=(S^1\\vee S^1)\\sqcup\\{p\\}.\n\\]\n每个圆可取为三角形的边界，楔和中的两个三角形边界只共用一个顶点。两空间不同伦等价，因为同伦等价会在路径分支间给出一一对应，并限制为对应分支间的同伦等价。第二个空间有可缩分支，第一个空间的两个分支都是圆。\n\n为计算悬挂，给每个分支选用只有一个零胞腔的 CW 分解。两个例子都总共有两个零胞腔和两个环形一胞腔。悬挂的两个悬点以及两个零胞腔各自扫出的弧组成一个图 \\(\\Gamma\\)。它由两条具有相同端点的弧构成，所以 \\(\\Gamma\\cong S^1\\)。\n\n每个环形一胞腔在悬挂中给出一个二胞腔。其附着映射的像落在该环的基点扫出的那条弧内，因为环的两个端点都是这个基点，悬挂的上下端分别压成了悬点。因此两个附着映射都可在 \\(\\Gamma\\) 内同伦到取值为同一悬点的常值映射。每个二胞腔都是沿 \\(S^1\\) 附上的锥，故可用 S2 中固定底空间的附锥同伦等价逐个替换附着映射。于是\n\\[\n\\Sigma|L_1|\\simeq S^1\\vee S^2\\vee S^2\n\\simeq\\Sigma|L_2|.\n\\]"
+        }
+      ]
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/nonlean/MG-GP001/delivery.v1.json",
+      "bytes": 3075,
+      "sha256": "999b6075beb3149d609a7b5ace6479c43b453bacb8ef74b5696e0ae503c7a3a5"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "original_final": {
+      "path": "sessions/MG-GP001/physical-1/output/response.md",
+      "bytes": 8316,
+      "sha256": "edf3668a4e4a0fcceb85be21ead55ae502b69f5c5280ac25e385dc11770c98e0"
+    },
+    "full_candidate_prompt": {
+      "path": "sessions/MG-GP001/physical-1/input/task.md",
+      "bytes": 2186,
+      "sha256": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa"
+    },
+    "original_seal": {
+      "path": "sessions/MG-GP001/physical-1/runtime/seal.json",
+      "bytes": 848,
+      "sha256": "1584a2f2f6138e1c7eac92de5f85ef95848fb5350560d041adcc940f2b84d5c1"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-GP001/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 829,
+      "sha256": "1062a796fadd693c2cdc025377a80a65b14499ac5a0d4ac2d4cc8c8094e704b6"
+    }
+  }
+}

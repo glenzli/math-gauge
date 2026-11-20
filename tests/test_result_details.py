@@ -73,10 +73,13 @@ class SourceLinkTests(unittest.TestCase):
 class ResultDetailsTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data=build_data();cls.pages=build_detail_pages(copy.deepcopy(cls.data),ROOT)
+        # Shared physical evidence pages retain every selected1.1 source model;
+        # the edition loader separately installs adopted1.2 scores or a pending notice.
+        cls.data=build_data(assessment_version='1.1.0');cls.pages=build_detail_pages(copy.deepcopy(cls.data),ROOT)
 
     def test_links_resolve_without_private_inventory_or_remote_runtime(self):
-        generated=set(self.pages)|{'index.html','data.json'}
+        # write_site emits the public anomaly companion after build_detail_pages.
+        generated=set(self.pages)|{'index.html','data.json','downloads/execution-anomalies.json'}
         for path,page in self.pages.items():
             with self.subTest(path=path):
                 for marker in ('math-gauge-private/','MG-TXP','MG-BCP','MG-X'):
@@ -117,6 +120,7 @@ class ResultDetailsTests(unittest.TestCase):
     def test_replacement_uses_its_first_delivery_without_retired_credit(self):
         page=self.pages['models/deepseek-v4.1-flash-1017/cases/MG-PS001.html']
         payload=page.split('<script type="application/json" id="data">',1)[1].split('</script>',1)[0];data=json.loads(payload)
+        self.assertEqual(data['benchmark_version'],'1.1.0')
         for views in data['case']['views'].values():
             first, selected = views['single_attempt'], views['nonlogical_retry_3']
             self.assertEqual(first['completion']['exact'], 0)

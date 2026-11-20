@@ -4,6 +4,7 @@ import html
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 from urllib.parse import quote
 
@@ -90,6 +91,21 @@ def controls(data):
 
 
 def review_status(data, href):
+    attribution = data.get('model', {}).get('harness', {}).get('review_attribution')
+    if attribution is not None:
+        if (not isinstance(attribution, dict)
+                or set(attribution) != {'reviewer_kind', 'human_review', 'detail_zh', 'detail_en'}
+                or attribution['reviewer_kind'] != 'ai' or attribution['human_review'] != 'pending'
+                or any(not isinstance(attribution[key], str) or not attribution[key].strip()
+                       for key in ('detail_zh', 'detail_en'))):
+            raise ValueError('Model review attribution needs explicit AI review and human-pending evidence')
+        labels = (('zh', 'AI 审核 · 人工数学审核待完成'),
+                  ('en', 'AI reviewed · Human mathematical review pending'))
+        return ('<div class="statusline"><span class="status-dot" aria-hidden="true"></span>'
+                + ''.join('<span data-lang-content="'+lang+'"'+(' hidden' if lang == 'en' else '')
+                    +' title="'+html.escape(attribution['detail_'+lang], quote=True)+'">'
+                    +html.escape(label)+'</span>' for lang, label in labels)
+                +'<a data-context-link href="'+html.escape(href, quote=True)+'">审核方式 →</a></div>')
     process = data['review_process']
     detail = '全审：'+process['primary_ai_reviewer']+'；抽审核对：'+' + '.join(process['cross_check_reviewers'])
     return ('<div class="statusline"><span class="status-dot" aria-hidden="true"></span>'
@@ -432,7 +448,42 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
     return shell(page,cid+' · '+entry['title'],model['label']+' · '+CATEGORY_TITLES.get(entry['category'],entry['category'])+' · 公开题证据',body,details,'case-results.js',back=('models/'+model['id']+'/index.html',model['label']))
 
 
-def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_reference=None, attempt_reference=None):
+def selfcheck_answer_markdown(folder, row, response, index, page, downloads):
+    """Resolve explicit same-round engineering links without altering the original."""
+    original = evidence_bytes(folder, response)
+    text = original.decode('utf-8')
+    source = row.get('source', {}).get('engineering_manifest')
+    if source is None:
+        return text
+    manifest = json.loads(evidence_bytes(folder, source))
+    if (manifest.get('schema') != 'math-gauge.actual-round-engineering-archive/v1'
+            or manifest.get('round') != index
+            or manifest.get('original_response_sha256') != hashlib.sha256(original).hexdigest()
+            or manifest.get('source_repaired') is not False
+            or manifest.get('cross_round_union') is not False):
+        raise ValueError('Engineering download must bind the exact original answer and round')
+
+    def reference(match):
+        name = match[2]
+        item = manifest['files'].get(name)
+        if item is None:
+            return match[0]
+        if Path(item['path']) != Path(source['path']).parent / name:
+            raise ValueError('Engineering download belongs to another round')
+        raw = evidence_bytes(folder, item)
+        target = 'downloads/engineering/' + source['sha256'] + '/' + name
+        value = raw.decode('utf-8')
+        if target in downloads and downloads[target] != value:
+            raise ValueError('Engineering download collision')
+        downloads[target] = value
+        href = quote(os.path.relpath(target, Path(page).parent), safe='/')
+        return match[1] + href + match[3]
+
+    return re.sub(r'(\[[^\]\n]*\]\()(?:\./)?([\w.-]+)(\))', reference, text)
+
+
+def render_model(page, data, model, cases, record, folder, markdown, *, downloads=None, anomaly_reference=None, attempt_reference=None):
+    downloads = {} if downloads is None else downloads
     root = folder.parents[3]
     details = compact_data(data, model)
     details['cases'] = cases
@@ -502,7 +553,7 @@ def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_
                next(s for s in record['records'] if s['id'] in
                     ('MG-C003:alignment:'+str(index), 'MG-C003:R'+str(index))))
         response = row.get('final_text') if delivery else row.get('response')
-        content = markdown.add(evidence_bytes(folder,response).decode()) if response else '未留存可读原答。'
+        content = markdown.add(selfcheck_answer_markdown(folder, row, response, index, page, downloads)) if response else '未留存可读原答。'
         link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗',root=root) if response else ''
         if delivery:
             link += ' · '+source_link(Path(model['source_record']).parent/row['review']['path'],page,'本轮审核 ↗',root=root)
@@ -549,7 +600,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
     attempts = load_attempt_history(root)
     entries = json.loads((root/'cases/catalog.json').read_bytes())['entries']
     catalog = {e['case_id']:e for e in entries}
-    pages, markdown = {}, EvidenceRenderer()
+    pages, downloads, markdown = {}, {}, EvidenceRenderer()
     for source_model in data['models']:
         model = dict(source_model, label=source_model.get('source_model_label', source_model['label']))
         folder = root / Path(model['source_record']).parent
@@ -578,7 +629,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
                 path = 'models/'+model['id']+'/cases/'+cid+'.html'
                 pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
             path = 'models/'+model['id']+'/index.html'
-            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference,attempt_reference=attempts)
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown,downloads=downloads,anomaly_reference=anomaly_reference,attempt_reference=attempts)
             del model['public_claims']
             continue
         if model.get('record_kind') == 'native_harness':
@@ -609,7 +660,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
                 path = 'models/'+model['id']+'/cases/'+cid+'.html'
                 pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
             path = 'models/'+model['id']+'/index.html'
-            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference,attempt_reference=attempts)
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown,downloads=downloads,anomaly_reference=anomaly_reference,attempt_reference=attempts)
             del model['public_claims']
             continue
         record = json.loads((folder/'record.json').read_bytes())
@@ -655,7 +706,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
             path = 'models/'+model['id']+'/cases/'+cid+'.html'
             pages[path] = render_case(path, data, model, entry, projection, evidence, markdown, root)
         path = 'models/'+model['id']+'/index.html'
-        pages[path] = render_model(path, data, model, cases, record, folder, markdown,anomaly_reference=anomaly_reference,attempt_reference=attempts)
+        pages[path] = render_model(path, data, model, cases, record, folder, markdown,downloads=downloads,anomaly_reference=anomaly_reference,attempt_reference=attempts)
         del model['public_claims']
     if anomaly_reference is not None:
         published = {model['id'] for model in data['models']}
@@ -669,4 +720,4 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
         '<div data-lang-content="zh">'+(HERE/'templates/method-content.html').read_text()+'</div>'
         '<div data-lang-content="en" hidden>'+(HERE/'templates/method-content.en.html').read_text()+'</div>',
         compact_data(data),'method-results.js')
-    return markdown.finish(pages)
+    return {**markdown.finish(pages), **downloads}

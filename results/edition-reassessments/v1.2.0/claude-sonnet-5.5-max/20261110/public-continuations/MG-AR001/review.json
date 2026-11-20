@@ -1,0 +1,184 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-sonnet-5.5-max",
+  "case_id": "MG-AR001",
+  "response_sha256": "78046ae032427b97d24f08a5279c963892d47c9cb53fd234f163fe18c8599029",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 100,
+  "RMC": 100,
+  "SMC": true,
+  "positive_criteria": [
+    {
+      "id": "local_lift",
+      "earned": 15,
+      "reason": "正确核对整数多项式及逐元素指数，无需2可逆。",
+      "quote": "全程不需要 2 可逆，n 可随 x 变化。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "inverse_limit",
+      "earned": 20,
+      "reason": "认可逐层唯一性相容组装、商分解及自然性。",
+      "quote": "全程没有用 p 满，也没有用极限核幂零。",
+      "evidence_file": "answer.md",
+      "max": 20
+    },
+    {
+      "id": "idealization",
+      "earned": 15,
+      "reason": "认可理想化环、导子过渡和不满射反例。",
+      "quote": "P₁ 不是多项式，矛盾。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "noncommutative",
+      "earned": 10,
+      "reason": "认可矩阵反例，把最后一行作为表述含混，保留上下文数学成立。",
+      "quote": "结论是对的，但成立的那条蕴含没有写出。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "lift_evidence",
+      "earned": 10,
+      "reason": "给出整除及相容的核验依据。",
+      "quote": "ρ_ik(ẽ_{j,k}) 幂等且像为 e_j，由唯一性等于 ẽ_{j,i}，所以相容。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "counterexample_evidence",
+      "earned": 10,
+      "reason": "核验实际乘法和P递推，不误用过渡满射。",
+      "quote": "Pₙ=1+tPₙ₊₁。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "scope_evidence",
+      "earned": 10,
+      "reason": "区分至多唯一和存在唯一的字面表述，同时承认共同设定给存在；不新增非交换存在义务。",
+      "quote": "行 3 和行 7 定性为“表述不严”，不是数学错误。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "empty_family",
+      "earned": 5,
+      "reason": "完整认可空J及零环边界。",
+      "quote": "S=0 时，1_{R_i}∈ker p_i 幂零，故 R_i=0、L=0，两边都是单点。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "element_surjectivity",
+      "earned": 5,
+      "reason": "区分极限nil与可数塔满射；未升级成截面。",
+      "quote": "不用交换性，也不用核幂零。",
+      "evidence_file": "answer.md",
+      "max": 5
+    }
+  ],
+  "claim_deductions": [],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "明确按S4语境接受原表，并把非交换存在性和omega1构造列补充，不当作原题新增义务。"
+  },
+  "strict_reason": "最终修订将行3/7明确界定为非数学错误、行5按S4语境成立；所有冻结审阅检查得到实质验证。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "原审阅核心核验成立；原有表格意见最终限定为编辑措辞，另外交出的omega1线性化反例证明也成立。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "行 3 和行 7 定性为“表述不严”，不是数学错误。"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "明确按S4语境接受原表，并把非交换存在性和omega1构造列补充，不当作原题新增义务。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "按 S4 语境读，这一行成立。若字面读成任意有向集则为假，见 §3。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 4,
+      "reason": "区分数学正确、上下文限定和文字歧义，准确保留证据与手工证明边界。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "命题 A 的核心引理是超限的，只有手工证明，没有计算机检验。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "通过有限支撑自由线性化及支撑数最终稳定建立不可数满过渡仍非满的完整结构障碍。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "于是 ⋃_β s_β 是单射 ω₁→ℕ，与 ω₁ 不可数矛盾。∎"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 4,
+      "reason": "交出的审阅与补充构造均闭合，开放的一般指标情形明确另列。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "我只证了 ω₁ 链的情形和可数共尾的正面结果。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.304875+00:00",
+    "source_review_sha256": "8f7835f0778b659cc77b91bc215415c51ababc86f02e43839e05e651768810c1",
+    "source_review_path": "grading/audit_background_written/claude-sonnet-5.5-max--MG-AR001.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 1.0,
+      "upper": 1.0,
+      "exact": 1.0
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}

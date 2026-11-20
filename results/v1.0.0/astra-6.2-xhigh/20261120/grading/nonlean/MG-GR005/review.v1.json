@@ -1,0 +1,204 @@
+{
+  "case_id": "MG-GR005",
+  "response_sha256": "7a3841a18c4f25c9afd120731501e013d8315179d974f2fdcbdad0eb05203f4c",
+  "reviewer": "GPT-6.1 Sol Max; primary independent AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "六个必答阶段均完整成立。S4采用全部有限观测的上图闭包交与局部凸严格分离的替代证明，确实得到原拓扑闭上图且覆盖同时取正负无穷的全部竞争者；无需模仿参考仿射下界路线。S2/S3仅在明确紧次水平条件下取到或实现，S5/S6合法反例保持全部原条件。未发现需要新增承诺扣罚的实质错误。",
+  "findings": [],
+  "group_contract_sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+  "stages": [
+    {
+      "stage_id": "S1",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "非负和至少一点有限的边界明确；实高度上图的epsilon原像证明凸性，按q_K纤维分组的inf恒等式包括空纤维且未假定min。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 19,
+          "utf8_start": 22,
+          "utf8_end": 844,
+          "quote": "由 \\(f\\ge 0\\) 得 \\(g_F\\ge 0\\)。取 \\(x_0\\in E\\) 使 \\(f(x_0)<\\infty\\)，则 \\(g_F(q_Fx_0)\\le f(x_0)<\\infty\\)。\n\n为证凸性，取 \\((y_i,t_i)\\in\\operatorname{epi}_{\\mathbb R}(g_F)\\)，\\(i=1,2\\)。对每个 \\(\\varepsilon>0\\)，可取 \\(x_i\\) 使 \\(q_Fx_i=y_i\\) 且 \\(f(x_i)\\le t_i+\\varepsilon\\)。于是对 \\(0\\le\\lambda\\le1\\)，由 \\(q_F\\) 的线性和 \\(f\\) 的凸性，\n\\[\ng_F\\bigl(\\lambda y_1+(1-\\lambda)y_2\\bigr)\n\\le f\\bigl(\\lambda x_1+(1-\\lambda)x_2\\bigr)\n\\le \\lambda t_1+(1-\\lambda)t_2+\\varepsilon.\n\\]\n令 \\(\\varepsilon\\downarrow0\\)，即得实高度上图凸。\n\n当 \\(F\\subset K\\) 时，\\(q_F=r_{KF}q_K\\)，故按 \\(q_Kx\\) 的值分组取下确界，得到\n\\[\ng_F(y)\n=\\inf_{r_{KF}z=y}\\ \\inf_{q_Kx=z} f(x)\n=\\inf_{r_{KF}z=y}g_K(z).\n\\]\n空纤维也符合此式。本阶段的证明均不需要下确界取到。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S2",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "把近最优点放在同一紧次水平集中，用递减非空闭集交得到实际最优点；由次水平集精确像及有限维Hausdorff闭性得到下半连续。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 23,
+          "line_end": 33,
+          "utf8_start": 870,
+          "utf8_end": 1581,
+          "quote": "记 \\(L_c=\\{x:f(x)\\le c\\}\\)。设 \\(a=g_F(y)<\\infty\\)。对每个 \\(n\\ge1\\)，集合\n\\[\nA_n=L_{a+1/n}\\cap q_F^{-1}(\\{y\\})\n\\]\n由下确界的定义非空。由于 \\(f\\) 下半连续，\\(L_{a+1/n}\\) 闭。由于 \\(F\\) 有限维，\\(q_F\\) 在选定基后的各坐标都是连续线性泛函，故 \\(q_F\\) 连续。于是 \\(A_n\\) 是紧集 \\(L_{a+1}\\) 中递减的非空闭集，其交非空。取 \\(x\\in\\bigcap_n A_n\\)，则 \\(q_Fx=y\\) 且 \\(f(x)\\le a\\)。由 \\(a\\) 的定义，\\(f(x)=a\\)。\n\n因此对每个有限实数 \\(c\\)，有\n\\[\n\\{y:g_F(y)\\le c\\}=q_F(L_c).\n\\]\n右端是紧集在连续映射下的像，在 Hausdorff 空间 \\(F^*\\) 中闭。所有有限实数次水平集均闭，故 \\(g_F\\) 下半连续。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S3",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "统一有限c给同一个紧集，各有限观测的和提供有限交性质，实现全部相容记录；Hausdorff局部凸空间的连续对偶分离点给唯一性。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 37,
+          "line_end": 47,
+          "utf8_start": 1619,
+          "utf8_end": 2283,
+          "quote": "在紧集 \\(L_c\\) 中，对每个有限维 \\(F\\subset E'\\) 取闭集\n\\[\nB_F=L_c\\cap q_F^{-1}(\\{y_F\\}).\n\\]\n由 \\(g_F(y_F)\\le c\\) 和 S2 的取到性，\\(B_F\\) 非空。给定有限多个 \\(F_1,\\ldots,F_m\\)，令 \\(K=F_1+\\cdots+F_m\\)。兼容性给出\n\\[\n\\varnothing\\ne B_K\\subseteq\\bigcap_{i=1}^m B_{F_i}.\n\\]\n故这族闭集具有有限交性质。由紧性，可取 \\(x\\in\\bigcap_F B_F\\)，它满足全部记录且 \\(f(x)\\le c\\)。\n\n若 \\(x'\\) 也满足全部记录，对每个 \\(\\varphi\\in E'\\) 取 \\(F=\\operatorname{span}\\{\\varphi\\}\\)，得 \\(\\varphi(x')=\\varphi(x)\\)。Hausdorff 局部凸空间的连续对偶由 Hahn–Banach 定理分离点，故 \\(x'=x\\)。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S4",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "闭上图定义合法，bar g_F沿观测扩大单调；完整证明epi G=交T_F^{-1}(闭T_F(epi f))=闭epi f。分离泛函只用一个有限观测span(phi)而保留高度，故未引入proper-only竞争者假设，闭上图包含也覆盖h的两种无穷值。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 58,
+          "line_end": 67,
+          "utf8_start": 2877,
+          "utf8_end": 3390,
+          "quote": "由全部记录构造\n\\[\n\\boxed{\\displaystyle G(x)=\\sup_{\\substack{F\\subset E'\\\\ \\dim F<\\infty}}\\bar g_F(q_Fx).}\n\\]\n扩大观测空间时，对 \\(F\\subset K\\)，S1 给出\n\\(\\bar g_F(r_{KF}z)\\le g_F(r_{KF}z)\\le g_K(z)\\)。由于 \\(r_{KF}\\) 是有限维空间之间的连续线性映射，\\(\\bar g_F\\circ r_{KF}\\) 是 \\(g_K\\) 的下半连续凸下界。因此\n\\[\n\\bar g_F\\circ r_{KF}\\le\\bar g_K.\n\\]\n特别地，定义 \\(G(x)\\) 的各项随 \\(F\\) 扩大而单调不减，并且都介于 \\(0\\) 和 \\(f(x)\\) 之间。\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 69,
+          "line_end": 87,
+          "utf8_start": 3391,
+          "utf8_end": 4942,
+          "quote": "为证最大性，记 \\(D=\\operatorname{epi}_{\\mathbb R}(f)\\)，\\(T_F(x,t)=(q_Fx,t)\\)。有\n\\[\n\\overline{T_F(D)}=\\overline{\\operatorname{epi}_{\\mathbb R}(g_F)}.\n\\]\n事实上，\\(T_F(D)\\subseteq\\operatorname{epi}_{\\mathbb R}(g_F)\\)。反过来，若 \\(g_F(y)\\le t\\)，则对每个 \\(\\varepsilon>0\\) 都有 \\((y,t+\\varepsilon)\\in T_F(D)\\)。\n\n由 \\(G\\) 的定义和上述等式，\n\\[\n\\operatorname{epi}_{\\mathbb R}(G)\n=\\bigcap_F T_F^{-1}\\bigl(\\overline{T_F(D)}\\bigr)\n=\\overline D.\n\\]\n最后一个等号可由分离定理证明。交集中的每个集合都是包含 \\(D\\) 的闭集，故包含 \\(\\overline D\\)。反过来，若 \\(p\\notin\\overline D\\)，由于 \\(E\\times\\mathbb R\\) 是 Hausdorff 局部凸空间，而 \\(\\overline D\\) 是非空闭凸集，点与闭凸集的严格分离定理给出连续线性泛函 \\(L\\) 和实数 \\(b\\)，使 \\(L(p)<b\\le L(d)\\) 对所有 \\(d\\in D\\) 成立。写成\n\\[\nL(x,t)=\\varphi(x)+\\alpha t,\\qquad \\varphi\\in E',\\ \\alpha\\in\\mathbb R.\n\\]\n取 \\(F=\\operatorname{span}\\{\\varphi\\}\\)，则 \\(L(x,t)=(q_Fx)(\\varphi)+\\alpha t\\)。因此闭半空间 \\(\\{(y,s):y(\\varphi)+\\alpha s\\ge b\\}\\) 包含 \\(\\overline{T_F(D)}\\)，而 \\(T_F(p)\\) 在其外。故 \\(p\\) 不属于上述交集。\n\n于是 \\(G\\) 下半连续、凸且 \\(G\\le f\\)。若 \\(h\\le f\\) 下半连续且凸，则其闭上图包含 \\(D\\)，从而包含 \\(\\overline D=\\operatorname{epi}_{\\mathbb R}(G)\\)，即 \\(h\\le G\\)。这个包含关系也涵盖 \\(h\\) 同时取 \\(-\\infty\\) 与 \\(+\\infty\\) 的情形，此时相应的垂直截面分别为整条实线与空集。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S5",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "C={(s,v)>=0:sv>=1}是闭凸非紧集合，指标成本保持原非负/至少一点有限条件；第一坐标投影为开正半轴，g_F的零次水平集非闭。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 91,
+          "line_end": 110,
+          "utf8_start": 4977,
+          "utf8_end": 5636,
+          "quote": "**不一定下半连续。** 取\n\\[\nC=\\{(s,v)\\in[0,\\infty)^2:sv\\ge1\\},\\qquad\nf(s,v)=\n\\begin{cases}\n0,&(s,v)\\in C,\\\\\n+\\infty,&(s,v)\\notin C.\n\\end{cases}\n\\]\n由乘法的连续性，\\(C\\) 闭。它也可写成 \\(\\{(s,v):s>0,\\ v\\ge1/s\\}\\)，由 \\(s\\mapsto1/s\\) 在 \\((0,\\infty)\\) 上的凸性可知 \\(C\\) 凸。因此 \\(f\\) 的实高度上图 \\(C\\times[0,\\infty)\\) 闭且凸，并且 \\(f(1,1)=0\\)。\n\n取 \\(F\\) 为第一坐标泛函张成的空间，将 \\(F^*\\) 识别为 \\(\\mathbb R\\)。由于 \\(C\\) 在第一坐标上的投影为 \\((0,\\infty)\\)，有\n\\[\ng_F(s)=\n\\begin{cases}\n0,&s>0,\\\\\n+\\infty,&s\\le0.\n\\end{cases}\n\\]\n其零次水平集 \\((0,\\infty)\\) 不闭。\n"
+        }
+      ]
+    },
+    {
+      "stage_id": "S6",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "G=f的充要性由原实高度上图闭性直接得到；用bar g_F<=u<=g_F及闭凸下界最大性双向夹逼，证明所需闭化公式。S5取K=E全对偶给实际同一例，u(0)=infty但bar g_F(0)=0，最外闭化确实不可省。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 114,
+          "line_end": 130,
+          "utf8_start": 5677,
+          "utf8_end": 6819,
+          "quote": "由 S4 的恒等式 \\(\\operatorname{epi}_{\\mathbb R}(G)=\\overline{\\operatorname{epi}_{\\mathbb R}(f)}\\)，\\(G=f\\) 当且仅当 \\(f\\) 的实高度上图闭，即当且仅当 \\(f\\) 下半连续。\n\n对 \\(F\\subset K\\)，记\n\\[\nu(y)=\\inf_{r_{KF}z=y}\\bar g_K(z).\n\\]\n这是非负凸函数，凸性可沿用 S1 的近似取点论证。由 S4 的 \\(\\bar g_F\\circ r_{KF}\\le\\bar g_K\\)，以及 \\(\\bar g_K\\le g_K\\) 和 S1 的分组公式，得\n\\[\n\\bar g_F(y)\\le u(y)\\le g_F(y).\n\\]\n左边说明 \\(\\bar g_F\\) 是 \\(u\\) 的下半连续凸下界，故 \\(\\bar g_F\\le\\bar u\\)。右边说明 \\(\\bar u\\) 是 \\(g_F\\) 的下半连续凸下界，故 \\(\\bar u\\le\\bar g_F\\)。因此\n\\[\n\\boxed{\\displaystyle\n\\bar g_F=\\overline{\\left(y\\longmapsto\\inf_{r_{KF}z=y}\\bar g_K(z)\\right)}.}\n\\]\n\n**最外层的闭化不能总省去。** 在 S5 的例子中取 \\(K=E'\\)。因 \\(E=\\mathbb R^2\\)，\\(q_K:E\\to K^*\\) 是线性同胚，在此识别下 \\(g_K=f=\\bar g_K\\)。于是 \\(u=g_F\\)，在 \\(0\\) 处取 \\(+\\infty\\)。但 \\((1/n,0)\\in\\operatorname{epi}_{\\mathbb R}(g_F)\\) 趋于 \\((0,0)\\)，故 \\(\\bar g_F(0)=0\\)。这给出了省去最外层闭化后等式失效的具体点。"
+        }
+      ]
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/nonlean/MG-GR005/delivery.v1.json",
+      "bytes": 3075,
+      "sha256": "d3954dcb0bd10bb5455a25783e53a62f968a76118d80083e5cfc960f182e4fb9"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "original_final": {
+      "path": "sessions/MG-GR005/physical-1/output/response.md",
+      "bytes": 6819,
+      "sha256": "7a3841a18c4f25c9afd120731501e013d8315179d974f2fdcbdad0eb05203f4c"
+    },
+    "full_candidate_prompt": {
+      "path": "sessions/MG-GR005/physical-1/input/task.md",
+      "bytes": 2068,
+      "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938"
+    },
+    "original_seal": {
+      "path": "sessions/MG-GR005/physical-1/runtime/seal.json",
+      "bytes": 848,
+      "sha256": "177df329148b88755137cc03928205aafd1434b836ab86063e81825ad77d7c47"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-GR005/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 829,
+      "sha256": "9eeeb164d4b3b6cb8aec7222fddb551cb832eb4a9c674077cbb70ee1b677524f"
+    }
+  }
+}

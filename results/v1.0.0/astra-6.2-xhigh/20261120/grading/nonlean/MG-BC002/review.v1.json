@@ -1,0 +1,99 @@
+{
+  "case_id": "MG-BC002",
+  "response_sha256": "f19ab093a68013377b801ad1b4b805c734e38ffcced8981e1b2c795eeb01699b",
+  "reviewer": "GPT-6.1 Sol Max; primary independent AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "全部流量化与条件prox证书成立。原答另给固定任意t>0、小初值ae1的二阶振幅展开，直接证明DΦ_t的反对称部分非零，排除每个正时间的任何凸近端表示；其适用范围强于参考小时间路线但论证闭合。部署段清楚区分时间tau、固定1/2惩罚系数和隐式Euler。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "明确否定从强凸梯度、收缩和耗散推得实际prox表示，且先证明任何C1凸prox映射必须为梯度、Jacobian对称；没有把仅非prox_(tf)冒充排除任意r。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 37,
+          "line_end": 59,
+          "utf8_start": 1258,
+          "utf8_end": 2371,
+          "quote": "### 2. Proximal certificate and its applicability\n\nSuppose \\(T=\\operatorname{prox}_r\\) for a proper lower-semicontinuous convex \\(r\\). The optimality condition at \\(p=T(z)\\) is \\(z-p\\in\\partial r(p)\\). Hence \\(r(u)\\ge r(p)+\\langle z-p,u-p\\rangle\\) for every \\(u\\in\\operatorname{dom}r\\). Expanding \\(\\|u-z\\|^2\\) about \\(p\\) gives\n\\[\n\\boxed{\\ r(p)+\\tfrac12\\|p-z\\|^2+\\tfrac12\\|u-p\\|^2\n\\le r(u)+\\tfrac12\\|u-z\\|^2.\\ }\n\\]\nFor \\(q=T(w)\\), monotonicity of \\(\\partial r\\) gives\n\\(\\langle (z-p)-(w-q),p-q\\rangle\\ge0\\). Rearranging proves firm nonexpansiveness,\n\\[\n\\|T(z)-T(w)\\|^2\\le \\langle T(z)-T(w),z-w\\rangle .\n\\]\n\n**The claimed proximal representation fails for every \\(\\tau>0\\).** To see the obstruction, any differentiable convex proximal map must have a symmetric Jacobian. Indeed, define\n\\[\nH(z)=\\sup_u\\{\\langle z,u\\rangle-r(u)-\\tfrac12\\|u\\|^2\\}.\n\\]\nThe unique maximizer is \\(T(z)\\). Using the maximizers at \\(z\\) and \\(z+d\\) to bound the increment gives\n\\[\n0\\le H(z+d)-H(z)-\\langle T(z),d\\rangle\n\\le \\langle T(z+d)-T(z),d\\rangle\\le\\|d\\|^2.\n\\]\nThus \\(T=\\nabla H\\), so a \\(C^1\\) proximal map has symmetric Jacobian.\n"
+        }
+      ]
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "对任意固定t>0，光滑依赖给v_a/a趋于e^-s e1及J_a趋于E，变常数公式的二阶小振幅项完整。直接积分得到J12=-a²rho(1-rho³)+o(a²)、J21=-3a²rho²(1-rho)+o(a²)，其差=-a²rho(1-rho)^3+o(a²)非零。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 61,
+          "line_end": 74,
+          "utf8_start": 2372,
+          "utf8_end": 3286,
+          "quote": "For the given flow, fix \\(t>0\\), set \\(e_1=(1,0)^\\top\\), and write \\(v_a(s)=\\Phi_s(ae_1)\\), \\(J_a(s)=D\\Phi_s(ae_1)\\), and \\(E(s)=e^{-sA}\\). The variational equation is\n\\[\n\\dot J_a=-AJ_a-3(b^\\top v_a)^2bb^\\top J_a,\\qquad J_a(0)=I.\n\\]\nAt the equilibrium, \\(J_0(s)=E(s)\\). Smooth dependence on initial data gives \\(v_a(s)/a\\to e^{-s}e_1\\) and \\(J_a(s)\\to E(s)\\) uniformly on \\([0,t]\\) as \\(a\\to0\\). Variation of constants therefore yields\n\\[\nJ_a(t)=E(t)-3a^2\\int_0^t e^{-2s}E(t-s)bb^\\top E(s)\\,ds+o(a^2).\n\\]\nWith \\(\\rho=e^{-t}\\), the two off-diagonal entries are\n\\[\n(J_a(t))_{12}=-a^2\\rho(1-\\rho^3)+o(a^2),\\qquad\n(J_a(t))_{21}=-3a^2\\rho^2(1-\\rho)+o(a^2).\n\\]\nTheir difference is \\(-a^2\\rho(1-\\rho)^3+o(a^2)\\). Since \\(0<\\rho<1\\), the Jacobian is asymmetric for sufficiently small nonzero \\(a\\). Taking \\(t=\\tau\\) rules out \\(T_\\tau=\\operatorname{prox}_{r_\\tau}\\) for any proper lower-semicontinuous convex \\(r_\\tau\\).\n"
+        }
+      ]
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "全正时间排除实际凸prox表示的证明闭合；前段以能量子水平集证明前向全局存在、强单调性/PL不等式证明所需两指数率、自治性证明堆叠；条件三点证书/FNE及部署参数范围均准确。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 78,
+          "utf8_start": 26,
+          "utf8_end": 3927,
+          "quote": "### 1. Global flow, contraction, and energy decay\n\nLet \\(A=\\operatorname{diag}(1,2)\\) and \\(b=(1,1)^\\top\\). Then\n\\[\n\\nabla f(z)=Az+(b^\\top z)^3b,\\qquad\n\\nabla^2 f(z)=A+3(b^\\top z)^2bb^\\top\\succeq I.\n\\]\nThus \\(f\\) is \\(1\\)-strongly convex. Since \\(\\nabla f(0)=0\\), the origin is its unique minimizer and the unique equilibrium.\n\nThe smooth vector field gives a unique local solution. Along that solution,\n\\[\n\\frac{d}{dt}f(\\Phi_t(z))=-\\|\\nabla f(\\Phi_t(z))\\|^2.\n\\]\nSince \\(f(v)\\ge \\|v\\|^2/2\\), the trajectory stays in a compact sublevel set. The ODE continuation theorem therefore gives existence for every \\(t\\ge0\\).\n\nFor \\(v=\\Phi_t(z)\\) and \\(w=\\Phi_t(w_0)\\), strong convexity gives\n\\[\n\\frac12\\frac{d}{dt}\\|v-w\\|^2\n=-\\langle v-w,\\nabla f(v)-\\nabla f(w)\\rangle\n\\le -\\|v-w\\|^2.\n\\]\nAlso, the strong convexity inequality evaluated at the minimizer gives\n\\[\nf(v)\\le \\langle\\nabla f(v),v\\rangle-\\tfrac12\\|v\\|^2\n\\le \\tfrac12\\|\\nabla f(v)\\|^2.\n\\]\nIntegrating the two differential inequalities yields\n\\[\n\\boxed{\\ \\|\\Phi_t(z)-\\Phi_t(w_0)\\|\\le e^{-t}\\|z-w_0\\|,\\qquad\nf(\\Phi_t(z))\\le e^{-2t}f(z).\\ }\n\\]\nBy autonomy and uniqueness, \\(T_\\tau^n=\\Phi_{n\\tau}\\). In particular,\n\\(\\|Z_n\\|\\le e^{-n\\tau}\\|Z_0\\|\\) and \\(f(Z_n)\\le e^{-2n\\tau}f(Z_0)\\).\n\n### 2. Proximal certificate and its applicability\n\nSuppose \\(T=\\operatorname{prox}_r\\) for a proper lower-semicontinuous convex \\(r\\). The optimality condition at \\(p=T(z)\\) is \\(z-p\\in\\partial r(p)\\). Hence \\(r(u)\\ge r(p)+\\langle z-p,u-p\\rangle\\) for every \\(u\\in\\operatorname{dom}r\\). Expanding \\(\\|u-z\\|^2\\) about \\(p\\) gives\n\\[\n\\boxed{\\ r(p)+\\tfrac12\\|p-z\\|^2+\\tfrac12\\|u-p\\|^2\n\\le r(u)+\\tfrac12\\|u-z\\|^2.\\ }\n\\]\nFor \\(q=T(w)\\), monotonicity of \\(\\partial r\\) gives\n\\(\\langle (z-p)-(w-q),p-q\\rangle\\ge0\\). Rearranging proves firm nonexpansiveness,\n\\[\n\\|T(z)-T(w)\\|^2\\le \\langle T(z)-T(w),z-w\\rangle .\n\\]\n\n**The claimed proximal representation fails for every \\(\\tau>0\\).** To see the obstruction, any differentiable convex proximal map must have a symmetric Jacobian. Indeed, define\n\\[\nH(z)=\\sup_u\\{\\langle z,u\\rangle-r(u)-\\tfrac12\\|u\\|^2\\}.\n\\]\nThe unique maximizer is \\(T(z)\\). Using the maximizers at \\(z\\) and \\(z+d\\) to bound the increment gives\n\\[\n0\\le H(z+d)-H(z)-\\langle T(z),d\\rangle\n\\le \\langle T(z+d)-T(z),d\\rangle\\le\\|d\\|^2.\n\\]\nThus \\(T=\\nabla H\\), so a \\(C^1\\) proximal map has symmetric Jacobian.\n\nFor the given flow, fix \\(t>0\\), set \\(e_1=(1,0)^\\top\\), and write \\(v_a(s)=\\Phi_s(ae_1)\\), \\(J_a(s)=D\\Phi_s(ae_1)\\), and \\(E(s)=e^{-sA}\\). The variational equation is\n\\[\n\\dot J_a=-AJ_a-3(b^\\top v_a)^2bb^\\top J_a,\\qquad J_a(0)=I.\n\\]\nAt the equilibrium, \\(J_0(s)=E(s)\\). Smooth dependence on initial data gives \\(v_a(s)/a\\to e^{-s}e_1\\) and \\(J_a(s)\\to E(s)\\) uniformly on \\([0,t]\\) as \\(a\\to0\\). Variation of constants therefore yields\n\\[\nJ_a(t)=E(t)-3a^2\\int_0^t e^{-2s}E(t-s)bb^\\top E(s)\\,ds+o(a^2).\n\\]\nWith \\(\\rho=e^{-t}\\), the two off-diagonal entries are\n\\[\n(J_a(t))_{12}=-a^2\\rho(1-\\rho^3)+o(a^2),\\qquad\n(J_a(t))_{21}=-3a^2\\rho^2(1-\\rho)+o(a^2).\n\\]\nTheir difference is \\(-a^2\\rho(1-\\rho)^3+o(a^2)\\). Since \\(0<\\rho<1\\), the Jacobian is asymmetric for sufficiently small nonzero \\(a\\). Taking \\(t=\\tau\\) rules out \\(T_\\tau=\\operatorname{prox}_{r_\\tau}\\) for any proper lower-semicontinuous convex \\(r_\\tau\\).\n\n## Deployment description\n\nEach block advances the gradient flow of \\(f\\) by time \\(\\tau\\). A stack of \\(n\\) blocks implements the exact flow at time \\(n\\tau\\), contracts distances between inputs by a factor of at most \\(e^{-n\\tau}\\), and reduces the energy to at most \\(e^{-2n\\tau}f(Z_0)\\). Every stack trajectory converges to the origin. The parameter \\(\\tau\\) specifies elapsed flow time. In the stated proximal convention, the squared-distance coefficient is fixed at \\(1/2\\). A proximal update of \\(f\\) with step size \\(\\tau\\) would be \\(\\operatorname{prox}_{\\tau f}\\), which solves the implicit-Euler equation \\(u+\\tau\\nabla f(u)=z\\)."
+        }
+      ]
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/nonlean/MG-BC002/delivery.v1.json",
+      "bytes": 3075,
+      "sha256": "330f679cbae91d27e96de7ce823973013510fb34c2be9d4c8a439a3cf1be53cf"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "original_final": {
+      "path": "sessions/MG-BC002/physical-1/output/response.md",
+      "bytes": 3927,
+      "sha256": "f19ab093a68013377b801ad1b4b805c734e38ffcced8981e1b2c795eeb01699b"
+    },
+    "full_candidate_prompt": {
+      "path": "sessions/MG-BC002/physical-1/input/task.md",
+      "bytes": 1993,
+      "sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af"
+    },
+    "original_seal": {
+      "path": "sessions/MG-BC002/physical-1/runtime/seal.json",
+      "bytes": 848,
+      "sha256": "db74cf33e6be1d3d1c32c375fb037dae58ec14f57b16f6f4c7b7debf5f4f06df"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-BC002/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 829,
+      "sha256": "35633c56661bf4f9c1d7745d01718cee5b3c623ec5ff6b9ccd704d3df50a1aec"
+    }
+  }
+}

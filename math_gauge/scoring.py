@@ -2725,6 +2725,234 @@ def score_theorem_extension_calibration_overlay(base, policy, *, calibration, mo
     return result
 
 
+def _neutral_source_fraction(value):
+    """Preserve every retained unrounded loss, including values very near one."""
+    return Fraction(str(value))
+
+
+def _neutral_task_interval(task, mode):
+    if mode == 'strict':
+        return _boolean(task['strict_pass'])
+    value = task['completion']
+    return tuple(None if value[k] is None else _neutral_source_fraction(value[k])
+                 for k in ('lower','upper','exact'))
+
+
+def score_neutral_revision_overlay(base, policy, *, revision, mode):
+    """Apply one signed 80/20 continuation to whole selected non-Lean tasks.
+
+    Selection is shared across modes, not a mode-specific best-of. Strict's
+    original binary field remains intact; its weighted completion can be .2
+    or .8. Re-aggregate affected families before their unchanged fixed weight.
+    """
+    from .neutral_revision import RevisionInputs, VERSION, SOURCE, TARGET, CONDITION, ELIGIBLE
+    policy = validate_assessment_policy(policy)
+    if (not isinstance(revision, RevisionInputs) or policy['version'] != '0.9.0'
+            or base.get('schema') != 'math-gauge.assessment-score/v1'
+            or base.get('neutral_revision') is not None or base.get('attempt_condition') != CONDITION
+            or mode not in {'capability','partial','strict'}):
+        raise ValueError('Neutral continuation requires a validated unchanged rule-selected assessment')
+    selected = revision.for_score(base, mode=mode)
+    result = deepcopy(base)
+    rows = {r['case_id']:r for r in selected['rows']}
+    affected, task_values, task_confirmed = set(), {}, {}
+    for task in result['tasks']:
+        cid = task['case_id']
+        first = _neutral_task_interval(task, mode)
+        if cid not in rows:
+            task_values[cid] = first
+            task_confirmed[cid] = first[2] if first[2] is not None else Fraction(0)
+            continue
+        row, continuation = rows[cid], rows[cid]['continuation']
+        if task['subcategory'] not in ELIGIBLE or task['family_id'] != row['family_id']:
+            raise ValueError('Neutral continuation cannot change Lean, task or family ownership')
+        status = continuation['status']
+        if status == 'not_run':
+            # Unknown is not charged as a mathematical or operational failure.
+            second = ((Fraction(-2,3), Fraction(1), None)
+                      if mode == 'partial' and task['subcategory'] == 'theorem-extension' else
+                      (Fraction(-1,2), Fraction(1), None)
+                      if mode == 'partial' and task['subcategory'] == 'manuscript-completion'
+                         and task.get('claim_assessment', {}).get('rmc_floor_points') != 0 else
+                      (Fraction(-1,5), Fraction(1), None)
+                      if mode == 'partial' and task['subcategory'] != 'manuscript-completion' else UNKNOWN)
+        elif status == 'delivery_failed':
+            if mode == 'capability':
+                cutoff = continuation.get('cutoff_capability')
+                second = (UNKNOWN if cutoff is None else tuple(None if cutoff[k] is None else
+                    _neutral_source_fraction(cutoff[k]) for k in ('lower','upper','exact')))
+            else:
+                second = (Fraction(0),) * 3
+        else:
+            second = (_neutral_source_fraction(continuation['scores'][mode]),) * 3
+        value = tuple(None if first[i] is None or second[i] is None else
+                      Fraction(4,5)*first[i] + Fraction(1,5)*second[i] for i in range(3))
+        confirmed = (Fraction(4,5)*(first[2] if first[2] is not None else Fraction(0))
+                     + Fraction(1,5)*(second[2] if second[2] is not None else Fraction(0)))
+        task['neutral_revision'] = dict(version=VERSION, status=status,
+            first_completion=deepcopy(task['completion']), first_strict_pass=task['strict_pass'],
+            revision_completion={k:None if v is None else float(v)
+                for k,v in zip(('lower','upper','exact'),second)},
+            revision_strict_pass=(None if status == 'not_run' else False if status == 'delivery_failed'
+                                  else bool(continuation['scores']['strict'])),
+            effective_completion={k:None if v is None else float(v)
+                for k,v in zip(('lower','upper','exact'),value)},
+            response_sha256=(continuation.get('answer') or {}).get('sha256'),
+            review_sha256=(continuation.get('review') or {}).get('sha256'))
+        task['completion'] = deepcopy(task['neutral_revision']['effective_completion'])
+        task_values[cid], task_confirmed[cid] = value, confirmed
+        affected.add(task['subcategory'])
+    if set(rows) != {t['case_id'] for t in result['tasks'] if 'neutral_revision' in t}:
+        raise ValueError('Neutral continuation lost a selected source task')
+    metrics, contributions = deepcopy(base['metrics']), deepcopy(base['contributions'])
+    intervals, confirmed = {}, {}
+    for child in policy['subcategories']:
+        key, metric = child['id'], metrics[child['id']]
+        if metric['complete'] and metric['exact'] is not None:
+            point = _neutral_source_fraction(metric.get('confirmed',metric['exact']))/100
+            intervals[key] = (point,) * 3
+        else:
+            intervals[key] = tuple(None if metric[k] is None else
+                _neutral_source_fraction(metric[k])/100 for k in ('lower','upper','exact'))
+        confirmed[key] = _neutral_source_fraction(metric.get('confirmed',metric['exact'] or 0))/100
+        if key not in affected:
+            continue
+        families, known_families = {}, {}
+        for task in result['tasks']:
+            if task['subcategory'] == key:
+                families.setdefault(task['family_id'],[]).append(task_values[task['case_id']])
+                known_families.setdefault(task['family_id'],[]).append(task_confirmed[task['case_id']])
+        count = child['families']
+        if len(families) > count or child['aggregation'] not in {'family','parent_family'}:
+            raise ValueError('Neutral continuation cannot change a family denominator or aggregation')
+        missing = ((Fraction(-2,3),Fraction(1),None)
+                   if key == 'theorem-extension' and mode == 'partial' else
+                   (Fraction(-1,2),Fraction(1),None)
+                   if key == 'manuscript-completion' and mode == 'partial' else UNKNOWN)
+        values = [_average(items) for items in families.values()] + [missing]*(count-len(families))
+        value = _average(values)
+        known = sum((sum(items,Fraction(0))/len(items) for items in known_families.values()),Fraction(0))/count
+        intervals[key],confirmed[key] = value,known
+        adjudicated = sum(v[2] is not None for v in values)
+        metrics[key] = _assessment_metric(value,unit=child['aggregation'],planned=count,adjudicated=adjudicated)
+        if value[2] is not None:
+            metrics[key]['exact'] = float(value[2]*100)
+        metrics[key]['confirmed'] = float(known*100)
+        weighted = tuple(None if v is None else v*Fraction(child['weight'],100) for v in value)
+        contributions[key] = _assessment_metric(weighted,unit='points in full benchmark',
+                                                planned=count,adjudicated=adjudicated)
+        if weighted[2] is not None:
+            contributions[key]['exact'] = float(weighted[2]*100)
+        contributions[key]['confirmed'] = float(known*child['weight'])
+    metrics,contributions = _assessment_rollups(policy,intervals,confirmed,metrics,contributions)
+    affected_groups = {g['id'] for g in policy['groups'] if set(g['children']).intersection(affected)}
+    # Existing display rounding must not promote a tiny retained first loss to
+    # exactly100. Confirmed/exact values retain the unrounded weighted result.
+    for group in policy['groups']:
+        if group['id'] in affected_groups:
+            children = [c for c in policy['subcategories'] if c['id'] in group['children']]
+            value = _average([intervals[c['id']] for c in children],[c['weight'] for c in children])
+            if value[2] is not None:
+                metrics[group['id']]['exact'] = float(value[2]*100)
+                contributions[group['id']]['exact'] = float(value[2]*group['weight'])
+    for key in ('earned','overall'):
+        children = [c for c in policy['subcategories'] if key == 'overall' or c['status']=='active']
+        if all(intervals[c['id']][2] is not None for c in children):
+            metrics[key]['exact'] = float(max(Fraction(0),sum(
+                (intervals[c['id']][2]*c['weight'] for c in children),Fraction(0))))
+    for key in affected | affected_groups | {'earned','overall'}:
+        if key in metrics:
+            result['metrics'][key] = metrics[key]
+        if key in contributions:
+            result['contributions'][key] = contributions[key]
+    result['benchmark_version'] = TARGET
+    result['neutral_revision'] = dict(version=VERSION, source_scoring_edition=SOURCE,
+        benchmark_version=TARGET, attempt_condition=CONDITION, baseline_weight=0.8, revision_weight=0.2,
+        selected_tasks=len(rows), reviewed=sum(r['continuation']['status']=='reviewed' for r in rows.values()),
+        delivery_failed=sum(r['continuation']['status']=='delivery_failed' for r in rows.values()),
+        pending=sum(r['continuation']['status']=='not_run' for r in rows.values()),
+        first_smc_is_binary=True, weighted_smc_is_binary=False, signed_decreases_allowed=True,
+        inputs_sha256=selected['inputs_sha256'], policy_sha256=selected['policy_sha256'],
+        base_report_sha256=selected['base_sha256'][mode], post_observation=True,
+        reviewer_kind='ai', human_review='pending', adoption_new_candidate_calls=0)
+    result['source_bindings'] = dict(base.get('source_bindings',{}),
+        neutral_revision_inputs_sha256=selected['inputs_sha256'],
+        neutral_revision_policy_sha256=selected['policy_sha256'],
+        neutral_revision_base_report_sha256=selected['base_sha256'][mode])
+    return result
+
+
+def score_neutral_revision_completion(revision, *, base):
+    """Count selected continuations whose own three unrounded scores are full.
+
+    A failed delivery remains in the denominator. An unrun continuation keeps
+    an unknown upper bound, and an empty selection has no completion rate.
+    This count is independent of the baseline and the 80/20 score blend.
+    """
+    from .neutral_revision import RevisionInputs, MODES
+    if not isinstance(revision, RevisionInputs):
+        raise ValueError('Completion summary requires validated neutral revision inputs')
+    data = revision.for_score(base, mode=base.get('score_mode'))
+    counts = dict(selected=len(data['rows']), reviewed=0, delivery_failed=0, pending=0)
+    full = 0
+    for row in data['rows']:
+        continuation = row['continuation']
+        status = continuation['status']
+        if status == 'reviewed':
+            counts['reviewed'] += 1
+            if all(_neutral_source_fraction(continuation['scores'][mode]) == 1 for mode in MODES):
+                full += 1
+        elif status == 'delivery_failed':
+            counts['delivery_failed'] += 1
+        elif status == 'not_run':
+            counts['pending'] += 1
+        else:
+            raise ValueError('Unknown continuation status in completion summary')
+    upper = full + counts['pending']
+    count = dict(lower=full, upper=upper, exact=full if not counts['pending'] else None)
+    rate = {key: None if not counts['selected'] or value is None
+            else float(Fraction(value, counts['selected'])) for key, value in count.items()}
+    return dict(counts, full_count=count, full_rate=rate, settled=not counts['pending'])
+
+
+def score_neutral_revision_delta(base, revised):
+    """Return signed MC/RMC/SMC continuation gains in the fixed100-point frame.
+
+    Consume the already authenticated public reports. No category arithmetic,
+    new review, score normalization or best-of selection occurs in this view.
+    Base may retain both historical conditions; only the selected parent is
+    compared. Unresolved reports do not become a settled gain/loss display.
+    """
+    from .neutral_revision import MODES, CONDITION, SOURCE, TARGET, VERSION
+    if not isinstance(base,dict) or not isinstance(revised,dict) or set(base) != set(MODES) or set(revised) != set(MODES):
+        raise ValueError('Neutral score delta requires the same three authenticated modes')
+    result = {}
+    for mode in MODES:
+        first = base[mode] if 'score_mode' in base[mode] else base[mode].get(CONDITION,{})
+        last = revised[mode]
+        metadata = last.get('neutral_revision',{})
+        old_binding = first.get('source_bindings',{}).get('private_report_sha256')
+        if (first.get('schema') != 'math-gauge.assessment-score-aggregate/v1'
+                or last.get('schema') != first.get('schema')
+                # The current source edition can retain an unchanged archived
+                # report whose own original benchmark label remains0.6.0.
+                or first.get('benchmark_version') not in {SOURCE, '0.6.0'}
+                or last.get('benchmark_version') != TARGET
+                or first.get('score_mode') != mode or last.get('score_mode') != mode
+                or first.get('attempt_condition') != CONDITION or last.get('attempt_condition') != CONDITION
+                or first.get('model_label') != last.get('model_label')
+                or metadata.get('version') != VERSION or metadata.get('source_scoring_edition') != SOURCE
+                or old_binding is None or metadata.get('base_report_sha256') != old_binding
+                or last.get('source_bindings',{}).get('neutral_revision_base_report_sha256') != old_binding):
+            raise ValueError('Neutral score delta lost its selected model, condition or exact parent report')
+        before,after = first['metrics']['earned'],last['metrics']['earned']
+        if not all(metric.get('complete') is True and metric.get('exact') is not None
+                   and type(metric.get('confirmed')) in {int,float} for metric in (before,after)):
+            raise ValueError('Unresolved continuation scores have no settled full100 delta')
+        result[mode] = after['confirmed'] - before['confirmed']
+    return result
+
+
 def _assess_manuscript_fidelity(value, passed, fidelity, *, mode, completion, claim_detail, findings):
     """Apply the same source-bound fidelity adjustment to either harness type."""
     if any(e['root_cause'] == fidelity['root_cause'] for e in findings):
@@ -3660,95 +3888,202 @@ def summarize_manuscript_observations(review, source_policy, observation_policy)
             'formal_comparison_eligible': False}
 
 
-def score_mathematical_profile(inputs):
-    """Aggregate independently reviewed traits, preserving every fixed unknown.
+def profile_strict_completion_metric(report):
+    """Project the official selected SMC; never rebuild its task weights here."""
+    if report.get('score_mode') != 'strict' or report.get('attempt_condition') != 'nonlogical_retry_3':
+        raise ValueError('Completion requires the official rule-selected SMC report')
+    source = report['metrics']['earned']
+    known = source['complete'] and source['exact'] is not None
+    # Main charts use observed confirmed credit. Exact displays must use that
+    # same value, not manufacture uncertainty from outward decimal rounding.
+    low = source['confirmed'] if known else source['lower']
+    high = low if known else source['upper']
+    return dict(exact=low if known else None, confirmed=source['confirmed'], lower=low, upper=high,
+                unknown_weight=high-low, coverage=dict(unit='benchmark_subcategory',
+                    planned=source['coverage']['planned'], reviewed=source['coverage']['adjudicated']))
 
-    Trait judgments have their own frozen family contracts. No MC/RMC/SMC value,
-    old R tier, claim deduction or candidate attempt participates in this math.
-    """
-    from .mathematical_profile import ProfileInputs, AXES, VERSION, LEGACY_VERSION, EDITION, CONDITION
+
+def score_mathematical_profile(inputs):
+    """Six independently reviewed axes plus unchanged official SMC completion."""
+    from .mathematical_profile import ProfileInputs, AXES, BEHAVIOR, VERSION, EDITION, CONDITION
     if not isinstance(inputs, ProfileInputs):
         raise ValueError('Mathematical traits require validated source-bound profile inputs')
-    review, contracts = inputs.review, inputs.contracts
-    version = review.get('version', getattr(inputs, 'policy', {}).get('version', LEGACY_VERSION))
-    rows = {r['id']:r for r in review['tasks']}
+    rows = {r['id']:r for r in inputs.review['tasks']}
     zero, four = Fraction(0), Fraction(4)
-    weighted, by_family, groups = {a:[] for a in AXES}, {a:{} for a in AXES}, {}
+    weighted, families = {a:[] for a in BEHAVIOR}, {a:{} for a in BEHAVIOR}
     task_scores = []
-
-    def known(value):
-        return (zero, four, None) if value is None else (Fraction(value),) * 3
-
-    def goals(row, contract):
-        verdicts = {g['id']:g['passed'] for g in row['goals']}
-        if version == VERSION:
-            # Acceptance is an AND of the visible requirements, never a text
-            # fraction. One established failure settles the conjunction even
-            # when an independent requirement still has unavailable evidence.
-            if any(value is False for value in verdicts.values()):
-                return zero, zero, zero
-            return known(None if any(value is None for value in verdicts.values()) else 4)
-        total = sum((Fraction(str(g['weight'])) for g in contract['goals']), zero)
-        confirmed = sum((Fraction(str(g['weight'])) for g in contract['goals']
-                         if verdicts[g['id']] is True), zero) * four / total
-        unknown = sum((Fraction(str(g['weight'])) for g in contract['goals']
-                       if verdicts[g['id']] is None), zero) * four / total
-        return confirmed, confirmed + unknown, None if unknown else confirmed
-
-    trajectory = None
-    if version == VERSION:
-        round_values = [goals(rows[c['id']], c) for c in contracts['tasks'] if c['kind'] == 'selfcheck']
-        # All three prescribed deliveries and diagnoses form one acceptance
-        # unit with half of C003's fixed family mass. No best round or union.
-        trajectory = ((zero, zero, zero) if any(value[1] == zero for value in round_values)
-                      else known(None if any(value[2] is None for value in round_values) else 4))
-    for contract in contracts['tasks']:
-        row = rows[contract['id']]
-        accepted = trajectory if version == VERSION and contract['kind'] == 'selfcheck' else goals(row, contract)
+    for contract in inputs.contracts['tasks']:
         values = {}
         for axis, fraction in contract['axis_weights'].items():
-            if (axis == 'completion' or version == LEGACY_VERSION and axis == 'closure'
-                    and contract['subcategory'] == 'manuscript-completion'):
-                value = accepted
-            elif version == LEGACY_VERSION and axis == 'closure':
-                completed = row['research']['complete']
-                value = known(None if completed is None else 4 if completed else 0)
-            else:
-                value = known(row['axes'][axis]['grade'])
+            grade = rows[contract['id']]['axes'][axis]['grade']
+            value = (zero, four, None) if grade is None else (Fraction(grade),) * 3
             weight = Fraction(fraction)
             weighted[axis].append((weight, value))
-            by_family[axis].setdefault(contract['family_id'], []).append(value)
-            if version == LEGACY_VERSION and axis in {'depth', 'closure'}:
-                groups.setdefault(axis, {}).setdefault(contract['subcategory'], []).append(
-                    (contract['family_id'], weight, value))
+            families[axis].setdefault(contract['family_id'], []).append(value)
             values[axis] = {k:None if v is None else float(v)
-                            for k,v in zip(('lower','upper','exact'),value)}
+                           for k,v in zip(('lower','upper','exact'),value)}
         task_scores.append(dict(id=contract['id'], family_id=contract['family_id'], axes=values))
-
-    def aggregate(items, *, planned, reviewed):
+    metrics = {}
+    for axis in AXES:
+        if axis == 'completion':
+            metrics[axis] = profile_strict_completion_metric(inputs.strict_report)
+            continue
+        items = weighted[axis]
         denominator = sum((weight for weight, _ in items), zero)
         low = sum((weight * value[0] for weight, value in items), zero) / denominator * 25
         high = sum((weight * value[1] for weight, value in items), zero) / denominator * 25
-        return dict(exact=None if low != high else float(low), confirmed=float(low),
-                    lower=float(low), upper=float(high), unknown_weight=float(high-low),
-                    reviewed_families=reviewed, planned_families=planned)
-
-    metrics = {axis:aggregate(weighted[axis], planned=contracts['planned_families'][axis],
-                   reviewed=sum(all(value[2] is not None for value in variants)
-                                for variants in by_family[axis].values())) for axis in AXES}
-    group_metrics = {}
-    for axis, categories in groups.items():
-        group_metrics[axis] = {}
-        for category, items in categories.items():
-            families = {}
-            for family, _, value in items:
-                families.setdefault(family, []).append(value)
-            metric = aggregate([(weight,value) for _,weight,value in items], planned=len(families),
-                reviewed=sum(all(v[2] is not None for v in variants) for variants in families.values()))
-            metric.pop('unknown_weight')
-            group_metrics[axis][category] = metric
-    return dict(schema='math-gauge.mathematical-profile-score/v1', version=version,
-        benchmark_version=EDITION, model_id=review['model_id'], condition=CONDITION,
-        metrics=metrics, groups=group_metrics, tasks=task_scores,
+        metrics[axis] = dict(exact=None if low != high else float(low), confirmed=float(low),
+            lower=float(low), upper=float(high), unknown_weight=float(high-low),
+            coverage=dict(unit='mathematical_family', planned=35,
+                reviewed=sum(all(value[2] is not None for value in variants)
+                             for variants in families[axis].values())))
+    return dict(schema='math-gauge.mathematical-profile-score/v1', version=VERSION,
+        benchmark_version=EDITION, model_id=inputs.review['model_id'], condition=CONDITION,
+        metrics=metrics, groups={}, tasks=task_scores,
         reviewer_kind='ai', human_review='pending', formal_comparison_eligible=False,
         new_candidate_calls=0, main_scores_modified=False)
+
+
+def score_mathematical_profile_revisions(inputs):
+    """Blend independently reviewed continuation traits at the original slots.
+
+    The original family/variant/selfcheck weights remain fixed. Initiative is
+    copied verbatim and completion projects the adopted official SMC report.
+    """
+    from .mathematical_profile import AXES, BEHAVIOR
+    from .mathematical_profile_revision import (
+        RevisionProfileInputs, REVIEWED_AXES, VERSION, EDITION, CONDITION,
+    )
+    if not isinstance(inputs, RevisionProfileInputs):
+        raise ValueError('Continuation traits require validated source-bound profile inputs')
+    original = {row['id']:row for row in inputs.base_score['tasks']}
+    revised = {row['id']:row for row in inputs.review['tasks']}
+    zero, four = Fraction(0), Fraction(4)
+    old_weight = Fraction(inputs.policy['original_weight'])
+    new_weight = Fraction(inputs.policy['revision_weight'])
+    weighted = {axis:[] for axis in REVIEWED_AXES}
+    families = {axis:{} for axis in REVIEWED_AXES}
+    tasks = []
+    for contract in inputs.contracts['tasks']:
+        slot = contract['id']
+        values = {}
+        for axis in (axis for axis in AXES if axis in BEHAVIOR):
+            value = original[slot]['axes'][axis]
+            low, high = Fraction(str(value['lower'])), Fraction(str(value['upper']))
+            if axis in REVIEWED_AXES:
+                if slot in revised:
+                    grade = revised[slot]['axes'][axis]['grade']
+                    revision = (zero, four) if grade is None else (Fraction(grade),) * 2
+                    low, high = old_weight * low + new_weight * revision[0], old_weight * high + new_weight * revision[1]
+                weight = Fraction(contract['axis_weights'][axis])
+                weighted[axis].append((weight, low, high))
+                families[axis].setdefault(contract['family_id'], []).append(low == high)
+            values[axis] = dict(lower=float(low), upper=float(high), exact=float(low) if low == high else None)
+        tasks.append(dict(id=slot, family_id=contract['family_id'], axes=values,
+                          continuation_selected=slot in revised))
+    metrics = {}
+    for axis in AXES:
+        if axis == 'completion':
+            metrics[axis] = profile_strict_completion_metric(inputs.strict_report)
+        elif axis == 'initiative':
+            metrics[axis] = deepcopy(inputs.base_profile['metrics'][axis])
+        else:
+            items = weighted[axis]
+            denominator = sum((weight for weight, _, _ in items), zero)
+            low = sum((weight * lower for weight, lower, _ in items), zero) / denominator * 25
+            high = sum((weight * upper for weight, _, upper in items), zero) / denominator * 25
+            metrics[axis] = dict(exact=float(low) if low == high else None, confirmed=float(low),
+                lower=float(low), upper=float(high), unknown_weight=float(high-low),
+                coverage=dict(unit='mathematical_family', planned=35,
+                    reviewed=sum(all(variants) for variants in families[axis].values())))
+    reviewed = sum(all(judgment['grade'] is not None for judgment in row['axes'].values())
+                   for row in revised.values())
+    return dict(schema='math-gauge.mathematical-profile-revision-score/v1', version=VERSION,
+        benchmark_version=EDITION, model_id=inputs.review['model_id'], condition=CONDITION,
+        metrics=metrics, groups={}, tasks=tasks,
+        revision_coverage=dict(selected_tasks=len(revised), reviewed_tasks=reviewed,
+                               unknown_tasks=len(revised)-reviewed),
+        reviewer_kind='ai', human_review='pending', formal_comparison_eligible=False,
+        new_candidate_calls=0, main_scores_modified=False, post_observation=True)
+
+
+def score_mathematical_profile_baseline_corrections(score, corrections, *, model_id):
+    """Apply only the independently accepted first-answer grade corrections."""
+    from .mathematical_profile_corrections import BaselineCorrectionInputs, CORRECTED_AXES
+    if not isinstance(corrections, BaselineCorrectionInputs):
+        raise ValueError('Baseline corrections require their source-bound acceptance')
+    result = deepcopy(score)
+    selected = corrections.for_model(model_id)
+    rows = {row['id']:row for row in result['tasks']}
+    for correction in selected:
+        for axis, judgment in correction['axes'].items():
+            if rows[correction['id']]['axes'][axis]['exact'] != judgment['from']:
+                raise ValueError('Baseline correction no longer matches its original grade')
+            rows[correction['id']]['axes'][axis] = dict.fromkeys(('lower','upper','exact'), judgment['to'])
+    if selected:
+        for axis in CORRECTED_AXES:
+            low = high = Fraction()
+            families = {}
+            for contract in corrections.contracts['tasks']:
+                value = rows[contract['id']]['axes'][axis]
+                weight = Fraction(contract['axis_weights'][axis])
+                low += weight * Fraction(str(value['lower'])) * 25
+                high += weight * Fraction(str(value['upper'])) * 25
+                families.setdefault(contract['family_id'], []).append(value['exact'] is not None)
+            result['metrics'][axis] = dict(exact=float(low) if low == high else None,
+                confirmed=float(low), lower=float(low), upper=float(high), unknown_weight=float(high-low),
+                coverage=dict(unit='mathematical_family',planned=35,reviewed=sum(all(v) for v in families.values())))
+    result['baseline_corrections_sha256'] = corrections.sha256
+    result.update(schema='math-gauge.mathematical-profile-corrected-baseline-score/v1',
+                  version='0.1.0',benchmark_version='1.2.0',source_profile_version='0.4.0')
+    return result
+
+
+def mathematical_profile_axis_delta(before, after):
+    """Display signed aggregate changes from the accepted source metrics."""
+    return {axis: after[axis]['confirmed'] - metric['confirmed'] for axis, metric in before.items()}
+
+
+def score_open_research(inputs):
+    """Five common open tasks, independently judged at their actual stages."""
+    from .open_research import ResearchInputs, VERSION, EDITION, CONDITION, BOUNDARIES, FAMILIES
+    if not isinstance(inputs, ResearchInputs):
+        raise ValueError('Open research requires authenticated independent source judgments')
+    rows = {(r['stage'],r['case_id']):r for r in inputs.review['tasks']}
+    selected = {r['case_id'] for r in inputs.materials['revision']}
+    original_weight = Fraction(inputs.policy['original_weight'])
+    revision_weight = Fraction(inputs.policy['revision_weight'])
+    task_scores, totals = [], {'first':[], 'revision':[]}
+    for family in inputs.contracts['families']:
+        cid, weight = family['case_id'], Fraction(family['weight'])
+        grade = rows[('first',cid)]['grade']
+        first = (Fraction(0),Fraction(4)) if grade is None else (Fraction(grade),)*2
+        revised = first
+        if cid in selected:
+            new = rows[('revision',cid)]['grade']
+            value = (Fraction(0),Fraction(4)) if new is None else (Fraction(new),)*2
+            revised = tuple(original_weight*a+revision_weight*b for a,b in zip(first,value))
+        for stage,value in [('first',first),('revision',revised)]:
+            totals[stage].append((weight,value))
+        task_scores.append(dict(case_id=cid,family_id=family['family_id'],
+            first=dict(lower=float(first[0]),upper=float(first[1]),exact=float(first[0]) if first[0]==first[1] else None),
+            revision=(dict(lower=float(revised[0]),upper=float(revised[1]),
+                exact=float(revised[0]) if revised[0]==revised[1] else None)
+                if inputs.materials['revision_available'] else None),
+            continuation_selected=cid in selected))
+    metrics={}
+    for stage,items in totals.items():
+        if stage=='revision' and not inputs.materials['revision_available']:
+            metrics[stage]=None
+            continue
+        if len(items)!=FAMILIES or sum((w for w,_ in items),Fraction())!=1:
+            raise ValueError('Open research must retain its fixed common-family weights')
+        low=sum((w*v[0] for w,v in items),Fraction())*25
+        high=sum((w*v[1] for w,v in items),Fraction())*25
+        metrics[stage]=dict(exact=float(low) if low==high else None,confirmed=float(low),
+            lower=float(low),upper=float(high),unknown_weight=float(high-low),
+            coverage=dict(unit='open_research_family',planned=FAMILIES,
+                          reviewed=sum(v[0]==v[1] for _,v in items)))
+    return dict(schema='math-gauge.open-research-score/v1',version=VERSION,
+        benchmark_version=EDITION,condition=CONDITION,model_id=inputs.review['model_id'],
+        first=metrics['first'],revision=metrics['revision'],tasks=task_scores,**BOUNDARIES)

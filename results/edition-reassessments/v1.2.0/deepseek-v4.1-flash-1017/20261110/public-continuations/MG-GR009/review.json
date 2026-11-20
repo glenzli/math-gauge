@@ -1,0 +1,247 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "deepseek-v4.1-flash-1017",
+  "case_id": "MG-GR009",
+  "task_id": "R010",
+  "response_sha256": "3f2fe81742426d6e4dd6f51e5cf8aba476294717e564376afc608d03841a70f4",
+  "reviewer_id": "Codex coordinator / source-bound mathematical review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "score_scale": 100,
+  "MC": 97.0,
+  "RMC": 0.0,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "S1",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S2",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S3",
+      "earned_points": 27,
+      "max_points": 30,
+      "reason": "商层、全测试稳定子、对象/态射等价及基底检验主要成立；固定E并附识别的实现群胚被错判为非平凡Aut群的单对象群胚。",
+      "evidence": []
+    },
+    {
+      "id": "S4",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S5",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S6",
+      "earned_points": 10,
+      "max_points": 10,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    }
+  ],
+  "claim_deductions": [
+    {
+      "id": "wrong-fixed-realization-groupoid",
+      "root_cause": "wrong-fixed-realization-groupoid",
+      "severity": "critical",
+      "kind": "false_verification",
+      "reason": "固定E的实现是(D,theta)；态射必须满足theta2∘q*f=theta1。全忠实性强迫每对实现之间有唯一相容同构，故自同构平凡、群胚可缩。取H=Q=*、E为两点平凡作用即反驳文中Aut(E)=S2的结论。遗忘theta才有Aut(D)，不能用它替代题定全部实现分类。该核心分类被明确作最终核验，RMC整题最高0。",
+      "strict_blocking": true,
+      "core_endorsement": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "为唯一对象自同构群的单对象群胚。它的所有对象都典范同构于 \\(D_E\\)，因此非空且连通；不能把它误称为“可缩”，因为一般 \\(\\operatorname{Aut}(D_E)\\) 可以非平凡。",
+          "utf8_byte_start": 13808,
+          "utf8_byte_end": 14022,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ]
+    },
+    {
+      "id": "semilinear-action-slice-label",
+      "root_cause": "semilinear-action-slice-label",
+      "severity": "local",
+      "kind": "false_assertion",
+      "reason": "基底作用非平凡时a_gamma不是C/H中的自同构；应为C中的自同构并覆盖h_gamma。后续实际等变公式正确，因此本处仅作局部类型错误，和主要群胚错误同受普通总量上限。",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "“\\(E\\to H\\) 上的群作用”始终指切片中的群同态 \\(\\Gamma\\to\\operatorname{Aut}_{\\mathbf C/H}(E)\\)，从而 \\(\\pi a_\\gamma=h_\\gamma\\pi\\)。本稿先证明一个反复使用的商同余引理，以免把层商误认为逐对象轨道商。",
+          "utf8_byte_start": 485,
+          "utf8_byte_end": 736,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ]
+    }
+  ],
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.97,
+      "upper": 0.97,
+      "exact": 0.97
+    },
+    "generic_deduction": 0.2,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.2,
+    "core_endorsement_cap": true,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": true,
+    "net_completion": {
+      "lower": 0.0,
+      "upper": 0.0,
+      "exact": 0.0
+    },
+    "actual_loss": 0.97,
+    "findings": 2,
+    "distinct_charged_roots": 2,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "wrong-fixed-realization-groupoid",
+      "semilinear-action-slice-label"
+    ]
+  },
+  "mathematical_checks": [
+    "S3对层商局部轨道相等与逐测试稳定子的充要证明成立。",
+    "固定识别的实现群胚与遗忘识别的下降对象群胚必须分开，H=Q=*的两点E即可明确检验。",
+    "S4以Cantor空间和常层关系生成的商构造合法，非局部常值恒等函数不能在有限满覆盖上被全部变为有限像，故单点检查不足。",
+    "S5沿局部满基底提升并以分离性粘合正确；S6非覆盖非空基底例正确。",
+    "3.14中f_H*作用于基底商是类型记号错误，实际基底拉回应为f*；不为同一类标签错误额外重复收费。"
+  ],
+  "strict_reason": "固定E并附识别的实现分类有确证核心错误，SMC不通过。",
+  "profile_axes": {
+    "proof": {
+      "grade": 2,
+      "reason": "固定E的全部实现分类属于必需核心，所声称群胚自同构结论被两点例反驳，其他有效下降机制不能抵补至3档。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "为唯一对象自同构群的单对象群胚。它的所有对象都典范同构于 \\(D_E\\)，因此非空且连通；不能把它误称为“可缩”，因为一般 \\(\\operatorname{Aut}(D_E)\\) 可以非平凡。",
+          "utf8_byte_start": 13808,
+          "utf8_byte_end": 14022,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ],
+      "core_status": "unresolved_core"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "实际证明保持半线性基底作用、任意群与任意层基底；范畴标签错记另计，不由标签推定实质换题。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "### S3.4 任意基底及拉回",
+          "utf8_byte_start": 14269,
+          "utf8_byte_end": 14299,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 0,
+      "reason": "自称修复历史群胚错误，却把带识别实现的正确唯一性改成不正确的非平凡自同构分类。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "**自评。** 相对原题，数学内容完整且各阶段结论已闭合，基线记为 **B2**。历史稿中的一个群胚术语错误已经修正，没有保留已知错误断言。研究等级方面，本稿在共同设定的全范围（任意 \\(U\\)-小离散群、任意 \\(T\\)、任意切片基底 \\(B\\to Q\\)）内完成了可实现对象与下降对象的等价及双向桥接，并闭环说明了局部满与非满基底检验的差别。按题面“完整解决原题未要求的一项新问题”的锚点，**R=3、B=2**；这是本人有依据的档位判断，最终评级仍以按标准审阅为准。",
+          "utf8_byte_start": 27257,
+          "utf8_byte_end": 27873,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "局部轨道等价关系、Cantor常层商的点不可见作用及局部满基底反射形成实质机制。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "### S4.2 局部截面显示不可实现",
+          "utf8_byte_start": 17913,
+          "utf8_byte_end": 17952,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 2,
+      "reason": "主要商与稳定子结果可独立使用；完整实现分类中的核心自同构断言不成立。",
+      "evidence": [
+        {
+          "file": "final-answer.md",
+          "quote": "为唯一对象自同构群的单对象群胚。它的所有对象都典范同构于 \\(D_E\\)，因此非空且连通；不能把它误称为“可缩”，因为一般 \\(\\operatorname{Aut}(D_E)\\) 可以非平凡。",
+          "utf8_byte_start": 13808,
+          "utf8_byte_end": 14022,
+          "file_sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [
+    {
+      "name": "final-answer.md",
+      "bytes": 27877,
+      "sha256": "44b9e09aa30fad4010e2c1094da8574bf0e4ecbf77f1164fd44075f854c266d3",
+      "delivery_quote": "核验已经完成，交付文件为 [final-answer.md](/Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R010/fresh-context/final-answer.md)。",
+      "recovered_after_collection": true,
+      "source_kind": "original_workspace_recovery",
+      "original_return_attachment_missing": true
+    }
+  ],
+  "unresolved_questions": [],
+  "no_hidden_reasoning_used_as_answer": true,
+  "original_math_unmodified": true,
+  "reviewed_at": "2026-11-21T00:11:58.350419+00:00",
+  "review_boundary": "Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.",
+  "source_materials": [
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR009/task.md",
+      "bytes": 2254,
+      "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR009/rubric.json",
+      "bytes": 768,
+      "sha256": "5461942bd5353f7069401cd9e91d696ae5209179df00329cc8dcc51416d57135"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR009/reference.md",
+      "bytes": 14202,
+      "sha256": "ed6a569d9ed574c65d931262e24a053478f3b0d419be9d9620ee91f4602c92ee"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR009/contract.json",
+      "bytes": 8002,
+      "sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a"
+    }
+  ],
+  "first_response_sha256": "71f0e5f2ad3a89ecc2afa5416ebd8b77000462fec31210dcdf785c40c7a7689b",
+  "first_review_sha256": "79dd248fe21a4524e36163191cdd18ebef72717ece4a8df80e365cf775dd5f0a"
+}

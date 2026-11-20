@@ -1,0 +1,150 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "astra-6.2-xhigh",
+  "record_id": "20261120",
+  "source_record": {
+    "path": "results/v1.0.0/astra-6.2-xhigh/20261120/record.json",
+    "bytes": 48887,
+    "sha256": "397a52511667426eedc26b6e5c949f7d33d5e4da496c89676c46d90d15597c1d"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "508234618dea64555fe38a078beb35370abd504062d47dd3e5e906c90cf3ae23",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 4,
+    "total_groups": 4,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "ef772e7b8de370a74c2d0f36e0489c073b69a2ccad9ce380358b04fc78d4763f",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "逐项/联合上、下矩阵、端点和零化阈值属于必需。复合模量/矩阵不等式虽正确，却只连续代入两次已定义约束，没有独立构造或新的障碍分析。数值反例用于区分本题必需读数。",
+      "candidates": [
+        {
+          "id": "G01",
+          "group_id": "G01",
+          "title": "扩展上下系数与不可区分半径",
+          "statement": "可用系数集区分端点，严格坏点inf半径和闭模量描述输入阈值与输出零距。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "这是M1-M5要求的类型、上下界、无穷及零化基本性质。",
+          "proof_review": "下系数sup保不等式，上系数0/无穷单独验可用性，半径用坏点inf。",
+          "nontrivial_step": "完成所选定义所必需的边界分析。",
+          "value_rationale": "忠实完成矩阵与零化想法。",
+          "reason": "这是M1-M5要求的类型、上下界、无穷及零化基本性质。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "ef772e7b8de370a74c2d0f36e0489c073b69a2ccad9ce380358b04fc78d4763f",
+              "start_byte": 0,
+              "end_byte": 4208,
+              "quote": "取 \\(D=\\mathrm{dom}(\\phi)\\)，先比较有效定义域中的点对。对 \\(x,y\\in D\\)，记\n\\[\na_j(x,y)=d_j(x,y),\\qquad b_i(x,y)=d_i(\\phi x,\\phi y).\n\\]\n矩阵的**行 \\(i\\) 表示输出分量，列 \\(j\\) 表示输入分量**。若要把算子失效也纳入估计，可以在以下定义中统一取 \\(D=\\mathcal X\\)。此时，一个输出有效、另一个输出为 \\(\\bot\\) 的点对，在每个输出分量上的距离都是 \\(\\infty\\)。\n\n## 一、上、下 Lipschitz 系数矩阵\n\n对每个 \\(i,j\\in I\\)，定义两个可用系数集\n\\[\n\\begin{aligned}\n\\mathcal U^\\phi_{ij}\n&=\\{u\\in[0,\\infty]:\\ \\forall x,y\\in D,\\ b_i(x,y)\\le u\\,a_j(x,y)\\},\\\\\n\\mathcal L^\\phi_{ij}\n&=\\{\\ell\\in[0,\\infty]:\\ \\forall x,y\\in D,\\ \\ell\\,a_j(x,y)\\le b_i(x,y)\\}.\n\\end{aligned}\n\\]\n由此定义**上系数矩阵** \\(U^\\phi\\) 和**下系数矩阵** \\(L^\\phi\\)：\n\\[\nU^\\phi_{ij}=\\inf\\mathcal U^\\phi_{ij},\n\\qquad\nL^\\phi_{ij}=\\sup\\mathcal L^\\phi_{ij},\n\\qquad \\inf\\varnothing=\\infty .\n\\]\n对于 \\(0<a_j(x,y)<\\infty\\) 的点对，这就是从上、下两侧估计比值 \\(b_i(x,y)/a_j(x,y)\\)。直接用不等式定义，也涵盖了输入距离为零或无穷的情形。\n\n**下系数总能取到。** \\(0\\) 总是可用，而且在 CH1 的算术下，对固定的 \\(a\\in[0,\\infty]\\)，乘以 \\(a\\) 保持上确界。因此对所有可用的 \\(\\ell\\) 取上确界，仍有 \\(L^\\phi_{ij}a_j(x,y)\\le b_i(x,y)\\)。\n\n**上系数要区分下确界与可用性。** 当 \\(0<U^\\phi_{ij}<\\infty\\) 时，令可用上系数从上方趋于 \\(U^\\phi_{ij}\\)，即可得到该值本身可用。两个端点则有各自的含义。\n\n- \\(U^\\phi_{ij}=\\infty\\) 表示没有有限上系数。\\(\\infty\\) 本身可用的充要条件是 \\(a_j(x,y)=0\\Rightarrow b_i(x,y)=0\\)。若某个零距离点对经 \\(\\phi\\) 后在第 \\(i\\) 个分量可区分，则由 \\(\\infty\\cdot0=0\\)，连 \\(\\infty\\) 也不能使上估计成立。\n- \\(U^\\phi_{ij}=0\\) 时，\\(0\\) 本身可用的充要条件是 \\(b_i\\) 在 \\(D^2\\) 上恒为零。例如，若距离数据只有 \\((a_j,b_i)=(0,0)\\) 和 \\((\\infty,1)\\)，则每个正上系数都可用，其下确界 \\(0\\) 却不可用。\n\n这样，每个算子都有扩展值矩阵 \\(U^\\phi,L^\\phi\\)。需要把某个上系数代回不等式时，其精确判据是属于 \\(\\mathcal U^\\phi_{ij}\\)。\n\n## 二、不可区分半径矩阵\n\n把“落入一定范畴”具体化为“输入的第 \\(j\\) 个距离小于某一阈值”。定义**不可区分半径矩阵**\n\\[\n\\boxed{\\displaystyle\nR^\\phi_{ij}\n=\\inf\\{\\,d_j(x,y):x,y\\in D,\\ d_i(\\phi x,\\phi y)>0\\,\\}.}\n\\]\n它从所有**输出仍可区分**的点对中，取输入距离的下确界。因而对每个 \\(r\\in[0,\\infty]\\)，都有精确等价式\n\\[\nr\\le R^\\phi_{ij}\n\\quad\\Longleftrightarrow\\quad\n\\forall x,y\\in D,\\quad\nd_j(x,y)<r\\ \\Longrightarrow\\ d_i(\\phi x,\\phi y)=0 .\n\\]\n证明直接来自下确界的定义。若 \\(r\\le R^\\phi_{ij}\\)，所有可区分点对的输入距离都至少为 \\(r\\)。若 \\(r>R^\\phi_{ij}\\)，就存在输入距离小于 \\(r\\) 的可区分点对。\n\n严格不等号保留了临界点的信息。若需要判断**闭半径** \\(r\\) 是否可用，可定义\n\\[\n\\omega^\\phi_{ij}(r)\n=\\sup\\{\\,d_i(\\phi x,\\phi y): x,y\\in D,\\ d_j(x,y)\\le r\\,\\},\n\\qquad \\sup\\varnothing=0 .\n\\]\n闭半径 \\(r\\) 可用当且仅当 \\(\\omega^\\phi_{ij}(r)=0\\)。特别地，\\(R^\\phi_{ij}=\\infty\\) 保证所有有限输入距离上的输出均不可区分，输入距离恰为 \\(\\infty\\) 的情形则由 \\(\\omega^\\phi_{ij}(\\infty)\\) 判断。\n\n若“不可区分”要求**所有输出分量**都为零，则对输入分量 \\(j\\)，精确的严格半径为\n\\[\nR^\\phi_{\\mathrm{all},j}=\\min_{i\\in I}R^\\phi_{ij}.\n\\]\n其结论是 \\(\\phi x\\sim\\phi y\\)，其中 \\(u\\sim v\\) 表示对每个 \\(i\\) 都有 \\(d_i(u,v)=0\\)。CH1 允许这样的 \\(u,v\\) 是不同的点。若所说的“范畴”是指定集合 \\(S\\subseteq D\\)，也可直接使用判据 \\(\\sup_{x,y\\in S}d_i(\\phi x,\\phi y)=0\\)，逐个输出分量判断。\n\n**下系数与不可区分半径记录不同的信息。** 例如，在普通距离空间 \\(D=\\{0,1,4\\}\\) 上，令 \\(\\phi(0)=\\phi(1)=0,\\ \\phi(4)=4\\)，再按 CH1 添入孤立的 \\(\\bot\\)。三个不同点对的输入、输出距离分别为 \\((1,0),(3,4),(4,4)\\)，故\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "G02",
+          "group_id": "G02",
+          "title": "模量和可用矩阵沿复合传递",
+          "statement": "omega(psi复合phi)逐项不超过min_k omega_psi(omega_phi(r))；可用上下矩阵相乘仍控制复合。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "两次代入原距离控制、利用非负保序性及取sup即可；没有新增可独立计数的数学机制。",
+          "proof_review": "复合有效域使中间点在后算子域内，先用phi界再用psi界，再对允许点对取sup。",
+          "nontrivial_step": "直接组合已定义约束，不能因另起小节而计组。",
+          "value_rationale": "便于复合计算，但不是非平凡独立研究。",
+          "reason": "两次代入原距离控制、利用非负保序性及取sup即可；没有新增可独立计数的数学机制。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "ef772e7b8de370a74c2d0f36e0489c073b69a2ccad9ce380358b04fc78d4763f",
+              "start_byte": 4211,
+              "end_byte": 6142,
+              "quote": "U^\\phi=\\tfrac43,\\qquad L^\\phi=0,\\qquad R^\\phi=3.\n\\]\n距离小于 \\(3\\) 时输出不可区分，恰为 \\(3\\) 时已经可区分。作为对照，\\([0,1]\\) 上的 \\(x\\mapsto x^2\\) 也有下系数 \\(0\\)，但它严格单调，且有任意接近的不同输入，所以其不可区分半径为 \\(0\\)。\n\n## 三、复合与多个输入分量的联合估计\n\n对复合 \\(\\psi\\circ\\phi\\)，其有效定义域中的点都经 \\(\\phi\\) 落入 \\(\\mathrm{dom}(\\psi)\\)。因此，经由任一中间分量 \\(k\\)，两个**可用**上系数可以相乘，两个可用下系数也可以相乘。这只需连续应用两次相应的不等式。对不可区分性，更直接的复合规则是\n\\[\n\\omega^{\\psi\\circ\\phi}_{ij}(r)\n\\le \\min_{k\\in I}\\omega^\\psi_{ik}\\!\\left(\\omega^\\phi_{kj}(r)\\right).\n\\]\n事实上，若 \\(d_j(x,y)\\le r\\)，则中间距离至多为 \\(\\omega^\\phi_{kj}(r)\\)，再应用 \\(\\psi\\) 的估计即得。右侧只要有一项为零，复合算子就在该闭半径内使第 \\(i\\) 个输出分量不可区分。\n\n最后，若想表达的是**多个输入分量共同控制一个输出分量**，可令 \\(\\mathbf d(x,y)=(d_j(x,y))_{j\\in I}\\)，另行定义可用的联合上、下估计矩阵 \\(A,B\\) 满足逐分量不等式\n\\[\nB\\,\\mathbf d(x,y)\\ \\le\\ \\mathbf d(\\phi x,\\phi y)\\\n\\le\\ A\\,\\mathbf d(x,y)\\qquad(x,y\\in D).\n\\]\n这里使用通常的非负矩阵乘法及 CH1 的无穷算术。这种估计能表达真正的分量叠加。例如，在 \\(\\mathbb R^2\\) 上取两个坐标伪度量，令 \\(\\phi(s,t)=(s+t,0)\\)。由三角不等式，\n\\[\nA=\\begin{pmatrix}1&1\\\\0&0\\end{pmatrix}\n\\]\n是可用的联合上矩阵，而单独固定任一输入坐标，第一输出坐标仍可改变，所以 \\(\\mathcal U^\\phi_{11}\\) 和 \\(\\mathcal U^\\phi_{12}\\) 都为空。联合矩阵也能沿复合传递，因为非负矩阵乘法保持逐分量次序，故 \\(A_\\psi A_\\phi\\) 和 \\(B_\\psi B_\\phi\\) 分别给出复合的联合上、下估计。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "G03",
+          "group_id": "G03",
+          "title": "联合矩阵严格超出单列控制的例子",
+          "statement": "坐标相加由联合矩阵控制，却不能只用任何一个输入坐标给第一输出的上界。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "例子阐明M2允许路线的表达能力和边界，按已给坐标直接变化验证。",
+          "proof_review": "固定任一输入坐标后改变另一个即可使输出改变；三角不等式给行(1,1)。",
+          "nontrivial_step": "所需语义对照和直接代入。",
+          "value_rationale": "防止把单列系数与联合系数混同。",
+          "reason": "例子阐明M2允许路线的表达能力和边界，按已给坐标直接变化验证。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "ef772e7b8de370a74c2d0f36e0489c073b69a2ccad9ce380358b04fc78d4763f",
+              "start_byte": 4890,
+              "end_byte": 6142,
+              "quote": "\\omega^{\\psi\\circ\\phi}_{ij}(r)\n\\le \\min_{k\\in I}\\omega^\\psi_{ik}\\!\\left(\\omega^\\phi_{kj}(r)\\right).\n\\]\n事实上，若 \\(d_j(x,y)\\le r\\)，则中间距离至多为 \\(\\omega^\\phi_{kj}(r)\\)，再应用 \\(\\psi\\) 的估计即得。右侧只要有一项为零，复合算子就在该闭半径内使第 \\(i\\) 个输出分量不可区分。\n\n最后，若想表达的是**多个输入分量共同控制一个输出分量**，可令 \\(\\mathbf d(x,y)=(d_j(x,y))_{j\\in I}\\)，另行定义可用的联合上、下估计矩阵 \\(A,B\\) 满足逐分量不等式\n\\[\nB\\,\\mathbf d(x,y)\\ \\le\\ \\mathbf d(\\phi x,\\phi y)\\\n\\le\\ A\\,\\mathbf d(x,y)\\qquad(x,y\\in D).\n\\]\n这里使用通常的非负矩阵乘法及 CH1 的无穷算术。这种估计能表达真正的分量叠加。例如，在 \\(\\mathbb R^2\\) 上取两个坐标伪度量，令 \\(\\phi(s,t)=(s+t,0)\\)。由三角不等式，\n\\[\nA=\\begin{pmatrix}1&1\\\\0&0\\end{pmatrix}\n\\]\n是可用的联合上矩阵，而单独固定任一输入坐标，第一输出坐标仍可改变，所以 \\(\\mathcal U^\\phi_{11}\\) 和 \\(\\mathcal U^\\phi_{12}\\) 都为空。联合矩阵也能沿复合传递，因为非负矩阵乘法保持逐分量次序，故 \\(A_\\psi A_\\phi\\) 和 \\(B_\\psi B_\\phi\\) 分别给出复合的联合上、下估计。"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

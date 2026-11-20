@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 from math_gauge.manuscript_surplus import ROOT_PATH, load_public, read_source, require
+from scripts.results_rankings import model_display_key
 
 
 def load_observations(root, models):
@@ -40,7 +41,7 @@ def load_observations(root, models):
 
 def ordered_models(data):
     return sorted(data['models'], key=lambda r: (-r['observation']['counts']['confirmed_groups'],
-                  r['observation']['counts']['total_groups'] is None, r['label']))
+                  r['observation']['counts']['total_groups'] is None, model_display_key(r)))
 
 
 def quote_markup(value):
@@ -116,7 +117,7 @@ def render_subboard(data, *, chart_renderer, controls=''):
             + '</td><td>' + str(coverage['reviewed']) + '/' + str(coverage['planned']) + '</td></tr>')
     return ('<details class="manuscript-observations view-board" data-board="initiative" id="research-initiative">'
         '<summary><span><strong>主动额外成果</strong><small>原任务未要求 · 手稿题观察</small></span>'
-        '<span class="initiative-expand" aria-hidden="true">＋</span></summary>'
+        '</summary>'
         '<div class="initiative-body"><div class="board-subhead"><span class="board-sort-static">按已核实组数排序</span><div class="board-toolbar">'+controls+'</div></div>'
         '<p class="initiative-intro">统计模型主动交付、经核实的独立额外成果组。</p>'
         '<p class="initiative-caveat">组数描述主动扩展任务的行为。成果价值及扩展范围是否合适，取决于研究问题和用途。</p>'

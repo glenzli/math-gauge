@@ -1,0 +1,160 @@
+{
+  "case_id": "LCH02",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01", "status": "complete",
+      "declarations": [
+        {"file":"LCH02/Bounds.lean","name":"LCH02.LipOn"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.IsLip"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.lipFamilyOn"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.lipFamily"}
+      ],
+      "representation": "G.d 是有限非空指标族的分量伪度量。LipOn 要求 U ⊆ dom f，且任意 x,y ∈ U 的输出距离向量逐分量小于等于 M 乘输入距离向量。IsLip 取 U = dom f，两个集合分别收集全部合法矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02", "status": "complete",
+      "declarations": [
+        {"file":"LCH02/Bounds.lean","name":"LCH02.CoLipOn"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.coLipFamilyOn"}
+      ],
+      "representation": "CoLipOn 要求 U 非空且包含于 dom f。对每对 x,y ∈ U，每个输出行的矩阵加权和均小于等于该输出距离。coLipFamilyOn 收集所有满足条件的矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03", "status": "complete",
+      "declarations": [
+        {"file":"LCH02/Bounds.lean","name":"LCH02.Mat"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.entry"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.entry_mul"}
+      ],
+      "representation": "Mat I 的元素属于 ENNReal。entry M i j = M j i，表示输入 i 到输出 j。对任意 i,j，后步 B 左乘前步 A 的条目等于对中间指标 k 求和。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D04", "status": "complete",
+      "declarations": [
+        {"file":"LCH02/Bounds.lean","name":"LCH02.unit_entry"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.orderedProduct"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.product_nil"},
+        {"file":"LCH02/Bounds.lean","name":"LCH02.product_cons"}
+      ],
+      "representation": "单位矩阵对角为 1，其余为 0。列表按末步至首步排列，空列表积为 1，在表头加入 A 将原积左乘 A。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D05", "status": "complete",
+      "declarations": [
+        {"file":"LCH02/Chains.lean","name":"LCH02.Step"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.chain"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.chainMatrix"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.reached"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.chain_nil"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.chain_cons"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.reached_nil"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.reached_cons"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.Along"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.along_iff"},
+        {"file":"LCH02/Chains.lean","name":"LCH02.step_domains"}
+      ],
+      "representation": "每步配对算子和矩阵，两次投影保留相同次序。chain 直接使用冻结的 OperatorChain。reached 从 U 出发逐步取精确像集。along_iff 将逐步前提展开到每个位置 n，其输入域是已执行后缀 drop (n+1) 的像。step_domains 从全复合的定义域条件推出每一步的定义域条件。",
+      "dependencies": ["CH02-D03","CH02-D04"]
+    },
+    {
+      "id": "CH02-D06", "status": "complete",
+      "declarations": [
+        {"file":"LCH02/Paths.lean","name":"LCH02.Interior"},
+        {"file":"LCH02/Paths.lean","name":"LCH02.factors"},
+        {"file":"LCH02/Paths.lean","name":"LCH02.PositivePath"},
+        {"file":"LCH02/Paths.lean","name":"LCH02.factors_length"}
+      ],
+      "representation": "对 n 步，Interior I (n−1) 依次存储 k_{n−1},…,k₁，i,j 为外部固定的两端。factors 给出对应的 n 个条目，PositivePath 要求其中每一项严格为正。Interior I 0 为 Unit，单步只有唯一空内部路径。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P01", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.singleton_lip"}],
+      "representation": "在非空 Subsingleton I 上任取唯一指标 i。全域 Lip 合法性等价于所有 x,y ∈ dom f 均满足以 entry A i i 为系数的标量上界。",
+      "dependencies": ["CH02-D01","CH02-D03"]
+    },
+    {
+      "id": "CH02-P02", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.lip_restrict"}],
+      "representation": "固定 f，对任意 U ⊆ V ⊆ dom f，V 上的整个 Lip 证书族包含于 U 上的证书族。",
+      "dependencies": ["CH02-D01"]
+    },
+    {
+      "id": "CH02-P04", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.lip_comp"}],
+      "representation": "f 为首步，g 为次步。对 U ⊆ dom (g*f)，A 在 U 上合法、B 在精确像 f.func '' U 上合法，推出 B*A 为复合在 U 上的 Lip 证书。",
+      "dependencies": ["CH02-D01","CH02-D03"]
+    },
+    {
+      "id": "CH02-P05", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.coLip_restrict"}],
+      "representation": "对非空 U ⊆ V ⊆ dom f，把 V 上任意 co-Lip 证书限制到 U，得到证书族的反向包含。",
+      "dependencies": ["CH02-D02"]
+    },
+    {
+      "id": "CH02-P07", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.coLip_zero_entry"}],
+      "representation": "对任意域内 x,y 和指标 i,j，若 j 输出距离为零且 i 输入距离为正，则每个全域 co-Lip 证书 A 的 entry A i j 为零。",
+      "dependencies": ["CH02-D02","CH02-D03"]
+    },
+    {
+      "id": "CH02-P08", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.coLip_comp"}],
+      "representation": "对 U ⊆ dom (g*f)，分别取 U 和 f.func '' U 上的 co-Lip 证书 A,B，推出 B*A 属于复合在 U 上的证书族。非空性随成员资格给出。",
+      "dependencies": ["CH02-D02","CH02-D03"]
+    },
+    {
+      "id": "CH02-P11", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.unit_lip"}],
+      "representation": "对任意非空 U ⊆ dom 1，矩阵空乘积属于恒等算子在 U 上的 Lip 证书族。product_nil 将该矩阵识别为单位矩阵。",
+      "dependencies": ["CH02-D01","CH02-D04"]
+    },
+    {
+      "id": "CH02-P12", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.unit_coLip"}],
+      "representation": "对任意非空 U ⊆ dom 1，同一空乘积属于恒等算子在 U 上的 co-Lip 证书族。",
+      "dependencies": ["CH02-D02","CH02-D04"]
+    },
+    {
+      "id": "CH02-P14", "status": "complete",
+      "declarations": [{"file":"LCH02/Paths.lean","name":"LCH02.product_positive_iff"}],
+      "representation": "first 是首步，later 是按复合次序书写的全部后续步。对任意 i,j，乘积条目严格为正当且仅当存在全正内部路径。later = [] 时只检查 first 的对应条目。",
+      "dependencies": ["CH02-D03","CH02-D04","CH02-D06"]
+    },
+    {
+      "id": "CH02-P03", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.lip_from_dom"}],
+      "representation": "取 V = dom f。对任意 U ⊆ dom f，全域 Lip 证书族包含于 U 上的 Lip 证书族。",
+      "dependencies": ["CH02-D01","CH02-P02"]
+    },
+    {
+      "id": "CH02-P06", "status": "complete",
+      "declarations": [{"file":"LCH02/Bounds.lean","name":"LCH02.coLip_from_dom"}],
+      "representation": "取 V = dom f。对任意非空 U ⊆ dom f，定义域上的全部 co-Lip 证书均可限制到 U。",
+      "dependencies": ["CH02-D02","CH02-P05"]
+    },
+    {
+      "id": "CH02-P09", "status": "complete",
+      "declarations": [{"file":"LCH02/Chains.lean","name":"LCH02.finite_lip"}],
+      "representation": "a :: s 遍历全部正长度链。给定 U 包含于复合定义域，并对每一步在其实际输入域给出 Lip 证书，推出同序矩阵连乘为全复合在 U 上的 Lip 证书。",
+      "dependencies": ["CH02-D01","CH02-D04","CH02-D05","CH02-P04"]
+    },
+    {
+      "id": "CH02-P10", "status": "complete",
+      "declarations": [{"file":"LCH02/Chains.lean","name":"LCH02.finite_coLip"}],
+      "representation": "对任意正长度链 a :: s 和复合定义域内的 U，从实际输入域上的逐步 co-Lip 证书推出矩阵连乘属于复合的 co-Lip 证书族，结论包含 U 非空。",
+      "dependencies": ["CH02-D02","CH02-D04","CH02-D05","CH02-P08"]
+    },
+    {
+      "id": "CH02-P13", "status": "complete",
+      "declarations": [{"file":"LCH02/Paths.lean","name":"LCH02.product_zero_iff"}],
+      "representation": "对任意首步、后续步和两端 i,j，乘积条目为零当且仅当每条内部路径的因子列表含 0，即至少一层条目为零。单步时该列表只有 first j i。",
+      "dependencies": ["CH02-D03","CH02-D04","CH02-D06","CH02-P14"]
+    }
+  ]
+}

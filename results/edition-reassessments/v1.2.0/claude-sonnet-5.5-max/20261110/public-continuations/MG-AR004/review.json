@@ -1,0 +1,188 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-sonnet-5.5-max",
+  "case_id": "MG-AR004",
+  "response_sha256": "5ee6875e4e4da870b614052f8f983377204d142c08debc1b485e9c27da72c831",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 75,
+  "RMC": 65,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "global_injectivity",
+      "earned": 25,
+      "reason": "正确反驳全局稠密开单射及F总分离。",
+      "quote": "**F1. \"稠密开浸入单射性\"为假。** 答卷断言：Y 为连通光滑整概形、W⊂Y 稠密开时，F(Y)→F(W) 单射。",
+      "evidence_file": "answer.md",
+      "max": 25
+    },
+    {
+      "id": "localization_claim",
+      "earned": 10,
+      "reason": "识别正维即非有限生成断言为假，保留不必开目标。",
+      "quote": "(a) **概形层面的论证为假。** 答卷断言：dim O_{X,x_i}≥1 时 O_{X,x_i} 在 O_{X,Σ} 上不是有限生成的，故 S_i→S 非有限型，因而不是开浸入。反例有两个：",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "actual_closed_points",
+      "earned": 0,
+      "reason": "未识别S5任意Sigma可含可比较素理想，未给删冗余点后按实际闭点归纳的归约。",
+      "quote": "**正确判据与证明。** 设 x_i、x_j 在同一连通分支，A 局部取为整环，x_i、x_j 互不为特殊化。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "target_and_retention",
+      "earned": 10,
+      "reason": "区分原证明失败与半局部目标真假，保留独立各阶段。",
+      "quote": "- 反例 Pic 不推翻最终同构，因为 Pic(S)=0=F_Zar(S)，只推翻答卷的路线。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "legal_counterexample_dependency",
+      "earned": 15,
+      "reason": "Pic/CH1同伦不变及有限对应转移得到说明，P1→A1合法；定位错误对交上单射的实际依赖。",
+      "quote": "- 答卷把它归入\"半局部化的局部化与纤维积\"，并用 F1、F2 导出，而二者为假。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "localization_scope",
+      "earned": 5,
+      "reason": "有效局部化反例和正确同分支判据；但把任意光滑曲线说成具有单个泛点的谱，未限制连通/积分。",
+      "quote": "- X 为光滑曲线、n=2：取 f∈𝔪_2∖𝔪_1，则 V(f)={𝔪_2}，D(f)={(0),𝔪_1}，O_S[1/f]=O_{𝔪_1}。于是 S_1=D(f) 是有限型的开子概形。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "source_hypotheses",
+      "earned": 0,
+      "reason": "把度零层化与高次比较所需域条件混在一起；未准确区分任意域的半局部度零定理。",
+      "quote": "- 题面 k 是任意域。据我回忆，Voevodsky 关于 F_Nis 同伦不变性、F_Zar=F_Nis 与 Gersten 型单射的理论是在完美域上陈述的，有限域另需归约。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "other_stages",
+      "earned": 10,
+      "reason": "对等化子、图追、余终性、稠密开反例及同调余极限均给实质核验。",
+      "quote": "- 答卷附注（空族余极限为 0，而 𝒪_{X,0}≠0）无害。",
+      "evidence_file": "answer.md",
+      "max": 10
+    }
+  ],
+  "claim_deductions": [
+    {
+      "root_cause": "dimension_only_localization_scope",
+      "level": "material",
+      "points": 10,
+      "quote": "- T 在 dim X≥2 时不是半局部的：其闭点是过 x_1、x_2 的各不可约曲线的一般点，有无穷多个。",
+      "reason": "把T非半局部作ambient维数的无条件结论；当前结论只对所举特定A2两闭点例成立，不能普遍化。",
+      "counterexample_or_refutation": "取X=A2，Sigma={(x),(x-1)}为两个height1素理想；其半局部化为维数1正则半局部环，两单点局部化的交是函数域，T半局部。或X=A2不交并A2各取闭点，T为空。",
+      "task_zero_cap": false
+    }
+  ],
+  "scope_fidelity": {
+    "judgment": "core_scope_failure",
+    "reason": "S5允许任意有限点集；审阅沿用实际闭点语境处理归纳，未检查可比较点和不改邻域的归约。"
+  },
+  "strict_reason": "漏任意Sigma中可比较点归约；另外有来源条件或局部化普遍性误断。Pic反例正确反驳原全局加强，未误称半局部目标为假。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 2,
+      "reason": "全局假引理及依赖审计成立，但必需的任意Sigma/实际闭点归纳分支未检查；新增若干范围判断也过强。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 答卷把它归入\"半局部化的局部化与纤维积\"，并用 F1、F2 导出，而二者为假。"
+        }
+      ],
+      "core_status": "unresolved_core"
+    },
+    "fidelity": {
+      "grade": 2,
+      "reason": "S5允许任意有限点集；审阅沿用实际闭点语境处理归纳，未检查可比较点和不改邻域的归约。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "**正确判据与证明。** 设 x_i、x_j 在同一连通分支，A 局部取为整环，x_i、x_j 互不为特殊化。"
+        }
+      ],
+      "core_scope_failure": true
+    },
+    "discernment": {
+      "grade": 2,
+      "reason": "准确否定全局加强、保留合法独立阶段；漏任意Sigma边界并对局部化/外部定理范围作过强判断。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 题面 k 是任意域。据我回忆，Voevodsky 关于 F_Nis 同伦不变性、F_Zar=F_Nis 与 Gersten 型单射的理论是在完美域上陈述的，有限域另需归约。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "有限对应下Pic机制、局部化开性及素避免给出成立结构解释；其作用范围需严格限制。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- X 为光滑曲线、n=2：取 f∈𝔪_2∖𝔪_1，则 V(f)={𝔪_2}，D(f)={(0),𝔪_1}，O_S[1/f]=O_{𝔪_1}。于是 S_1=D(f) 是有限型的开子概形。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "主要反例和独立阶段核验闭合；整体审阅仍缺任意Sigma归约且含范围错误。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- 反例 Pic 不推翻最终同构，因为 Pic(S)=0=F_Zar(S)，只推翻答卷的路线。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.306314+00:00",
+    "source_review_sha256": "1d2295082046f6de5c43244d69e53e55c8f9e93787321b012d108294608731a5",
+    "source_review_path": "grading/audit_background_written/claude-sonnet-5.5-max--MG-AR004.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.75,
+      "upper": 0.75,
+      "exact": 0.75
+    },
+    "generic_deduction": 0.1,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.1,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.65,
+      "upper": 0.65,
+      "exact": 0.65
+    },
+    "actual_loss": 0.1,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "claim-1"
+    ]
+  }
+}

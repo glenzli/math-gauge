@@ -11,330 +11,152 @@ from unittest.mock import patch
 
 from math_gauge.evidence_retention import read_bytes
 from math_gauge.mathematical_profile import (
-    AXES, VERSION, PREVIOUS_VERSION, LEGACY_VERSION, WHOLE_COMPLETION, ProfileInputs, load_policy, project_public, source_bytes,
-    validate_contracts, validate_public, validate_review, _validate_prior_profile,
-    _validate_assessment_status, _validate_fidelity_core,
+    AXES, BEHAVIOR, VERSION, COMPLETION, CORE_GATE, ProfileInputs, load_policy, project_public,
+    source_bytes, validate_contracts, validate_public, validate_review,
+    _validate_assessment_status, _validate_fidelity_core, _validate_proof_core,
 )
-from math_gauge.scoring import score_mathematical_profile
-
+from math_gauge.scoring import score_mathematical_profile, profile_strict_completion_metric
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def arithmetic_fixture(version=LEGACY_VERSION):
-    """Public contracts plus synthetic private slots; no private checkout needed.
+def strict_report(value=32.833333333333336, *, unknown=False):
+    return dict(score_mode='strict', attempt_condition='nonlogical_retry_3', metrics=dict(earned=dict(
+        exact=None if unknown else round(value,10), confirmed=value,
+        lower=value if unknown else round(value-1e-10,10), upper=value+10 if unknown else round(value+1e-10,10),
+        complete=not unknown,coverage=dict(unit='fixed 100-point benchmark',planned=8,
+                                         adjudicated=7 if unknown else 8,unknown=1 if unknown else 0))))
 
-    Bypass evidence construction only for these pure arithmetic examples. The
-    source boundary is independently exercised below with real temporary bytes.
-    """
-    policy, digest = load_policy(ROOT, version=version)
-    tasks = deepcopy(policy['public_task_contracts'])
-    for category, count in [('written-argument',4),('background-check',2),
-                            ('theorem-extension',4),('manuscript-completion',4)]:
-        for index in range(count):
-            ident = category+'-synthetic-'+str(index)
-            weights = dict(fidelity='1/35', completion='1/35')
-            if category in {'written-argument','theorem-extension'}:
-                weights['proof'] = '1/20'
-            if category == 'background-check':
-                weights['discernment'] = '1/11'
-            if category == 'theorem-extension':
-                weights.update(initiative='1/6', depth='1/12', closure='1/12')
-            if category == 'manuscript-completion':
-                weights.update(depth='1/10', closure='1/10')
-            if version != LEGACY_VERSION:
-                weights = dict.fromkeys(AXES, '1/35')
-            tasks.append(dict(id=ident+':A1',case_id=ident,family_id=ident,
-                subcategory=category,kind='initial',public=False,axis_weights=weights,
-                goals=[dict(id='whole-goal',weight=100)]))
-    inputs = object.__new__(ProfileInputs)
-    inputs.policy = policy
-    inputs.contracts = dict(schema='math-gauge.mathematical-profile-contracts/v1', version=version,
-        benchmark_version='1.1.0',condition='nonlogical_retry_3',
-        tasks=tasks,planned_families=policy['planned_families'],
-        **({'completion_rule':WHOLE_COMPLETION} if version == VERSION else {}))
-    inputs.review = dict(model_id='synthetic', version=version, tasks=[dict(id=c['id'],
-        axes={a:dict(grade=4) for a in c['axis_weights']
-              if a != 'completion' and (a != 'closure' or version != LEGACY_VERSION)},
-        goals=[dict(id=g['id'],passed=True) for g in c['goals']],
-        research=dict(complete=True)) for c in tasks])
-    return inputs, policy, digest
+
+def arithmetic_fixture():
+    policy,digest=load_policy(ROOT)
+    tasks=deepcopy(policy['public_task_contracts'])
+    for category,count in [('written-argument',4),('background-check',2),
+                           ('theorem-extension',4),('manuscript-completion',4)]:
+        for i in range(count):
+            ident=category+'-synthetic-'+str(i)
+            tasks.append(dict(id=ident+':A1',case_id=ident,family_id=ident,subcategory=category,
+                kind='initial',public=False,axis_weights=dict.fromkeys(BEHAVIOR,'1/35'),
+                goals=[dict(id='whole',weight=100)],proof_core=dict(required_goals=['whole'],
+                    scope='Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted.')))
+    inputs=object.__new__(ProfileInputs)
+    inputs.policy=policy
+    inputs.contracts=dict(schema='math-gauge.mathematical-profile-contracts/v1',version=VERSION,
+        benchmark_version='1.1.0',condition='nonlogical_retry_3',tasks=tasks,
+        planned_families=policy['planned_families'],completion_rule=COMPLETION,proof_core_gate=CORE_GATE)
+    inputs.review=dict(model_id='synthetic',version=VERSION,tasks=[dict(id=c['id'],
+        axes={a:dict(grade=4) for a in BEHAVIOR},goals=[dict(id=g['id'],passed=True) for g in c['goals']])for c in tasks])
+    inputs.strict_report=strict_report()
+    return inputs,policy,digest
 
 
 class ProfileArithmeticTests(unittest.TestCase):
     def setUp(self):
-        self.inputs,self.policy,self.digest = arithmetic_fixture()
-        self.rows = {r['id']:r for r in self.inputs.review['tasks']}
+        self.inputs,self.policy,self.digest=arithmetic_fixture()
+        self.rows={r['id']:r for r in self.inputs.review['tasks']}
 
-    def score(self):
-        return score_mathematical_profile(self.inputs)
-
-    def test_each_family_keeps_its_fixed_mass(self):
-        for axis in AXES:
-            weights = {}
-            for task in self.inputs.contracts['tasks']:
-                if axis in task['axis_weights']:
-                    family = task['family_id']
-                    weights[family] = weights.get(family,Fraction())+Fraction(task['axis_weights'][axis])
-            self.assertEqual(sum(weights.values()),1)
-            if axis not in {'depth','closure'}:
-                self.assertEqual(set(weights.values()),{Fraction(1,len(weights))})
-        for metric in self.score()['metrics'].values():
-            self.assertEqual((metric['exact'],metric['lower'],metric['upper']),(100,100,100))
-            self.assertEqual(metric['reviewed_families'],metric['planned_families'])
-
-    def test_c003_initial_and_whole_trajectory_each_occupy_half_a_family(self):
-        for g in self.rows['MG-C003:A1']['goals']:
-            g['passed'] = False
-        initial = self.score()['metrics']['completion']
-        self.assertAlmostEqual(initial['exact'],100-100/70)
-        for g in self.rows['MG-C003:A1']['goals']:
-            g['passed'] = True
-        for suffix in ('R1','R2','R3'):
-            for g in self.rows['MG-C003:'+suffix]['goals']:
-                g['passed'] = False
-        self.assertEqual(initial['exact'],self.score()['metrics']['completion']['exact'])
-
-    def test_one_unknown_round_does_not_shrink_denominator(self):
-        self.rows['MG-C003:R2']['axes']['fidelity']['grade'] = None
-        for g in self.rows['MG-C003:R2']['goals']:
-            g['passed'] = None
-        for axis in ('fidelity','completion'):
-            metric = self.score()['metrics'][axis]
-            self.assertIsNone(metric['exact'])
-            self.assertAlmostEqual(metric['lower'],100-100/210)
-            self.assertEqual(metric['upper'],100)
-            self.assertEqual(metric['reviewed_families'],34)
-
-    def test_research_groups_each_have_half_not_their_task_count_ratio(self):
-        for contract in self.inputs.contracts['tasks']:
-            if contract['subcategory'] == 'manuscript-completion':
-                row = self.rows[contract['id']]
-                row['axes']['depth']['grade'] = 0
-                for g in row['goals']:
-                    g['passed'] = False
-        for axis in ('depth','closure'):
-            result = self.score()
-            self.assertEqual(result['metrics'][axis]['exact'],50)
-            self.assertEqual(result['groups'][axis]['theorem-extension']['exact'],100)
-            self.assertEqual(result['groups'][axis]['manuscript-completion']['exact'],0)
-
-    def test_unknown_behavior_and_known_zero_are_distinct(self):
-        for row in self.rows.values():
-            for value in row['axes'].values():
-                value['grade'] = None
-        for axis in ('proof','fidelity','discernment','initiative','depth'):
-            m = self.score()['metrics'][axis]
-            self.assertIsNone(m['exact'])
-            self.assertEqual((m['lower'],m['upper'],m['reviewed_families']),(0,100,0))
-        for row in self.rows.values():
-            for value in row['axes'].values():
-                value['grade'] = 0
-            for g in row['goals']:
-                g['passed'] = False
-            row['research']['complete'] = False
-        for m in self.score()['metrics'].values():
-            self.assertEqual(m['exact'],0)
-            self.assertEqual(m['reviewed_families'],m['planned_families'])
-
-    def test_only_a_complete_goal_counts_and_partial_goals_stay_weighted(self):
-        row = self.rows['MG-PS001:A1']
-        row['goals'][0]['passed'] = False
-        # Independent valid work does not backfill this failed complete goal.
-        self.assertEqual(row['axes']['proof']['grade'],4)
-        contract = next(t for t in self.inputs.contracts['tasks'] if t['id']==row['id'])
-        lost = Fraction(str(contract['goals'][0]['weight']))/sum(Fraction(str(g['weight'])) for g in contract['goals'])
-        self.assertAlmostEqual(self.score()['metrics']['completion']['exact'],100-float(lost)*100/35)
-
-
-class ProfileV2ArithmeticTests(unittest.TestCase):
-    def setUp(self):
-        self.inputs,self.policy,self.digest = arithmetic_fixture(PREVIOUS_VERSION)
-        self.rows = {row['id']:row for row in self.inputs.review['tasks']}
-
-    def test_all_axes_use_the_same_fixed_35_family_contract(self):
+    def test_six_axes_preserve_family_mass_and_selfcheck_nesting(self):
         validate_contracts(self.inputs.contracts,self.policy)
-        score = score_mathematical_profile(self.inputs)
-        self.assertEqual(score['version'], PREVIOUS_VERSION)
-        self.assertEqual(score['groups'], {})
-        for axis in AXES:
-            weights = {}
-            for row in self.inputs.contracts['tasks']:
-                self.assertEqual(set(row['axis_weights']),set(AXES))
-                family = row['family_id']
-                weights[family] = weights.get(family,Fraction())+Fraction(row['axis_weights'][axis])
-            self.assertEqual(len(weights),35)
-            self.assertEqual(set(weights.values()),{Fraction(1,35)})
-            self.assertEqual(score['metrics'][axis]['exact'],100)
+        for axis in BEHAVIOR:
+            families={}
+            for t in self.inputs.contracts['tasks']:
+                family=t['family_id'];families[family]=families.get(family,Fraction())+Fraction(t['axis_weights'][axis])
+                self.assertNotIn('completion',t['axis_weights'])
+            self.assertEqual(set(families.values()),{Fraction(1,35)})
+            self.assertEqual(len(families),35)
+        score=score_mathematical_profile(self.inputs)
+        self.assertTrue(all(score['metrics'][a]['exact']==100 for a in BEHAVIOR))
+        self.assertAlmostEqual(score['metrics']['completion']['exact'],32.833333333333336)
 
-    def test_completion_and_result_closure_are_independent(self):
-        for row in self.inputs.review['tasks']:
-            for goal in row['goals']:
-                goal['passed'] = False
-            row['axes']['closure']['grade'] = 2
-            row['research']['complete'] = True
-        score = score_mathematical_profile(self.inputs)
-        self.assertEqual(score['metrics']['completion']['exact'],0)
-        self.assertEqual(score['metrics']['closure']['exact'],50)
+    def test_completion_is_the_exact_official_value_not_family_goal_average(self):
+        before=score_mathematical_profile(self.inputs)['metrics']['completion']
+        for row in self.rows.values():
+            for goal in row['goals']:goal['passed']=False
+            for axis in BEHAVIOR:row['axes'][axis]['grade']=0
+        after=score_mathematical_profile(self.inputs)
+        self.assertEqual(after['metrics']['completion'],before)
+        self.assertEqual(after['metrics']['proof']['exact'],0)
+        self.inputs.strict_report=strict_report(64.5)
+        self.assertEqual(score_mathematical_profile(self.inputs)['metrics']['completion']['exact'],64.5)
 
-    def test_every_kind_of_mathematics_contributes_on_every_axis(self):
-        for row in self.inputs.review['tasks']:
-            for judgment in row['axes'].values():
-                judgment['grade'] = 0
-            for goal in row['goals']:
-                goal['passed'] = False
-        for category in {row['subcategory'] for row in self.inputs.contracts['tasks']}:
-            inputs = deepcopy(self.inputs)
-            selected = next(row for row in inputs.contracts['tasks'] if row['subcategory'] == category)
-            reviewed = next(row for row in inputs.review['tasks'] if row['id'] == selected['id'])
-            for judgment in reviewed['axes'].values():
-                judgment['grade'] = 4
-            for goal in reviewed['goals']:
-                goal['passed'] = True
-            expected = float(Fraction(selected['axis_weights']['proof'])*100)
-            for metric in score_mathematical_profile(inputs)['metrics'].values():
-                self.assertAlmostEqual(metric['exact'],expected)
+    def test_smc_unknown_retains_official_bounds_and_coverage(self):
+        self.inputs.strict_report=strict_report(14,unknown=True)
+        metric=score_mathematical_profile(self.inputs)['metrics']['completion']
+        self.assertIsNone(metric['exact']);self.assertEqual((metric['confirmed'],metric['lower'],metric['upper']),(14,14,24))
+        self.assertEqual(metric['coverage'],dict(unit='benchmark_subcategory',planned=8,reviewed=7))
 
-    def test_c003_unknown_stays_within_its_fixed_one_sixth_of_a_family(self):
-        row = self.rows['MG-C003:R2']
-        for judgment in row['axes'].values():
-            judgment['grade'] = None
-        for goal in row['goals']:
-            goal['passed'] = None
-        for metric in score_mathematical_profile(self.inputs)['metrics'].values():
-            self.assertIsNone(metric['exact'])
-            self.assertAlmostEqual(metric['unknown_weight'],100/210)
-            self.assertAlmostEqual(metric['lower'],100-100/210)
-            self.assertEqual(metric['upper'],100)
-            self.assertEqual(metric['reviewed_families'],34)
+    def test_unknown_proof_round_does_not_change_known_smc_or_shrink_family_denominator(self):
+        self.rows['MG-C003:R2']['axes']['proof']['grade']=None
+        score=score_mathematical_profile(self.inputs)
+        m=score['metrics']['proof'];self.assertIsNone(m['exact'])
+        self.assertAlmostEqual(m['unknown_weight'],100/210)
+        self.assertEqual(m['coverage']['reviewed'],34)
+        self.assertIsNotNone(score['metrics']['completion']['exact'])
 
-    def test_contract_rejects_a_denominator_changed_for_one_axis(self):
-        contract = next(row for row in self.inputs.contracts['tasks'] if row['kind'] == 'initial')
-        contract['axis_weights']['initiative'] = '1/6'
-        with self.assertRaises(ValueError):
-            validate_contracts(self.inputs.contracts,self.policy)
+    def test_delivery_zero_and_evidence_unknown_remain_distinct(self):
+        for row in self.rows.values():row['axes']['proof']['grade']=None
+        metric=score_mathematical_profile(self.inputs)['metrics']['proof']
+        self.assertEqual((metric['lower'],metric['upper'],metric['coverage']['reviewed']),(0,100,0))
+        for row in self.rows.values():row['axes']['proof']['grade']=0
+        metric=score_mathematical_profile(self.inputs)['metrics']['proof']
+        self.assertEqual((metric['exact'],metric['coverage']['reviewed']),(0,35))
+
+    def test_contract_cannot_replace_original_required_goals_or_family_weight(self):
+        self.inputs.contracts['tasks'][0]['proof_core']['required_goals']=[]
+        with self.assertRaises(ValueError):validate_contracts(self.inputs.contracts,self.policy)
+        inputs,policy,_=arithmetic_fixture();inputs.contracts['tasks'][0]['axis_weights']['proof']='1/6'
+        with self.assertRaises(ValueError):validate_contracts(inputs.contracts,policy)
+
+    def test_smc_rejects_a_different_mode_or_attempt_condition(self):
+        for key,value in [('score_mode','capability'),('attempt_condition','single_attempt')]:
+            report=strict_report();report[key]=value
+            with self.assertRaises(ValueError):profile_strict_completion_metric(report)
 
 
-class ProfileWholeTaskTests(unittest.TestCase):
-    def setUp(self):
-        self.inputs, self.policy, self.digest = arithmetic_fixture(VERSION)
-        self.rows = {row['id']:row for row in self.inputs.review['tasks']}
+class CoreGateTests(unittest.TestCase):
+    def test_refuted_or_essential_unproved_core_cannot_keep_high_grade(self):
+        for status in ('unresolved_core','refuted_core'):
+            for grade in (3,4):
+                with self.assertRaises(ValueError):_validate_proof_core(dict(grade=grade,core_status=status))
+            _validate_proof_core(dict(grade=2,core_status=status))
 
-    def score(self):
-        return score_mathematical_profile(self.inputs)
+    def test_local_gap_cannot_be_presented_as_complete(self):
+        _validate_proof_core(dict(grade=3,core_status='local_gap'))
+        with self.assertRaises(ValueError):_validate_proof_core(dict(grade=4,core_status='local_gap'))
+        _validate_proof_core(dict(grade=4,core_status='established'))
 
-    def test_one_failed_required_goal_rejects_the_whole_task_not_a_text_fraction(self):
-        row = self.rows['MG-PS001:A1']
-        self.assertGreater(len(row['goals']), 1)
-        row['goals'][-1]['passed'] = False
-        score = self.score()
-        self.assertAlmostEqual(score['metrics']['completion']['exact'], 100-100/35)
-        self.assertEqual(score['metrics']['proof']['exact'], 100)
-        self.assertEqual(score['metrics']['closure']['exact'], 100)
-        self.assertTrue(any(g['passed'] is True for g in row['goals']))
+    def test_no_progress_zero_and_missing_source_are_not_mathematical_refutations(self):
+        _validate_proof_core(dict(grade=0,core_status='no_valid_progress'))
+        _validate_proof_core(dict(grade=None,core_status='source_unresolved',assessment_status='source_unresolved'))
+        for value in [dict(grade=4),dict(grade=0,core_status='refuted_core'),dict(grade=None,core_status='established')]:
+            with self.assertRaises(ValueError):_validate_proof_core(value)
 
-    def test_a_single_failed_diagnosis_rejects_the_whole_prescribed_trajectory(self):
-        self.rows['MG-C003:R1']['goals'][-1]['passed'] = False
-        score = self.score()
-        self.assertAlmostEqual(score['metrics']['completion']['exact'], 100-100/70)
-        for row in score['tasks']:
-            if row['id'].startswith('MG-C003:R'):
-                self.assertEqual(row['axes']['completion']['exact'], 0)
-        self.assertEqual(score['metrics']['fidelity']['exact'], 100)
-        self.assertTrue(all(g['passed'] is True for g in self.rows['MG-C003:R3']['goals']))
-
-    def test_unknown_round_retains_the_entire_trajectory_interval(self):
-        self.rows['MG-C003:R2']['goals'][0]['passed'] = None
-        metric = self.score()['metrics']['completion']
-        self.assertIsNone(metric['exact'])
-        self.assertAlmostEqual(metric['unknown_weight'], 100/70)
-        self.assertAlmostEqual(metric['lower'], 100-100/70)
-        self.assertEqual(metric['upper'], 100)
-
-    def test_known_failure_settles_a_conjunction_even_when_another_goal_is_unknown(self):
-        self.rows['MG-C003:R1']['goals'][0]['passed'] = None
-        self.rows['MG-C003:R3']['goals'][0]['passed'] = False
-        metric = self.score()['metrics']['completion']
-        self.assertAlmostEqual(metric['exact'], 100-100/70)
-        self.assertEqual(metric['unknown_weight'], 0)
-
-    def test_unknown_whole_task_has_no_confirmed_partial_completion(self):
-        self.rows['MG-PS001:A1']['goals'][-1]['passed'] = None
-        metric = self.score()['metrics']['completion']
-        self.assertIsNone(metric['exact'])
-        self.assertAlmostEqual(metric['lower'], 100-100/35)
-        self.assertEqual(metric['upper'], 100)
-
-    def test_tx_visible_baseline_does_not_inherit_an_unrequested_r3_gate(self):
-        for contract in self.inputs.contracts['tasks']:
-            if contract['subcategory'] == 'theorem-extension':
-                self.rows[contract['id']]['research']['complete'] = False
-                self.rows[contract['id']]['axes']['initiative']['grade'] = 0
-        self.assertEqual(self.score()['metrics']['completion']['exact'], 100)
-
-    def test_the_new_contract_must_freeze_its_acceptance_rule(self):
-        validate_contracts(self.inputs.contracts, self.policy)
-        del self.inputs.contracts['completion_rule']
-        with self.assertRaises(ValueError):
-            validate_contracts(self.inputs.contracts, self.policy)
-
-    def test_core_scope_drift_cannot_keep_a_high_fidelity_grade(self):
-        for grade in (3, 4):
-            with self.assertRaises(ValueError):
-                _validate_fidelity_core(dict(grade=grade, core_scope_failure=True))
-        _validate_fidelity_core(dict(grade=2, core_scope_failure=True))
-        _validate_fidelity_core(dict(grade=4, core_scope_failure=False))
-        _validate_fidelity_core(dict(grade=None, core_scope_failure=None))
-
-    def test_missing_core_scope_judgment_cannot_be_presented_as_reviewed(self):
-        with self.assertRaises(ValueError):
-            _validate_fidelity_core(dict(grade=4))
+    def test_fidelity_gate_still_rejects_unbridged_scope_drift(self):
+        for grade in (3,4):
+            with self.assertRaises(ValueError):_validate_fidelity_core(dict(grade=grade,core_scope_failure=True))
+        _validate_fidelity_core(dict(grade=2,core_scope_failure=True))
 
 
 class PublicBoundaryTests(unittest.TestCase):
     def setUp(self):
-        inputs,self.policy,self.digest = arithmetic_fixture()
-        descriptor = dict(path='results/selected/record.json',sha256='0'*64)
-        self.public = project_public(score_mathematical_profile(inputs),policy=self.policy,
-            policy_sha256=self.digest,private_review_sha256='1'*64,private_materials_sha256='2'*64,
-            source_record=descriptor,source_calibration=descriptor)
-
-    def test_private_details_cannot_be_nested_in_public_group_scores(self):
-        self.public['groups']['depth']['theorem-extension']['exact'] = {'private':'PRIVATE_SENTINEL'}
-        with self.assertRaises(ValueError):
-            validate_public(self.public,self.policy,policy_sha256=self.digest)
-
-    def test_public_source_descriptors_are_also_allowlisted(self):
-        self.public['source_record']['private_details'] = {'case':'PRIVATE_SENTINEL'}
-        with self.assertRaises(ValueError):
-            validate_public(self.public,self.policy,policy_sha256=self.digest)
-
-    def test_projection_ignores_private_reviewer_objects(self):
-        inputs,_,_ = arithmetic_fixture()
-        score = score_mathematical_profile(inputs)
-        score['tasks'][0]['private_details'] = 'PRIVATE_SENTINEL'
-        descriptor = dict(path='results/selected/record.json',sha256='0'*64)
-        public = project_public(score,policy=self.policy,policy_sha256=self.digest,
-            private_review_sha256='1'*64,private_materials_sha256='2'*64,
-            source_record=descriptor,source_calibration=descriptor)
-        # Retained profile validation compares exact JSON bytes, including this
-        # original field order; adding an initial route must not rewrite it.
-        keys=list(public)
-        self.assertEqual(keys[keys.index('source_record')+1], 'source_calibration')
-        self.assertNotIn('PRIVATE_SENTINEL',json.dumps(public))
-        self.assertNotIn('tasks',public)
-
-    def test_v0_2_public_projection_has_no_private_or_separately_weighted_groups(self):
-        inputs,policy,digest = arithmetic_fixture(PREVIOUS_VERSION)
-        score = score_mathematical_profile(inputs)
-        score['tasks'][0]['private_details'] = 'PRIVATE_SENTINEL'
-        descriptor = dict(path='results/selected/record.json',sha256='0'*64)
-        public = project_public(score,policy=policy,policy_sha256=digest,
-            private_review_sha256='1'*64,private_materials_sha256='2'*64,
-            source_record=descriptor,source_calibration=descriptor)
-        self.assertEqual(public['groups'],{})
-        self.assertNotIn('PRIVATE_SENTINEL',json.dumps(public))
-        public['groups']['private'] = {'case_id':'PRIVATE_SENTINEL'}
-        with self.assertRaises(ValueError):validate_public(public,policy,policy_sha256=digest)
+        inputs,self.policy,self.digest=arithmetic_fixture();self.score=score_mathematical_profile(inputs)
+        self.ref=dict(path='results/selected/record.json',sha256='0'*64)
+        self.public=self.project()
+    def project(self):
+        return project_public(self.score,policy=self.policy,policy_sha256=self.digest,
+            private_review_sha256='1'*64,private_materials_sha256='2'*64,source_record=self.ref,source_calibration=self.ref)
+    def test_only_aggregates_and_allowlisted_sources_are_public(self):
+        self.score['tasks'][0]['private_details']='PRIVATE_SENTINEL'
+        self.assertNotIn('PRIVATE_SENTINEL',json.dumps(self.project()))
+        self.public['source_record']['private_details']='PRIVATE_SENTINEL'
+        with self.assertRaises(ValueError):validate_public(self.public,self.policy,policy_sha256=self.digest)
+    def test_smc_coverage_cannot_be_mislabeled_as_35_families(self):
+        self.public['metrics']['completion']['coverage']=dict(unit='mathematical_family',planned=35,reviewed=35)
+        with self.assertRaises(ValueError):validate_public(self.public,self.policy,policy_sha256=self.digest)
+    def test_public_group_or_metric_cannot_expose_private_rows(self):
+        self.public['metrics']['proof']['private_rows']=['PRIVATE_SENTINEL']
+        with self.assertRaises(ValueError):validate_public(self.public,self.policy,policy_sha256=self.digest)
+        self.public=self.project();self.public['groups']={'private':'PRIVATE_SENTINEL'}
+        with self.assertRaises(ValueError):validate_public(self.public,self.policy,policy_sha256=self.digest)
 
 
 class SourceBoundaryTests(unittest.TestCase):
@@ -346,7 +168,7 @@ class SourceBoundaryTests(unittest.TestCase):
         self.pub.mkdir();self.prv.mkdir()
         self.roots = dict(public=self.pub,private=self.prv)
         self.policy_sha,self.contract_sha = 'a'*64,'b'*64
-        self.policy = dict(private_contract_sha256=self.contract_sha)
+        self.policy = dict(version=VERSION,private_contract_sha256=self.contract_sha)
 
         def put(root,path,value):
             raw = (json.dumps(value,ensure_ascii=False)+'\n').encode() if not isinstance(value,bytes) else value
@@ -362,25 +184,29 @@ class SourceBoundaryTests(unittest.TestCase):
         cr,gr = put(self.prv,'reviews/content.json',content),put(self.prv,'reviews/goals.json',goals)
         report = put(self.prv,'reports/selected.json',dict(tasks=states,alignment_selfcheck=dict(rounds=[])))
         ci = put(self.prv,'calibration/inputs.json',dict(model_id='fixture',conditions={'nonlogical_retry_3':[]}))
-        manifest = put(self.prv,'calibration/manifest.json',dict(inputs=ci,scores={'partial':{'nonlogical_retry_3':report}}))
+        smc=put(self.prv,'reports/strict.json',strict_report())
+        psmc=put(self.pub,'reports/strict.json',strict_report())
+        manifest=put(self.prv,'calibration/manifest.json',dict(inputs=ci,scores={
+            'partial':{'nonlogical_retry_3':report},'strict':{'nonlogical_retry_3':smc}}))
         put(self.prv,'results/edition-reassessments/v1.1.0/transition.json',dict(calibrations={'fixture':manifest}))
-        pub_cal = put(self.pub,'calibration/public.json',dict(private_manifest_sha256=manifest['sha256'],private_inputs_sha256=ci['sha256']))
+        pub_cal=put(self.pub,'calibration/public.json',dict(private_manifest_sha256=manifest['sha256'],
+            private_inputs_sha256=ci['sha256'],scores={'strict':{'nonlogical_retry_3':psmc}}))
         record = put(self.pub,'records/selected.json',dict(model_id='fixture'))
         sources = dict(public_source_record=record,calibration=pub_cal,calibration_inputs=ci,
-                       selected_report=report,content_review=cr,goal_review=gr)
+                       selected_report=report,selected_smc_report=smc,public_smc_report=psmc,content_review=cr,goal_review=gr)
         sources.update({'answer:'+slot:answers[i] for i,slot in enumerate(self.ids)})
-        self.materials = dict(model_id='fixture',condition='nonlogical_retry_3',policy_sha256=self.policy_sha,
+        self.materials = dict(version=VERSION,new_candidate_calls=0,model_id='fixture',condition='nonlogical_retry_3',policy_sha256=self.policy_sha,
             private_contract_sha256=self.contract_sha,sources=sources,tasks=[dict(id=slot,content_index=i,goal_index=i,
                 response_sha256=answers[i]['sha256'],raw_answer=answers[i],selected_state=states[i]) for i,slot in enumerate(self.ids)])
         self.contracts = dict(tasks=[dict(id=slot,case_id=slot.split(':')[0],kind='initial',
-            subcategory='written-argument',axis_weights={'fidelity':'1/2','completion':'1/2'},goals=[dict(id='whole',weight=100)]) for slot in self.ids])
-        self.review = dict(schema='math-gauge.mathematical-profile-review/v1',version='0.1.0',benchmark_version='1.1.0',
+            subcategory='written-argument',axis_weights={'fidelity':'1/2','proof':'1/2'},goals=[dict(id='whole',weight=100)]) for slot in self.ids])
+        self.review = dict(schema='math-gauge.mathematical-profile-review/v1',version=VERSION,benchmark_version='1.1.0',
             condition='nonlogical_retry_3',model_id='fixture',policy_sha256=self.policy_sha,private_contract_sha256=self.contract_sha,
             reviewer_id='synthetic-reviewer',reviewer_kind='ai',human_review='pending',new_candidate_calls=0,formal_comparison_eligible=False,tasks=[])
         for i,slot in enumerate(self.ids):
             ev = dict(source_id='content_review',pointer=f'/tasks/{i}/units/0/reason',quote='actual evidence '+slot)
-            self.review['tasks'].append(dict(id=slot,axes={'fidelity':dict(grade=4,reason='Same original objects and assumptions.',evidence=[ev])},
-                goals=[dict(id='whole',passed=True,reason='The complete goal is delivered.',evidence=[dict(source_id='goal_review',pointer=f'/tasks/{i}/goals/0/reason',quote='complete goal '+slot)])],research=None))
+            self.review['tasks'].append(dict(id=slot,axes={'fidelity':dict(grade=4,core_scope_failure=False,assessment_status='reviewed',reason='Same original objects and assumptions.',evidence=[ev]),'proof':dict(grade=4,core_status='established',assessment_status='reviewed',reason='The original core is established.',evidence=[ev])},
+                goals=[dict(id='whole',passed=True,assessment_status='reviewed',reason='The complete goal is delivered.',evidence=[dict(source_id='goal_review',pointer=f'/tasks/{i}/goals/0/reason',quote='complete goal '+slot)])],research=None))
         stack = self.enterContext(ExitStack())
         stack.enter_context(patch('math_gauge.current_assessment_admissions.selections',return_value={}))
         stack.enter_context(patch('math_gauge.current_results.selected_current_record_paths',return_value={'fixture':record['path']}))
@@ -441,57 +267,6 @@ class SourceBoundaryTests(unittest.TestCase):
         with self.assertRaises(ValueError):self.validate()
 
 
-class AssessmentStatusTests(unittest.TestCase):
-    def check(self, classification, status, value, *, goal=False, **fields):
-        material = dict(selected_state=dict(submission_assessment=dict(classification=classification)))
-        _validate_assessment_status(dict(assessment_status=status,**fields),value,material,goal=goal)
-
-    def test_settled_blank_is_known_zero_for_traits_and_goals(self):
-        self.check('blank','operational_zero',0)
-        self.check('blank','operational_zero',False,goal=True)
-        for status,value in [('reviewed',0),('source_unresolved',None),('not_run',None)]:
-            with self.assertRaises(ValueError):
-                self.check('blank',status,value,missing_evidence='No mathematical delivery.')
-
-    def test_unrun_is_unknown_and_cannot_be_zero_filled(self):
-        self.check('not_run','not_run',None)
-        with self.assertRaises(ValueError):self.check('not_run','reviewed',0)
-        with self.assertRaises(ValueError):self.check('active_final','not_run',None)
-
-    def test_forced_content_can_retain_independently_reviewed_original_work(self):
-        self.check('forced_content','reviewed',3)
-        self.check('forced_content','operational_zero',0)
-
-    def test_missing_source_requires_a_typed_specific_unknown(self):
-        self.check('active_final','source_unresolved',None,missing_evidence='Original sealed engineering unavailable.')
-        with self.assertRaises(ValueError):self.check('active_final','source_unresolved',None)
-        with self.assertRaises(ValueError):self.check('active_final','reviewed',None)
-        with self.assertRaises(ValueError):
-            self.check('active_final','source_unresolved',0,missing_evidence='Original sealed engineering unavailable.')
-
-
-class InitialProfileSourceBoundaryTests(SourceBoundaryTests):
-    """A first profile retains the ordinary selected-record evidence checks."""
-    def setUp(self):
-        super().setUp()
-        self.policy['version'] = PREVIOUS_VERSION
-        self.review.update(version=PREVIOUS_VERSION,review_origin='initial_profile')
-        self.materials.update(schema='math-gauge.mathematical-profile-materials/v1',
-                              version=PREVIOUS_VERSION,new_candidate_calls=0)
-        for row in self.review['tasks']:
-            for judgment in row['axes'].values():
-                judgment['assessment_status'] = 'reviewed'
-            for goal in row['goals']:
-                goal['assessment_status'] = 'reviewed'
-        # This two-slot fixture isolates source validation. The full42-slot,
-        # fixed-family contract is independently exercised by arithmetic tests.
-        old_contract = self.put(self.prv,'protocol/mathematical-profile/v0.1.0/contracts.json',self.contracts)
-        legacy_policy = json.loads(read_bytes(ROOT/'protocol/mathematical-profile-v0.1.0.json'))
-        legacy_policy['private_contract_sha256'] = old_contract['sha256']
-        self.legacy_policy = self.put(self.pub,'protocol/mathematical-profile-v0.1.0.json',legacy_policy)
-        self.put(self.pub,'protocol/mathematical-profile-v0.1.0.md',
-                 read_bytes(ROOT/'protocol/mathematical-profile-v0.1.0.md'))
-
     def test_bound_manuscript_companion_is_exact_and_confined_to_its_task(self):
         alias = 'manuscript:' + self.ids[0] + ':manuscript'
         companion = self.put(self.prv, 'delivered/manuscript.md', b'original companion theorem')
@@ -525,175 +300,42 @@ class InitialProfileSourceBoundaryTests(SourceBoundaryTests):
             with self.assertRaisesRegex(ValueError, 'exact selected delivery'):
                 self.validate()
 
-    def test_first_profile_needs_explicit_origin(self):
-        self.review.pop('review_origin')
-        with self.assertRaises(ValueError):self.validate()
 
-    def test_first_profile_cannot_invent_a_prior_review(self):
-        self.materials['sources']['prior_profile_review'] = dict(path='invented.json',sha256='1'*64)
+    def test_reject_another_model_smc_even_under_a_valid_top_record(self):
+        self.materials['sources']['selected_smc_report']=self.put(self.prv,'other/strict.json',strict_report(100))
+        with self.assertRaisesRegex(ValueError,'exact selected assessment'):self.validate()
+    def test_prior_profile_alias_cannot_become_an_evidence_dependency(self):
+        self.materials['sources']['prior_profile_review']=dict(path='old.json',sha256='0'*64)
         with self.assertRaises(ValueError):self.validate()
-
-    def test_incomplete_retained_review_cannot_be_bypassed_as_initial(self):
-        self.put(self.prv,'results/mathematical-profiles/v0.1.0/fixture/review.json',dict(model_id='fixture'))
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_private_index_entry_cannot_be_bypassed_when_payload_is_missing(self):
-        self.put(self.prv,'results/mathematical-profiles/v0.1.0/index.json',
-                 dict(version=LEGACY_VERSION,policy_sha256=self.legacy_policy['sha256'],models={'fixture':{}}))
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_initial_profile_cannot_change_a_frozen_goal(self):
-        self.contracts['tasks'][0]['goals'][0]['weight'] = 50
+    def test_refuted_core_cannot_be_hidden_in_an_otherwise_valid_source_review(self):
+        self.review['tasks'][0]['axes']['proof']['core_status']='refuted_core'
         with self.assertRaises(ValueError):self.validate()
 
 
-class PriorProfileBindingTests(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp.cleanup)
-        base = Path(self.tmp.name)
-        self.pub,self.prv = base/'public',base/'private'
-        self.pub.mkdir();self.prv.mkdir()
-        self.roots = dict(public=self.pub,private=self.prv)
+class AssessmentStatusTests(unittest.TestCase):
+    def check(self, classification, status, value, *, goal=False, **fields):
+        material = dict(selected_state=dict(submission_assessment=dict(classification=classification)))
+        _validate_assessment_status(dict(assessment_status=status,**fields),value,material,goal=goal)
 
-        def put(root,path,value):
-            raw = value if isinstance(value,bytes) else (json.dumps(value,ensure_ascii=False)+'\n').encode()
-            target = root/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
-            return dict(repository='public' if root==self.pub else 'private',path=path,
-                        bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
-        self.put = put
-        for suffix in ('json','md'):
-            name = 'protocol/mathematical-profile-v0.1.0.'+suffix
-            put(self.pub,name,read_bytes(ROOT/name))
-        inputs,policy,digest = arithmetic_fixture()
-        record = put(self.pub,'records/selected.json',dict(model_id='fixture'))
-        contract_ref = put(self.prv,'old-contracts.json',inputs.contracts)
-        self.contracts = deepcopy(inputs.contracts)
-        self.contracts['version'] = PREVIOUS_VERSION
-        old_sources = dict(public_source_record=record,contracts=contract_ref,
-                           selected_report=dict(path='selected-report.json',sha256='4'*64))
-        self.tasks = [dict(id='case:A1',selected_state=dict(status='original'))]
-        header = dict(version=LEGACY_VERSION,model_id='fixture',condition='nonlogical_retry_3',policy_sha256=digest)
-        prefix = 'results/mathematical-profiles/v0.1.0/fixture/'
-        old_review = put(self.prv,prefix+'review.json',dict(header,tasks=[]))
-        old_materials = put(self.prv,prefix+'source-bindings.json',dict(header,sources=old_sources,tasks=self.tasks))
-        score = score_mathematical_profile(inputs);score['model_id']='fixture'
-        public = project_public(score,policy=policy,policy_sha256=digest,
-            private_review_sha256=old_review['sha256'],private_materials_sha256=old_materials['sha256'],
-            source_record=record,source_calibration=record)
-        ref = put(self.pub,prefix+'profile.json',public)
-        put(self.pub,'results/mathematical-profiles/v0.1.0/index.json',
-            dict(version=LEGACY_VERSION,policy_sha256=digest,models={'fixture':ref}))
-        self.materials = dict(sources=dict(old_sources,contracts=dict(path='new-contracts.json',sha256='5'*64),
-            prior_profile_review=old_review,prior_profile_materials=old_materials),tasks=deepcopy(self.tasks))
+    def test_settled_blank_is_known_zero_for_traits_and_goals(self):
+        self.check('blank','operational_zero',0)
+        self.check('blank','operational_zero',False,goal=True)
+        for status,value in [('reviewed',0),('source_unresolved',None),('not_run',None)]:
+            with self.assertRaises(ValueError):
+                self.check('blank',status,value,missing_evidence='No mathematical delivery.')
 
-    def validate(self):
-        _validate_prior_profile(dict(model_id='fixture'),self.materials,self.roots,contracts=self.contracts)
+    def test_unrun_is_unknown_and_cannot_be_zero_filled(self):
+        self.check('not_run','not_run',None)
+        with self.assertRaises(ValueError):self.check('not_run','reviewed',0)
+        with self.assertRaises(ValueError):self.check('active_final','not_run',None)
 
-    def test_exact_retained_prior_review_and_selected_states_are_accepted(self):
-        self.validate()
+    def test_forced_content_can_retain_independently_reviewed_original_work(self):
+        self.check('forced_content','reviewed',3)
+        self.check('forced_content','operational_zero',0)
 
-    def test_prior_review_cannot_be_substituted_even_with_a_valid_new_hash(self):
-        self.materials['sources']['prior_profile_review'] = self.put(self.prv,
-            'results/mathematical-profiles/v0.1.0/fixture/review.json',dict(model_id='other'))
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_supplement_cannot_change_an_original_source_alias(self):
-        self.materials['sources']['selected_report'] = dict(path='other.json',sha256='6'*64)
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_supplement_cannot_change_the_selected_attempt_or_task_state(self):
-        self.materials['tasks'][0]['selected_state']['status'] = 'another attempt'
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_legacy_anchor_alias_does_not_fallback_after_damage(self):
-        (self.pub/'protocol/mathematical-profile-v0.1.0.md').write_text('damaged frozen document')
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_supplement_cannot_change_a_visible_goal_or_private_family(self):
-        self.contracts['tasks'][-1]['family_id'] = 'different-private-family'
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_retained_profile_cannot_claim_initial_origin(self):
+    def test_missing_source_requires_a_typed_specific_unknown(self):
+        self.check('active_final','source_unresolved',None,missing_evidence='Original sealed engineering unavailable.')
+        with self.assertRaises(ValueError):self.check('active_final','source_unresolved',None)
+        with self.assertRaises(ValueError):self.check('active_final','reviewed',None)
         with self.assertRaises(ValueError):
-            _validate_prior_profile(dict(model_id='fixture',review_origin='initial_profile'),
-                                    self.materials,self.roots,contracts=self.contracts)
-
-
-class RecentProfileBindingTests(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp.cleanup)
-        base = Path(self.tmp.name)
-        self.pub, self.prv = base/'public', base/'private'
-        self.roots = dict(public=self.pub, private=self.prv)
-
-        def put(root, path, value):
-            raw = value if isinstance(value, bytes) else (json.dumps(value)+'\n').encode()
-            target = root/path
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(raw)
-            return dict(path=path, bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
-        self.put = put
-        for version in (LEGACY_VERSION, PREVIOUS_VERSION):
-            for suffix in ('json', 'md'):
-                rel = 'protocol/mathematical-profile-v'+version+'.'+suffix
-                put(self.pub, rel, read_bytes(ROOT/rel))
-        inputs, policy, digest = arithmetic_fixture(PREVIOUS_VERSION)
-        record = dict(repository='public', **put(self.pub, 'records/selected.json', {'model_id':'fixture'}))
-        old_contract = dict(repository='private', **put(self.prv, 'contracts-v2.json', inputs.contracts))
-        sources = dict(public_source_record=record, contracts=old_contract,
-                       selected_report=dict(path='retained-report.json', sha256='4'*64))
-        self.tasks = [dict(id='case:A1', selected_state=dict(status='same-attempt'))]
-        header = dict(version=PREVIOUS_VERSION, model_id='fixture', condition='nonlogical_retry_3', policy_sha256=digest)
-        prefix = 'results/mathematical-profiles/v0.2.0/fixture/'
-        old_review = put(self.prv, prefix+'review.json', dict(header, tasks=[]))
-        old_materials = put(self.prv, prefix+'source-bindings.json', dict(header, sources=sources, tasks=self.tasks))
-        score = score_mathematical_profile(inputs)
-        score['model_id'] = 'fixture'
-        public = project_public(score, policy=policy, policy_sha256=digest,
-            private_review_sha256=old_review['sha256'], private_materials_sha256=old_materials['sha256'],
-            source_record=record, source_calibration=record)
-        ref = put(self.pub, prefix+'profile.json', public)
-        put(self.pub, 'results/mathematical-profiles/v0.2.0/index.json',
-            dict(version=PREVIOUS_VERSION, policy_sha256=digest, models={'fixture':ref}))
-        put(self.prv, 'results/mathematical-profiles/v0.2.0/index.json',
-            dict(version=PREVIOUS_VERSION, policy_sha256=digest,
-                 models={'fixture':{'review':old_review, 'source-bindings':old_materials}}))
-        self.materials = dict(version=VERSION, sources=dict(sources,
-            contracts=dict(path='contracts-v3.json', sha256='5'*64),
-            prior_component_review=dict(repository='private', **old_review),
-            prior_component_materials=dict(repository='private', **old_materials)), tasks=deepcopy(self.tasks))
-        self.contracts = deepcopy(inputs.contracts)
-        self.contracts.update(version=VERSION, completion_rule=WHOLE_COMPLETION)
-
-    def validate(self, **extra):
-        _validate_prior_profile(dict(model_id='fixture', version=VERSION, **extra),
-                                self.materials, self.roots, contracts=self.contracts)
-
-    def test_new_component_binds_the_exact_selected_previous_review_and_materials(self):
-        self.validate()
-
-    def test_new_component_cannot_hide_an_existing_profile_as_initial(self):
-        with self.assertRaises(ValueError):self.validate(review_origin='initial_profile')
-
-    def test_a_different_valid_review_hash_is_not_the_selected_predecessor(self):
-        ref = self.put(self.prv, 'substituted.json', {'model_id':'fixture'})
-        self.materials['sources']['prior_component_review'] = dict(repository='private', **ref)
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_new_component_cannot_replace_an_original_attempt_or_alias(self):
-        self.materials['tasks'][0]['selected_state']['status'] = 'another-attempt'
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_frozen_previous_policy_damage_is_not_hidden_by_current_policy(self):
-        (self.pub/'protocol/mathematical-profile-v0.2.0.md').write_text('damaged')
-        with self.assertRaises(ValueError):self.validate()
-
-    def test_new_completion_method_does_not_change_the_visible_goal_definitions(self):
-        self.contracts['tasks'][0]['goals'][0]['weight'] += 1
-        with self.assertRaises(ValueError):self.validate()
-
-
-if __name__ == '__main__':
-    unittest.main()
+            self.check('active_final','source_unresolved',0,missing_evidence='Original sealed engineering unavailable.')

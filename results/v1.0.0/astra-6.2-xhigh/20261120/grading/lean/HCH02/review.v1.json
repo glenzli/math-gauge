@@ -1,0 +1,972 @@
+{
+  "case_id": "HCH02",
+  "response_sha256": "8503cfd078f4604105ba0cb25c8b3596a72e3b70a872a980bf6b94dd95f3bcda",
+  "reviewer": "GPT-6.1 Sol Max; primary independent Lean mathematical reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "按所给历史原文而非现行章节逐行核对全部40项及完整原答，40项均完整正确。链实际域、矩阵施行次序、路径边/端点和单步边界、扰动双向、通道inf正有限取到及零不取到反例、行列解耦和非分离零距结论均吻合。目标没有放进字段或最终证书前提；标量/向量/矩阵和原文递推域都有实际桥。65regular同源及9目录链接枚举差异另按root限定回执处理，原guard false不改；独立编译不代替此语义判断。",
+  "findings": [],
+  "group_contract_sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+  "stages": [
+    {
+      "stage_id": "HC02-D01",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.Gauge"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.lip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.globalLip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.infinite_term"
+        }
+      ],
+      "notes": "Gauge只存原有限非空规范族的真实扩展伪度量背景，lip/globalLip为全域/受限族的原全点对和全输出ENNReal有限和上界。infinite_term正确说明top乘0为0、乘正值为top，未要求分量分离或最优矩阵存在。"
+    },
+    {
+      "stage_id": "HC02-D02",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.coLip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.co_term"
+        }
+      ],
+      "notes": "coLip的成员严格保留非空U、U包含dom及所有点对/输出的行和下界；co_term由非负和提取任意单输入项，0/top系数都允许。"
+    },
+    {
+      "stage_id": "HC02-D03",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.Mat"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.display"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.mul"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.display_mul"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.act"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.act_mul"
+        }
+      ],
+      "notes": "输入优先存A i j，display转为普通矩阵A(j,i)；display_mul证明原复合求和对应标准B*A，act_mul另证对输入距离向量的作用，输入/输出方向及施行次序均有桥。"
+    },
+    {
+      "stage_id": "HC02-D04",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.eye"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.product"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.product_one"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.product_order"
+        }
+      ],
+      "notes": "eye是Kronecker单位，product空元组取eye、product_one证单矩阵不变；product_order证明施行顺序元组对应反序普通矩阵积，不把前后步骤颠倒。"
+    },
+    {
+      "stage_id": "HC02-D05",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.comp"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.comp_domain"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.chain"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.chain_order"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.stage"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.stage_zero"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.stage_next"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.final_image"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.step_domains"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.Steps"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.steps_from"
+        }
+      ],
+      "notes": "chain_order连接冻结OperatorChain，stage_zero/next/final_image证明全部实际像域递推和最终像，step_domains由复合域证明每一步合法。Steps仅含逐步证书，steps_from对任意满足原递推的域列证明同一表示，未假设最终复合界。"
+    },
+    {
+      "stage_id": "HC02-D06",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.Path"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.edges"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.edges_indexed"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.weight"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.hasZero"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.allPos"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.one_path"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.expansion"
+        }
+      ],
+      "notes": "Path=Fin n到I遍历所有n个内部指标，无正性限制；edges_indexed以cons/snoc把固定两端i/j及每层边逐项接回原序列。weight/hasZero/allPos是真实边积/含零/全正，one_path给n=0唯一内部序列，expansion实际证明路径求和展开。"
+    },
+    {
+      "stage_id": "HC02-D07",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.Channel"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.Row"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.Col"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.Diagonal"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.RowDec"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.ColDec"
+        }
+      ],
+      "notes": "Channel为有序I×I；Row/Col分别固定输出行/输入列并允许任意保留位置，也允许全零。RowDec/ColDec先量化合法Lip证书再量化保留指标；Diagonal恰全部非对角项0。"
+    },
+    {
+      "stage_id": "HC02-D08",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.Region"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.scalars"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.best"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.best_empty"
+        }
+      ],
+      "notes": "Region携带原U包含dom，scalars量化全部U内点对且只用指定输入/输出分量；best是该族sInf，best_empty证空族为top。对象与矩阵中任一条目明确分开，没有把通道最优值偷当矩阵最优条目。"
+    },
+    {
+      "stage_id": "HC02-P01",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.singleton_lip"
+        }
+      ],
+      "notes": "singleton_lip在非空Subsingleton指标族把唯一求和化为标量，双向证明全域Lip成员资格与原标量式等价。"
+    },
+    {
+      "stage_id": "HC02-P02",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.restrict_global"
+        }
+      ],
+      "notes": "restrict_global取真实dom上的族，逐点限制至任意合法U，保留原全域和受限区别。"
+    },
+    {
+      "stage_id": "HC02-P03",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.restrict_lip"
+        }
+      ],
+      "notes": "restrict_lip从原V族成员中同时限制定义域和任意点对不等式，得到缩域后证书族扩大；不把证书族直接视为唯一矩阵。"
+    },
+    {
+      "stage_id": "HC02-P04",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.entryInf"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.entryInf_le"
+        }
+      ],
+      "notes": "entryInf定义为条目评价在完整Lip族的像集下确界；entryInf_le由族反包含和sInf反单调性证明缩域时各条目下确界不增，即使族为空亦合法。"
+    },
+    {
+      "stage_id": "HC02-P05",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.lip_comp"
+        }
+      ],
+      "notes": "lip_comp对外层在实际operator_image p U上的界，用act_mono代入内层再以act_mul还原mul B A。原复合合法U和精确中间像均保留，乘积次序正确。"
+    },
+    {
+      "stage_id": "HC02-P06",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.co_degenerate"
+        }
+      ],
+      "notes": "co_degenerate从co_term和指定输出距0得到单项乘积0，再以输入距正排除该因子为0，故系数0；域为原dom p，无额外有限性。"
+    },
+    {
+      "stage_id": "HC02-P07",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.co_comp"
+        }
+      ],
+      "notes": "co_comp在相同实际像域把内层下界经非负act单调后接外层下界，复合非空U由内层合法co-Lip取出。"
+    },
+    {
+      "stage_id": "HC02-P08",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.CloseOn"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.close_swap"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.perturb"
+        }
+      ],
+      "notes": "CloseOn只打包原公共域及逐点扰动上界，不存目标点对结论；perturb真实用两次三角与close_swap得到正向像距加两份delta，所有x,y与输出j任意。"
+    },
+    {
+      "stage_id": "HC02-P09",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.perturb_rev"
+        }
+      ],
+      "notes": "perturb_rev由原逐点误差的对称性交换算子，再调用已证正向界，误差项仍非负ENNReal两份delta，不作非法减法。"
+    },
+    {
+      "stage_id": "HC02-P10",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.perturb_lip"
+        }
+      ],
+      "notes": "perturb_lip将第一个算子的原合法矩阵上界代入perturb，给第二个算子像距的加性界；任意两个算子可用close_swap对换。"
+    },
+    {
+      "stage_id": "HC02-P11",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "HCH02.perturb_co"
+        }
+      ],
+      "notes": "perturb_co把第一算子co-Lip下界与反向扰动界连接，方向为矩阵行和<=第二像距+2delta，未误称第二算子的纯co-Lip证书。"
+    },
+    {
+      "stage_id": "HC02-P12",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.chain_lip"
+        }
+      ],
+      "notes": "chain_lip对任意有限长度从原每步实际stage域的Steps归纳建立product M全复合上界。零步单位基例已证，正长度原命题是其精确实例，未输入最终界。"
+    },
+    {
+      "stage_id": "HC02-P13",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.chain_co"
+        }
+      ],
+      "notes": "chain_co对正长度从首步证书推出U非空，chain_co_aux在尾链实际像保持非空并归纳合成全部下界，非空并非未证明结构前提。"
+    },
+    {
+      "stage_id": "HC02-P14",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.eye_act"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.empty_lip"
+        }
+      ],
+      "notes": "eye_act证明单位矩阵确实保留整个输入距离向量，empty_lip据此给零步恒等链上界，覆盖原非空合法U且无更强前提。"
+    },
+    {
+      "stage_id": "HC02-P15",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.empty_co"
+        }
+      ],
+      "notes": "empty_co明确取合法且非空U，以同一单位作用等式构造完整下界族成员。"
+    },
+    {
+      "stage_id": "HC02-P16",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.product_zero"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.certified_zero"
+        }
+      ],
+      "notes": "expansion给全部完整路径真实有限求和，product_zero由非负和为0及列表乘积为0得每路径含零；certified_zero恢复历史原文同一算子链、实际域、两类逐步证书的适用条件，单步唯一边未漏。"
+    },
+    {
+      "stage_id": "HC02-P17",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.product_pos"
+        },
+        {
+          "file": "Chains.lean",
+          "name": "HCH02.certified_pos"
+        }
+      ],
+      "notes": "product_pos对product_zero取否定并把无零边等价为全边正，给存在真实完整路径的双向判据；certified_pos恢复原co-Lip链条件，top因子按ENNReal处理。"
+    },
+    {
+      "stage_id": "HC02-P18",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.obstructed"
+        }
+      ],
+      "notes": "obstructed对原合法U中的输入零距/输出正距点对逐一反驳任何ENNReal r，包括top，因为r*0=0，继而best_empty给下确界top。不是只选坏证书。"
+    },
+    {
+      "stage_id": "HC02-P19",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.attained"
+        }
+      ],
+      "notes": "attained在best正且有限时先由finite_iff得非空可行族，再以正inf排除ENNReal乘inf的零例外，合法交换iInf与乘固定距离，逐点证明best本身可行。没有假设目标取到性或要求输入距离有限。"
+    },
+    {
+      "stage_id": "HC02-P20",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.scalar_up"
+        }
+      ],
+      "notes": "scalar_up对每对原域点使用右端系数的乘法单调性，证明任一可行r之上的t也可行，包含top。"
+    },
+    {
+      "stage_id": "HC02-P21",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.above_best"
+        }
+      ],
+      "notes": "above_best由sInf_lt_iff实际取小于给定r的可行t，再scalar_up得r可行；是原正有限best语境下结论的更一般有效证明，r=top也包含。"
+    },
+    {
+      "stage_id": "HC02-P22",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.zero_best"
+        }
+      ],
+      "notes": "zero_best以a=0代入above_best，得每个严格正r可行，因而全部有限正r均满足；没有顺便断言r=0可行。"
+    },
+    {
+      "stage_id": "HC02-P23",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.discreteD"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.exampleGauge"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.exampleId"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.exampleU"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.unattained_zero"
+        }
+      ],
+      "notes": "exampleGauge逐字段证明Fin3上不同点距top的合法扩展伪度量，0为吸收元，恒等算子域含1/2非空。unattained_zero证明每个正r可行、inf=0，并用点对1/2排除r=0，完整合法反例满足原要求。"
+    },
+    {
+      "stage_id": "HC02-P24",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.finite_iff"
+        }
+      ],
+      "notes": "finite_iff用sInf严格小于top的完整线序判据双向等价于存在某个有限可行系数；没有把inf有限误等同为inf必取到。"
+    },
+    {
+      "stage_id": "HC02-P25",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.erase_term"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.lip_erase"
+        }
+      ],
+      "notes": "erase_term对任意ENNReal向量证零条目乘积0并给删除该输入项后的精确行和，lip_erase接回合法证书上界，包含输入距top。"
+    },
+    {
+      "stage_id": "HC02-P26",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.row_bound"
+        }
+      ],
+      "notes": "row_bound用任意指定输入i的单行稀疏条件化简有限和，得原全部域内点对的单输入上界；未限制i=j。"
+    },
+    {
+      "stage_id": "HC02-P27",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.col_term"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.column_contribution"
+        }
+      ],
+      "notes": "col_term/column_contribution只说明所选合法证书中固定输入i向各k不等于j的贡献为0，未过度推断实际算子不依赖其他输入或其他项为0。"
+    },
+    {
+      "stage_id": "HC02-P28",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.diagonal_upper"
+        }
+      ],
+      "notes": "diagonal_upper从对角矩阵的每行Row条件推出每个输出j的同分量标量上界，保留全部x,y属于U。"
+    },
+    {
+      "stage_id": "HC02-P29",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.ScalarBounds"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.bilateral"
+        }
+      ],
+      "notes": "bilateral从合法K提取对角单项下界并与合法A的指定输出行上界合并，ScalarBounds为结论的透明谓词而非假设字段；K没有被额外要求对角。"
+    },
+    {
+      "stage_id": "HC02-P30",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.all_bilateral"
+        },
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.finite_bilateral"
+        }
+      ],
+      "notes": "all_bilateral把逐行稀疏条件实例化到任意j，finite_bilateral在原两类对角系数有限条件下构造NNReal系数及转换等式，再恢复同一双侧界；未增加正下界条件。"
+    },
+    {
+      "stage_id": "HC02-P31",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.distinguish"
+        }
+      ],
+      "notes": "distinguish用正co-Lip项与正输入距的非零乘积及co_term传至输出严格正，系数或距离为无穷也允许。"
+    },
+    {
+      "stage_id": "HC02-P32",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Channels.lean",
+          "name": "HCH02.reflect_zero"
+        }
+      ],
+      "notes": "reflect_zero对每个正对角项使用distinguish反证输入分量非零，得冻结GaugeZeroRelated原族零距；没有增加分离性或把结论加强成x=y。"
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-lean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "candidate_lean_report": "/private/tmp/math-gauge-astra62-xhigh-api-20261120/verification/lean/receipts/HCH02-A1/shared-verification/report.json",
+  "candidate_lean_report_sha256": "7dfd7712c27960d5f87284ee0deb66975a2a3209dc7ea63e80be6f5d0f8fa888",
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/lean/HCH02/delivery.v1.json",
+      "bytes": 23916,
+      "sha256": "4fa0bdd7162571ece874aa4d5af8c19a98432d861ebaac3121123b57a8a9ff81"
+    },
+    "original_final": {
+      "path": "sessions/HCH02/physical-1/output/response.md",
+      "bytes": 40490,
+      "sha256": "8503cfd078f4604105ba0cb25c8b3596a72e3b70a872a980bf6b94dd95f3bcda"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "mechanical_receipt": {
+      "path": "verification/lean/receipts/HCH02-A1/shared-verification/report.json",
+      "bytes": 72318,
+      "sha256": "7dfd7712c27960d5f87284ee0deb66975a2a3209dc7ea63e80be6f5d0f8fa888"
+    },
+    "engineering_projection": {
+      "path": "verification/lean/receipts/HCH02-A1/delivered-original.md",
+      "bytes": 40490,
+      "sha256": "8503cfd078f4604105ba0cb25c8b3596a72e3b70a872a980bf6b94dd95f3bcda"
+    }
+  }
+}

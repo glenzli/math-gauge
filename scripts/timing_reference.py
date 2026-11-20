@@ -4,6 +4,7 @@ The same public A1 tasks are used for every model. Known non-delivery
 durations remain in the sample; missing clocks are never replaced by budgets.
 """
 import copy
+from collections import Counter
 import hashlib
 import json
 import math
@@ -24,6 +25,15 @@ CASES = (
 )
 CASE_IDS = tuple(case[0] for case in CASES)
 DAILY_IDS = tuple(cid for cid in CASE_IDS if cid != "MG-C003")
+ADDITIONAL_DAILY_CASES = (
+    ("written-argument", "书面论证", "Written argument",
+     ("MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR022", "MG-GR023", "MG-PS001")),
+    ("argument-review", "论证审阅", "Argument review", ("MG-AR001", "MG-AR003", "MG-AR004")),
+    ("background-check", "背景核查", "Background check", ("MG-BC002",)),
+    ("theorem-extension", "命题拓展", "Theorem extension", ("MG-TX002",)),
+)
+REVISION_CASES = CASES + tuple((cid, group, zh, en)
+                              for group, zh, en, ids in ADDITIONAL_DAILY_CASES for cid in ids)
 
 
 def read(path):
@@ -51,7 +61,7 @@ def summarize(rows):
 
 def daily_summary(rows, weights):
     result = summarize(rows)
-    complete = result["timed"] == len(rows)
+    complete = bool(rows) and result["timed"] == len(rows)
     result["weighted_mean_seconds"] = (sum(r["seconds"] * weights[r["case_id"]] for r in rows)
                                         / sum(weights[r["case_id"]] for r in rows)) if complete else None
     if not complete:
@@ -59,7 +69,7 @@ def daily_summary(rows, weights):
     return result
 
 
-def load_supplement(path, current_record_id):
+def load_supplement(path, current_record_id, case_ids=CASE_IDS):
     data = read(path)
     if data.get("schema") != "math-gauge.answer-timings/v1" or data.get("visibility") != "public-projection":
         raise ValueError("Timing reference requires a public timing supplement")
@@ -73,7 +83,7 @@ def load_supplement(path, current_record_id):
     allowed = set(data["public_case_ids"])
     rows = {}
     for row in data["rows"]:
-        if row["phase"] != "A1" or row["case_id"] not in CASE_IDS:
+        if row["phase"] != "A1" or row["case_id"] not in case_ids:
             continue
         if row["case_id"] not in allowed:
             raise ValueError("Timing panel attempted to expose a nonpublic task")
@@ -104,12 +114,20 @@ def select_timing(case_id, expected_sha, sources):
     return matches[0] if matches else (None, None)
 
 
-def build_reference(root, *, display_data=None):
+def build_reference(root, *, display_data=None, base_reference=None, revision_models=None):
     root = Path(root)
+    payload = display_data or read(root / 'site/data.json')
+    if payload.get('benchmark_version') == '1.2.0':
+        if base_reference is None:
+            baseline = root / 'site/versions/1.1.0/data.json'
+            if not is_file(baseline):
+                raise ValueError('Continuation clocks need the retained first-answer display')
+            base_reference = build_reference(root, display_data=read(baseline),
+                                             revision_models={model['id'] for model in payload['models']})
+        return revision_reference(root, payload, base_reference)
     edition = source_edition(root)
     selected = dict(edition["selected_result_record_ids"])
     selected["dot-underlying-model-20261108"] = "20261108"
-    payload = display_data or read(root / "site/data.json")
     display = {m["id"]: m for m in payload["models"]}
     from math_gauge.current_assessment_admissions import record_paths
     fresh = record_paths(root) if payload.get('benchmark_version') == '1.1.0' else {}
@@ -117,17 +135,21 @@ def build_reference(root, *, display_data=None):
         selected[mid] = Path(path).parent.name
     if set(display) != set(selected):
         raise ValueError('Timing display differs from its edition-selected model cohort')
+    case_definitions = CASES if revision_models is None else REVISION_CASES
+    case_ids = tuple(case[0] for case in case_definitions)
     cases = [{"id": cid, "group": group, "title": {"zh": zh, "en": en}}
-             for cid, group, zh, en in CASES]
+             for cid, group, zh, en in case_definitions]
     policy_path = root / "protocol/scoring-policy.json"
     category_weights = {item["id"]: item["weight"] for item in read(policy_path)["subcategories"]}
-    weights = {c["id"]: category_weights[c["group"]] for c in cases if c["id"] in DAILY_IDS}
+    weights = {c["id"]: category_weights[c["group"]] for c in cases if c["group"] != "lean"}
     observations_path = root / "site/timings/observed-clocks.json"
     observations = read(observations_path) if is_file(observations_path) else {"rows": []}
     if observations.get("rows") and observations.get("schema") != "math-gauge.timing-reference-observations/v1":
         raise ValueError("Unknown timing observations")
     models, inputs = [], [{"path": "protocol/scoring-policy.json", "sha256": sha(policy_path)}]
     for model_id, record_id in selected.items():
+        if revision_models is not None and model_id not in revision_models:
+            continue
         folder = ((root / fresh[model_id]).parent if model_id in fresh else
                   root / result_archive(edition, model_id) / model_id / record_id)
         record_path = folder / ("record.json" if is_file(folder / "record.json") else "native-observation.json")
@@ -136,17 +158,17 @@ def build_reference(root, *, display_data=None):
         inputs.append({"path": task_path.relative_to(root).as_posix(), "sha256": sha(task_path)})
         # Reused answer clocks require the exact same response hash, not just a case ID.
         current = folder / "answer-timings.json"
-        sources = [load_supplement(current, record_id)] if is_file(current) else []
+        sources = [load_supplement(current, record_id, case_ids)] if is_file(current) else []
         needs_history = any(scores[cid].get("response_sha256") is not None
                             and select_timing(cid, scores[cid]["response_sha256"], sources)[1] is None
-                            for cid in CASE_IDS)
+                            for cid in case_ids)
         if needs_history:
             candidates = sorted((path for path in iter_files(folder.parent)
                                  if path.name == "answer-timings.json" and path != current
                                  and len(path.relative_to(folder.parent).parts) == 2), reverse=True)
-            sources.extend(load_supplement(path, record_id) for path in candidates)
+            sources.extend(load_supplement(path, record_id, case_ids) for path in candidates)
         rows = []
-        for case_id in CASE_IDS:
+        for case_id in case_ids:
             score = scores[case_id]
             expected = score.get("response_sha256")
             source, timed = select_timing(case_id, expected, sources)
@@ -189,7 +211,12 @@ def build_reference(root, *, display_data=None):
                     if clock["answer_sha256"] != expected or expected is None:
                         raise ValueError("Observed clock belongs to another answer")
                     if row["seconds"] is not None and row["seconds"] != value:
-                        raise ValueError("Conflicting selected answer clock")
+                        if (row["method"], clock["method"]) != ("native_terminal_wall", "execution_elapsed"):
+                            raise ValueError("Conflicting selected answer clock")
+                        # Keep the published legacy sample. The expanded sample uses
+                        # the recovered native cutoff, which excludes cleanup time.
+                        if revision_models is not None:
+                            continue
                     row.update(item)
                     row["source_reused"] = clock["selected_record_sha256"] != sha(record_path)
                 else:
@@ -199,6 +226,7 @@ def build_reference(root, *, display_data=None):
         model = {"id": model_id, "label": meta["label"], "record_id": record_id,
                  "harness": meta["harness_display_name"].rstrip("¹²³⁴⁵*†"), "theme": copy.deepcopy(meta["theme"]),
                  "logo": copy.deepcopy(meta["logo"]), "rows": rows}
+        model['presentation_eligibility'] = copy.deepcopy(meta.get('presentation_eligibility', {}))
         model["summaries"] = {"daily": daily_summary([r for r in rows if r["case_id"] in DAILY_IDS], weights),
                               "MG-C003": summarize([r for r in rows if r["case_id"] == "MG-C003"])}
         models.append(model)
@@ -207,6 +235,50 @@ def build_reference(root, *, display_data=None):
             "cases": cases, "daily_case_ids": list(DAILY_IDS), "daily_weights": weights,
             "models": models, "score_inputs": inputs,
             "new_candidate_calls": 0, "scores_modified": False}
+
+
+def revision_reference(root, display_data, base_reference):
+    """Compare all commonly timed non-Lean tasks and the separate chapter run."""
+    from scripts.results_revision_resources import load_public, DATA_PATH, INDEX_PATH
+    resources = load_public(root)
+    resource_models = {row['id']: row for row in resources['models']}
+    selected = {model['id'] for model in display_data['models']}
+    ranked = {model['id'] for model in display_data['models']
+              if model.get('presentation_eligibility', {}).get('ranked') is not False}
+    result = copy.deepcopy(base_reference)
+    result['benchmark_version'] = '1.2.0'
+    result['base_assessment_version'] = '1.1.0'
+    result['resource_source'] = INDEX_PATH if is_file(Path(root) / INDEX_PATH) else DATA_PATH
+    result['batch_span_seconds'] = resources['batch_span_seconds']
+    result['models'] = [model for model in result['models'] if model['id'] in selected]
+    observed = [{row['case_id'] for row in model['rows'] if row['seconds'] is not None}
+                for model in result['models'] if model['id'] in ranked]
+    common = set.intersection(*observed) if observed else set()
+    original_weights = result['daily_weights']
+    case_groups = {cid: group for cid, group, _, _ in REVISION_CASES}
+    group_order = {group: i for i, (_, group, _, _) in enumerate(CASES)}
+    sample = sorted(common & original_weights.keys(), key=lambda cid: (group_order[case_groups[cid]], cid))
+    counts = Counter(case_groups[cid] for cid in sample)
+    result['daily_case_ids'] = sample
+    result['daily_weights'] = {cid: original_weights[cid] / counts[case_groups[cid]] for cid in sample}
+    sample_cases = [*sample, 'MG-C003']
+    titles = {cid: {'id': cid, 'group': group, 'title': {'zh': zh, 'en': en}}
+              for cid, group, zh, en in REVISION_CASES}
+    result['cases'] = [titles[cid] for cid in sample_cases]
+    for model in result['models']:
+        resource = resource_models[model['id']]
+        clocks = {row['case_id']: row['seconds'] for row in resource['public_cases']}
+        rows = {row['case_id']: row for row in model['rows']}
+        model['rows'] = [rows[cid] for cid in sample_cases]
+        for row in model['rows']:
+            row['base_seconds'] = row['seconds']
+            row['revision_seconds'] = clocks.get(row['case_id'], 0)
+            row['seconds'] = (None if row['seconds'] is None else row['seconds'] + row['revision_seconds'])
+        model['summaries'] = {
+            'daily': daily_summary(model['rows'][:-1], result['daily_weights']),
+            'MG-C003': summarize([row for row in model['rows'] if row['case_id'] == 'MG-C003'])}
+        model['revision_resources'] = copy.deepcopy(resource)
+    return result
 
 
 def render_panel(data, *, link_prefix=""):

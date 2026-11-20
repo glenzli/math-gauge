@@ -1,0 +1,194 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-opus-5.5-max",
+  "case_id": "MG-AR002",
+  "response_sha256": "90a757e41cc67cd2634a3332306d2e932cd3e6694055431e833d79eb16546e75",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 77.5,
+  "RMC": 72.5,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "body",
+      "earned": 20,
+      "reason": "正确认可原稿对偶延拓、像、纤维与分类公式。",
+      "quote": "所有公式和主干证明都成立。",
+      "evidence_file": "answer.md",
+      "max": 20
+    },
+    {
+      "id": "closure",
+      "earned": 15,
+      "reason": "认可任意域闭性与扩充系统/有限方程两条独立路线。",
+      "quote": "论据 2：正确",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "affine_boundary",
+      "earned": 12.5,
+      "reason": "有明确将线性子空间改为线性簇的编辑修复，但又总称原三论据数学成立，未充分定位缺失的仿射版本。",
+      "quote": "\"闭仿射子空间为线性紧子空间\"应改称\"线性簇\"。",
+      "evidence_file": "answer.md",
+      "max": 25
+    },
+    {
+      "id": "closure_evidence",
+      "earned": 10,
+      "reason": "给出有限支撑闭方程交或闭包扩充系统的有效核验。",
+      "quote": "每个 $C_w$ 只是有限个坐标上的条件，是既开又闭的柱集；任意多个闭集的交仍是闭集。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "affine_evidence",
+      "earned": 5,
+      "reason": "明确要求改称线性簇，但无x=1或同等非线性结构核验。",
+      "quote": "\"闭仿射子空间为线性紧子空间\"应改称\"线性簇\"。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "limited_impact",
+      "earned": 5,
+      "reason": "保留独立主证并给术语修复，然而没有将第三条明确列为需修复路线。",
+      "quote": "三条论据在数学上都成立。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "field_range",
+      "earned": 5,
+      "reason": "保留有限域通常紧与任意域代数延拓之别。",
+      "quote": "这里没有用到紧性。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "support_range",
+      "earned": 5,
+      "reason": "保留有限支撑解反例，不以通常不紧否定线性紧。",
+      "quote": "这个反例对任意域都成立。",
+      "evidence_file": "answer.md",
+      "max": 5
+    }
+  ],
+  "claim_deductions": [
+    {
+      "root_cause": "affine_linear_type_endorsement",
+      "level": "local",
+      "points": 5,
+      "quote": "\"闭仿射子空间为线性紧子空间\"应改称\"线性簇\"。",
+      "reason": "补充第三条的原线性子空间定理不能直接作用于一般非齐次S；新答所采用的仿射簇版本是额外修复。",
+      "counterexample_or_refutation": "k=Q，单方程x=1：S={1}不含0，不是环境线性子空间，虽闭性当然成立。",
+      "task_zero_cap": false
+    }
+  ],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持任意域、任意指标、全积与有限支撑解空间及原审阅目标；错误是补充证明条件判断，未替换原数学问题。"
+  },
+  "strict_reason": "第三条按原文将一般非齐次仿射解集视为线性子空间；必须补平移/明确仿射版本并说明是修复。当前新答未充分完成此审阅要求，主闭性正确不豁免该局部断言。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 3,
+      "reason": "主体核验和所交补证成立；仿射类型修复仅有简短改称，未完整识别原路线的适用条件缺口。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "\"闭仿射子空间为线性紧子空间\"应改称\"线性簇\"。"
+        }
+      ],
+      "core_status": "local_gap"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持任意域、任意指标、全积与有限支撑解空间及原审阅目标；错误是补充证明条件判断，未替换原数学问题。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "所有公式和主干证明都成立。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 3,
+      "reason": "识别对象名称需修复但总括认可过强。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "三条论据在数学上都成立。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "实际给出的对偶延拓、分类补证及方向空间/数据恢复形成成立的结构解释。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- **纤维维数。** 非空纤维是 $\\mathcal F_y=x+V_0$，其中 $V_0=W^\\perp\\cap U_A^\\perp=(W+U_A)^\\perp$，维数为 $|I|-\\dim(W+U_A)$。附注里的另一种写法与此相等，因为 $\\dim(W+U_A)=\\dim W+|A|-\\dim(W\\cap U_A)$。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "交出的闭性和分类数学基本闭合；完整审阅仍未准确闭合第三条原有类型边界。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "论据 2：正确"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [
+    {
+      "name": "verify_compact.py",
+      "sha256": "0fd8e6200b6cd04529ae0ae9b047dc491e79f9a12a8408f100269591959950b5",
+      "delivery_quote": "本轮运行的脚本（`verify_compact.py` 全文，`python3 -I` 运行）"
+    }
+  ],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.275730+00:00",
+    "source_review_sha256": "193c3f36dc132f8da3d5ae56eb9741d907f9461efce9fcd34fff38fd54d6118a",
+    "source_review_path": "grading/audit_background_written/claude-opus-5.5-max--MG-AR002.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.775,
+      "upper": 0.775,
+      "exact": 0.775
+    },
+    "generic_deduction": 0.05,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.05,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.725,
+      "upper": 0.725,
+      "exact": 0.725
+    },
+    "actual_loss": 0.05,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "claim-1"
+    ]
+  }
+}

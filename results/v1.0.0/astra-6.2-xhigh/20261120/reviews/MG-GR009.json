@@ -1,0 +1,316 @@
+{
+  "case_id": "MG-GR009",
+  "response_sha256": "8a3c7363426b2b6807c69eb8897733c3c4cee513489eb41172e5795420c7aace",
+  "reviewer": "GPT-6.1 Sol Max; primary independent AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "六阶段完整成立。有限自由profinite作用用实际不交开闭片构造全局连续截面，得到所有层对象的下降。一般情形合法使用Set_V中的层化、全测试稳定子判据及任意层基底分类；S4以只在有限像上折合符号的预层层化给出点不可见作用，完整满足小性及覆盖条件。S5/S6及附带检验原则范围准确。",
+  "findings": [],
+  "group_contract_sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+  "stages": [
+    {
+      "stage_id": "S1",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "有限轨道由饱和开闭集分离，商为U小profinite；局部自由切片经有限不交开闭细分给连续截面及Gamma乘商的等变同胚。由可表示层粘合和有限余积分解证明层商泛性质，并逐分量实现任意等变E；空基底也涵盖。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 3,
+          "line_end": 20,
+          "utf8_start": 34,
+          "utf8_end": 2180,
+          "quote": "令 \\(S=T/\\Gamma\\) 为轨道集，赋予商拓扑，记商映射为 \\(p:T\\to S\\)。这是 \\(U\\)-小紧空间。紧 Hausdorff 全不连通空间有开闭基，因此对两个不同的有限轨道，可以取包含第一个轨道且避开第二个轨道的开闭集。它的所有 \\(\\Gamma\\)-平移之并仍是开闭集，且是饱和的。于是 \\(S\\) 中任意两点可由开闭集分开，故 \\(S\\) 是 profinite 空间。\n\n自由性给出一个连续截面 \\(\\sigma:S\\to T\\)。事实上，对每个 \\(t\\in T\\)，各点 \\(\\gamma t\\) 互异，可为它们选取两两不交的开闭邻域 \\(V_\\gamma\\)。令\n\\[\nW=\\bigcap_{\\gamma\\in\\Gamma}\\gamma^{-1}V_\\gamma .\n\\]\n则 \\(W\\) 是 \\(t\\) 的开闭邻域，各 \\(\\gamma W\\) 两两不交。因为 \\(p^{-1}p(W)=\\bigcup_\\gamma\\gamma W\\) 开闭，\\(p(W)\\) 也开闭，且 \\(p|_W:W\\to p(W)\\) 是紧空间到 Hausdorff 空间的连续双射，因而是同胚。这些 \\(p(W)\\) 有有限子覆盖，将其细化为不交开闭分割，逐块取逆即得 \\(\\sigma\\)。由此得到等变同胚\n\\[\n\\Gamma\\times S\\xrightarrow{\\sim}T,\\qquad (\\gamma,s)\\longmapsto\\gamma\\sigma(s).\n\\]\n\n可表示预层确实是层。对有限联合满射覆盖 \\((P_i\\to P)\\)，映射 \\(\\coprod_iP_i\\to P\\) 是紧空间到 Hausdorff 空间的商映射，所以相容的连续映射唯一粘合为连续映射。对任意层 \\(Y\\)，有限不交开闭分割上的层条件又给出各分块取值的乘积，因为 \\(Y(\\varnothing)\\) 是单点。因此上面的同胚给出层的余积 \\(H\\simeq\\coprod_{\\gamma\\in\\Gamma}h_S\\)。一个 \\(H\\to Y\\) 的态射是 \\(\\Gamma\\)-不变的，当且仅当它在这些分量上给出同一个 \\(h_S\\to Y\\)。这证明 \\(h_p:H\\to h_S\\) 是层商。\n\n给定等变层 \\(\\pi:E\\to H\\)，取 \\(D=h_\\sigma^*E\\to h_S\\)。在 \\(H\\) 的第 \\(\\gamma\\) 个分量上，\\(a_\\gamma\\) 将 \\(D\\) 同构到 \\(E\\) 在该分量上的限制，逆映射由 \\(a_{\\gamma^{-1}}\\) 给出。逐块粘合得到\n\\[\nH\\times_{h_S}D\\xrightarrow{\\sim}E.\n\\]\n由 \\(a_\\delta a_\\gamma=a_{\\delta\\gamma}\\)，此同构等变，左侧的作用只改变 \\(H\\) 坐标。空空间的情形由空分割和空覆盖的层条件一并涵盖。\n"
+        }
+      ],
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "有限轨道由饱和开闭集分离，商为U小profinite；局部自由切片经有限不交开闭细分给连续截面及Gamma乘商的等变同胚。由可表示层粘合和有限余积分解证明层商泛性质，并逐分量实现任意等变E；空基底也涵盖。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S2",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "给出纤维Gamma_t集合与诱导Gamma集合的双向构造及全部态射；平凡稳定子作用充要刻画可实现性，自动群为各Sym(X_t)之积。有限纤维允许为空，公式包含Sym(empty)平凡群。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 24,
+          "line_end": 42,
+          "utf8_start": 2221,
+          "utf8_end": 3492,
+          "quote": "每个轨道选一个代表 \\(t\\)，记 \\(X_t\\) 为 \\(t\\) 上的纤维。取纤维给出范畴等价\n\\[\n\\{\\text{有限 \\(\\Gamma\\)-集合等变地映到 \\(T\\)}\\}\n\\simeq \\prod_{[t]\\in T/\\Gamma}\\{\\text{有限 \\(\\Gamma_t\\)-集合}\\}.\n\\]\n具体地，从一族有限 \\(\\Gamma_t\\)-集合 \\(F_t\\) 重建\n\\[\n\\bigsqcup_{[t]\\in T/\\Gamma}\\Gamma\\times_{\\Gamma_t}F_t\n   \\longrightarrow T,\\qquad [g,u]\\longmapsto gt,\n\\]\n其中 \\((gk,u)\\sim(g,ku)\\)。取 \\(F_t=X_t\\) 时，\\([g,u]\\mapsto gu\\) 是到 \\(X\\) 的等变双射。态射恰由各纤维上的 \\(\\Gamma_t\\)-等变映射 \\(f_t\\) 给出，重建后的公式为 \\([g,u]\\mapsto[g,f_t(u)]\\)。\n\n**\\(h_X\\) 可在 \\(Q=h_{T/\\Gamma}\\) 上实现，当且仅当每个 \\(\\Gamma_t\\) 在 \\(X_t\\) 上作用平凡。** 必要性可在单点上检验。若 \\(h_X\\simeq H\\times_QD\\)，则对 \\((t,d)\\)，每个 \\(k\\in\\Gamma_t\\) 都固定两个坐标。反之，若各稳定子作用平凡，则每个 \\(X\\)-轨道与其像轨道中每一点的纤维恰交于一点。因此\n\\[\nX\\longrightarrow T\\times_{T/\\Gamma}(X/\\Gamma),\\qquad x\\longmapsto(\\pi(x),[x])\n\\]\n是等变双射，取 \\(D=h_{X/\\Gamma}\\) 即可。由纤维分类及 Yoneda 引理，可实现对象在 \\(H\\) 上的等变自同构群为\n\\[\n\\prod_{[t]\\in T/\\Gamma}\\operatorname{Sym}(X_t).\n"
+        }
+      ],
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "给出纤维Gamma_t集合与诱导Gamma集合的双向构造及全部态射；平凡稳定子作用充要刻画可实现性，自动群为各Sym(X_t)之积。有限纤维允许为空，公式包含Sym(empty)平凡群。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S3",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "U属于V使站点有V小骨架，Set_V层化合法；局部提升及局部轨道相等有明确公式。典范比较总局部满射，所有测试稳定子条件给单射及必要性；分类全部对象、态射和带指定识别的实现，且任意层基底的轨道商及拉回相容均证明。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 47,
+          "line_end": 66,
+          "utf8_start": 3530,
+          "utf8_end": 4871,
+          "quote": "对带 \\(\\Gamma\\)-作用的层 \\(F\\)，定义其轨道层及典范映射\n\\[\n\\mathcal O(F)=\\bigl(P\\longmapsto F(P)/\\Gamma\\bigr)^\\#,\\qquad\n\\rho_F:F\\longrightarrow\\mathcal O(F),\n\\]\n其中 \\({}^\\#\\) 表示层化。由 \\(U\\in V\\)，站点可在 \\(V\\) 内取小骨架，此层化可在 \\(\\mathrm{Set}_V\\) 中进行。取 \\(Q=\\mathcal O(H)\\)、\\(q=\\rho_H\\)。逐截面取轨道的泛性质与层化的伴随性给出自然双射\n\\[\n\\operatorname{Hom}(Q,Y)\\xrightarrow[\\ \\circ q\\ ]{\\sim}\n\\operatorname{Hom}(H,Y)^\\Gamma .\n\\]\n\n层化给出两个局部事实。第一，\\(\\rho_F\\) 局部满射。第二，对 \\(u,v\\in F(P)\\)，有\n\\[\n\\rho_F(u)=\\rho_F(v)\n\\quad\\Longleftrightarrow\\quad\n\\text{存在有限覆盖 }(P_i\\to P)\\text{ 及 }\\gamma_i\\in\\Gamma,\\quad\nv|_{P_i}=a_{\\gamma_i}(u|_{P_i}).\n\\tag{1}\n\\]\n这是因为层化中的截面局部来自原预层，两个原预层截面在层化中相等当且仅当它们局部相等。此处覆盖对拉回和复合封闭，所需细化仍是有限覆盖。特别地，若一个不变态射 \\(F\\to Z\\) 局部满射，且同像截面总是局部相差群元素，则 \\(\\mathcal O(F)\\to Z\\) 是同构。它局部满射，而将轨道层的两个截面在共同覆盖上提升到 \\(F\\) 后，(1) 给出单射性。对层而言，单射且局部满射的态射是同构，因为局部原像唯一，故能粘合。\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 68,
+          "line_end": 93,
+          "utf8_start": 4872,
+          "utf8_end": 7190,
+          "quote": "**可实现性判据**是对每个测试空间 \\(P\\)、每个 \\(e\\in E(P)\\) 和每个 \\(\\gamma\\in\\Gamma\\)，都有\n\\[\n\\gamma\\pi(e)=\\pi(e)\\quad\\Longrightarrow\\quad a_\\gamma(e)=e.\n\\tag{2}\n\\]\n满足时，典范实现为 \\(D=\\mathcal O(E)\\to Q\\)，其结构映射由 \\(q\\pi\\) 诱导。\n\n下面在任意基底上证明此判据及分类。给定 \\(B\\to Q\\)，记 \\(H_B=H\\times_Q B\\)，令 \\(q_B:H_B\\to B\\) 为投影。\\(\\Gamma\\) 只作用于 \\(H\\) 坐标。因为 \\(q\\) 局部满射，\\(q_B\\) 也局部满射。\\(H_B(P)\\) 中两个有相同 \\(B\\) 坐标的截面，其 \\(H\\) 坐标在 \\(Q(P)\\) 中相等，由 (1) 局部相差群元素。因此 \\(\\mathcal O(H_B)\\simeq B\\)。\n\n对 \\(H_B\\) 上的等变对象 \\(p:F\\to H_B\\)，令 \\(D_F=\\mathcal O(F)\\to B\\)，考虑典范等变态射\n\\[\nk_F:F\\longrightarrow H_B\\times_BD_F,\\qquad e\\longmapsto(p(e),\\rho_F(e)).\n\\]\n它总是局部满射。给定右侧截面 \\((x,d)\\)，局部提升 \\(d\\) 为 \\(e\\)。于是 \\(p(e)\\) 与 \\(x\\) 有相同的 \\(B\\) 坐标，再细化覆盖即可写成 \\(x=\\gamma p(e)\\)。此时 \\(a_\\gamma(e)\\) 提升 \\((x,d)\\)。\n\n若 \\(F\\) 满足以 \\(p\\) 代替 \\(\\pi\\) 的 (2)，则 \\(k_F\\) 也是单射。事实上，若 \\(k_F(e)=k_F(e')\\)，则 \\(p(e)=p(e')\\)，且由 (1)，局部有 \\(e'=a_\\gamma(e)\\)。这个 \\(\\gamma\\) 固定共同的底截面，故由 (2) 得 \\(e'=e\\) 局部成立，再由层的分离性得全局相等。因此 \\(k_F\\) 是同构。反过来，在任何实现 \\(H_B\\times_BD\\) 中，固定底截面就固定整个截面，所以 (2) 必要。取 \\(B=Q\\) 即得原判据。\n\n由此有范畴等价\n\\[\n\\mathbf C/B\\ \\simeq\\\n\\{\\,H_B\\text{ 上满足 (2) 的等变对象及其全部等变态射}\\,\\},\n\\qquad\nD\\longmapsto q_B^*D,\\quad F\\longmapsto D_F .\n\\tag{3}\n\\]\n具体地，对任意 \\(D\\to B\\)，投影 \\(q_B^*D\\to D\\) 局部满射，同像截面局部相差群元素，故 \\(\\mathcal O(q_B^*D)\\simeq D\\)。在态射上，一个 \\(F\\to q_B^*D\\) 的底坐标已经由 \\(p\\) 确定，另一坐标恰是 \\(B\\) 上的不变态射 \\(F\\to D\\)，因而唯一对应于 \\(D_F\\to D\\)。这也分类了固定 \\(F\\) 的所有实现。若 \\(F\\) 可实现，指定一个实现同构 \\(F\\xrightarrow{\\sim}q_B^*D\\)，等价于指定一个 \\(B\\) 上的同构 \\(D_F\\xrightarrow{\\sim}D\\)。任意两个带此指定的实现之间有唯一相容同构。\n"
+        },
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 95,
+          "line_end": 100,
+          "utf8_start": 7191,
+          "utf8_end": 7698,
+          "quote": "最后，对任意 \\(Q\\) 上的态射 \\(B'\\to B\\)，有自然同构\n\\[\n\\mathcal O(F\\times_B B')\\ \\simeq\\ \\mathcal O(F)\\times_B B'.\n\\tag{4}\n\\]\n事实上，\\(F\\times_B B'\\to\\mathcal O(F)\\times_B B'\\) 是 \\(\\rho_F\\) 的拉回，故局部满射。同像截面的 \\(B'\\) 坐标相等，而 \\(F\\) 坐标由 (1) 局部相差群元素，这就证明了 (4)。在 \\(H_{B'}\\simeq H_B\\times_B B'\\) 下，\\(k_F\\) 拉回为 \\(k_{F\\times_B B'}\\)。这些映射都由投影诱导，因而也与连续两次拉回相容。\n"
+        }
+      ],
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "U属于V使站点有V小骨架，Set_V层化合法；局部提升及局部轨道相等有明确公式。典范比较总局部满射，所有测试稳定子条件给单射及必要性；分类全部对象、态射和带指定识别的实现，且任意层基底的轨道商及拉回相容均证明。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S4",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "K={0,1}^N为U小无限profinite。L(P)两符号仅在有限像时识别，限制和C2作用良定；层化在普通点上所有截面可由一点拉回表示，作用平凡，而id_K两符号不可能在有限联合满射覆盖上识别。故实际一般层不下降，未假设点函子保守。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 104,
+          "line_end": 112,
+          "utf8_start": 7727,
+          "utf8_end": 8790,
+          "quote": "**否。** 取 \\(T=*\\)、\\(\\Gamma=C_2\\)，于是 \\(H=Q=*\\)。取无限的 \\(U\\)-小 profinite 空间 \\(K=\\{0,1\\}^{\\mathbb N}\\)。定义预层\n\\[\nL(P)=\\bigl(\\operatorname{Cont}(P,K)\\times\\{+,-\\}\\bigr)/{\\sim},\n\\]\n其中仅当 \\(u(P)\\) 有限时，才把 \\((u,+)\\) 与 \\((u,-)\\) 识别。预合成保持有限像条件，故限制映射良定义。交换两个符号给出 \\(C_2\\)-作用，令 \\(E=L^\\#\\) 带诱导作用。\n\n每个 \\(E(*)\\) 中的截面都来自 \\(L(*)\\)。事实上，它在某个有限覆盖上来自 \\(L\\)，而该覆盖中必有一个非空成员，选取其中一点拉回即得单点上的代表。每个 \\(*\\to K\\) 的像都有限，所以 \\(C_2\\) 固定 \\(E(*)\\) 的每个元素。\n\n但 \\((\\mathrm{id}_K,+)\\) 和 \\((\\mathrm{id}_K,-)\\) 在 \\(E(K)\\) 中不同。若它们相等，则存在有限覆盖 \\((p_i:P_i\\to K)\\) 使二者在每个 \\(L(P_i)\\) 中相等。这迫使每个 \\(p_i(P_i)\\) 有限，与这些像覆盖无限集 \\(K\\) 矛盾。生成元交换这两个截面，同时固定其底截面，违反 (2)，故 \\(E\\) 不可实现。\n"
+        }
+      ],
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "K={0,1}^N为U小无限profinite。L(P)两符号仅在有限像时识别，限制和C2作用良定；层化在普通点上所有截面可由一点拉回表示，作用平凡，而id_K两符号不可能在有限联合满射覆盖上识别。故实际一般层不下降，未假设点函子保守。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S5",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "沿B局部提升共同Q截面，拉回实现迫使局部稳定子固定e，层分离性回到全局，取得精确反映性；不要求全局截面或B可表示。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 116,
+          "line_end": 120,
+          "utf8_start": 8828,
+          "utf8_end": 9325,
+          "quote": "**是。** 设 \\(B\\to Q\\) 局部满射，且 \\(E\\times_Q B\\) 可在 \\(B\\) 上实现。给定 \\(e\\in E(P)\\) 和固定 \\(x=\\pi(e)\\) 的 \\(\\gamma\\)，选有限覆盖 \\((P_i\\to P)\\)，使 \\(q(x)|_{P_i}\\) 提升为 \\(b_i\\in B(P_i)\\)。在拉回对象中，\\(\\gamma\\) 固定 \\((e|_{P_i},b_i)\\) 的底截面 \\((x|_{P_i},b_i)\\)。由 S3 判据的必要性，\n\\[\na_\\gamma(e)|_{P_i}=e|_{P_i}.\n\\]\n层的分离性给出 \\(a_\\gamma(e)=e\\)。于是原对象满足 S3 的充分条件，可在 \\(Q\\) 上实现。\n"
+        }
+      ],
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "沿B局部提升共同Q截面，拉回实现迫使局部稳定子固定e，层分离性回到全局，取得精确反映性；不要求全局截面或B可表示。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S6",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "非空单点可表示B仅覆盖平凡纤维，另一基底点上交换两元素使原E不下降；额外检验原则将点决定截面、局部满射族和Q终对象特殊情形准确条件化。",
+      "evidence": [
+        {
+          "source_id": "answer",
+          "pointer": "",
+          "line_start": 124,
+          "line_end": 132,
+          "utf8_start": 9363,
+          "utf8_end": 10667,
+          "quote": "**否。** 取 \\(\\Gamma=C_2\\) 平凡作用于 \\(T=\\{0,1\\}\\)，于是 \\(Q=H=h_T\\)。令 \\(X\\to T\\) 在 \\(0\\) 上有一个元素，在 \\(1\\) 上有两个元素。令生成元固定前一个元素，交换后两个元素。这给出等变对象 \\(E=h_X\\to H\\)。\n\n取非空可表示层 \\(B=h_{\\{0\\}}\\to Q\\)。此时 \\(H_B=B\\)，且 \\(E\\times_Q B\\simeq B\\) 带平凡作用，取 \\(D=B\\to B\\) 即得实现。在原基底上，生成元固定 \\(1\\)，却交换其纤维的两个元素，故由 S2，\\(E\\) 不可在 \\(Q\\) 上实现。\n\n可用的检验原则如下。\n\n- 对任意层，S3 的稳定子条件在所有测试空间上给出充要判据。若每个 \\(E(P)\\) 的截面都由其在 \\(P\\) 的各点上的限制唯一确定，则单点检验已足够，因为可以逐点验证 \\(a_\\gamma(e)=e\\)。可表示层具有这一性质，S4 说明一般层可能缺少它。\n- 可实现性沿任意基底拉回保持，沿局部满射拉回也能反映。S5 的证明同样适用于一族基底，只要每个 \\(Q\\)-截面在某个有限覆盖的各块上都能提升到这族基底中的某个成员。\n- 当 \\(Q=*\\) 时，非空可表示层 \\(B\\) 的一个点就给出 \\(B\\to *\\) 的截面，故可用 S5。对一般 \\(Q\\)，非空性只保证 \\(B\\) 有点，不能保证各个 \\(Q\\)-截面局部有提升。"
+        }
+      ],
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "非空单点可表示B仅覆盖平凡纤维，另一基底点上交换两元素使原E不下降；额外检验原则将点决定截面、局部满射族和Q终对象特殊情形准确条件化。",
+        "reasons": []
+      }
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-nonlean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/nonlean/MG-GR009/delivery.v1.json",
+      "bytes": 3078,
+      "sha256": "b3d9cabceafc14f71907e9a12bf798ce46cc3bda6d2b9457f126e5763c9e64d6"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "original_final": {
+      "path": "sessions/MG-GR009/physical-1/output/response.md",
+      "bytes": 10667,
+      "sha256": "8a3c7363426b2b6807c69eb8897733c3c4cee513489eb41172e5795420c7aace"
+    },
+    "full_candidate_prompt": {
+      "path": "sessions/MG-GR009/physical-1/input/task.md",
+      "bytes": 2254,
+      "sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143"
+    },
+    "original_seal": {
+      "path": "sessions/MG-GR009/physical-1/runtime/seal.json",
+      "bytes": 849,
+      "sha256": "d0249ab06cd867c924bc5c042f01f0fc5bb0f97b1a5a8960f8cf3e8cd5bc7db9"
+    },
+    "terminal_source_observation": {
+      "path": "sessions/MG-GR009/physical-1/runtime/terminal-source-observation.json",
+      "bytes": 830,
+      "sha256": "a53eecef506aa4fe0496adc92ccc646ba23753677fe3cbbc7697dfa2a3e9848c"
+    },
+    "acquisition_plan_sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1",
+    "native_final_sha256": "8a3c7363426b2b6807c69eb8897733c3c4cee513489eb41172e5795420c7aace",
+    "collection_sha256": "2d78db07c9e254b2306fa7a1d72543596131a8248fd51daaa5fd844b34660df4",
+    "task_sha256": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+    "rubric_sha256": "5461942bd5353f7069401cd9e91d696ae5209179df00329cc8dcc51416d57135",
+    "reference_sha256": "ed6a569d9ed574c65d931262e24a053478f3b0d419be9d9620ee91f4602c92ee"
+  },
+  "assembly_original_review": {
+    "path": "grading/nonlean/MG-GR009/review.v1.json",
+    "bytes": 18916,
+    "sha256": "53b760170edff75515c3cc2c49bdf47b02fef1a324975407bdfe48b720cc2446"
+  },
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-GR009:A1",
+  "binding": {
+    "plan_sha256": "fcc9fb6adb911ee3be059b462246c497e565e02f754811755de6e6c9e88be370",
+    "slot_id": "MG-GR009:A1",
+    "evidence_id": "e984684e3ffde7f31daafbc9f36eda858851688012124c72410570379e1308c1",
+    "response_sha256": "8a3c7363426b2b6807c69eb8897733c3c4cee513489eb41172e5795420c7aace",
+    "history_sha256": "6a00400ae3f061c409a9204287e8b80a911e1984101e8c37bdd1d01870f8e586",
+    "projected_request_sha256": "694d4e68e91dd50d4e09f3dafc8f05b43f28d554635d44ddab7e895cb3ce9ddb",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "bfaea0af7120686e2caabe0191ce0e40396fbea5b3815964b662054773578aea",
+    "body_origin": {
+      "slot_id": "MG-GR009:A1",
+      "response_sha256": "8a3c7363426b2b6807c69eb8897733c3c4cee513489eb41172e5795420c7aace",
+      "start_byte": 0,
+      "end_byte": 10667
+    },
+    "body_sha256": "8a3c7363426b2b6807c69eb8897733c3c4cee513489eb41172e5795420c7aace",
+    "rationale_sha256": null,
+    "request_sha256": "694d4e68e91dd50d4e09f3dafc8f05b43f28d554635d44ddab7e895cb3ce9ddb",
+    "group_contract_sha256": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a"
+  },
+  "format_review": {
+    "decision": "valid",
+    "notes": "Original normal final is a resolved independent A1; full supplied text retained."
+  },
+  "post_observation": true,
+  "new_candidate_calls": 0,
+  "original_judgment": {
+    "path": "settlement/assessment-20261120T163559.038956Z/judgments/MG-GR009.json",
+    "bytes": 19664,
+    "sha256": "fd0fac1b55a2bc6d87968a4f40e7daeb0d1efd561753700583981b7794f20b19"
+  },
+  "review_sha256": "a24f5db12663e63e17bf316e327f50eff647b395973491d87b947d622af6bafd"
+}

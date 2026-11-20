@@ -1,0 +1,25 @@
+**附件完整覆盖了正文的节点域加细定义，以及该情形下一步加细保持外延等价的命题。** `NetworkRefinement.node_domain` 要求保留节点之间的完整边域满足正文的交集公式。给定正文所列的分划和局域算子，`NodePartitionData.network_refinement` 构造出满足这一要求的网络。用 Lean 4.29.1 重新编译了该构造及其依赖，共 24 个附件模块，编译通过。[一步加细关系](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:407) · [构造满足该关系的证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:449)
+
+1. **分划与局域算子。** `NodePartitionData` 用 `Fin count`、`count_pos`、`nonempty`、`disjoint` 和 `cover` 表达有限正数个非空块，两两不交，且并集恰为目标节点的**整个**定义域 \(U_\beta\)。`local_domain` 给出 \(\operatorname{dom}(f_{\beta,a})=U_{\beta,a}\)，`local_eq` 给出块内逐点相等。块外因不属于定义域，算子值必为 \(\bot\)，所以 `local_op_eq_restrict` 证明了全算子等式 \(f_{\beta,a}=f_\beta|_{U_{\beta,a}}\)。一块分划也在允许范围内。[分划数据与限制算子定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:12)
+
+2. **节点与入口。** 设 \(\pi\) 将子节点投回 \(\beta\)，将其余标签投回对应旧节点。`source_injective` 排除重复副本，`old_node_present` 和 `old_node_op_compat` 保证每个未拆旧节点恰有一个对应节点，算子相等。`same_input_domain` 给出 \(U'=U\)。由入口投影、入口点属于所在节点域，以及同一旧节点的不同子域互斥，`entry_domain_eq` 证明
+   \[
+   U'^{\mathrm{in}}_v=U^{\mathrm{in}}_{\pi v}\cap U'_v.
+   \]
+   对子节点，这正是正文的入口交集。对其余节点，旧入口片已包含于节点域，交集就等于旧入口片。空交集表示该节点没有入口输入，它仍可能由前驱到达。[节点与入口条件](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:85) · [入口交集定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:283)
+
+3. **边域，包括自环与未使用的边。** 记 \(I'_v=f'_v(U'_v)\) 为完整局域输出像。`NodeDomainRefinement.edge_domain_eq` 对每对保留节点要求
+   \[
+   D'_{v\to w}=D_{\pi v\to\pi w}\cap I'_v\cap U'_w.
+   \]
+   原边域本就包含于原源节点输出像和原目标节点域。因此，两端均未拆时得到原边域；仅目标被拆时只需交 \(U_{\beta,a}\)；仅源被拆时只需交 \(f_{\beta,a}(U_{\beta,a})\)；原自环则同时交源块输出像与目标块输入域，允许 \(a=b\) 或 \(a\ne b\)。边由边域非空来识别。辅助结构 `OperationalNodeDomainRefinement` 的 `choice_projection` 只约束实际产生的输出，单凭它无法确定未使用的边。正式关系另外要求上述集合等式，具体构造的 `network_edge_domain_eq` 已证明该等式。[正式关系的边域字段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:118) · [具体构造的边域定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:346)
+
+4. **轨迹与删点。** `colour_path` 在每次经过 \(\beta\) 时，用**该次发生的当前输入**选择唯一子块。因而即使一条路径反复经过 \(\beta\)，每次也可选择不同子节点。`coloured_terminal`、`coloured_eval` 和 `colour_path_length` 分别证明新路径合法终止、输出相等、长度相等，故原统一长度界可直接使用。随后 `piece_label_reached_iff` 证明，子块恰在某条原入口轨迹的一次 \(\beta\) 发生收到该块中的输入时保留。`prune` 删除其余标签及关联边，`network_path_projection` 证明删点后的实际路径逐项投影回原路径。[逐次选块与求值证明](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:168) · [子块保留判据](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:310)
+
+**终止域须区分删点前后。** 正文在删点前使用 \(T^{\mathrm{pre}}_{\beta_a}=I'_{\beta_a}\cap T_\beta\)。这可从构造直接推出，因为每个原后继在合法输出处都能提升到唯一的新标签。删点后，终止域是输出像减去**通往保留节点**的边域之并，可能严格扩大。源码的 `prune_choice` 正是在后继被删时改取 `stop`，同时由 `prune_choice_next_iff` 保留两端均在的边在每个输出点上的选择。[正文证明中公式的适用阶段](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/source.md:1101) · [删点的路由定义与定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_presentation.lean:35)
+
+例如，取 \(\mathcal X=\{\bot,a,b,c\}\)，节点 \(\alpha,\beta\) 都用恒等算子，入口片分别为 \(\{a\},\{b\}\)，唯一边域为 \(D_{\alpha\to\beta}=\{b,c\}\)。两个入口输入都一步终止。将 \(\beta\) 分成 \(\{a,b\}\) 和 \(\{c\}\) 后，第一块因入口 \(b\) 保留，第二块被删。于是从 \(\alpha\) 通往第一块的边域 **\(\{b\}\) 必须保留**，尽管没有入口轨迹经过这条边。通往第二块的边随节点删除，故 \(T_\alpha\) 从 \(\{a\}\) 扩大为 \(\{a,c\}\)。这同时说明了完整边域等式的作用，以及为何删点后只需在实际输出上要求路由投影一致。
+
+**源码已证明的外延结论。** 对任意正式加细见证，`path_projection` 由实际路由投影和确定性终止路径的唯一性得到路径对应，`eval_projected` 由各步算子在当前输入上相等得到求值对应。`refinement_preserves_local_equivalence` 据此证明正文所写的 \(\phi_{N'}\equiv_U\phi_N\)。对从分划数据构造的网络，`network_extensional_eq` 还直接证明了全空间上的算子等式。对任意关系见证，全空间等式也由同域、域内逐点相等、域外同取 \(\bot\) 直接推出。删点前的终止域交集式和实际最大深度相等可以另列为推论；所问定义与外延命题本身无需修复。[一般局部等价定理](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/network_refinement.lean:453) · [具体构造的全算子等式](/private/tmp/math-gauge-astra62-xhigh-api-20261120/sessions/AHR03/physical-1/work/formal_oet/vol_01/ch_05_operator_networks/domain_refinement_construction.lean:258)
+
+正文与 Lean 源码出自 Zhe Li（Glen Li / glenzli）的《The Operator Evolution Theory》，本审阅针对所附版本。[作品主页](https://glenzli.com/books/oet/) · [作者 ORCID](https://orcid.org/0009-0006-6536-3453) · [公开仓库](https://gitlab.com/glenzli/oet-public) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)

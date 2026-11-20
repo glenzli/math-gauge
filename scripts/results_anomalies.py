@@ -5,14 +5,17 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from math_gauge.evidence_retention import read_json
 from math_gauge.execution_anomalies import validate_public
 from scripts.results_attempt_history import validate_public as validate_attempt_history
+from scripts.results_rankings import model_display_key
 
 
 HEADINGS = {
-    "timeout": "超时", "service_stream_connection": "断流／服务错误", "http_429": "429",
-    "output_or_context_limit": "输出／上下文耗尽", "harness_environment": "运行器／环境", "other": "其他",
-    "server_errors": "服务端错误", "context": "上下文", "runner": "运行器",
+    "timeout": ("超时", "Timeout"), "service_stream_connection": ("断流／服务错误", "Stream / service errors"),
+    "http_429": ("429", "429"), "output_or_context_limit": ("输出／上下文耗尽", "Output / context limit"),
+    "harness_environment": ("运行器／环境", "Harness / environment"), "other": ("其他", "Other"),
+    "server_errors": ("服务端错误", "Server errors"), "context": ("上下文", "Context"), "runner": ("运行器", "Harness"),
 }
 COVERAGE = {"complete": "完整留档批次", "partial": "部分记录", "unknown": "缺少运行记录",
             "qualitative_only": "仅有定性记录"}
@@ -174,66 +177,182 @@ def render_model_details(document, model_id, *, root=None, attempt_reference=Non
         '<p class="panel-foot">已核对运行包含正式题目作答及重试；异常次数仅计模型、服务端或原生Harness自身的问题。</p>'
         '<p class="panel-foot">测试脚本、采集器、本地适配器和环境配置导致的中断不计入；记录不全或归因待确认时，仅列已核实次数。</p>'
         + notes +
-        '<p class="panel-foot"><a data-context-link href="../../index.html#execution-anomalies">返回运行异常统计 →</a></p>'
+        '<p class="panel-foot"><a href="../../../docs/execution-anomalies.md">'
+        +_languages('异常记录口径与来源 →', 'Anomaly definitions and sources →', tag='span')+'</a> · '
+        '<a href="../../downloads/execution-anomalies.json" download>'
+        +_languages('下载异常统计', 'Download anomaly summary', tag='span')+'</a></p>'
         '</section>'
     )
 
 
-def render_panel(document, *, models=(), attempt_reference=None):
-    model_labels = {model['id']: model['label'] for model in models}
-    attempts = render_attempt_summary(attempt_reference, labels=model_labels)
-    if document is None and not attempts:
-        return ""
-    if document is None:
-        return '<details class="panel execution-anomalies" id="execution-anomalies"><summary>运行与重试记录</summary>'+attempts+'</details>'
+def _initial_attempt_counts(model, complete, root):
+    """Take counts only from the applicable retained run scope."""
+    if complete:
+        counts = complete['totals']
+        return tuple(counts[key] for key in ('lifecycle_records', 'effective_attempts',
+            'additional_effective_attempts', 'system_exclusions')), ('任务尝试记录', 'Task-attempt records')
+
+    path = model.get('source_record')
+    if root is None or not path:
+        return (None, None, None, None), ('参见历史异常样本', 'See historical anomaly sample')
+    record = read_json(Path(root) / path)
+    summary = record.get('execution_summary', {})
+    requests = summary.get('physical_model_requests')
+    system = summary.get('pure_system_exclusions')
+    if type(requests) is int and type(system) is int and summary.get('physical_requests_include_selfcheck'):
+        effective = requests - system
+        retries = summary.get('native_model_attempt_retries')
+        slots = summary.get('planned_initial_tasks', 0) + summary.get('prescribed_selfcheck_rounds', 0)
+        delivered = summary.get('delivered_initial_tasks', 0) + summary.get('delivered_selfcheck_rounds', 0)
+        if retries is None and slots == delivered and 0 < slots <= effective:
+            retries = effective - slots
+        return (requests, effective, retries, system), ('外层物理请求', 'Outer physical requests')
+
+    if 'request_history_counts' in summary:
+        counts = summary['request_history_counts']
+        return (counts['retained_lifecycle_records'], counts.get('effective_attempts_after_source_bound_correction'),
+                None, None), ('部分归因未结算', 'Some classifications remain unsettled')
+
+    if 'physical_initial_preparations' in summary:
+        return (summary['physical_initial_preparations'], None, None, summary.get('pure_system_initial_exclusions')), (
+            '仅首答准备记录', 'Initial-answer preparations only')
+
+    if summary.get('native_first_final_verified_within_deadline') and summary.get('effective_retry_attempts') == 0:
+        return (summary.get('total_physical_invocations'), summary['scored_deliveries'], 0, None), (
+            '已核对的候选交付', 'Verified candidate deliveries')
+
+    return (None, None, None, None), ('尝试总数缺少统一记录', 'Complete attempt counts unavailable')
+
+
+def _render_attempt_table(models, attempt_reference, resources, root):
+    if attempt_reference is not None:
+        validate_attempt_history(attempt_reference)
+    complete = (attempt_reference or {}).get('models', {})
+    by_id = {model['id']: model for model in models}
+    base_phase = ('首答／自查', 'Initial answers / self-checks')
+    rows = []
+
+    def row(model_id, phase, phase_label, counts, note):
+        cells = ''.join('<td class="numeric">'+('—' if count is None else str(count))+'</td>' for count in counts)
+        return ('<tr data-run-phase="'+phase+'" data-run-model="'+html.escape(model_id, quote=True)+'">'
+                '<th scope="row">'+html.escape(by_id.get(model_id, {}).get('label', model_id))+'</th><td>'
+                +_languages(*phase_label, tag='span')+'</td>'+cells
+                +'<td class="attempt-scope">'+_languages(*note, tag='span')+'</td></tr>')
+
+    if root is not None or complete:
+        for model in sorted(models, key=model_display_key):
+            mid = model['id']
+            counts, note = _initial_attempt_counts(model, complete.get(mid), root)
+            rows.append(row(mid, 'initial', base_phase, counts, note))
+        for mid in sorted(complete.keys() - by_id.keys()):
+            counts, note = _initial_attempt_counts({}, complete[mid], root)
+            rows.append(row(mid, 'initial', base_phase, counts, note))
+
+    reasons = {'capacity': ('容量不足', 'Service at capacity'),
+               'network': ('网络故障', 'Network failure'), 'system': ('系统故障', 'System failure')}
+    for resource in sorted(resources, key=lambda item: model_display_key(by_id.get(item['id'], item))):
+        revision = resource['revision']
+        requests = revision.get('physical_requests')
+        if requests is None:
+            selected = revision['planned_calls']
+            reused = revision['reused_calls']
+            counts = (selected, selected, None, None)
+            note = (f'已采纳调用，含 {reused} 次复用', f'Adopted calls, {reused} reused')
+        else:
+            effective = revision['effective_attempts']
+            system = revision.get('system_exclusions', 0) if requests == effective else revision.get('system_exclusions')
+            counts = (requests, effective, effective - revision['selected_tasks'], system)
+            failures = revision.get('system_failure_reasons', {})
+            note = ('、'.join(reasons[key][0] for key in failures),
+                    ', '.join(reasons[key][1] for key in failures)) if failures else ('外层物理请求', 'Outer physical requests')
+        rows.append(row(resource['id'], 'continuation', ('1.2.0 续答', '1.2.0 continuation'), counts, note))
+
+    if not rows:
+        return ''
+    headings = (('模型', 'Model'), ('阶段', 'Phase'), ('留档次数', 'Recorded'), ('有效尝试', 'Effective attempts'),
+                ('有效重试', 'Effective retries'), ('系统排除', 'System exclusions'), ('说明', 'Notes'))
+    downloads = []
+    if complete:
+        downloads.append('<a href="downloads/execution-attempts.json" download>'
+                         +_languages('完整尝试摘要', 'Complete attempt summary', tag='span')+'</a>')
+    if resources:
+        downloads.append('<a href="downloads/continuation-resources.json" download>'
+                         +_languages('续答资源', 'Continuation resources', tag='span')+'</a>')
+    downloads.append('<a href="../docs/execution-attempts.md">'
+                     +_languages('统计口径 ↗', 'Counting method ↗', tag='span')+'</a>')
+    return (
+        '<section aria-label="Attempt counts" class="run-history-attempts">'
+        '<div class="table-wrap" tabindex="0" role="region" aria-label="按模型和阶段统计的尝试">'
+        '<table class="compact attempt-table run-history-table"><thead><tr>'
+        +''.join('<th scope="col"'+(' class="numeric"' if 2 <= i <= 5 else '')+'>'
+                 +_languages(zh, en, tag='span')+'</th>' for i, (zh, en) in enumerate(headings))
+        +'</tr></thead><tbody>'+''.join(rows)+'</tbody></table></div>'
+        +_languages('留档次数沿用各批原始单位。— 表示来源未确认。确认的系统故障进入重试记录，有效尝试用于成本和耗时统计。',
+                    'Recorded counts retain the source units. A dash means the source does not confirm a count. '
+                    'Confirmed system failures remain in retry history. Cost and time use effective attempts.',
+                    css='attempt-note')
+        +'<p class="anomaly-links">'+' · '.join(downloads)+'</p></section>')
+
+
+def _render_historical_anomalies(document, models, source_edition):
     validate_public(document)
     categories = document["categories"]
     labels = {model["id"]: model for model in models}
     rows = []
-    ordered = sorted(document["rows"], key=lambda r: (
-        r["anomalous_runs"]["known"] == 0 and r["anomalous_runs"]["exact"] is None and not r["reviewed_runs"],
-        -r["anomalous_runs"]["known"], r["model_label"].casefold(), r["harness_label"], r["route"]))
+    ordered = sorted(document["rows"], key=lambda row: (
+        model_display_key(labels.get(row['model_id'], {'id': row['model_id'], 'label': row['model_label']})),
+        row['harness_label'], row['route']))
     for row in ordered:
         model = labels.get(row["model_id"])
-        label = html.escape(row["model_label"])
-        if model is not None:
-            label = '<a data-context-link href="models/' + html.escape(row["model_id"], quote=True) + '/index.html">' + label + '</a>'
+        label = html.escape(model["label"] if model else row["model_label"])
+        route = 'models/' + row['model_id']
+        fixed = ''
+        if model:
+            route += '/index.html'
+            if source_edition:
+                route += '?edition=' + source_edition
+                fixed = ' data-fixed-edition="' + html.escape(source_edition, quote=True) + '"'
         else:
-            label = '<a data-context-link href="models/' + html.escape(row["model_id"], quote=True) + '/operations.html">' + label + '</a>'
+            route += '/operations.html'
+        label = '<a'+fixed+' href="'+html.escape(route+'#execution-anomalies', quote=True)+'">'+label+'</a>'
         if row["anomalous_runs"]["exact"] is None:
             label += '<sup aria-describedby="anomaly-history-note">*</sup>'
         harness = _harness(row)
         cells = ''.join('<td class="numeric">' + _count(row["categories"][key]) + '</td>' for key in categories)
         rows.append('<tr><th scope="row" class="anomaly-model">' + label + '</th>'
                     '<td class="anomaly-harness">' + harness + '</td>'
+                    '<td class="numeric">' + (str(row["reviewed_runs"]) if row["reviewed_runs"] else '—') + '</td>'
                     '<td class="numeric">' + _count(row["anomalous_runs"], total=True, show_known=bool(row["reviewed_runs"]))
                     + '</td>' + cells + '</tr>')
     timestamp = datetime.fromisoformat(document["cutoff_utc"].replace("Z", "+00:00")).astimezone(ZoneInfo("Asia/Singapore"))
-    overview = []
-    for model_id, model in (attempt_reference or {}).get('models', {}).items():
-        total = model['totals']
-        name = html.escape(model_labels.get(model_id, model_id))
-        overview.append(_languages(name+' · '+str(total['lifecycle_records'])+'次尝试 · '
-                                   +str(total['additional_effective_attempts'])+'次有效重试',
-                                   name+' · '+str(total['lifecycle_records'])+' attempts · '
-                                   +str(total['additional_effective_attempts'])+' effective retries', tag='span'))
+    cutoff = timestamp.strftime("%Y-%m-%d %H:%M") + ' SGT'
+    headings = [('模型', 'Model'), ('Harness', 'Harness'), ('已核对运行', 'Reviewed runs'), ('异常运行', 'Anomalous runs')]
+    headings.extend(HEADINGS[key] for key in categories)
     return (
-        '<details class="panel execution-anomalies" id="execution-anomalies" aria-labelledby="execution-anomalies-title">'
-        '<summary class="panel-head"><strong id="execution-anomalies-title">运行与重试记录</strong>'
-        '<span class="anomaly-cutoff">'+(''.join(overview) if attempts else '历史异常样本')
-        +'</span></summary>'+attempts+
-        '<div class="panel-head"><div><h3>历史异常样本</h3>'
-        '<p class="panel-desc">只统计正式题目作答及重试；同一次运行可涉及多类异常，合计去重。</p></div>'
-        '<span class="anomaly-cutoff">截至 ' + timestamp.strftime("%Y-%m-%d %H:%M") + ' SGT</span></div>'
-        '<div class="anomalies-scroll" tabindex="0" role="region" aria-label="模型与Harness运行异常统计">'
-        '<table class="anomalies-table"><thead><tr><th scope="col">模型</th><th scope="col">Harness</th>'
-        '<th scope="col" class="numeric">异常运行</th>'
-        + ''.join('<th scope="col" class="numeric">' + HEADINGS[key] + '</th>' for key in categories)
+        '<details class="historical-anomalies run-history-snapshot"><summary>'
+        +_languages('历史异常样本 · 截至 '+cutoff, 'Historical anomaly sample · as of '+cutoff, tag='span')
+        +'</summary><div class="table-wrap" tabindex="0" role="region" aria-label="模型与Harness运行异常统计">'
+        '<table class="compact attempt-table run-history-table anomalies-table"><thead><tr>'
+        + ''.join('<th scope="col"'+(' class="numeric"' if i >= 2 else '')+'>'
+                 +_languages(zh, en, tag='span')+'</th>' for i, (zh, en) in enumerate(headings))
         + '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>'
-        '<div class="anomaly-notes"><p>订阅额度耗尽、主动取消及正常续接本身不计异常；恢复后成功交卷的真实断流或429仍计入。</p>'
-        '<p>测试脚本和环境配置导致的中断已排除；原生Harness自身的超时、回传与上下文故障照计。</p>'
-        '<p id="anomaly-history-note">* 部分历史运行记录未能补全或异常归因未确认；表中仅列已核实次数。</p>'
-        '<p>—表示记录不足，不能视作0。不同模型的运行次数、留档范围与环境不同，本表不作可用性排名，也不影响数学分数。</p>'
-        '<div class="anomaly-links"><a href="../docs/execution-anomalies.md">统计口径与来源 ↗</a>'
-        '<a href="downloads/execution-anomalies.json" download>下载异常统计</a></div></div></details>'
+        '<p class="attempt-note" id="anomaly-history-note">'
+        +_languages('* 表示记录不全或归因未定，数字为已核实次数。历史异常合计按运行去重，独立于上表的尝试次数。',
+                    '* indicates incomplete records or unresolved attribution. Values show verified counts. '
+                    'Historical totals count unique runs independently of the attempt counts above.', tag='span')
+        +'</p><p class="anomaly-links"><a href="../docs/execution-anomalies.md">'
+        +_languages('异常统计口径 ↗', 'Anomaly counting method ↗', tag='span')+'</a> · '
+        '<a href="downloads/execution-anomalies.json" download>'
+        +_languages('下载异常统计', 'Download anomaly summary', tag='span')+'</a></p></details>'
     )
+
+
+def render_panel(document, *, models=(), attempt_reference=None, continuation_resources=(),
+                 source_root=None, source_edition=None):
+    attempts = _render_attempt_table(models, attempt_reference, continuation_resources, source_root)
+    history = _render_historical_anomalies(document, models, source_edition) if document is not None else ''
+    if not attempts and not history:
+        return ''
+    return ('<details class="panel subboard execution-anomalies" id="execution-anomalies"><summary><strong>'
+            +_languages('运行与重试记录', 'Attempts and retries', tag='span')
+            +'</strong></summary><div class="run-history-body">'+attempts+history+'</div></details>')

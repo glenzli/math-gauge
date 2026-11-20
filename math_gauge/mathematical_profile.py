@@ -14,25 +14,17 @@ import re
 
 from .evidence_retention import read_bytes, is_file
 
-VERSION = '0.3.0'
-PREVIOUS_VERSION = '0.2.0'
-LEGACY_VERSION = '0.1.0'
-VERSIONS = (LEGACY_VERSION, PREVIOUS_VERSION, VERSION)
-WHOLE_COMPLETION = 'all-visible-goals-per-task;whole-three-round-selfcheck;TX-baseline-only'
+VERSION = '0.4.0'
+VERSIONS = (VERSION,)
 EDITION = '1.1.0'
 CONDITION = 'nonlogical_retry_3'
 AXES = ('proof', 'fidelity', 'completion', 'discernment', 'initiative', 'depth', 'closure')
 BEHAVIOR = frozenset(AXES) - {'completion'}
-FAMILIES = dict.fromkeys(AXES, 35)
-LEGACY_FAMILIES = dict(zip(AXES, (20, 35, 35, 11, 6, 11, 11)))
+FAMILIES = dict.fromkeys(BEHAVIOR, 35)
+COMPLETION = 'official-SMC;nonlogical_retry_3;unchanged-main-weights-and-trajectory'
+CORE_GATE = 'original-required-core;no-refuted-or-essential-unproved-core-at-grade3or4'
 POLICY_PATH = 'protocol/mathematical-profile.json'
-INDEX_PATH = 'results/mathematical-profiles/v0.3.0/index.json'
-_LEGACY_ANCHOR = ('protocol/mathematical-profile.md',
-                  '98c40378e115a041649241a38cad3e4fa22a0b169fc21cf17683620badafdbb9')
-_LEGACY_POLICY_SHA256 = 'de25ce588b61bf8e689f1f79202931b9467258df4c09ca4d13e4319bad0212a3'
-_PREVIOUS_POLICY_SHA256 = 'b0ed9e2e9f50f248dcc0f060f12b1fcb513869c43d92bddb3936969574770158'
-_PREVIOUS_ANCHOR = ('protocol/mathematical-profile.md',
-                    'd19302d80c8ee2441f4f3f33f9e7089cc8d6f6c724a759170a9b693daf8e7268')
+INDEX_PATH = 'results/mathematical-profiles/v0.4.0/index.json'
 _HASH = re.compile(r'[0-9a-f]{64}\Z')
 
 
@@ -52,14 +44,6 @@ def _text(value):
 def index_path(version=VERSION):
     _require(version in VERSIONS, 'Unsupported mathematical-profile version')
     return 'results/mathematical-profiles/v' + version + '/index.json'
-
-
-def _families(policy):
-    return LEGACY_FAMILIES if policy['version'] == LEGACY_VERSION else FAMILIES
-
-
-def _behavior(policy):
-    return BEHAVIOR - {'closure'} if policy.get('version') == LEGACY_VERSION else BEHAVIOR
 
 
 def _relative(value):
@@ -96,65 +80,29 @@ def validate_policy(policy):
              and policy.get('formal_comparison_eligible') is False,
              'Profiles cannot change candidate calls, main scores, eligibility or edition1.0')
     _require([a.get('id') for a in policy.get('axes', [])] == list(AXES)
-             and policy.get('planned_families') == _families(policy)
+             and policy.get('planned_families') == FAMILIES
              and _hash(policy.get('private_contract_sha256')), 'Profile axes or fixed families differ')
     for axis in policy['axes']:
         for field in ('label', 'description'):
             _require(set(axis.get(field, {})) == {'zh', 'en'}
                      and all(_text(v) for v in axis[field].values()), 'Profile axis needs bilingual copy')
-    if policy['version'] == PREVIOUS_VERSION:
-        previous = policy.get('previous_component', {})
-        _require(previous.get('version') == LEGACY_VERSION
-                 and previous.get('policy') == dict(path='protocol/mathematical-profile-v0.1.0.json',
-                                                    sha256=_LEGACY_POLICY_SHA256)
-                 and previous.get('anchors') == dict(path='protocol/mathematical-profile-v0.1.0.md',
-                                                     sha256=_LEGACY_ANCHOR[1]),
-                 'v0.2 must bind the exact immutable v0.1 policy and anchors')
-    if policy['version'] == VERSION:
-        previous = policy.get('previous_component', {})
-        _require(previous == dict(version=PREVIOUS_VERSION,
-                    policy=dict(path='protocol/mathematical-profile-v0.2.0.json',
-                                sha256=_PREVIOUS_POLICY_SHA256),
-                    anchors=dict(path='protocol/mathematical-profile-v0.2.0.md',
-                                 sha256=_PREVIOUS_ANCHOR[1])),
-                 'v0.3 must bind the exact immutable v0.2 policy and anchors')
-        _require(policy.get('completion') == WHOLE_COMPLETION,
-                 'v0.3 requires whole-task and whole-trajectory completion')
-        _require(policy.get('fidelity_core_gate')
-                 == 'any-required-core-scope-drift-without-delivered-bridge-caps-grade-at2',
-                 'v0.3 must retain its source-reviewed fidelity core gate')
+    _require('previous_component' not in policy,
+             'Only the current mathematical profile is retained')
+    _require(policy.get('completion') == COMPLETION,
+             'Completion must use the condition-selected official SMC')
+    _require(policy.get('proof_core_gate') == CORE_GATE,
+             'Proof requires the original-task core gate')
+    _require(policy.get('fidelity_core_gate')
+             == 'any-required-core-scope-drift-without-delivered-bridge-caps-grade-at2',
+             'Profile must retain its source-reviewed fidelity core gate')
     return policy
 
 
 def load_policy(root, *, version=None):
-    path = POLICY_PATH
-    if version in {LEGACY_VERSION, PREVIOUS_VERSION}:
-        legacy = 'protocol/mathematical-profile-v' + version + '.json'
-        if is_file(Path(root) / legacy):
-            path = legacy
-    elif version is not None:
-        _require(version == VERSION, 'Unsupported mathematical-profile version')
-    raw = read_bytes(Path(root) / path)
+    _require(version is None or version == VERSION, 'Unsupported mathematical-profile version')
+    raw = read_bytes(Path(root) / POLICY_PATH)
     policy = validate_policy(json.loads(raw))
-    _require(version is None or policy['version'] == version, 'Profile policy version differs')
-    anchor = policy['anchors']
-    # The immutable v0.1 policy names the original current document. Resolve
-    # that one exact old digest to its byte-identical frozen alias; never use an
-    # alias for arbitrary policies or conceal a damaged source with a fallback.
-    legacy_anchor = 'protocol/mathematical-profile-v' + policy['version'] + '.md'
-    old_anchor = {LEGACY_VERSION:_LEGACY_ANCHOR, PREVIOUS_VERSION:_PREVIOUS_ANCHOR}.get(policy['version'])
-    if (old_anchor is not None
-            and (anchor.get('path'), anchor.get('sha256')) == old_anchor
-            and is_file(Path(root) / legacy_anchor)):
-        anchor = dict(anchor, path=legacy_anchor)
-    source_bytes(root, anchor)
-    if policy['version'] != LEGACY_VERSION:
-        previous = policy['previous_component']
-        predecessor = source_bytes(root, previous['policy'])
-        _, predecessor_sha = load_policy(root, version=previous['version'])
-        _require(hashlib.sha256(predecessor).hexdigest() == predecessor_sha,
-                 'Profile predecessor differs from its frozen component')
-        source_bytes(root, previous['anchors'])
+    source_bytes(root, policy['anchors'])
     return policy, hashlib.sha256(raw).hexdigest()
 
 
@@ -171,41 +119,46 @@ def validate_contracts(contracts, policy):
              and len({r['family_id'] for r in rows}) == 35, 'Profile task/family denominator differs')
     _require(sum(r['kind'] == 'initial' for r in rows) == 39
              and sum(r['kind'] == 'selfcheck' for r in rows) == 3, 'Profile trajectory denominator differs')
-    for axis in AXES:
+    for axis in BEHAVIOR:
         relevant = [r for r in rows if axis in r['axis_weights']]
         _require(sum((Fraction(r['axis_weights'][axis]) for r in relevant), Fraction()) == 1
                  and all(Fraction(r['axis_weights'][axis]) > 0 for r in relevant)
-                 and len({r['family_id'] for r in relevant}) == _families(policy)[axis],
+                 and len({r['family_id'] for r in relevant}) == FAMILIES[axis],
                  'Profile weights or family count differ for ' + axis)
     for row in rows:
-        _require(set(row['axis_weights']) <= set(AXES), 'Unknown profile axis')
+        _require(set(row['axis_weights']) == BEHAVIOR, 'Unknown profile axis')
         goals = row['goals']
         _require(goals and len({g['id'] for g in goals}) == len(goals)
                  and all(type(g['weight']) in (int, float) and g['weight'] > 0 for g in goals),
                  'Profile goals need fixed positive independent weights')
-    if policy['version'] != LEGACY_VERSION:
-        by_family = {}
-        for row in rows:
-            _require(set(row['axis_weights']) == set(AXES),
-                     'Every v0.2 task must contribute to all seven axes')
-            by_family.setdefault(row['family_id'], []).append(row)
-        for variants in by_family.values():
-            initial = [r for r in variants if r['kind'] == 'initial']
-            rounds = [r for r in variants if r['kind'] == 'selfcheck']
+    by_family = {}
+    for row in rows:
+        _require(set(row['axis_weights']) == BEHAVIOR,
+                 'Every task must contribute to all six reviewed axes')
+        by_family.setdefault(row['family_id'], []).append(row)
+    for variants in by_family.values():
+        initial = [r for r in variants if r['kind'] == 'initial']
+        rounds = [r for r in variants if r['kind'] == 'selfcheck']
+        if rounds:
+            _require(len(initial) == 1 and initial[0]['id'] == 'MG-C003:A1'
+                     and {r['id'] for r in rounds} == {'MG-C003:R1', 'MG-C003:R2', 'MG-C003:R3'},
+                     'Only the C003 family contains the fixed selfcheck trajectory')
+        for row in variants:
             if rounds:
-                _require(len(initial) == 1 and initial[0]['id'] == 'MG-C003:A1'
-                         and {r['id'] for r in rounds} == {'MG-C003:R1', 'MG-C003:R2', 'MG-C003:R3'},
-                         'Only the C003 family contains the fixed selfcheck trajectory')
-            for row in variants:
-                if rounds:
-                    expected = Fraction(1, 70) if row['kind'] == 'initial' else Fraction(1, 210)
-                else:
-                    expected = Fraction(1, 35 * len(variants))
-                _require(all(Fraction(value) == expected for value in row['axis_weights'].values()),
-                         'v0.2 axes must preserve equal fixed family mass and C003 nesting')
+                expected = Fraction(1, 70) if row['kind'] == 'initial' else Fraction(1, 210)
+            else:
+                expected = Fraction(1, 35 * len(variants))
+            _require(all(Fraction(value) == expected for value in row['axis_weights'].values()),
+                     'Reviewed axes must preserve equal fixed family mass and C003 nesting')
     if policy['version'] == VERSION:
-        _require(contracts.get('completion_rule') == WHOLE_COMPLETION,
-                 'Private contracts must freeze whole-task and whole-trajectory acceptance')
+        _require(contracts.get('completion_rule') == COMPLETION
+                 and contracts.get('proof_core_gate') == CORE_GATE,
+                 'Private contracts must freeze official SMC and the original core gate')
+        for row in rows:
+            _require(row.get('proof_core') == dict(
+                required_goals=[g['id'] for g in row['goals']],
+                scope='Original task, including every required branch, dependency and representation bridge; valid alternative proofs or original-premise counterexamples are accepted.'),
+                'Proof core must cover the exact frozen original goals')
     public = {r['id']: r for r in policy['public_task_contracts']}
     _require(len(public) == 28 and set(public) == {r['id'] for r in rows if r['public']},
              'Public profile contract projection differs')
@@ -268,6 +221,7 @@ class ProfileInputs:
         validate_contracts(contracts, policy)
         validate_review(review, policy, contracts, materials,
                         roots=roots, policy_sha256=policy_sha256)
+        self.strict_report = json.loads(source_bytes(roots['private'], materials['sources']['selected_smc_report']))
         self.review, self.policy, self.contracts, self.materials = (
             deepcopy(review), deepcopy(policy), deepcopy(contracts), deepcopy(materials))
 
@@ -288,10 +242,10 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
              and materials.get('policy_sha256') == policy_sha256
              and materials.get('private_contract_sha256') == policy['private_contract_sha256'],
              'Profile review does not match its selected source materials')
-    if version != LEGACY_VERSION:
-        _require(materials.get('version') == version and materials.get('new_candidate_calls') == 0,
-                 'Profile materials differ in version or candidate calls')
-        _validate_prior_profile(review, materials, roots, contracts=contracts)
+    _require(materials.get('version') == version and materials.get('new_candidate_calls') == 0,
+             'Profile materials differ in version or candidate calls')
+    _require(not any(k.startswith(('prior_profile', 'prior_component')) for k in materials['sources']),
+             'Current profile must bind original evidence directly')
     contracts_by_id = {r['id']: r for r in contracts['tasks']}
     originals = {r['id']: r for r in materials['tasks']}
     rows = review.get('tasks', [])
@@ -348,6 +302,18 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
     _require(all(sources['selected_report'][k] == selected_report_ref[k] for k in ('path', 'sha256'))
              and all(sources[inputs_key][k] == private_manifest['inputs'][k] for k in ('path', 'sha256')),
              'Profile report or inputs are not the condition-selected source')
+    for alias, manifest in (('selected_smc_report', private_manifest),
+                            ('public_smc_report', public_binding)):
+        expected = manifest['scores']['strict'][CONDITION]
+        _require(all(sources[alias].get(k) == expected[k] for k in ('path', 'sha256')),
+                 'Profile SMC report is not the exact selected assessment')
+    private_smc, public_smc = original_json('selected_smc_report'), original_json('public_smc_report')
+    _require(sources['selected_smc_report']['repository'] == 'private'
+             and sources['public_smc_report']['repository'] == 'public'
+             and private_smc['metrics'] == public_smc['metrics']
+             and private_smc.get('score_mode') == 'strict'
+             and private_smc.get('attempt_condition') == CONDITION,
+             'Profile SMC public/private source or selected condition differs')
     inputs_raw = original(inputs_key)
     _require(hashlib.sha256(inputs_raw).hexdigest() == public_binding['private_inputs_sha256'],
              'Profile private inputs differ from the public source binding')
@@ -402,7 +368,6 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
 
     manuscript_aliases = {name for name in sources if name.startswith('manuscript:')}
     if manuscript_aliases:
-        _require(version != LEGACY_VERSION, 'Bound manuscript companions require a modern profile component')
         record_id = Path(sources['public_source_record']['path']).parent.name
         delivered = manuscript_delivery_sources(public_root, private_root, mid, record_id)
         for name in manuscript_aliases:
@@ -443,18 +408,18 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
 
     for row in rows:
         contract = contracts_by_id[row['id']]
-        expected = set(contract['axis_weights']) & _behavior({'version':version})
+        expected = set(contract['axis_weights']) & BEHAVIOR
         _require(set(row.get('axes', {})) == expected, 'Profile behavior axes differ from task contract')
         if version == VERSION:
             _validate_fidelity_core(row['axes']['fidelity'])
+            _validate_proof_core(row['axes']['proof'])
         for judgment in row['axes'].values():
             grade = judgment.get('grade')
             _require(grade is None or type(grade) is int and 0 <= grade <= 4,
                      'Profile behavior grade must be integer0to4 or unknown')
             _require(_text(judgment.get('reason')), 'Profile judgment needs its mathematical reason')
             evidence(judgment.get('evidence'), row['id'])
-            if version != LEGACY_VERSION:
-                _validate_assessment_status(judgment, grade, originals[row['id']], goal=False)
+            _validate_assessment_status(judgment, grade, originals[row['id']], goal=False)
         goals = row.get('goals', [])
         _require(len(goals) == len(contract['goals'])
                  and {g['id'] for g in goals} == {g['id'] for g in contract['goals']},
@@ -469,42 +434,32 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
                 _require(goal['passed'] is None, 'Unrun profile goals must remain unknown')
             _require(_text(goal.get('reason')), 'Profile goal needs its acceptance reason')
             evidence(goal.get('evidence'), row['id'])
-            if version != LEGACY_VERSION:
-                _validate_assessment_status(goal, goal['passed'], originals[row['id']], goal=True)
-        research = row.get('research')
-        if version != LEGACY_VERSION and research is None:
-            continue
-        if version == LEGACY_VERSION and contract['subcategory'] not in {'theorem-extension', 'manuscript-completion'}:
-            _require(research is None, 'Research opportunity was not frozen for this task')
-            continue
-        _require(isinstance(research, dict) and (research.get('complete') is None
-                 or type(research.get('complete')) is bool) and _text(research.get('reason')),
-                 'Profile research needs its actual result register')
-        _require(isinstance(research.get('results'), list)
-                 and isinstance(research.get('unfinished_claims'), list)
-                 and all(_text(v) for v in research['unfinished_claims']), 'Invalid research result register')
-        evidence(research.get('evidence'), row['id'])
-        for result in research['results']:
-            _require(_text(result.get('statement')) and _text(result.get('scope'))
-                     and type(result.get('substantive')) is bool
-                     and (result.get('complete') is None or type(result.get('complete')) is bool),
-                     'Research results need their actual scope and completion')
-            evidence(result.get('evidence'), row['id'])
-        if version == LEGACY_VERSION and contract['subcategory'] == 'theorem-extension' and research['complete'] is True:
-            _require(delivery == 'active_final' and any(r['substantive'] and r['complete'] is True
-                                                       for r in research['results']),
-                     'TX completion needs an actually delivered substantive independent result')
-        if delivery in {'blank', 'forced_content'}:
-            _require(research['complete'] is False, 'Undelivered research cannot be completed')
-        if delivery == 'not_run':
-            _require(research['complete'] is None, 'Unrun research must remain unknown')
+            _validate_assessment_status(goal, goal['passed'], originals[row['id']], goal=True)
     return review
+
+
+def _validate_proof_core(judgment):
+    grade, status = judgment.get('grade'), judgment.get('core_status')
+    allowed = {'established', 'local_gap', 'unresolved_core', 'refuted_core',
+               'no_valid_progress', 'not_run', 'source_unresolved'}
+    _require(status in allowed, 'Proof needs an explicit original-core assessment')
+    if grade is None:
+        _require(status == judgment.get('assessment_status')
+                 and status in {'not_run', 'source_unresolved'},
+                 'Unknown proof core needs the original missing-evidence state')
+    else:
+        _require(status not in {'not_run', 'source_unresolved'}, 'Known core cannot be unknown')
+        _require(grade != 4 or status == 'established', 'Proof grade4 requires an established original core')
+        _require(grade < 3 or status in {'established', 'local_gap'},
+                 'Refuted or essential unproved original core cannot receive proof grade3or4')
+        _require((grade == 0) == (status == 'no_valid_progress'),
+                 'Zero proof must retain its no-valid-progress status')
 
 
 def _validate_fidelity_core(judgment):
     grade, failed = judgment.get('grade'), judgment.get('core_scope_failure')
     _require(failed is None if grade is None else type(failed) is bool,
-             'v0.3 fidelity requires an explicit core-scope judgment; only unknown evidence stays unknown')
+             'Fidelity requires an explicit core-scope judgment; only unknown evidence stays unknown')
     _require(failed is not True or grade is not None and grade <= 2,
              'Unbridged drift of any required core scope cannot receive fidelity grade3or4')
 
@@ -512,7 +467,7 @@ def _validate_fidelity_core(judgment):
 def _validate_assessment_status(judgment, value, material, *, goal):
     status = judgment.get('assessment_status')
     _require(status in {'reviewed', 'operational_zero', 'not_run', 'source_unresolved'},
-             'v0.2 profile judgments need a typed assessment status')
+             'Profile judgments need a typed assessment status')
     _require((value is None) == (status in {'not_run', 'source_unresolved'}),
              'Only unrun or missing-source evidence may remain unknown')
     delivery = _delivery(material)
@@ -532,141 +487,8 @@ def _validate_assessment_status(judgment, value, material, *, goal):
                  'Missing-source unknowns must identify the unavailable evidence')
 
 
-def _validate_prior_profile(review, materials, roots, *, contracts=None):
-    """Bind revisions to v0.1; permit an explicit first profile without one."""
-    if review.get('version', materials.get('version')) == VERSION:
-        return _validate_recent_profile(review, materials, roots, contracts=contracts)
-    mid = review['model_id']
-    legacy_policy, legacy_digest = load_policy(roots['public'], version=LEGACY_VERSION)
-    legacy_index = Path(roots['public']) / index_path(LEGACY_VERSION)
-    index = json.loads(read_bytes(legacy_index)) if is_file(legacy_index) else None
-    if index is not None:
-        _require(index.get('version') == LEGACY_VERSION and index.get('policy_sha256') == legacy_digest,
-                 'Prior profile index differs from its immutable policy')
-    sources = materials['sources']
-    if index is None or mid not in index['models']:
-        prefix = 'results/mathematical-profiles/v0.1.0/' + mid + '/'
-        retained = any(is_file(Path(roots[repository]) / (prefix + name))
-                       for repository,name in (('public','profile.json'),
-                                               ('private','review.json'),
-                                               ('private','source-bindings.json')))
-        private_index = Path(roots['private']) / index_path(LEGACY_VERSION)
-        if is_file(private_index):
-            private = json.loads(read_bytes(private_index))
-            _require(private.get('version') == LEGACY_VERSION
-                     and private.get('policy_sha256') == legacy_digest,
-                     'Private prior profile index differs from its immutable policy')
-            retained = retained or mid in private['models']
-        _require(not retained, 'A retained or incomplete v0.1 profile cannot use the initial-profile path')
-        _require(review.get('review_origin') == 'initial_profile'
-                 and not {'prior_profile_review','prior_profile_materials'} & set(sources),
-                 'A first v0.2 profile needs explicit initial_profile origin and no invented predecessor')
-        if contracts is not None:
-            old_contracts = json.loads(source_bytes(roots['private'], dict(
-                path='protocol/mathematical-profile/v0.1.0/contracts.json',
-                sha256=legacy_policy['private_contract_sha256'])))
-            _validate_unchanged_profile_contracts(contracts, old_contracts)
-        return
-    _require(review.get('review_origin', 'bound_revision') == 'bound_revision',
-             'An existing v0.1 profile requires the bound-revision path')
-    old_public = validate_public(json.loads(source_bytes(roots['public'], index['models'][mid])),
-                                 legacy_policy, policy_sha256=legacy_digest)
-    prior = {}
-    for key, filename, digest_key in (
-            ('prior_profile_review', 'review.json', 'private_review_sha256'),
-            ('prior_profile_materials', 'source-bindings.json', 'private_materials_sha256')):
-        source = sources.get(key, {})
-        expected = 'results/mathematical-profiles/v0.1.0/' + mid + '/' + filename
-        _require(source.get('repository') == 'private' and source.get('path') == expected
-                 and source.get('sha256') == old_public[digest_key],
-                 'v0.2 supplements require the exact retained v0.1 profile source')
-        prior[key] = json.loads(source_bytes(roots['private'], source))
-    old_review, old_materials = prior['prior_profile_review'], prior['prior_profile_materials']
-    _require(all(value.get('model_id') == mid and value.get('version') == LEGACY_VERSION
-                 and value.get('policy_sha256') == legacy_digest
-                 and value.get('condition') == CONDITION for value in (old_review, old_materials)),
-             'Prior profile evidence belongs to another model, policy or condition')
-    _require(old_public['model_id'] == mid
-             and old_public['source_record'] == {k:sources['public_source_record'][k] for k in ('path','sha256')},
-             'Profile supplements cannot replace the original selected record')
-    old_sources = old_materials['sources']
-    _require(all(sources.get(key) == value for key,value in old_sources.items() if key != 'contracts'),
-             'Profile supplements cannot replace retained source evidence aliases')
-    _require({row['id']:row for row in materials['tasks']}
-             == {row['id']:row for row in old_materials['tasks']},
-             'Profile supplements cannot replace the original selected task states or answers')
-    if contracts is not None:
-        old_contracts = json.loads(source_bytes(roots['private'], old_sources['contracts']))
-        _validate_unchanged_profile_contracts(contracts, old_contracts)
-
-
-def _validate_recent_profile(review, materials, roots, *, contracts=None):
-    """Bind v0.3 to the selected v0.2 review without changing old aliases."""
-    mid, sources = review['model_id'], materials['sources']
-    policy, digest = load_policy(roots['public'], version=PREVIOUS_VERSION)
-    public_path = Path(roots['public']) / index_path(PREVIOUS_VERSION)
-    private_path = Path(roots['private']) / index_path(PREVIOUS_VERSION)
-    index = json.loads(read_bytes(public_path)) if is_file(public_path) else None
-    private = json.loads(read_bytes(private_path)) if is_file(private_path) else None
-    for value in (index, private):
-        if value is not None:
-            _require(value.get('version') == PREVIOUS_VERSION and value.get('policy_sha256') == digest,
-                     'Prior v0.2 profile index differs from its immutable policy')
-    keys = {'prior_component_review', 'prior_component_materials'}
-    if index is None or mid not in index['models']:
-        prefix = 'results/mathematical-profiles/v0.2.0/' + mid + '/'
-        retained = any(is_file(Path(roots[repo]) / (prefix + name))
-            for repo, name in (('public','profile.json'), ('private','review.json'),
-                               ('private','source-bindings.json')))
-        _require(not retained and (private is None or mid not in private['models']),
-                 'A retained or incomplete v0.2 profile cannot be bypassed')
-        _require(review.get('review_origin') == 'initial_profile' and not keys & set(sources),
-                 'A first v0.3 profile needs explicit initial origin without an invented predecessor')
-        old_contracts = json.loads(source_bytes(roots['private'], dict(
-            path='protocol/mathematical-profile/v0.2.0/contracts.json',
-            sha256=policy['private_contract_sha256'])))
-    else:
-        _require(private is not None and mid in private['models']
-                 and review.get('review_origin', 'bound_revision') == 'bound_revision',
-                 'An existing v0.2 profile requires its bound private predecessor')
-        old_public = validate_public(json.loads(source_bytes(roots['public'], index['models'][mid])),
-                                     policy, policy_sha256=digest)
-        prior = {}
-        for alias, key, digest_key in (
-            ('prior_component_review','review','private_review_sha256'),
-            ('prior_component_materials','source-bindings','private_materials_sha256')):
-            source, expected = sources.get(alias, {}), private['models'][mid][key]
-            _require(source == dict(repository='private', **expected)
-                     and source.get('sha256') == old_public[digest_key],
-                     'v0.3 requires the exact selected retained v0.2 profile source')
-            prior[key] = json.loads(source_bytes(roots['private'], source))
-        old_review, old_materials = prior['review'], prior['source-bindings']
-        _require(all(value.get('model_id') == mid and value.get('version') == PREVIOUS_VERSION
-                     and value.get('policy_sha256') == digest and value.get('condition') == CONDITION
-                     for value in (old_review, old_materials)),
-                 'Prior v0.2 evidence belongs to another model, policy or condition')
-        _require(old_public['model_id'] == mid
-                 and old_public['source_record'] == {k:sources['public_source_record'][k] for k in ('path','sha256')},
-                 'Profile revisions cannot replace the selected original record')
-        _require(all(sources.get(key) == value for key, value in old_materials['sources'].items()
-                     if key != 'contracts') and materials['tasks'] == old_materials['tasks'],
-                 'Profile revisions cannot replace retained source aliases, task states or answers')
-        old_contracts = json.loads(source_bytes(roots['private'], old_materials['sources']['contracts']))
-    if contracts is not None:
-        _validate_unchanged_profile_contracts(contracts, old_contracts)
-
-
-def _validate_unchanged_profile_contracts(contracts, old_contracts):
-    unchanged = lambda rows: {row['id']:{k:v for k,v in row.items() if k != 'axis_weights'}
-                              for row in rows}
-    _require(unchanged(contracts['tasks']) == unchanged(old_contracts['tasks'])
-             and contracts.get('source_goal_definition_sha256')
-                 == old_contracts.get('source_goal_definition_sha256'),
-             'v0.2 cannot replace visible goals, task scopes or mathematical family ownership')
-
-
 _METRIC_KEYS = frozenset({'exact', 'confirmed', 'lower', 'upper', 'unknown_weight',
-                          'reviewed_families', 'planned_families'})
+                          'coverage'})
 _PUBLIC_KEYS = frozenset({'schema', 'version', 'benchmark_version', 'condition', 'model_id',
     'policy_sha256', 'private_review_sha256', 'private_materials_sha256', 'source_record',
     'source_calibration', 'metrics', 'groups', 'reviewer_kind', 'human_review',
@@ -675,7 +497,7 @@ _PUBLIC_KEYS = frozenset({'schema', 'version', 'benchmark_version', 'condition',
 
 def validate_public(report, policy, *, policy_sha256):
     validate_policy(policy)
-    version, families = policy['version'], _families(policy)
+    version = policy['version']
     binding_key = 'source_initial_assessment' if 'source_initial_assessment' in report else 'source_calibration'
     expected_keys = (_PUBLIC_KEYS - {'source_calibration'}) | {binding_key}
     _require(set(report) == expected_keys
@@ -695,10 +517,12 @@ def validate_public(report, policy, *, policy_sha256):
         _relative(source['path'])
     _require(set(report['metrics']) == set(AXES), 'Public profile axes differ')
     for axis, metric in report['metrics'].items():
-        _require(set(metric) == _METRIC_KEYS and metric['planned_families'] == families[axis]
-                 and type(metric['reviewed_families']) is int
-                 and 0 <= metric['reviewed_families'] <= families[axis],
-                 'Public profile family coverage differs')
+        planned, unit = (8, 'benchmark_subcategory') if axis == 'completion' else (35, 'mathematical_family')
+        coverage = metric.get('coverage', {})
+        _require(set(metric) == _METRIC_KEYS and set(coverage) == {'unit', 'planned', 'reviewed'}
+                 and coverage['unit'] == unit and coverage['planned'] == planned
+                 and type(coverage['reviewed']) is int and 0 <= coverage['reviewed'] <= planned,
+                 'Public profile coverage differs from its axis source')
         for key in ('confirmed', 'lower', 'upper', 'unknown_weight'):
             value = metric[key]
             _require(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 100,
@@ -706,34 +530,11 @@ def validate_public(report, policy, *, policy_sha256):
         exact = metric['exact']
         _require(exact is None or type(exact) in (int, float) and math.isfinite(exact)
                  and metric['lower'] == exact == metric['upper'], 'Invalid exact profile value')
-        _require(metric['confirmed'] == metric['lower']
-                 and metric['lower'] <= metric['upper']
+        _require(metric['lower'] <= metric['confirmed'] <= metric['upper']
                  and abs(metric['upper'] - metric['lower'] - metric['unknown_weight']) < 1e-8
                  and (exact is None) == (metric['unknown_weight'] > 0),
                  'Profile unknowns cannot be rescaled away')
-    # Group scores are aggregate numbers only, never private task/family rows.
-    if version != LEGACY_VERSION:
-        _require(report['groups'] == {}, 'v0.2 profiles have no separately weighted research layers')
-        return report
-    _require(set(report['groups']) == {'depth', 'closure'}, 'Profile research layers differ')
-    for groups in report['groups'].values():
-        _require(set(groups) == {'theorem-extension', 'manuscript-completion'},
-                 'Unsupported public research layer')
-        for group, metric in groups.items():
-            _require(set(metric) == {'exact', 'confirmed', 'lower', 'upper', 'planned_families', 'reviewed_families'}
-                     and metric['planned_families'] == (6 if group == 'theorem-extension' else 5)
-                     and type(metric['reviewed_families']) is int
-                     and 0 <= metric['reviewed_families'] <= metric['planned_families'],
-                     'Private research rows cannot enter the public profile')
-            for key in ('confirmed', 'lower', 'upper'):
-                value = metric[key]
-                _require(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 100,
-                         'Public research layers require finite aggregate numbers')
-            _require(metric['confirmed'] == metric['lower'] <= metric['upper']
-                     and (metric['exact'] is None and metric['lower'] != metric['upper']
-                          or type(metric['exact']) in (int, float)
-                          and metric['lower'] == metric['exact'] == metric['upper']),
-                     'Public research layer interval is inconsistent')
+    _require(report['groups'] == {}, 'Current profiles have no separately weighted research layers')
     return report
 
 
@@ -763,12 +564,10 @@ def load_public_profiles(root, models, *, benchmark_version, component_version=N
     """Load the independently reviewed1.1 layer; edition1.0 never inherits it."""
     if benchmark_version != EDITION:
         return None
-    if (not is_file(Path(root) / POLICY_PATH)
-            and not (component_version == LEGACY_VERSION
-                     and is_file(Path(root) / 'protocol/mathematical-profile-v0.1.0.json'))):
+    if not is_file(Path(root) / POLICY_PATH):
         return None
     policy, digest = load_policy(root, version=component_version)
-    version, families = policy['version'], _families(policy)
+    version = policy['version']
     path = index_path(version)
     if not is_file(Path(root) / path):
         return None
@@ -788,7 +587,8 @@ def load_public_profiles(root, models, *, benchmark_version, component_version=N
         ref = index['models'].get(mid)
         if ref is None:
             metrics = {a:dict(exact=None, confirmed=0, lower=0, upper=100, unknown_weight=100,
-                              reviewed_families=0, planned_families=families[a]) for a in AXES}
+                              coverage=dict(unit='benchmark_subcategory' if a == 'completion' else 'mathematical_family',
+                                            planned=8 if a == 'completion' else 35, reviewed=0)) for a in AXES}
             values.append(dict(id=mid, metrics=metrics, groups={}, review_status='unreviewed'))
             continue
         report = validate_public(json.loads(source_bytes(root, ref)), policy, policy_sha256=digest)
@@ -798,11 +598,14 @@ def load_public_profiles(root, models, *, benchmark_version, component_version=N
                  and report.get(binding_key) == {k:expected_binding[k] for k in ('path', 'sha256')},
                  'Profile sources are not the selected answers for this model')
         source_bytes(root, report['source_record'])
-        source_bytes(root, report[binding_key])
+        binding = json.loads(source_bytes(root, report[binding_key]))
+        strict = json.loads(source_bytes(root, binding['scores']['strict'][CONDITION]))
+        from .scoring import profile_strict_completion_metric
+        _require(report['metrics']['completion'] == profile_strict_completion_metric(strict),
+                 'Public completion axis differs from the selected official SMC')
         values.append(dict(id=mid, metrics=report['metrics'], groups=report['groups'],
                            review_status='ai-reviewed', source=ref))
     return dict(schema='math-gauge.mathematical-profile/v1', version=version,
         benchmark_version=EDITION, axes=deepcopy(policy['axes']), models=values,
         reviewer_kind='ai', human_review='pending', new_candidate_calls=0,
-        main_scores_modified=False, method='../../protocol/mathematical-profile'
-            + ('' if version == VERSION else '-v' + version) + '.md')
+        main_scores_modified=False, method='../../protocol/mathematical-profile.md')

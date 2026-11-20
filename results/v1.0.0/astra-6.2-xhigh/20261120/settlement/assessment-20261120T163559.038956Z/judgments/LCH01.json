@@ -1,0 +1,250 @@
+{
+  "case_id": "LCH01",
+  "response_sha256": "7c9bf1d868940b81d195a0498606cd40eea74ddba02a1b304f8b27948be993f2",
+  "reviewer": "GPT-6.1 Sol Max; primary independent Lean mathematical reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "实际完整原答、ChannelBounds和alignment逐字阅读并逐项对照冻结原文；8项均完整正确。有限非空规范族、Lip与co-Lip不同非空条件、输入列输出行、稀疏行、严格正性及族零距结论均保留。Gauge只存原背景结构，目标均有实际证明。另有独立原样编译/公理证据，不以编译替代语义审核。",
+  "findings": [],
+  "group_contract_sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+  "stages": [
+    {
+      "stage_id": "CH02-D01",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.IsLip"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.IsLipOn"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.lipFamily"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.lipFamilyOn"
+        }
+      ],
+      "notes": "IsLipOn为U包含于dom加全x,y属于U/全输出j的有限ENNReal行和上界；IsLip严格取U=dom，两种family均收集全部合法矩阵。与原定义仅作透明命名/行求和展开，无额外非空、有限值或分离条件。Gauge.metric只打包原给定扩展伪度量，不把所求通道结论放入字段。"
+    },
+    {
+      "stage_id": "CH02-D02",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.IsCoLipOn"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.coLipFamilyOn"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.coLip_term_le"
+        }
+      ],
+      "notes": "IsCoLipOn精确加入U.Nonempty和U包含于dom，量化任意U内点对及每个输出分量，并取行和不大于像距；coLipFamilyOn为全部该证书。coLip_term_le以非负有限和取单项，非目标假设。"
+    },
+    {
+      "stage_id": "CH02-D03",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.CoeffMatrix"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.entry"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.entry_mul"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.rowValue"
+        }
+      ],
+      "notes": "CoeffMatrix为Matrix I I ENNReal；entry M i j定义为M j i，输入列/输出行一致。entry_mul直接展开标准矩阵乘法，得到先A后B的B*A在i到j上的sum_k B(k到j)*A(i到k)，没有转置或次序反转。"
+    },
+    {
+      "stage_id": "CH02-D07",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.Channel"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.OnlyInput"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.IsDiagonal"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.zero_channel_term"
+        }
+      ],
+      "notes": "Channel=I×I保留有序输入/输出。OnlyInput恰约束输出行除指定输入外的项为零，不要求保留项非零；IsDiagonal逐行取(i,i)。zero_channel_term对任意ENNReal输入以zero_mul证明零贡献，包含0*top。"
+    },
+    {
+      "stage_id": "CH02-P19",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.rowValue_onlyInput"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.lip_onlyInput"
+        },
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.lip_diagonal"
+        }
+      ],
+      "notes": "rowValue_onlyInput对任意向量用sum_eq_single得到整行精确化简，lip_onlyInput实例化原点对向量得到单输入上界；lip_diagonal对每一输出j用其对角稀疏性，覆盖原文对角特例。原域/全称量词保留。"
+    },
+    {
+      "stage_id": "CH02-P20",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.positive_channel"
+        }
+      ],
+      "notes": "positive_channel以合法co-Lip单项下界和ENNReal.mul_pos_iff推导输出距离严格为正，条件仅为指定K项>0及输入分量距离>0，没有增加矩阵或距离有限性。"
+    },
+    {
+      "stage_id": "CH02-P21",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.reflects_gauge_zero"
+        }
+      ],
+      "notes": "reflects_gauge_zero量化所有正对角条目，从像族零距反证各原分量非零，实际调用positive_channel。结论使用冻结GaugeZeroRelated，仍是族零距，没有偷偷假定分离性或加强为x=y。"
+    },
+    {
+      "stage_id": "CH02-P25",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "ChannelBounds.lean",
+          "name": "LCH01.diagonal_two_sided"
+        }
+      ],
+      "notes": "diagonal_two_sided只对指定Lip输出行要求OnlyInput L(j,j)，co-Lip K无需对角。对同一phi/U上的任意L、K与任意x,y属于U，将coLip_term_le下界和lip_onlyInput上界组成合取，精确覆盖习题的双侧标量式。"
+    }
+  ],
+  "reviewer_id": "sol-6.1-max-astra62-xhigh-lean",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "candidate_lean_report": "/private/tmp/math-gauge-astra62-xhigh-api-20261120/verification/lean/receipts/LCH01-A1/shared-verification/report.json",
+  "candidate_lean_report_sha256": "89f3a1c2d0e05c757f93182728efd7316408fdeb2bbe2bae53a24bb181360c89",
+  "source_bindings": {
+    "delivery": {
+      "path": "grading/lean/LCH01/delivery.v1.json",
+      "bytes": 8660,
+      "sha256": "203bf60347842a9bafbdac9fc68f095ef085203d84e2c384c95cce337b891a13"
+    },
+    "original_final": {
+      "path": "sessions/LCH01/physical-1/output/response.md",
+      "bytes": 10780,
+      "sha256": "7c9bf1d868940b81d195a0498606cd40eea74ddba02a1b304f8b27948be993f2"
+    },
+    "actual_acquisition_plan": {
+      "path": "plan.json",
+      "bytes": 45143,
+      "sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1"
+    },
+    "mechanical_receipt": {
+      "path": "verification/lean/receipts/LCH01-A1/shared-verification/report.json",
+      "bytes": 41028,
+      "sha256": "89f3a1c2d0e05c757f93182728efd7316408fdeb2bbe2bae53a24bb181360c89"
+    },
+    "acquisition_plan_sha256": "6538a870e313c5f61c97dcc0293983c525110b874ab5bd506138a836920f00a1",
+    "native_final_sha256": "7c9bf1d868940b81d195a0498606cd40eea74ddba02a1b304f8b27948be993f2",
+    "collection_sha256": "1259b38f2679d967ab1d3f5778c392a2098bcefc6bd9d6a093bbbb57c4548e3f",
+    "task_sha256": "0fed38a0b03927abdaff45eda71275277eb1626ce1ed27f007751dcacc4f2fdb",
+    "rubric_sha256": "f9dde5175f07705a851d0ff6da53a5380be220f1e1611ae44c64097979c90fad",
+    "reference_sha256": "7b389e141a34f6fb74a26a53a95e00be4134a3fb213bc5a94c1f681cc7e910f9"
+  },
+  "assembly_original_review": {
+    "path": "grading/lean/LCH01/review.v1.json",
+    "bytes": 8914,
+    "sha256": "ca194690a165bd2e43c096322c52cfaa4721543dc1a6e63556f2e2a18054bcfa"
+  }
+}

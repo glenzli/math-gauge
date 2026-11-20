@@ -1,0 +1,217 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "deepseek-v4.1-flash-1017",
+  "case_id": "MG-GR005",
+  "task_id": "R009",
+  "response_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34",
+  "reviewer_id": "Codex coordinator / source-bound mathematical review",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "score_scale": 100,
+  "MC": 98.0,
+  "RMC": 93.0,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "S1",
+      "earned_points": 12,
+      "max_points": 12,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S2",
+      "earned_points": 14,
+      "max_points": 16,
+      "reason": "下半连续证明正确使用子网；取到部分却把一般紧集误当序列紧。只需同一序列的收敛子网即可修复，局部缺口计2分。",
+      "evidence": []
+    },
+    {
+      "id": "S3",
+      "earned_points": 18,
+      "max_points": 18,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S4",
+      "earned_points": 24,
+      "max_points": 24,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S5",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    },
+    {
+      "id": "S6",
+      "earned_points": 15,
+      "max_points": 15,
+      "reason": "本阶段的构造、条件与必要论证在交付正文中成立。",
+      "evidence": []
+    }
+  ],
+  "claim_deductions": [
+    {
+      "id": "compact-implies-sequential-compact",
+      "root_cause": "compact-implies-sequential-compact",
+      "severity": "local",
+      "kind": "false_assertion",
+      "reason": "一般Hausdorff局部凸空间中的紧集未必序列紧；题设不保证可取收敛子列。改为收敛子网后原成本界推导成立，不升级为核心结论反例。",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "当 \\(n\\) 足够大时，\\(x_n\\in\\{f\\le L+1\\}\\)。由假设，该集合紧，故序列 \\((x_n)\\) 有收敛子列，仍记为 \\(x_n\\to x\\)。由 \\(q_F\\) 连续，",
+          "utf8_byte_start": 2495,
+          "utf8_byte_end": 2656,
+          "file_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34"
+        }
+      ]
+    }
+  ],
+  "shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.98,
+      "upper": 0.98,
+      "exact": 0.98
+    },
+    "generic_deduction": 0.05,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.05,
+    "core_endorsement_cap": false,
+    "strict_blocking": true,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.93,
+      "upper": 0.93,
+      "exact": 0.93
+    },
+    "actual_loss": 0.05,
+    "findings": 1,
+    "distinct_charged_roots": 1,
+    "embedded_reliability_removed": false,
+    "finding_ids": [
+      "compact-implies-sequential-compact"
+    ]
+  },
+  "mathematical_checks": [
+    "S1 ε极小点与纤维分组不要求取到。",
+    "S3在同一紧成本集内取FIP并由连续对偶分离点，非局部化或度量化。",
+    "S4对于h取-∞的点直接比较；其余点按闭凸上图分离，x在dom闭包内时严格分离排除垂直系数0，故没有把proper-only定理硬套所有h。",
+    "S5给f=max(1/x-y,0)的闭凸反例正确。",
+    "S6所用cl L(C)=cl L(cl C)合法，上图投影的闭包关系避免了不取到时的错误等号。"
+  ],
+  "strict_reason": "S2取到证明包含一般紧集必有收敛子列的错误；不能把未写的子网修复冒充原稿已完成。",
+  "profile_axes": {
+    "proof": {
+      "grade": 3,
+      "reason": "原目标的闭上图恢复与全部投影机制成立，S2取到证明只余紧性子列/子网的局部修复。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "当 \\(n\\) 足够大时，\\(x_n\\in\\{f\\le L+1\\}\\)。由假设，该集合紧，故序列 \\((x_n)\\) 有收敛子列，仍记为 \\(x_n\\to x\\)。由 \\(q_F\\) 连续，",
+          "utf8_byte_start": 2495,
+          "utf8_byte_end": 2656,
+          "file_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34"
+        }
+      ],
+      "core_status": "local_gap"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保留任意Hausdorff局部凸空间、±无穷竞争者、有限观测与原条件。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "设 \\(h:E\\to[-\\infty,+\\infty]\\) 下半连续、凸且 \\(h\\le f\\)。若 \\(h(x)=-\\infty\\)，显然 \\(h(x)\\le G(x)\\)。固定 \\(x\\)，以下设 \\(h(x)>-\\infty\\)。",
+          "utf8_byte_start": 5641,
+          "utf8_byte_end": 5801,
+          "file_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 2,
+      "reason": "正确发现上图投影不等式的取到问题并修复，仍明确接受一般紧集必有收敛子列。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "复核后，整体结论成立。原论证中的主要问题在 S6：由 \\(g_F=P_{KF}g_K\\) 不能直接推出",
+          "utf8_byte_start": 0,
+          "utf8_byte_end": 109,
+          "file_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 3,
+      "reason": "闭上图、仿射分离、有限观测上确界和投影闭包关系建立了一般恢复机制。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "\\boxed{G=\\bar f.}",
+          "utf8_byte_start": 8194,
+          "utf8_byte_end": 8211,
+          "file_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "核心恢复机制、反例及正则化关系闭合，最优点取到的一处局部证明未严格成立。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "当 \\(n\\) 足够大时，\\(x_n\\in\\{f\\le L+1\\}\\)。由假设，该集合紧，故序列 \\((x_n)\\) 有收敛子列，仍记为 \\(x_n\\to x\\)。由 \\(q_F\\) 连续，",
+          "utf8_byte_start": 2495,
+          "utf8_byte_end": 2656,
+          "file_sha256": "1a80259eea97ef4adbe8c64c5f7227c0d2b1f96a283e9accf43baae64448fe34"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "unresolved_questions": [],
+  "no_hidden_reasoning_used_as_answer": true,
+  "original_math_unmodified": true,
+  "reviewed_at": "2026-11-21T00:11:58.347669+00:00",
+  "review_boundary": "Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.",
+  "source_materials": [
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR005/task.md",
+      "bytes": 2068,
+      "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR005/rubric.json",
+      "bytes": 768,
+      "sha256": "751b8cc5a1ee70bbc11d7e7290d28031d719f12be21c0cdc81bb9eb7ae7b352e"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR005/reference.md",
+      "bytes": 7384,
+      "sha256": "18fbc7990926deeb6ad54c4379fa1067076271f0819ac807a33f9ec20fc13da4"
+    },
+    {
+      "repository": "public",
+      "path": "cases/proofs/MG-GR005/contract.json",
+      "bytes": 6591,
+      "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef"
+    }
+  ],
+  "first_response_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+  "first_review_sha256": "86acdfaae95d5d365f352b191aefc76715352d418a21a585b6d1320d5f1b0d7b"
+}

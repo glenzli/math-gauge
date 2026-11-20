@@ -4,9 +4,11 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from scripts.render_timing_reference import write_reference
-from scripts.timing_reference import CASE_IDS, build_reference, load_supplement, select_timing, summarize, daily_summary
+from scripts.timing_reference import (CASE_IDS, build_reference, load_supplement, select_timing, summarize,
+                                      daily_summary, revision_reference)
 
 
 class TimingReferenceTests(unittest.TestCase):
@@ -90,6 +92,26 @@ class TimingReferenceTests(unittest.TestCase):
         result = daily_summary(rows, {"a": 25, "b": 10})
         self.assertIsNone(result["weighted_mean_seconds"])
         self.assertIsNone(result["median_seconds"])
+
+    def test_expanded_sample_uses_common_clocks_and_splits_category_weights(self):
+        def model(mid, removed_clock):
+            values = {"MG-GP001": 180, "MG-GP002": removed_clock, "MG-GR021": 60,
+                      "MG-AR002": 600, "MG-C003": 1200}
+            return {"id": mid, "rows": [self.row(cid, seconds, "delivered") for cid, seconds in values.items()]}
+
+        models = [model("one", 1800), model("two", None)]
+        weights = {"MG-GP001": 25, "MG-GP002": 25, "MG-GR021": 25, "MG-AR002": 10}
+        resources = {"batch_span_seconds": None, "models": [
+            {"id": "one", "public_cases": [{"case_id": "MG-GR021", "seconds": 60}]},
+            {"id": "two", "public_cases": []}]}
+        with patch("scripts.results_revision_resources.load_public", return_value=resources):
+            result = revision_reference(self.root, {"models": models},
+                                        {"models": models, "daily_weights": weights})
+        self.assertEqual(result["daily_weights"], {"MG-GP001": 12.5, "MG-GR021": 12.5, "MG-AR002": 10})
+        daily = result["models"][0]["summaries"]["daily"]
+        self.assertAlmostEqual(daily["weighted_mean_seconds"], ((180 + 120) * 12.5 + 600 * 10) / 35)
+        self.assertEqual(daily["median_seconds"], 180)
+        self.assertEqual(result["models"][0]["summaries"]["MG-C003"]["median_seconds"], 1200)
 
     def test_current_answer_binding_and_private_projection(self):
         self.fixture()

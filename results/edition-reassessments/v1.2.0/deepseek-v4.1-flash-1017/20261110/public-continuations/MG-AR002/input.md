@@ -1,0 +1,706 @@
+# 通用评分标准
+
+MC（数学能力）只计算已核实的有效数学贡献。RMC（可靠数学能力）在有效成果上扣除错误断言、误判、范围变更或没有根据的完成/验证承诺；诚实说明未完成不是额外错误。SMC（严格数学完成）要求当前测项的全部实质要求正确、完整交付，不能用篇幅、多数正确或自称完成代替。
+
+保留原题的对象、定义、条件、量词、定义域和结论强度。不同但正确的证明、表示或建模路线同等接受；如改换表示，应建立回到原任务所要求对象及范围的必要对应。标准数学定理可以援引，须说明其实际条件与适用性。局部结论不能冒充原要求的一般结论。
+
+书面论证按完整原目标验收。答卷审阅须准确判断被审原文的正确与不正确部分，给出可核查依据，说明错误影响范围，并检查支撑数学对象/依赖是否合法；不能因一个中间缺口就否定其他独立成立的结果。本任务是审阅时，不要求重做被审材料里的整套习题。
+
+想法或草稿的手稿化任务，满分依据是忠实、严谨完成原题意图：定义和类型自洽，所用假设明确，核心结论及必要依赖证明完整，边界和全文一致。题面允许探索选择时可明说选择与边界，不必复刻某个指定理论；但不能把原本要定义/证明的对象改成一个更容易的对象而未建立对应。完成原题所需数学可以满分，不强迫额外创造题外理论。
+
+以下B/R尺度适用于命题拓展型的研究测项，不是把其他类别都改成必须做研究。
+
+
+B 与 R 独立判断。B0 表示原题的核心结论/证明错误；B1 表示有实质进展但仍有关键缺口或未完成；B2 表示原题在实际声称范围内完整正确。完整证明原题而没有研究增量是 B2/R0，不是原题数学失败。
+
+
+- **R0：原结论层面。** 没有实际交付经过证明且可独立表述的研究增量。B2/R0 表示完整证明可见题面，绝不是证明错误。
+- **R1：有用的局部推进。** 已证的局部细化、定量界、严格性/锐性、边界/必要性例或特定范围的新信息。它确实增加了可用信息，而不只是给原结论改名。几个同层小结果、同一依赖链的几个推论不因数量晋级。
+- **R2：实质拓展。** 在自然且有实质覆盖的对象/参数族上，完整解决原题未要求的一项新问题：例如真正释放条件的统一推广、一般插值/逆问题、非平凡分布/动力学/正则性定理、全阶控制或完整边界判定。证明短、沿用原方法或在证明内部出现，都不减档。只把一个边界特例参数化或写出尚未闭合的纲领不足以升级。
+- **R3：深入且完整的研究增量。** 已完成一项显著推进对原问题或自然延伸的理解与处理能力的成果。它须有实质自然范围、充分的数学分量与解释力，且关键定义、条件、桥梁和论证闭合；能够系统回答一类有意义的新问题。表示、分类、重建、精确演化/分布、极限机制等是充分锚点，不是必须命中的清单。一项定理即可，不要求多个定理包、最大适用域、参考中的最强结论、双向/可逆形式或文献原创性。一个狭小结论不能仅因自称“完整理论”升到 R3。
+
+按最高达到档给 R=0/1/2/3；B 独立。比较实际输入范围、决定的新信息、机制和闭合程度，不以篇幅、术语、定理数、证明难度猜测、模型身份或是否另列“推广”评分。最弱条件是一条重要路线，不强求证明全数学世界中的绝对最小假设；实际声称的范围必须成立。等价结构、强证明内部的成果同等接纳，结果搬入/搬出证明不得改分。允许普通代数和定义性读出省略，不允许评审补出关键引理、构造、推广量词或反向桥梁。
+
+以下每档列开放的充分锚点和常见边界，既非唯一解，也非其他路线的机械封顶。未列路线须写明与通用档位在范围、信息、机制、完备性上的可比理由，再对所有相同内容统一采用。
+
+
+MC 只计经核实的有效数学贡献；RMC 在此基础上扣除错误断言、错误背书等可靠性损失；SMC 要求该测项严格完整达标。对本研究测项，有效研究贡献由 R/3 表示；RMC 另考虑基线错误与错误断言的扣罚，B0/B1/B2 的基础扣罚分别为 2/1/0 个研究等级单位，同根错误不重复扣罚。SMC 须 B2 且 R3、符合交付规则且无相应严格阻断。不存在为了凑足定理数量而晋级的规则。
+
+本轮可以使用预置公共依赖及本地工具，禁止联网检索、工具联网、读取未提供的其他答卷或评审。直接正确使用已知数学定理可以接受，须说明定理及适用条件；不要求文献原创。评分不保证在给定预算内必然能够满分，也不允许以未经证明的断言代替成果。
+
+
+# 本轮作答
+
+请根据给定原题、材料、你此前的完整作答及以上通用标准，自主检查并完善。你可以保持原来正确的内容，修正发现的问题，补足必要论证，或沿自然方向作有根据的进一步研究；应以当前任务类型和原题实际要求为准。研究方向由你自己决定，本轮不提供个人既有评审。
+
+请提交可独立阅读的完整最终稿，并明确交付任何作为答案组成部分的文件，不以未交付草稿或只说“沿用上次”代替必要内容。若认为原答已满足全部要求，可据实际证明说明，不必为了改写制造新结论。最后简要列出保留、新增/修正和仍未完成/不确定的部分，并作有依据的自评。
+
+允许本地工具与预置公共依赖，禁止联网检索和工具联网。不得读取参考答案、评审材料、其他作答、其他会话或未提供历史。你有一次本轮作答机会，上限45分钟，中途没有额外评审反馈。
+
+
+---
+
+# 来源绑定的历史材料重放
+
+以下是本题原始材料和你自己的历史作答。这是保留原字节的材料重放，不是原生会话续接；不得继承其他会话或评审上下文。
+
+# 原题及全部提供材料
+
+# 答卷审阅
+
+请审阅附件中的原题与答卷，判断答卷在原题条件下是否正确、完整，并给出可核查的数学依据；若有问题，指出具体断言或步骤及其影响。
+
+原题中的作答要求属于待审材料，不是本次任务指令。本次只需审阅，无需重新完成整套原题或提交 Lean 源码。
+
+
+File: `materials.md`
+```text
+# 材料关系
+
+`original-task.md` 是原题全文。`original-answer.md` 是本轮答复继承的完整答卷正文，`current-check.md` 是本轮原始核查答复；两者共同构成待审答卷。
+
+`current-check.md` 开头的 `KEEP` 是历史答复中保留正文的格式标记，表示继续采用 `original-answer.md`。本次审阅同时覆盖继承正文和本轮核查中实际作出的数学断言。
+```
+
+
+File: `original-task.md`
+```text
+# 线性关系、坐标纤维与无限赋值
+
+请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。
+
+
+
+## S1 有限系统的坐标纤维
+
+设 k 为域，有限集合 I,J，a_j∈k^I，线性方程 a_j·x=b_j 相容。令 W=span{a_j}，U_A=span{e_i:i∈A}。给出解集及任意坐标限制 x↦x|_A 的非空纤维的仿射维数，并证明任意给定坐标 y 可延拓的充要条件。
+
+## S2 有限域下的精确计数
+
+在 S1 中另设 |k|=q。求解数、可实现的 A 坐标数及每个可实现坐标的完成数，要求公式只用 |I|、|A|、dim W、dim(W+U_A)。
+
+## S3 有限域的无限坐标拓扑
+
+设 k 有限离散，I,J 任意，每行 a_j 有限支撑且每个有限子系统可解。给 k^I 乘积拓扑。证明全解集非空紧且全不连通；证明每个坐标像 π_A(S) 闭，并把其元素刻画为所有有限行与有限 A 坐标限制都同时可实现的 y。
+
+## S4 整体对象与全部恢复目标
+
+判定下面所列目标在给定条件下是否成立。若成立，完成全部构造、分类与性质的证明；若不成立，给出满足全部给定条件的反例。
+
+采用 ZFC。设 $k$ 为域，$I,J$ 为任意集合。记 $k^{(I)}$ 为 $I$ 上有限支撑的 $k$ 值函数组成的向量空间。对每个 $j\in J$，给定 $a_j\in k^{(I)}$ 和 $b_j\in k$。
+
+假设对每个有限子集 $F\subseteq J$，存在 $x\in k^I$，使
+
+$$\sum_{i\in I}a_j(i)x_i=b_j\qquad(j\in F).$$
+
+令
+
+$$\mathcal S=\left\{x\in k^I:\sum_{i\in I}a_j(i)x_i=b_j\text{ 对所有 }j\in J\right\}.$$
+
+对每个子集 $A\subseteq I$，记 $\pi_A:\mathcal S\to k^A$ 为坐标限制映射。
+
+建立这一方程系的整体实现与坐标恢复理论：构造整体解，并用仅由给定系数和常数确定的代数数据，完整描述 $\mathcal S$、每个 $\pi_A$ 的像以及所有非空纤维。给出分类、对应构造和完整论证。
+
+## S5 赋值空间的支持
+
+设 k 为任意域、I=J=N，仍要求各行有限支撑。若每个有限子系统在 k^{(N)} 中有解，判定全系统是否也必在 k^{(N)} 中有解。
+
+## S6 无限域的坐标像
+
+回到 S4 的原全赋值空间，给任意域 k 离散拓扑。判定每个 π_A(S) 是否仍在 k^A 的乘积拓扑中闭，即使 k 无限。若成立，给只涉及有限坐标的闭方程描述。
+```
+
+
+File: `original-answer.md`
+```text
+# 线性关系、坐标纤维与无限赋值
+
+---
+
+## S1 有限系统的坐标纤维
+
+### 1. 解集与非空纤维的仿射维数
+
+在有限维向量空间 $k^I$ 上，赋予标准非退化双线性配对 $\langle u, v \rangle = u \cdot v = \sum_{i\in I} u_i v_i$。在此配对下，空间维数为 $\dim k^I = |I|$。
+
+- **解集 $\mathcal{S}$ 的仿射维数：**
+  齐次线性方程组的解空间为
+  $$\mathcal{S}_0 = \{x \in k^I : a_j \cdot x = 0, \forall j \in J\} = W^\perp.$$
+  由配对的非退化性，$\dim W^\perp = |I| - \dim W$。因原方程组相容，$\mathcal{S} \neq \emptyset$，故 $\mathcal{S}$ 为平行于 $W^\perp$ 的仿射子空间，其仿射维数为：
+  $$\dim \mathcal{S} = |I| - \dim W.$$
+
+- **任意坐标限制非空纤维的仿射维数：**
+  设 $y \in \pi_A(\mathcal{S})$，纤维为 $\mathcal{F}_y = \{x \in \mathcal{S} : x|_A = y\}$。其齐次化方向子空间为：
+  $$V_0 = \{x \in k^I : x \in W^\perp \text{ 且 } x|_A = 0\}.$$
+  注意到 $x|_A = 0 \iff x \cdot e_i = 0\ (\forall i \in A) \iff x \in U_A^\perp$。因此，
+  $$V_0 = W^\perp \cap U_A^\perp = (W + U_A)^\perp.$$
+  从而非空纤维的仿射维数为：
+  $$\dim \mathcal{F}_y = \dim (W + U_A)^\perp = |I| - \dim(W + U_A).$$
+  *(注：亦可写作 $|I| - |A| - \dim W + \dim(W \cap U_A)$)*。
+
+---
+
+### 2. 给定坐标 $y \in k^A$ 可延拓的充要条件与证明
+
+**充要条件：**
+给定 $y \in k^A$，存在 $x \in \mathcal{S}$ 使得 $x|_A = y$ 的充要条件是：
+对任意向量 $w \in W \cap U_A$，若将其表示为 $w = \sum_{j\in J} c_j a_j$，则必须满足
+$$\sum_{i\in A} w_i y_i = \sum_{j\in J} c_j b_j.$$
+*(由于原系统相容，右端数值仅依赖于 $w$ 本身，记为 $\beta(w)$，与系数 $c_j$ 的具体选取无关；等价地，取任意特解 $x_0 \in \mathcal{S}$，有 $\beta(w) = w \cdot x_0$)*。
+
+**证明：**
+
+- **必要性 ($\implies$)：**
+  若存在 $x \in \mathcal{S}$ 使得 $x|_A = y$。对于任意 $w \in W \cap U_A$，因 $\operatorname{supp}(w) \subseteq A$，有
+  $$\sum_{i\in A} w_i y_i = \sum_{i\in I} w_i x_i = w \cdot x = \left(\sum_{j\in J} c_j a_j\right) \cdot x = \sum_{j\in J} c_j (a_j \cdot x) = \sum_{j\in J} c_j b_j.$$
+
+- **充分性 ($\impliedby$)：**
+  取定原系统的一个特解 $x_0 \in \mathcal{S}$。则任意 $x \in \mathcal{S}$ 均可写为 $x = x_0 + v$，其中 $v \in W^\perp$。
+  条件 $x|_A = y$ 等价于 $v|_A = y - x_0|_A$。
+  设线性映射 $T: W^\perp \to k^A$ 为坐标限制映射 $T(v) = v|_A$。延拓的存在性等价于
+  $$z := y - x_0|_A \in \operatorname{Im}(T).$$
+  在标准配对下，映射 $T$ 的伴随算子 $T^*: k^A \to (W^\perp)^* \cong k^I / W$ 为 $T^*(u) = \iota_A(u) + W$，其中 $\iota_A(u) = \sum_{i\in A} u_i e_i \in U_A$。
+  因此，
+  $$\ker(T^*) = \{u \in k^A : \iota_A(u) \in W\} \cong W \cap U_A.$$
+  由有限维空间对偶定理（Fredholm 择一性），$\operatorname{Im}(T) = (\ker T^*)^\perp$。
+  故 $z \in \operatorname{Im}(T)$ 当且仅当对所有 $u \in \ker T^*$ 均有 $z \cdot u = 0$。
+  令 $w = \iota_A(u) \in W \cap U_A$，则 $w_i = u_i$ ($i \in A$) 且
+  $$z \cdot u = \sum_{i\in A} (y_i - (x_0)_i) u_i = \sum_{i\in A} w_i y_i - w \cdot x_0 = \sum_{i\in A} w_i y_i - \sum_{j\in J} c_j b_j.$$
+  因此 $z \cdot u = 0 \iff \sum_{i\in A} w_i y_i = \sum_{j\in J} c_j b_j$。充分性得证。 $\blacksquare$
+
+---
+
+## S2 有限域下的精确计数
+
+设 $|k| = q$。利用 S1 中的仿射维数结果，各计数公式如下（仅含 $|I|, |A|, \dim W, \dim(W+U_A)$）：
+
+1. **解数：**
+   解集 $\mathcal{S}$ 是维数为 $|I| - \dim W$ 的仿射空间，故
+   $$|\mathcal{S}| = q^{|I| - \dim W}.$$
+
+2. **每个可实现坐标的完成数（非空纤维大小）：**
+   每个可实现的 $y \in \pi_A(\mathcal{S})$ 的纤维均为维数 $|I| - \dim(W+U_A)$ 的仿射空间，故完成数为
+   $$|\mathcal{F}_y| = q^{|I| - \dim(W + U_A)}.$$
+
+3. **可实现的 $A$ 坐标数：**
+   由于限制映射 $\pi_A|_\mathcal{S}$ 在每个纤维上的原像数恒等于 $q^{|I| - \dim(W+U_A)}$，可实现的坐标数为
+   $$|\pi_A(\mathcal{S})| = \frac{|\mathcal{S}|}{|\mathcal{F}_y|} = \frac{q^{|I| - \dim W}}{q^{|I| - \dim(W + U_A)}} = q^{\dim(W + U_A) - \dim W}.$$
+
+---
+
+## S3 有限域的无限坐标拓扑
+
+设 $k$ 有限离散，$I, J$ 任意，每行 $a_j$ 有限支撑且有限子系统相容。在 $k^I$ 上赋予乘积拓扑。
+
+### 1. 全解集非空、紧且全不连通的证明
+
+- **紧性与 Hausdorff 性：**
+  $k$ 有限离散，因而 $k$ 是紧 Hausdorff 空间。由 **Tychonoff 定理**，乘积空间 $k^I$ 紧且 Hausdorff。
+- **闭性与非空性：**
+  对每个 $j \in J$，映射 $f_j: k^I \to k$ 给定为 $f_j(x) = \sum_{i\in I} a_j(i) x_i$。因为 $a_j$ 有限支撑，该和式只包含有限项，即 $f_j$ 为有限个坐标投影的线性组合。由于投影映射与 $k$ 上的有限线性运算均连续，故 $f_j$ 是连续映射。
+  因 $k$ 离散，单点集 $\{b_j\}$ 是闭集。所以单方程解集 $\mathcal{S}_j = f_j^{-1}(\{b_j\})$ 为 $k^I$ 中的闭集。
+  对于任意有限子集 $F \subseteq J$，由题设有限子系统可解，有 $\bigcap_{j\in F} \mathcal{S}_j \neq \emptyset$。
+  闭集族 $\{\mathcal{S}_j\}_{j\in J}$ 满足有限交性质（FIP）。根据 $k^I$ 的紧性，
+  $$\mathcal{S} = \bigcap_{j\in J} \mathcal{S}_j \neq \emptyset.$$
+  作为紧空间的闭子集，$\mathcal{S}$ 是**紧集**。
+- **全不连通性：**
+  离散空间 $k$ 是全不连通的。全不连通空间的任意乘积空间仍是全不连通的，其任意子空间亦继承全不连通性。因此 $\mathcal{S}$ **全不连通**。
+
+---
+
+### 2. 坐标像 $\pi_A(\mathcal{S})$ 为闭集的证明
+
+- 坐标限制映射 $\pi_A: k^I \to k^A$ 由积拓扑的泛性质可知是连续映射。
+- $\mathcal{S}$ 在 $k^I$ 中紧，故其连续像 $\pi_A(\mathcal{S})$ 在 $k^A$ 中**紧**。
+- 空间 $k^A$ 作为 Hausdorff 空间 $k$ 的乘积，是 **Hausdorff 空间**。
+- Hausdorff 空间中的紧子集必为闭集，因此 $\pi_A(\mathcal{S})$ 在 $k^A$ 中**闭**。
+
+---
+
+### 3. 元素的有限可实现性刻画与证明
+
+**刻画命题：**
+$y \in \pi_A(\mathcal{S})$ 当且仅当：对任意有限子集 $F \subseteq J$ 及任意有限子集 $B \subseteq A$，均存在 $x \in k^I$ 满足
+$$\sum_{i\in I} a_j(i) x_i = b_j\quad (\forall j \in F) \qquad\text{且}\qquad x_i = y_i\quad (\forall i \in B).$$
+
+**证明：**
+- **必要性 ($\implies$)：**
+  若 $y \in \pi_A(\mathcal{S})$，则存在 $x \in \mathcal{S}$ 使得 $x|_A = y$。该 $x$ 自然满足全系统，故对任意有限行集 $F \subseteq J$ 及任意有限子集 $B \subseteq A \subseteq I$，均有 $f_j(x) = b_j\ (j\in F)$ 且 $x|_B = y|_B$。
+- **充分性 ($\impliedby$)：**
+  对每个 $i \in A$，令闭圆柱集 $K_i = \{x \in k^I : x_i = y_i\} = \pi_i^{-1}(\{y_i\})$，它是 $k^I$ 的闭子集。
+  题设条件即：对于指标集 $J$ 的任意有限子集 $F$ 和 $A$ 的任意有限子集 $B$，闭集交集
+  $$\left(\bigcap_{j\in F} \mathcal{S}_j\right) \cap \left(\bigcap_{i\in B} K_i\right) \neq \emptyset.$$
+  因此，闭集族 $\mathcal{F} = \{\mathcal{S}_j\}_{j\in J} \cup \{K_i\}_{i\in A}$ 满足有限交性质。
+  根据 $k^I$ 的紧性，全交非空：
+  $$\left(\bigcap_{j\in J} \mathcal{S}_j\right) \cap \left(\bigcap_{i\in A} K_i\right) \neq \emptyset.$$
+  取属于该全交的点 $x$，则 $x \in \mathcal{S}$ 且对所有 $i \in A$ 均有 $x_i = y_i$（即 $x|_A = y$）。故 $y \in \pi_A(\mathcal{S})$。 $\blacksquare$
+
+---
+
+## S4 整体对象与全部恢复目标
+
+**判定：目标成立。**
+
+在 ZFC 公理系统下，对任意域 $k$ 与任意集合 $I, J$，全系统的整体解必存在，且其解集、投影像与纤维完全由线性代数对偶数据确定。
+
+### 1. 代数框架与整体解的构造
+
+记 $V = k^{(I)}$ 为 $I$ 上有限支撑函数构成的 $k$-向量空间，具有标准基 $\{e_i\}_{i\in I}$。全赋值空间 $k^I$ 自然同构于代数对偶空间 $V^* = \operatorname{Hom}_k(k^{(I)}, k)$：
+$$x \in k^I \longleftrightarrow \varphi_x \in V^*,\quad \varphi_x(v) = \sum_{i\in I} v_i x_i\quad (\text{对 } v \in k^{(I)} \text{ 恒为有限和}).$$
+定义子空间 $W = \operatorname{span}_k\{a_j : j \in J\} \subseteq k^{(I)}$。
+
+- **泛函 $\beta$ 的相容性定义：**
+  若有有限线性关系 $\sum_{j\in F} c_j a_j = 0$（$F \subseteq J$ 有限），由题设该有限子系统存在整体解 $x^{(F)} \in k^I$，两端与 $x^{(F)}$ 配对得到：
+  $$\sum_{j\in F} c_j b_j = \sum_{j\in F} c_j \langle a_j, x^{(F)} \rangle = \left\langle \sum_{j\in F} c_j a_j, x^{(F)} \right\rangle = \langle 0, x^{(F)} \rangle = 0.$$
+  故映射 $\beta: W \to k$
+  $$\beta\left(\sum_{j\in F} c_j a_j\right) = \sum_{j\in F} c_j b_j$$
+  是良定义的线性泛函（$\beta \in W^*$）。
+- **整体解的构造（Zorn 引理 / 选择公理）：**
+  在 ZFC 中，选取 $W$ 的一组 $k$-基 $\mathcal{B}_W$。由 Zorn 引理，将其扩充为 $V = k^{(I)}$ 的基 $\mathcal{B}_V$。
+  定义线性泛函 $\tilde{\beta}: k^{(I)} \to k$ 为：
+  $$\tilde{\beta}(v) = \beta(v)\quad (\forall v \in \mathcal{B}_W), \qquad \tilde{\beta}(v) = 0\quad (\forall v \in \mathcal{B}_V \setminus \mathcal{B}_W).$$
+  令 $x^* \in k^I$ 为 $x^*_i = \tilde{\beta}(e_i)\ (i \in I)$。则对任意 $j \in J$：
+  $$\sum_{i\in I} a_j(i) x^*_i = \tilde{\beta}(a_j) = \beta(a_j) = b_j.$$
+  因此 $x^* \in \mathcal{S}$，证明了 $\mathcal{S} \neq \emptyset$。
+
+---
+
+### 2. 解集 $\mathcal{S}$ 的代数数据描述
+
+定义 $W$ 在 $k^I$ 中的零化子（annihilator）：
+$$W^\circ = \{x \in k^I : \forall w \in W, \langle w, x \rangle = 0\}.$$
+则全解集完全由代数数据 $(W \subseteq k^{(I)}, \beta \in W^*)$ 刻画为仿射空间：
+$$\mathcal{S} = x^* + W^\circ = \{x \in k^I : \forall w \in W, \langle w, x \rangle = \beta(w)\}.$$
+
+---
+
+### 3. 任意 $\pi_A$ 的像的完整描述
+
+对任意子集 $A \subseteq I$，定义坐标子空间 $U_A = k^{(A)} = \operatorname{span}_k\{e_i : i \in A\} \subseteq k^{(I)}$。
+
+**定理：**
+$$\pi_A(\mathcal{S}) = \left\{y \in k^A : \forall w \in W \cap U_A,\ \sum_{i\in A} w_i y_i = \beta(w)\right\}.$$
+
+**论证：**
+- **包含关系 ($\subseteq$)：** 若 $y = x|_A$ 且 $x \in \mathcal{S}$，则对任意 $w \in W \cap U_A$，因 $\operatorname{supp}(w) \subseteq A$，有 $\sum_{i\in A} w_i y_i = \langle w, x \rangle = \beta(w)$。
+- **反向包含 ($\supseteq$)：** 任取满足该条件的 $y \in k^A$。定义 $U_A$ 上的线性泛函 $\gamma_y: U_A \to k$ 为 $\gamma_y(u) = \sum_{i\in A} u_i y_i$。
+  条件表明对所有 $w \in W \cap U_A$，$\gamma_y(w) = \beta(w)$，即两泛函在子空间交集 $W \cap U_A$ 上严格一致。
+  在子空间和 $W + U_A \subseteq k^{(I)}$ 上定义泛函：
+  $$\psi(w + u) = \beta(w) + \gamma_y(u)\qquad (w \in W, u \in U_A).$$
+  若 $w + u = w' + u'$，则 $w - w' = u' - u \in W \cap U_A$，由一致性知 $\beta(w - w') = \gamma_y(u' - u)$，故 $\psi$ 良定且为线性泛函。
+  由选择公理，将 $\psi$ 延拓为全空间 $k^{(I)}$ 上的线性泛函 $\Phi$。
+  令 $x_i = \Phi(e_i)\ (i \in I)$。则：
+  1. 对 $w \in W$，$\langle w, x \rangle = \Phi(w) = \psi(w) = \beta(w)$，即 $x \in \mathcal{S}$；
+  2. 对 $i \in A$，$e_i \in U_A$，故 $x_i = \Phi(e_i) = \psi(e_i) = \gamma_y(e_i) = y_i$，即 $x|_A = y$。
+  因此 $y \in \pi_A(\mathcal{S})$。
+
+---
+
+### 4. 非空纤维的完整描述
+
+对任意 $y \in \pi_A(\mathcal{S})$，任取原像 $x \in \pi_A^{-1}(y) \cap \mathcal{S}$，其纤维为平行于 $(W + U_A)^\circ$ 的仿射空间：
+$$\pi_A^{-1}(y) \cap \mathcal{S} = x + (W + U_A)^\circ,$$
+其中方向空间为
+$$(W + U_A)^\circ = W^\circ \cap U_A^\circ = \{v \in k^I : v|_A = 0 \text{ 且 } \forall w \in W, \langle w, v \rangle = 0\}.$$
+
+---
+
+### 5. 限制映射 $\pi_A|_\mathcal{S}$ 的分类理论
+
+通过代数对偶，$\pi_A|_\mathcal{S}$ 的几何性质完全由子空间对 $(W, U_A)$ 在 $k^{(I)}$ 中的相对位置分类：
+
+| 映射性质 | 几何/代数充要条件 | 对应代数/系统意义 |
+| :--- | :--- | :--- |
+| **单射**（唯一恢复） | $W + U_A = k^{(I)}$ | $(W+U_A)^\circ=\{0\}$，任意外部坐标 $i \notin A$ 的基向量可模 $U_A$ 归入 $W$，即外部坐标被 $A$ 完全决定 |
+| **满射**（完全无约束） | $W \cap U_A = \{0\}$ | 方程系中不存在支撑全在 $A$ 内的非平凡线性组合，坐标 $y \in k^A$ 可完全自由选取 |
+| **双射**（仿射同构） | $W \oplus U_A = k^{(I)}$ | $A$ 构成解集流形 $\mathcal{S}$ 的一组自由且完备的坐标系 |
+
+---
+
+## S5 赋值空间的支持
+
+**判定：全系统不一定在 $k^{(\mathbb{N})}$ 中有解（结论不成立）。**
+
+### 满足全部前提的反例
+
+设 $k$ 为任意域，$I = J = \mathbb{N} = \{1, 2, 3, \dots\}$。构造如下方程组：
+
+- 第 1 行：$x_1 = 1$（即 $a_1 = e_1, b_1 = 1$）；
+- 第 $j$ 行（$j \ge 2$）：$x_{j-1} - x_j = 0$（即 $a_j = e_{j-1} - e_j, b_j = 0$）。
+
+#### 验证前提：
+1. **有限支撑行：** $\operatorname{supp}(a_1) = \{1\}$，对 $j \ge 2$，$\operatorname{supp}(a_j) = \{j-1, j\}$，每行均为有限支撑。
+2. **每个有限子系统在 $k^{(\mathbb{N})}$ 中可解：**
+   设 $F \subseteq \mathbb{N}$ 为任意非空有限子集，记 $M = \max(F)$。定义赋值向量 $x \in k^\mathbb{N}$：
+   $$x_i = \begin{cases} 1, & 1 \le i \le M, \\ 0, & i > M. \end{cases}$$
+   显然 $\operatorname{supp}(x) = \{1, \dots, M\}$ 是有限集，故 $x \in k^{(\mathbb{N})}$。
+   检验方程：
+   - 若 $1 \in F$，则 $x_1 = 1 = b_1$；
+   - 对任意 $j \in F$ 且 $j \ge 2$，因为 $j \le M$，所以 $j-1 \le M-1 < M$，故 $x_{j-1} = 1$ 且 $x_j = 1$。
+     从而 $x_{j-1} - x_j = 1 - 1 = 0 = b_j$。
+   因此，有限子系统 $F$ 在 $k^{(\mathbb{N})}$ 中有解。
+
+#### 验证全系统在 $k^{(\mathbb{N})}$ 中无解：
+若全系统在 $k^\mathbb{N}$ 中有解 $x$，则：
+- 由第 1 行，$x_1 = 1$；
+- 对所有 $j \ge 2$，由 $x_{j-1} - x_j = 0$ 得 $x_j = x_{j-1}$。
+通过数学归纳法，对所有 $n \in \mathbb{N}$ 均有 $x_n = 1$。
+因此全系统在全赋值空间 $k^\mathbb{N}$ 中的唯一解是全 1 序列：
+$$x = (1, 1, 1, \dots).$$
+该解的支撑集 $\operatorname{supp}(x) = \mathbb{N}$ 是无限集，故 $x \notin k^{(\mathbb{N})}$。全系统在 $k^{(\mathbb{N})}$ 中无解。 $\blacksquare$
+
+---
+
+## S6 无限域的坐标像
+
+**判定：每个 $\pi_A(\mathcal{S})$ 在 $k^A$ 的乘积拓扑中仍然是闭集，即使 $k$ 为无限域（结论成立）。**
+
+### 1. 只涉及有限坐标的闭方程描述
+
+在 S4 中已证明，对任意域 $k$ 与任意子集 $A \subseteq I$，坐标像严格由如下方程族确定：
+$$\pi_A(\mathcal{S}) = \left\{y \in k^A : \sum_{i\in \operatorname{supp}(w)} w_i y_i = \beta(w)\quad (\forall w \in W \cap U_A)\right\}.$$
+若选取 $W \cap U_A$ 的一组代数基 $\{w_\lambda\}_{\lambda \in \Lambda}$，则 $\pi_A(\mathcal{S})$ 可等价地描述为互不冗余的闭方程组：
+$$\sum_{i\in \operatorname{supp}(w_\lambda)} w_\lambda(i) y_i = \beta(w_\lambda)\qquad (\forall \lambda \in \Lambda).$$
+注意到因 $W \subseteq k^{(I)}$，对每个 $w \in W \cap U_A$，其支撑集 $\operatorname{supp}(w) \subseteq A$ **必为有限集**。因此上述每个方程均**仅涉及有限个坐标**。
+
+---
+
+### 2. 拓扑闭性的完整证明
+
+设域 $k$ 带有离散拓扑，$k^A = \prod_{i\in A} k$ 带有乘积拓扑。
+
+1. **单个方程解集的闭性（柱状集）：**
+   任取 $w \in W \cap U_A$，记其有限支撑集为 $F_w = \operatorname{supp}(w) \subseteq A$。
+   考虑规范有限投影映射
+   $$p_{F_w}: k^A \to k^{F_w},\quad y \mapsto y|_{F_w}.$$
+   由乘积拓扑定义，$p_{F_w}$ 是连续映射。
+   因为 $F_w$ 是有限集，有限乘积空间 $k^{F_w} = \prod_{i\in F_w} k$ 具有有限离散空间的乘积拓扑，因而 $k^{F_w}$ **自身就是离散空间**。
+   定义求和线性映射
+   $$L_w: k^{F_w} \to k,\quad z \mapsto \sum_{i\in F_w} w_i z_i.$$
+   离散空间到离散空间的任何映射均连续，故 $L_w$ 连续。
+   复合映射
+   $$g_w = L_w \circ p_{F_w}: k^A \to k,\quad y \mapsto \sum_{i\in A} w_i y_i$$
+   为连续映射。
+2. **闭集交集：**
+   因为 $k$ 为离散拓扑空间，单点集 $\{\beta(w)\}$ 在 $k$ 中既开又闭，故其原像
+   $$C_w = g_w^{-1}(\{\beta(w)\}) = \left\{y \in k^A : \sum_{i\in \operatorname{supp}(w)} w_i y_i = \beta(w)\right\}$$
+   是 $k^A$ 中的闭集（亦为开集，即 Clopen 柱状集）。
+3. **整体像的闭性：**
+   由 S4 的代数充要条件，
+   $$\pi_A(\mathcal{S}) = \bigcap_{w \in W \cap U_A} C_w.$$
+   在任意拓扑空间中，**任意多个闭集的交集恒为闭集**。
+   因此，无论 $k$ 是有限域还是无限域，$\pi_A(\mathcal{S})$ 在 $k^A$ 的乘积拓扑中必为闭集。 $\blacksquare$
+```
+
+
+File: `current-check.md`
+```text
+KEEP
+
+### 本轮再次核查依据
+
+经第二轮独立且严密的数理逻辑核查，原答卷中 S1 至 S6 的所有构造、分类与定理证明在 ZFC 系统下均无任何漏洞。关于 S6 中“在离散域 $k$ 与乘积拓扑下，每个坐标像 $\pi_A(\mathcal{S})$ 必为闭集”的判定，具有无可辩驳的数学确定性。核心论据明确归纳如下：
+
+1. **有限支撑系统紧致性引理的自闭环（引用 S4 结论）**：
+   - 设 $y^* \in \overline{\pi_A(\mathcal{S})}$。按 $k^A$ 的乘积拓扑定义，对 $A$ 的任意有限子集 $B$，开圆柱邻域 $[B, y^*|_B]$ 与 $\pi_A(\mathcal{S})$ 相交，即存在解 $x \in \mathcal{S}$ 使得 $x|_B = y^*|_B$。
+   - 构造扩充线性方程系统：
+     $$\begin{cases}
+     \sum_{i \in I} a_j(i) x_i = b_j & (j \in J), \\
+     x_i = y^*_i & (i \in A).
+     \end{cases}$$
+   - **该系统的每一行均有限支撑**（原行 $a_j \in k^{(I)}$ 由题设有限支撑；坐标约束行对应基向量 $e_i \in k^{(I)}$，支撑为单点 $\{i\}$）。
+   - **该系统的任意有限子系统相容**：任意有限子集仅包含有限个原指标 $F \subseteq J$ 及有限个坐标指标 $B \subseteq A$；由前述邻域相交性，存在 $x \in \mathcal{S}$ 满足全系统 $J$（因而满足 $F$）且满足 $x|_B = y^*|_B$，即为该有限子系统的解。
+   - 根据 S4 已证的标准定理（任意域上有限支撑行线性系统的可解性等价于所有有限子系统可解，本质为代数对偶 $(k^{(I)})^* \cong k^I$ 与 Hahn-Banach/基扩充公理），**扩充全系统在 $k^I$ 中必有整体解 $x^*$**。
+   - 该整体解 $x^*$ 显然满足 $x^* \in \mathcal{S}$ 且 $x^*|_A = y^*$，直接导出 $y^* \in \pi_A(\mathcal{S})$。故 $\overline{\pi_A(\mathcal{S})} = \pi_A(\mathcal{S})$，$\pi_A(\mathcal{S})$ 必闭。
+
+2. **代数等价刻画的拓扑拓扑性质（引用 S4、S6）**：
+   - 在 S4 中严格证明了：
+     $$\pi_A(\mathcal{S}) = \left\{ y \in k^A : \sum_{i \in \operatorname{supp}(w)} w_i y_i = \beta(w),\ \forall w \in W \cap U_A \right\}.$$
+   - 因 $W \subseteq k^{(I)}$，每一线性组合 $w$ 的支撑集 $\operatorname{supp}(w) \subseteq A$ 均为有限集。
+   - 在离散域乘积空间中，有限坐标线性方程的解集均为 Clopen 柱状集。
+   - 拓扑学基本公理确立：**任意族闭集的交集恒为闭集**。
+
+3. **线性紧性定理（Linearly Compact Spaces）**：
+   - 根据 Bourbaki (*Algèbre*, Chap. II, §7) 及 Lefschetz (1942) 的经典理论，赋离散拓扑的域 $k$ 上的乘积空间 $k^I$ 在线性拓扑下是线性紧的。
+   - 闭仿射子空间 $\mathcal{S}$ 为线性紧子空间，其在连续线性映射 $\pi_A$ 下的像 $\pi_A(\mathcal{S})$ 保持线性紧性。
+   - 在 Hausdorff 线性拓扑空间 $k^A$ 中，任何线性紧子空间恒为闭集。
+
+以上论证不依赖域的基数，完全适用于无限域。因此判定结论完全正确，维持 `KEEP`。
+```
+
+
+# 你此前的完整最终答复（原文，含全部自评）：`previous-answer.md`
+
+```text
+## 审阅结论
+
+**答卷的数学结论正确，`current-check` 的 `KEEP` 可以维持。**  
+S1–S6 的主要断言均成立，未发现满足题设的反例或实质性推理漏洞。仅有一些**非实质性的表述与引用问题**，不影响正确性，见文末。
+
+---
+
+## 分项核查
+
+### S1：有限系统的坐标纤维
+
+设 \(V=k^I\)，标准配对 \(\langle u,v\rangle=\sum_i u_i v_i\)，\(W=\operatorname{span}\{a_j\}\)，\(U_A=\operatorname{span}\{e_i:i\in A\}\)。
+
+- 相容时，齐次方程组解空间为
+  \[
+  W^\perp=\{x:a_j\cdot x=0\ \forall j\},
+  \]
+  故
+  \[
+  \mathcal S=x_0+W^\perp,\qquad \dim\mathcal S=|I|-\dim W.
+  \]
+  正确。
+
+- 对 \(y\in\pi_A(\mathcal S)\)，纤维方向为
+  \[
+  W^\perp\cap U_A^\perp=(W+U_A)^\perp,
+  \]
+  所以
+  \[
+  \dim\mathcal F_y=|I|-\dim(W+U_A).
+  \]
+  正确。
+
+- 延拓条件：\(y\in k^A\) 可延拓为解，当且仅当对所有 \(w\in W\cap U_A\)，
+  \[
+  \sum_{i\in A}w_i y_i=\beta(w),
+  \]
+  其中 \(\beta(w)=\sum_j c_j b_j\) 对任意 \(w=\sum_j c_j a_j\)。相容性保证 \(\beta(w)\) 与表示无关。必要性由代入方程直接得到；充分性由线性映射
+  \[
+  T:W^\perp\to k^A,\qquad T(v)=v|_A
+  \]
+  的像条件
+  \[
+  \operatorname{Im}T=(\ker T^*)^\perp,\qquad
+  \ker T^*\cong W\cap U_A
+  \]
+  得到。正确。
+
+---
+
+### S2：有限域精确计数
+
+由 S1 的仿射维数直接得到：
+\[
+|\mathcal S|=q^{|I|-\dim W},
+\]
+每个非空纤维
+\[
+|\mathcal F_y|=q^{|I|-\dim(W+U_A)},
+\]
+故可实现坐标数
+\[
+|\pi_A(\mathcal S)|
+=\frac{q^{|I|-\dim W}}{q^{|I|-\dim(W+U_A)}}
+=q^{\dim(W+U_A)-\dim W}.
+\]
+所有公式正确，且只使用题中指定参数。
+
+---
+
+### S3：有限域的无限坐标拓扑
+
+- \(k\) 有限离散，故紧 Hausdorff；由 Tychonoff，\(k^I\) 紧 Hausdorff。
+- 每行有限支撑，故每个方程函数
+  \[
+  f_j(x)=\sum_i a_j(i)x_i
+  \]
+  是有限个坐标投影的线性组合，连续；\(\mathcal S_j=f_j^{-1}(\{b_j\})\) 闭。
+- 有限子系统相容给出闭集族 \(\{\mathcal S_j\}\) 的有限交性质；紧性推出
+  \[
+  \mathcal S=\bigcap_j\mathcal S_j\neq\varnothing
+  \]
+  且紧。
+- 乘积空间全不连通，闭子空间继承全不连通性。
+- \(\pi_A(\mathcal S)\) 是紧空间 \(\mathcal S\) 的连续像，紧；\(k^A\) Hausdorff，故闭。
+- 元素刻画：
+  \[
+  y\in\pi_A(\mathcal S)
+  \iff
+  \forall\text{有限 }F\subseteq J,\ \forall\text{有限 }B\subseteq A,\ 
+  \exists x\in k^I:
+  f_j(x)=b_j\ (j\in F),\ x|_B=y|_B.
+  \]
+  由闭集族 \(\{\mathcal S_j\}_{j\in J}\cup\{K_i\}_{i\in A}\) 的有限交性质及紧性得到。正确。
+
+---
+
+### S4：整体对象与恢复目标
+
+这是答卷的核心，核查如下。
+
+#### 1. 整体解存在
+
+令 \(V=k^{(I)}\)，自然有
+\[
+V^*\cong k^I.
+\]
+定义
+\[
+\beta\left(\sum_{j\in F}c_j a_j\right)=\sum_{j\in F}c_j b_j.
+\]
+若 \(\sum_{j\in F}c_j a_j=0\)，取有限子系统 \(F\) 的解 \(x^{(F)}\)，则
+\[
+\sum_{j\in F}c_jb_j
+=\left\langle \sum_{j\in F}c_j a_j,x^{(F)}\right\rangle
+=0.
+\]
+因此 \(\beta\in W^*\) 良定义。将 \(W\) 的基扩充为 \(V\) 的基，把 \(\beta\) 延拓为线性泛函 \(\widetilde\beta:V\to k\)，令
+\[
+x_i^*=\widetilde\beta(e_i).
+\]
+则对每个 \(j\)，
+\[
+\sum_i a_j(i)x_i^*=\widetilde\beta(a_j)=\beta(a_j)=b_j.
+\]
+所以 \(\mathcal S\neq\varnothing\)。构造正确，使用 ZFC 中的基扩充是合法的。
+
+#### 2. 解集描述
+
+\[
+W^\circ=\{x\in k^I:\forall w\in W,\ \langle w,x\rangle=0\},
+\]
+则
+\[
+\mathcal S=x^*+W^\circ
+=\{x\in k^I:\forall w\in W,\ \langle w,x\rangle=\beta(w)\}.
+\]
+正确。
+
+#### 3. 坐标像
+
+答卷给出
+\[
+\pi_A(\mathcal S)
+=\left\{y\in k^A:
+\forall w\in W\cap U_A,\ 
+\sum_{i\in A}w_i y_i=\beta(w)
+\right\}.
+\]
+包含关系显然。反向包含的构造也正确：定义
+\[
+\gamma_y(u)=\sum_{i\in A}u_i y_i\quad(u\in U_A),
+\]
+条件保证 \(\gamma_y\) 与 \(\beta\) 在 \(W\cap U_A\) 上一致，于是
+\[
+\psi(w+u)=\beta(w)+\gamma_y(u)
+\]
+在 \(W+U_A\) 上良定义；延拓到 \(V\)，令 \(x_i=\Phi(e_i)\)，则 \(x\in\mathcal S\) 且 \(x|_A=y\)。  
+因此该像刻画完全正确。
+
+#### 4. 纤维
+
+对 \(y\in\pi_A(\mathcal S)\) 及任意 \(x\in\pi_A^{-1}(y)\cap\mathcal S\)，
+\[
+\pi_A^{-1}(y)\cap\mathcal S
+=x+(W+U_A)^\circ.
+\]
+因为方向空间恰为
+\[
+W^\circ\cap U_A^\circ=(W+U_A)^\circ.
+\]
+正确。
+
+#### 5. 分类
+
+由
+\[
+\ker(\pi_A|_{\mathcal S})\cong (W+U_A)^\circ
+\]
+得
+\[
+\pi_A|_{\mathcal S}\text{ 单射}
+\iff W+U_A=k^{(I)}.
+\]
+由像条件得
+\[
+\pi_A|_{\mathcal S}\text{ 满射}
+\iff W\cap U_A=\{0\}.
+\]
+因此双射当且仅当
+\[
+W\oplus U_A=k^{(I)}.
+\]
+分类表中的三条均正确。答卷没有逐行展开这三个等价性的证明，但由前面的核与像公式立即推出，不构成实质性缺失。
+
+---
+
+### S5：赋值空间的支持
+
+反例正确。取
+\[
+x_1=1,\qquad x_{j-1}-x_j=0\quad(j\ge2).
+\]
+每行有限支撑。对任意有限 \(F\)，令 \(M=\max F\)，定义
+\[
+x_i=\begin{cases}1,&i\le M,\\0,&i>M,\end{cases}
+\]
+则 \(x\in k^{(\mathbb N)}\) 且满足 \(F\) 中所有方程。
+
+但全系统在 \(k^{\mathbb N}\) 中的唯一解是
+\[
+x=(1,1,1,\dots),
+\]
+其支撑为无限集，不属于 \(k^{(\mathbb N)}\)。因此“有限子系统在 \(k^{(\mathbb N)}\) 中可解”不能推出全系统在 \(k^{(\mathbb N)}\) 中可解。正确。
+
+---
+
+### S6：无限域的坐标像
+
+答卷判定为“闭”，这是正确的。
+
+由 S4 的像公式，
+\[
+\pi_A(\mathcal S)
+=\bigcap_{w\in W\cap U_A}C_w,
+\]
+其中
+\[
+C_w=\left\{y\in k^A:\sum_{i\in A}w_i y_i=\beta(w)\right\}.
+\]
+因 \(w\in k^{(I)}\)，其支撑有限，所以 \(C_w\) 只涉及有限个坐标。定义
+\[
+g_w(y)=\sum_{i\in A}w_i y_i.
+\]
+\(g_w\) 只依赖有限个坐标；在离散域 \(k\) 上，有限乘积空间 \(k^{\operatorname{supp}w}\) 离散，故 \(g_w\) 连续。于是
+\[
+C_w=g_w^{-1}(\{\beta(w)\})
+\]
+是闭集，事实上是 clopen 柱状集。任意多个闭集之交仍闭，故
+\[
+\pi_A(\mathcal S)
+\]
+在 \(k^A\) 的乘积拓扑中闭，与 \(k\) 是否无限无关。论证正确。
+
+`current-check` 中用“闭点 \(y^*\) 扩充方程组”的证明也成立：对每个有限 \(B\subseteq A\)，由 \(y^*\in\overline{\pi_A(\mathcal S)}\) 可取 \(x\in\mathcal S\) 使 \(x|_B=y^*|_B\)；因此把原方程与坐标约束 \(x_i=y_i^*\) 合并后，任意有限子系统可解。由 S4 的整体存在定理，扩充系统有解，故 \(y^*\in\pi_A(\mathcal S)\)。这同样证明闭性。
+
+---
+
+## 需要指出的非实质问题
+
+1. **S1 的“解集为平行于 \(W^\perp\) 的仿射子空间”**可以更明确写成
+   \[
+   \mathcal S=x_0+W^\perp
+   \]
+   对任意 \(x_0\in\mathcal S\)。这只是表述简略。
+
+2. **S4 的分类表**没有逐行写出证明。其结论可由
+   \[
+   \ker(\pi_A|_{\mathcal S})=(W+U_A)^\circ
+   \]
+   和像的约束条件直接推出，因此不是错误，但若要求绝对形式化，可补上这三行推导。
+
+3. **`current-check` 第 3 点引用线性紧性**是冗余的；前两条代数/拓扑论证已经足够。且把仿射子空间直接称为“线性紧子空间”在术语上略不严谨；另外“Hahn-Banach”说法不必要，实际使用的是线性泛函的基扩充。它们不影响最终结论。
+
+## 最终判定
+
+\[
+\boxed{\text{原答卷正确，S1–S6 的结论与主要证明均成立；current-check 的 KEEP 结论成立。}}
+\]
+
+仅有少量可补充的表述细节，没有需要推翻的数学断言或影响答案正确性的步骤。
+```

@@ -1,0 +1,184 @@
+{
+  "schema": "math-gauge.neutral-revision-mathematical-review/v1",
+  "model_id": "claude-opus-5.5-xhigh",
+  "case_id": "MG-AR003",
+  "response_sha256": "2a12f250f0c4b378e69ba9e1576723d21271f54b12191a0bbb7eaf0bc017fc96",
+  "reviewer_id": "gpt-6.1-sol-max/external_neutral_audits",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "mathematical_verdict_finalized": true,
+  "MC": 95,
+  "RMC": 95,
+  "SMC": false,
+  "positive_criteria": [
+    {
+      "id": "mapping_identification",
+      "earned": 30,
+      "reason": "明确纠正固定目标映射集应C(X,Y)，并保留全Y结论。",
+      "quote": "答卷写：\"连续映射 f: X→Y 诱导的自然变换对应于集合 C(X,kY) ⊂ C(kX,kY)。\"这是错的。",
+      "evidence_file": "answer.md",
+      "max": 30
+    },
+    {
+      "id": "exponential_law",
+      "earned": 15,
+      "reason": "识别S1的局部紧变量错位并认可原稿后续CGHaus独立路线。",
+      "quote": "**影响范围。** 只影响 S3(1) 这一同构的证明。S3(2) 和 S6 都只依赖 S2 与 CGHaus 的标准定理，不依赖第 4 步，所以都不受影响。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "ultrafilter",
+      "earned": 5,
+      "reason": "识别恰有一个过强，至少一个足够。",
+      "quote": "- **错误措辞：\"由超滤子性质，恰有一个集合不属于 𝒰\"。** 当 K∩ℕ ∉ 𝒰 时，A₁、A₂ 两个都不属于 𝒰。正确说法是\"至少一个不属于\"：若两者都属于 𝒰，则 ∅ = A₁∩A₂ ∈ 𝒰，矛盾。后文\"不妨设 A₁ ∉ 𝒰\"只需要这一点，所以无害。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "retained_results",
+      "earned": 10,
+      "reason": "保留原全Y充要命题、有效非k反例、求值与复合结果。",
+      "quote": "**影响范围。** 只影响 S3(1) 这一同构的证明。S3(2) 和 S6 都只依赖 S2 与 CGHaus 的标准定理，不依赖第 4 步，所以都不受影响。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "mapping_evidence",
+      "earned": 15,
+      "reason": "用非k空间上的恒等映射给合法反例，区分固定Y与全Y。",
+      "quote": "- 而 C(X,kY) ⊊ C(X,Y) 可以真包含。反例：取 S5 中的超滤空间 Z，令 X = Y = Z。则 id_Z ∈ C(Z,Z)，但 kZ 是离散空间而 Z 不是，所以 id_Z ∉ C(Z,kZ)。",
+      "evidence_file": "answer.md",
+      "max": 15
+    },
+    {
+      "id": "exponential_scope",
+      "earned": 10,
+      "reason": "正确要求kX局部紧，不以参数S的局部紧代替；后续独立标准定理条件适合。",
+      "quote": "- S1 证明的是 C(Z,C_co(X,Y)) ≅ C(Z×X,Y)，要求局部紧的是映射空间的**定义域** X，参数空间 Z 可以任意。",
+      "evidence_file": "answer.md",
+      "max": 10
+    },
+    {
+      "id": "ultrafilter_scope",
+      "earned": 5,
+      "reason": "说明两个不交部分可都不在超滤子，保留开覆盖。",
+      "quote": "- **错误措辞：\"由超滤子性质，恰有一个集合不属于 𝒰\"。** 当 K∩ℕ ∉ 𝒰 时，A₁、A₂ 两个都不属于 𝒰。正确说法是\"至少一个不属于\"：若两者都属于 𝒰，则 ∅ = A₁∩A₂ ∈ 𝒰，矛盾。后文\"不妨设 A₁ ∉ 𝒰\"只需要这一点，所以无害。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "beta_size",
+      "earned": 5,
+      "reason": "补出betaD可表示为双重幂集子集，不误判宇宙越界。",
+      "quote": "- 省略：没有说明 βD 是 U 小的。补充：βD ⊂ P(P(D)) ∈ U。",
+      "evidence_file": "answer.md",
+      "max": 5
+    },
+    {
+      "id": "mapping_space_size",
+      "earned": 0,
+      "reason": "未指出或验证M的U小性。",
+      "quote": "- 底集是 C(kX,kY)，拓扑是 k C_co(kX,kY)。",
+      "evidence_file": "answer.md",
+      "max": 5
+    }
+  ],
+  "claim_deductions": [],
+  "scope_fidelity": {
+    "judgment": "preserved",
+    "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。"
+  },
+  "strict_reason": "漏M的U小验证，其余主审计成立。",
+  "unresolved_questions": [],
+  "profile_axes": {
+    "proof": {
+      "grade": 4,
+      "reason": "固定目标识别、局部紧输入错位、超滤子边界均正确，独立CGHaus主路线得到保留；大小遗漏仅补充覆盖。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "**影响范围。** 只影响 S3(1) 这一同构的证明。S3(2) 和 S6 都只依赖 S2 与 CGHaus 的标准定理，不依赖第 4 步，所以都不受影响。"
+        }
+      ],
+      "core_status": "established"
+    },
+    "fidelity": {
+      "grade": 4,
+      "reason": "保持原U小Hausdorff、任意输入与各阶段范围，合法接受CGHaus标准定理，不强求重做原题。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "**影响范围。** 只影响 S3(1) 这一同构的证明。S3(2) 和 S6 都只依赖 S2 与 CGHaus 的标准定理，不依赖第 4 步，所以都不受影响。"
+        }
+      ],
+      "core_scope_failure": false
+    },
+    "discernment": {
+      "grade": 3,
+      "reason": "关键真伪与影响范围准确；尚漏M大小核查。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "答卷写：\"连续映射 f: X→Y 诱导的自然变换对应于集合 C(X,kY) ⊂ C(kX,kY)。\"这是错的。"
+        }
+      ]
+    },
+    "depth": {
+      "grade": 4,
+      "reason": "通过探针、紧子集限制与指数伴随建立结构性的核验和修复；额外范围锐化有成立证明。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "- S1 证明的是 C(Z,C_co(X,Y)) ≅ C(Z×X,Y)，要求局部紧的是映射空间的**定义域** X，参数空间 Z 可以任意。"
+        }
+      ]
+    },
+    "closure": {
+      "grade": 3,
+      "reason": "主要审阅和补证闭合；缺M大小检查。",
+      "evidence": [
+        {
+          "file": "answer.md",
+          "quote": "**影响范围。** 只影响 S3(1) 这一同构的证明。S3(2) 和 S6 都只依赖 S2 与 CGHaus 的标准定理，不依赖第 4 步，所以都不受影响。"
+        }
+      ]
+    }
+  },
+  "delivered_attachments": [],
+  "excluded_attachments": [],
+  "root_final_acceptance": {
+    "reviewer_id": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "human_review": "pending",
+    "accepted_at": "2026-11-20T16:08:54.290664+00:00",
+    "source_review_sha256": "8132e44f548188aae444965722ffddad61bfef72b13720fb884b88c822702aec",
+    "source_review_path": "grading/audit_background_written/claude-opus-5.5-xhigh--MG-AR003.json",
+    "scope": "Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.",
+    "candidate_calls": 0
+  },
+  "final_shared_claim_arithmetic": {
+    "status": "reviewed",
+    "positive_completion": {
+      "lower": 0.95,
+      "upper": 0.95,
+      "exact": 0.95
+    },
+    "generic_deduction": 0.0,
+    "baseline_deduction": 0.0,
+    "applied_deduction": 0.0,
+    "core_endorsement_cap": false,
+    "strict_blocking": false,
+    "core_endorsement_cap_applied": false,
+    "net_completion": {
+      "lower": 0.95,
+      "upper": 0.95,
+      "exact": 0.95
+    },
+    "actual_loss": 0.0,
+    "findings": 0,
+    "distinct_charged_roots": 0,
+    "embedded_reliability_removed": false,
+    "finding_ids": []
+  }
+}
