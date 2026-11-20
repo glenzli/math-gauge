@@ -4,7 +4,7 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前评分版本为 **[1.1.0](docs/theorem-extension-reassessment.md)**；最新已发布题包为 **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**。
+Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前评分版本为 **[1.2.0](docs/neutral-revision.md)**；最新已发布题包为 **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**。
 
 [在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh) · [完整结果](docs/results.md) · [公开题目](cases/README.md) · [运行指南](docs/harness-guide.md)
 
@@ -38,21 +38,31 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 | 分数 | 含义 |
 |---|---|
+| **SMC · Strict Mathematical Completion** | 每次交付按整题是否满足全部实质要求二值验收；1.2.0对首答和续答的判断加权。Lean自查按完整三轮轨迹验收。 |
+| **RMC · Reliable Mathematical Capability** | 在有效成果上扣除错误断言、误判等造成的损失，衡量可靠的数学成果。 |
 | **MC · Mathematical Capability** | 只计经过核实的有效数学贡献，包括未完成任务中的有效进展。 |
-| **RMC · Reliable Mathematical Capability** | 在有效成果上扣除错误断言、误判等造成的损失，是默认主分。 |
-| **SMC · Strict Mathematical Completion** | 整题达到全部实质要求才得分；自查按完整三轮的完成情况、诊断和无回退要求验收。 |
 
-三种分数使用同一批规则选定答卷和固定权重，均按 **100 分**报告；未测项保留未知范围，不把已测部分放大到满分。每题采用规则内首次正常交卷；没有正常交卷时，MC 可计经核实的截止前原成果，RMC 与 SMC 为 0。具体判准见[评分规范](protocol/benchmark-scoring.md)。
+三种分数使用同一批规则选定答卷和固定权重，均按 **100 分**报告；未测项保留未知范围，不把已测部分放大到满分。每题采用规则内首次正常交卷；没有正常交卷时，MC 可计经核实的截止前原成果，RMC 与 SMC 为 0。1.2.0对非Lean失分题增加一次中性续答，入选整题的三个分数均按**80%首答＋20%续答**折算；三个分数首答全满的题免测，Lean结果沿用。首答与续答的严格判断分别保留，退步也按20%反映。具体见[续答规则](protocol/neutral-revision.md)与[评分规范](protocol/benchmark-scoring.md)。
 
 命题拓展题另看实际研究增量：R1 是有用的局部推进，R2 是实质拓展，R3 是深入且完整的研究成果；同等分量的不同路线、证明内部的强结论都可计入。该子类的 SMC 要求原题正确并完整达到 R3。B2／R0 表示原题证明正确，只是没有研究增量。具体尺度见 [1.1.0 评分说明](docs/theorem-extension-reassessment.md)。
 
 ## 当前结果
 
-榜单默认按 RMC 排序。结果页面默认显示 **1.1.0**，也可切换到 **1.0.0**；模型页、逐题评审和下载跟随选版，详见[版本切换](docs/edition-views.md)。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
+榜单默认按 SMC 排序，指标依次为 SMC／RMC／MC。结果页面默认显示 **1.2.0**，本地已纳入完成续答的15个配置（GPT、Claude、Kimi和DeepSeek）；其他配置待回交，可查看 **1.1.0／1.0.0** 原成绩。模型页、逐题评审和下载跟随选版，详见[版本切换](docs/edition-views.md)。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
+
+15个配置共采用171份续答，其中100份达到续答自身的三项满分。原9个GPT配置的68份续答保留原记录，Claude三个配置与Kimi的68份回交答卷已经采用；另加入Astra 6.2 xHigh的9份续答，8份达到续答自身三项满分。全部171份续答均已完成AI数学审核。余下6个外部配置的106题等待回交，GLM跳过。成本计入有效续答的完整开销，耗时仍采用12道共有计时的题目，并单列整章形式化；数学画像可切换首答与含续答。原答、历史成绩和已发布1.0.0题包保留。这些更新目前在本地，下列各批次分别注明首答与续答评分口径。[新版说明](docs/neutral-revision.md)
+
+DeepSeek v4.1 Flash（1017，max）的26道中性续答已结算：24份正常交卷、1份截止原稿仅计MC、1题截止无正文。1.2.0成绩为 **MC76.93／RMC64.09／SMC26.25**，续答自身三项满分1／26。新增参考成本$8.45，连同首答及三轮自查合计$14.86。原final、补回的原始交付附件、判分与130项独立五轴判断均已绑定来源；未新增作答。[详细审核](results/edition-reassessments/v1.2.0/deepseek-v4.1-flash-1017/20261110/REPORT.md)
+
+2026-11-20 的 [Astra 6.2 (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/astra-6.2-xhigh/?lang=zh) 已完成39道初答、三轮自查和9道中性续答。1.2.0成绩为SMC **83.90**、RMC **91.66**、MC **92.66**；原答和原评保持不变，运行来源为Codex CLI0.169.1／OpenAI API，人工数学审核仍待完成。分项、配套指标和运行条件见[完整结果](docs/results.md#astra-62-xhigh--2026-11-20)。
 
 2026-11-19 的 [Claude Opus 5.5 (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/claude-opus-5.5-xhigh/?lang=zh) 经 Sol 6.1 Max 并行全审，MC **91.36**、RMC **88.80**、SMC **54.92**。39道初答及三轮自查全部正常交付；逐项依据与运行条件见[完整结果](docs/results.md#claude-opus-55-xhigh--2026-11-19)。
 
 2026-11-19 的 [Astra 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/astra-6.2-max/?lang=zh) 已完成39道初答和三轮自查。与 Astra 6 原答对照复核后，按1.1.0标准计为 MC **92.25**、RMC **92.25**、SMC **87.17**。分项、两率、数学画像和运行条件见[完整结果](docs/results.md#astra-62-max--2026-11-19)；Sol 6.2 Max／xHigh 的结果及前代对比也保留在其中。
+
+数学画像另将[开放研究能力与研究主动性](docs/open-research.md)分开：前者看明确要求研究时交出了什么，后者看未被要求时是否自行推进，放在八轴最后。两者独立评审，不把克制直接解释为能力不足。
+
+下图为1.1.0留档示意；当前1.2.0成绩与待补测状态以交互页为准。
 
 [![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 
@@ -61,7 +71,7 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 <details>
 <summary>成本与耗时截图</summary>
 
-以下两图以 RMC 为例。成本只计每题采用的一次作答及三轮固定自查，使用留档的 API 参考价或测试日费用；耗时包含工具使用与等待，受运行环境影响。两者的来源和限制分别见[成本口径](docs/cost-reference.md)与[计时口径](docs/answer-timings.md)。
+以下两图以 RMC 为例。基础成本计每题采用的一次作答及三轮固定自查；1.2.0另加实际采用续答的完整成本。截图为续答前留档，当前数值以交互页为准。成本使用留档的 API 参考价或测试日费用；耗时包含工具使用与等待，受运行环境影响。两者的来源和限制分别见[成本口径](docs/cost-reference.md)与[计时口径](docs/answer-timings.md)。
 
 [![Math Gauge 中文成本与 RMC 前沿](docs/screenshots/cost-frontier-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&cost-axis=cost&cost-score=partial#cost-frontier)
 
@@ -85,7 +95,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 |---|---|
 | 题目与选题 | [公开题目](cases/README.md) · [选题说明](docs/selection.md) |
 | 评分与审核 | [评测协议](protocol/evaluation.md) · [评分规范](protocol/benchmark-scoring.md) · [审核方式](docs/review-process.md) |
-| 辅助指标 | [数学画像（1.1.0）](protocol/mathematical-profile.md) · [内容可靠率与目标达成率](protocol/content-rates.md) · [手稿主动额外成果](docs/manuscript-observations.md) |
+| 辅助指标 | [数学画像：首答／含续答](docs/mathematical-profile-revision.md) · [内容可靠率与目标达成率](protocol/content-rates.md) · [手稿主动额外成果](docs/manuscript-observations.md) |
 | 执行与留档 | [运行与交付指南](docs/harness-guide.md) · [正式记录合同](protocol/result-record.md) |
 | 时间与费用 | [计时口径](docs/answer-timings.md) · [成本口径](docs/cost-reference.md) |
 | 故障与补测 | [答卷来源更正](docs/harness-corrections.md) · [整章自查补充](docs/c003-sealed-continuation.md) · [尝试与重试统计](docs/execution-attempts.md) |

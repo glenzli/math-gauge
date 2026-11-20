@@ -7,7 +7,7 @@
 - `models/<model>/cases/<case>.html`：公开题的判定理由及逐项评审；题面、原答及长附件按需展开。
 - `method.html`：计分、工具、重跑、未知值与公开证据边界。
 
-页面统一采用 `nonlogical_retry_3` 的规则选定成绩，默认主分为RMC；每题含首次最多3次有效模型尝试，采用首次正常交付，重跑过程只作备注。导航使用 `?score=capability|partial|strict` 保留口径选择。所有图表均按模型横向分行：RMC实色、MC浅色、SMC粗斜纹；组内2px间隙，共用零线、无柱边框，数值右对齐。
+页面统一采用 `nonlogical_retry_3` 的规则选定成绩，默认主分为RMC；每题含首次最多3次有效模型尝试，采用首次正常交付，重跑过程只作备注。导航使用 `?score=capability|partial|strict` 保留口径选择。总榜和分类榜按模型排列横柱，三项分别采用浅品牌色 MC、中等浓度的品牌色 RMC 和深色缎面 SMC。SMC 读数加重，三柱共用零线，组内间隙为 2px，数值在右侧对齐。成本和耗时散点图用粗虚线标 Pareto 前沿，用细实线连接需要指认的型号和点。
 
 SMC（Strict Mathematical Completion）为严格数学交付的展示简称，归档模式仍为 `strict`。三口径共用同一原答，未知保持未知；SMC使用原始整题判定，不能把底层部分完成度显示成SMC分数。
 

@@ -4,6 +4,12 @@
 
 这里记录模型在原任务未要求的情况下，主动提出并实际交付了多少经核实的额外成果组。仅覆盖五道手稿题，复用规则选定A1；没有补跑，没有研究邀请，没有跨尝试拼接。
 
+1.2.0仍直接展示这些首答观察，不加入中性续答产生的成果，也不因模型尚未完成续答而隐藏其已有观察。入口在数学研究分榜内的“主动额外成果”，原答与公开依据链接固定到首答评分版。GLM仍只保留部分测试资料，不参加该分榜比较。
+
+Astra 6.2 xHigh新采用的五份首答手稿共核实4组主动额外成果；只复用原答和已采用审核，9道中性续答的受邀成果不加入此观察。原有21个模型的观察值保持不变。
+
+Astra 6.2 xHigh adds four verified additional-result groups across five first-answer manuscripts. The nine invited neutral revisions are excluded from this first-answer observation; the other 21 models retain their existing values.
+
 它描述这批答卷的主动探索行为，不表示研究能力，也不预设数量越多越好。原题完成质量、可靠性以及是否适合主动扩展范围须分别判断。没有满分、百分比、题目产出率或有限上限，不是独立benchmark，也不进入任何主分或两率。
 
 | 模型 | 已核实额外成果组 | 已审手稿 |
@@ -22,6 +28,7 @@
 | Terra 6.1 (max) | 6 | 5/5 |
 | Astra 6 (max) | 4 | 5/5 |
 | Astra 6.2 (max) | 4 | 5/5 |
+| Astra 6.2 (xHigh) | 4 | 5/5 |
 | Dot Underlying (2026-11-08) | 4 | 5/5 |
 | Terra 6.1 (xhigh) | 3 | 5/5 |
 | Gemini 4 Argon (high) | 2 | 5/5 |

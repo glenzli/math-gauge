@@ -3,7 +3,8 @@
  'use strict';
  const source=document.getElementById('cost-reference-data');if(!source)return;
  const data=JSON.parse(source.textContent),board=document.getElementById('cost-board'),plot=document.getElementById('cost-plot');
- const ns='http://www.w3.org/2000/svg',modes=['capability','partial','strict'];
+ data.models=data.models.filter(model=>model.presentation_eligibility?.ranked!==false);
+ const ns='http://www.w3.org/2000/svg',modes=['strict','partial','capability'];
  const labels={
   title:['总成本参考','Total cost reference'],subtitle:['当前留档答卷 · 美元','Retained attempts · USD'],
   method:['计算口径 ↗','Method ↗'],scope:['每题只计留档采用的一次作答；全部未交卷时取最后留档尝试。三轮固定自查各计一次，其余重试不计。','One retained attempt per task; if none delivered, use the last retained failed attempt. Each prescribed self-check round is included once. Other retries are excluded.'],
@@ -19,26 +20,36 @@
   chartData:['查看图表数据','View chart data'],model:['模型','Model'],total:['总成本','Total cost'],timeLabel:['典型题耗时 / 分钟','Typical time / min'],unknown:['未取得成本','Cost unavailable'],partial:['用量不齐','Usage incomplete'],estimatedNote:['含用量估算','Includes imputed usage'],
   costAxis:['总成本 / 美元（线性刻度）','Total cost / USD (linear scale)'],timeAxis:['典型题耗时 / 分钟','Typical task time / min'],
   range:['估算范围','Scenario range'],minutes:['分钟','min'],
-  costNote:['实线连接费用已核对且具有完整成绩的 Pareto 前沿模型。','The line connects Pareto-frontier models with verified costs and complete evaluations.'],
-  timeNote:['实线按同一组日常五题的已记录加权耗时与完整数学成绩计算。耗时包含工具和等待。','The time frontier uses recorded weighted time for the same five everyday tasks and completed mathematical evaluations. Time includes tools and waiting.'],
+  costNote:['虚线连接费用已核对且具有完整成绩的 Pareto 前沿模型。','The dashed line connects Pareto-frontier models with verified costs and complete evaluations.'],
+  timeNote:['虚线标出用同一组日常五题的已记录加权耗时与完整数学成绩计算的前沿。耗时包含工具和等待。','The dashed frontier uses recorded weighted time for the same five everyday tasks and completed mathematical evaluations. Time includes tools and waiting.'],
   noData:['没有足够的数据绘图。','Insufficient data to plot.'],score:['成绩','Score'],lowerBound:['仅有成本下限','Cost lower bound only'],
   highlight:['高亮','Highlight'],
   clearSelection:['清除高亮','Clear highlights'],pinLabel:['固定高亮','Pin highlight'],unpinLabel:['取消高亮','Unpin highlight'],
   selectionCount:['已固定 {count} 个','{count} pinned'],
   interactionHint:['悬停查看详情，点击点或名称可固定高亮。','Hover for details; click a point or name to pin its highlight.']
  };
+ if(data.benchmark_version==='1.2.0')Object.assign(labels,{
+  subtitle:['首答＋采纳续答 · 美元','First answers + adopted continuations · USD'],
+  scope:['计入首答、三轮规定自查及采纳续答的有效尝试开销，复用试答只计一次。已确认的系统及网络故障只记在重试附表。',
+         'Includes effective attempts for first answers, the three prescribed self-checks and adopted continuations. Each reused trial is counted once. Confirmed system and network failures appear in the retry appendix.'],
+  timeSubtitle:[`横轴为 ${data.time_sample_count} 道共有样本题的加权耗时（分钟），纵轴为{score}。越靠左上越好。`,
+                `Weighted time in minutes for ${data.time_sample_count} shared tasks on the horizontal axis and {score} on the vertical axis. Upper left is better.`],
+  timeNote:['虚线标出用共有样本题的加权耗时与完整数学成绩计算的 Pareto 前沿。','The dashed Pareto frontier uses weighted time for the shared tasks and complete mathematical scores.'],
+  priceNote:['沿用原公开API参考价与缓存口径；原费用估算仍标估算，未知后端身份保持未知。判卷、其他提示分支和打包等待不计入候选成本。','Original public API reference prices and cache treatment are retained. Existing estimates remain estimates; unknown backend identity stays unknown. Reviews, other feedback branches and packaging waits are excluded.']
+ });
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const svg=(tag,attrs={},text)=>{const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));if(text!=null)n.textContent=text;return n};
- let lang='zh',axis='cost',mode='partial',selected=new Set();
+ let lang='zh',axis='cost',mode='strict',selected=new Set();
  const t=key=>labels[key][lang==='en'?1:0],locale=()=>lang==='en'?'en-US':'zh-CN';
  const money=v=>'$'+v.toLocaleString(locale(),{minimumFractionDigits:2,maximumFractionDigits:2});
  const amount=m=>m.total_usd??(m.status==='partial'?m.known_usd:null);
  const costText=m=>amount(m)==null?'—':(m.status==='estimated'?'≈ ':m.status==='partial'?'≥ ':'')+money(amount(m));
  const brand=m=>m.theme.color||m.theme.ink||'#556f98';
+ const modelOrder=(a,b)=>window.MG?.compareModelOrder?.(a.model_id,b.model_id)??a.model_id.localeCompare(b.model_id);
  function link(m){const a=node('a',m.label);a.title=m.label;const target='models/'+encodeURIComponent(m.model_id)+'/index.html?lang='+lang+'&score='+mode;const url=new URL(window.MG?MG.href(target):target,document.baseURI);url.searchParams.set('score',mode);a.href=url.href;return a}
  function icon(m){const img=node('img');img.src=m.logo.data_url;img.alt='';return img}
  function renderBoard(){
-  const ranked=data.models.filter(m=>m.total_usd!=null).sort((a,b)=>a.total_usd-b.total_usd||a.model_id.localeCompare(b.model_id));
+  const ranked=data.models.filter(m=>m.total_usd!=null).sort((a,b)=>a.total_usd-b.total_usd||modelOrder(a,b));
   const maximum=Math.max(1,...ranked.map(m=>m.total_usd));board.replaceChildren();
   ranked.forEach((m,index)=>{
    const row=node('div',null,'cost-row '+m.status);row.setAttribute('role','listitem');row.dataset.costModel=m.model_id;row.style.setProperty('--cost-brand',brand(m));
@@ -48,10 +59,10 @@
    row.append(identity,track,readout);board.append(row);
   });
   const missing=document.getElementById('cost-unavailable');missing.replaceChildren();
-  data.models.filter(m=>m.total_usd==null).forEach(m=>{const item=node('span',null,'cost-unavailable-item');item.append(icon(m),link(m),node('strong',costText(m)),node('span',m.status==='partial'?t('partial'):t('unknown')));missing.append(item)});
+  data.models.filter(m=>m.total_usd==null).sort(modelOrder).forEach(m=>{const item=node('span',null,'cost-unavailable-item');item.append(icon(m),link(m),node('strong',costText(m)),node('span',m.status==='partial'?t('partial'):t('unknown')));missing.append(item)});
  }
  function renderPlot(){
-  const W=1040,H=460,left=70,right=955,top=32,bottom=384;
+  const W=1040,H=486,left=70,right=955,top=58,bottom=410;
   plot.setAttribute('viewBox','0 0 '+W+' '+H);
   plot.replaceChildren(svg('title',{id:'cost-svg-title'},t(axis==='cost'?'costAxisButton':'timeAxisButton')),
    svg('desc',{id:'cost-svg-desc'},t(axis==='cost'?'costNote':'timeNote')+' '+t('submissionNote')));
@@ -74,10 +85,11 @@
   plot.append(svg('text',{x:left,y:17,class:'cost-axis-title'},({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' / 100'),svg('text',{x:(left+right)/2,y:H-27,'text-anchor':'middle',class:'cost-axis-title'},t(axis==='cost'?'costAxis':'timeAxis')));
   const frontier=new Set(data.frontiers[mode][axis]),byId=Object.fromEntries(rows.map(m=>[m.model_id,m]));
   const fp=data.frontiers[mode][axis].filter(id=>byId[id]).map(id=>byId[id]);
+  const connectorLayer=svg('g',{class:'cost-connectors','aria-hidden':'true'}),pointLayer=svg('g'),labelLayer=svg('g');
+  plot.append(connectorLayer);
   if(fp.length>1)plot.append(svg('path',{d:fp.map((m,i)=>(i?'L':'M')+x(axis==='cost'?amount(m):m.seconds/60)+','+y(m.scores[mode].value)).join(' '),class:'cost-frontier-path'}));
   // Geometry is independent of score projection; only labels may move.
-  const connectorLayer=svg('g',{class:'cost-connectors','aria-hidden':'true'}),pointLayer=svg('g'),labelLayer=svg('g');
-  plot.append(connectorLayer,pointLayer,labelLayer);
+  plot.append(pointLayer,labelLayer);
   const placed=[],states=new Map(),tooltip=document.getElementById('cost-tooltip'),wrap=plot.parentElement;
   const labelSize=Number.parseFloat(getComputedStyle(plot).getPropertyValue('--board-label-size'))||12;
   const screenScale=plot.getBoundingClientRect().width/W||1,fontSize=labelSize/screenScale,labelPadding=3;
@@ -96,8 +108,13 @@
    const halo=svg('circle',{cx,cy,r:7,class:'cost-point-halo',fill:'none',stroke:brand(m),'aria-hidden':'true'});
    target.append(halo,p);pointLayer.append(target);
    if(axis==='cost'&&m.status==='partial')target.append(svg('path',{d:`M${cx+r+4},${cy}h18m-5,-4l5,4l-5,4`,fill:'none',stroke:brand(m),'stroke-width':1.5}));
-   const text=svg('text',{class:'cost-label',fill:brand(m),'font-size':fontSize,visibility:'hidden'},m.label);
-   text.style.fontSize=fontSize+'px';labelLayer.append(text);
+   const text=svg('text',{class:'cost-label','font-size':fontSize,visibility:'hidden'});
+   const qualifier=m.label.match(/ \([^()]+\)$/);
+   text.textContent=qualifier?m.label.slice(0,qualifier.index):m.label;
+   if(qualifier)text.append(svg('tspan',{class:'cost-label-qualifier'},qualifier[0]));
+   text.style.fontSize=fontSize+'px';
+   text.style.setProperty('--cost-model-ink',m.theme.ink||brand(m));
+   labelLayer.append(text);
    const measured=text.getBBox();text.removeAttribute('visibility');
    const label=svg('g',{class:'cost-label-target','data-cost-label':m.model_id,'data-cost-model':m.model_id,role:'button','aria-label':m.label,'aria-pressed':selected.has(m.model_id)});
    const hit=svg('rect',{fill:'transparent',rx:3});label.append(hit,text);labelLayer.append(label);
@@ -108,8 +125,9 @@
    states.set(m.model_id,{m,p,target,label,text,hit,line,measured,delivery});
   });
   const segments=fp.slice(1).map((m,i)=>({x1:x(axis==='cost'?amount(fp[i]):fp[i].seconds/60),y1:y(fp[i].scores[mode].value),x2:x(axis==='cost'?amount(m):m.seconds/60),y2:y(m.scores[mode].value)}));
-  const layouts=globalThis.MathGaugeCostLabels.layout(placed,{bounds:{left:left-8,top:top-8,right:W-8,bottom:bottom-4},
-   mode:'all',padding:4,lines:segments});
+  // Leave space for complete names above the 100-point gridline.
+  const layouts=globalThis.MathGaugeCostLabels.layout(placed,{bounds:{left:left-8,top:24,right:W-8,bottom:bottom-4},
+   mode:'all',padding:4,lines:segments,interactiveConnectors:true});
   layouts.forEach(layout=>{
    const state=states.get(layout.id);state.layout=layout;
    state.text.setAttribute('x',layout.x+labelPadding-state.measured.x);state.text.setAttribute('y',layout.y+labelPadding-state.measured.y);
@@ -123,7 +141,7 @@
    states.forEach((state,key)=>{
     const active=key===id,pinned=selected.has(key);
     for(const part of [state.target,state.label,state.line]){part.classList.toggle('cost-active',active);part.classList.toggle('cost-pinned',pinned)}
-    state.label.style.display='';state.line.style.display=active||pinned||state.layout.connector.needed?'':'none';
+    state.line.style.display=active||pinned||state.layout.connector.needed?'':'none';
    });
    if(id==null){tooltip.hidden=true;return}
    const state=states.get(id),m=state.m,score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2);
@@ -151,7 +169,7 @@
   plot.onkeydown=event=>{const id=event.target.dataset.costPoint;if(id&&['Enter',' '].includes(event.key)){event.preventDefault();toggleSelection(id,true)}};
   highlight(null);
   const table=document.getElementById('cost-plot-table');table.replaceChildren();
-  rows.forEach(m=>{
+  [...rows].sort(modelOrder).forEach(m=>{
    const tr=document.createElement('tr'),name=node('th');name.scope='row';name.append(link(m));tr.append(name);
    for(const text of [costText(m),m.scores[mode].value.toFixed(2),m.seconds==null?'—':(m.seconds/60).toFixed(1)])tr.append(node('td',text,'numeric'));
    const cell=node('td'),pin=node('button',t(selected.has(m.model_id)?'unpinLabel':'pinLabel'),'cost-pin-button');pin.type='button';pin.dataset.costPin=m.model_id;
@@ -172,7 +190,7 @@
  }
 
  function render(){
-  const params=new URLSearchParams(location.search);lang=params.get('lang')==='en'?'en':'zh';axis=params.get('cost-axis')==='time'?'time':'cost';mode=modes.includes(params.get('cost-score'))?params.get('cost-score'):'partial';
+  const params=new URLSearchParams(location.search);lang=params.get('lang')==='en'?'en':'zh';axis=params.get('cost-axis')==='time'?'time':'cost';mode=window.MG?MG.scorePreference(location.search,'cost-score'):(modes.includes(params.get('cost-score'))?params.get('cost-score'):'strict');
   const validIds=new Set(data.models.map(m=>m.model_id));selected=new Set((params.get('cost-selected')||'').split(',').filter(id=>validIds.has(id)));
   document.getElementById('cost-tooltip').hidden=true;
   document.querySelectorAll('[data-cost-t]').forEach(n=>{
@@ -183,6 +201,7 @@
    }
    n.textContent=text;
   });
+  document.querySelectorAll('[data-cost-t="argonPriceLabel"]').forEach(n=>n.parentElement.hidden=!data.models.some(model=>model.model_id==='gemini-4-argon'));
   document.querySelectorAll('[data-cost-axis]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costAxis===axis)));
   document.querySelectorAll('[data-cost-score]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costScore===mode)));
   document.getElementById('cost-selection-count').textContent=selected.size?t('selectionCount').replace('{count}',selected.size):'';

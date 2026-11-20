@@ -1,0 +1,262 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><pre><code class="language-json">{
+  &quot;schema&quot;: &quot;math-gauge.neutral-revision-mathematical-review/v1&quot;,
+  &quot;model_id&quot;: &quot;claude-sonnet-5.5-max&quot;,
+  &quot;case_id&quot;: &quot;MG-MCP003&quot;,
+  &quot;response_sha256&quot;: &quot;33d308a18fa75dd1c9dbe365e0c87cfa88e42f582ff94a97a1d4e6e00ef2dfbd&quot;,
+  &quot;reviewer_id&quot;: &quot;gpt-6.1-sol-max/external_neutral_fitting&quot;,
+  &quot;reviewer_kind&quot;: &quot;ai&quot;,
+  &quot;human_review&quot;: &quot;pending&quot;,
+  &quot;mathematical_verdict_finalized&quot;: true,
+  &quot;score_scale&quot;: 100,
+  &quot;MC&quot;: 100,
+  &quot;RMC&quot;: 75,
+  &quot;SMC&quot;: false,
+  &quot;mc_completion&quot;: 1.0,
+  &quot;rmc_completion&quot;: 0.75,
+  &quot;positive_criteria&quot;: [
+    {
+      &quot;id&quot;: &quot;M1&quot;,
+      &quot;max_points&quot;: 15,
+      &quot;earned_points&quot;: 15,
+      &quot;reason&quot;: &quot;保持CH1吸收元与非分离扩展伪度量；全局/区域/商空间量词及表示桥明确。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;全局量词取遍整个 $\\mathcal X$（含 $\\bot$）&quot;
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;M2&quot;,
+      &quot;max_points&quot;: 20,
+      &quot;earned_points&quot;: 20,
+      &quot;reason&quot;: &quot;联合求和上矩阵、响应函数等价与复合已建立，且解释通道型不能替代联合型。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;**(U) 上 Lipschitz 矩阵。**&quot;
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;M3&quot;,
+      &quot;max_points&quot;: 20,
+      &quot;earned_points&quot;: 20,
+      &quot;reason&quot;: &quot;直接下矩阵及独立反向矩阵定义、方向与复合正确；零反射与商上单射加了所需零相容。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;**(D) 下 Lipschitz 矩阵。**&quot;
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;M4&quot;,
+      &quot;max_points&quot;: 20,
+      &quot;earned_points&quot;: 20,
+      &quot;reason&quot;: &quot;核心∞框架、零距存在充要条件与通道端点/极值例有效；未用∞假装零距兼容，未将典范inf当证书。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;不分离时 $\\infty$ 兜不住底&quot;
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;M5&quot;,
+      &quot;max_points&quot;: 20,
+      &quot;earned_points&quot;: 20,
+      &quot;reason&quot;: &quot;联合坍缩盒的定义、响应零集、混合复合与通道端点处理给出独立有效描述；额外错误凸性断言不抹去这些完整正向成果。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;\\Theta\\in\\mathcal C(\\phi)\\iff\\rho_j(\\Theta_{j\\cdot})=0&quot;
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;M6&quot;,
+      &quot;max_points&quot;: 5,
+      &quot;earned_points&quot;: 5,
+      &quot;reason&quot;: &quot;数值、关系、响应包络和区域化之间的核心接口相容，原题要求的基本框架已闭合。可删除旁支错误按RMC另罚。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;**注 4.1（区域化）**&quot;
+        }
+      ]
+    }
+  ],
+  &quot;claim_deductions&quot;: [
+    {
+      &quot;root_cause&quot;: &quot;collapse_box_admissibility_not_convex&quot;,
+      &quot;level&quot;: &quot;material&quot;,
+      &quot;points&quot;: 10,
+      &quot;reason&quot;: &quot;推论1.3把四类行容许集一并称凸，但坍缩盒的容许阈值下集一般不凸；只证明U的凸性不能推出C。&quot;,
+      &quot;counterexample&quot;: &quot;X={a,b,⊥},I={1,2},d1(a,b)=d2(a,b)=1，吸收距离∞，φ=id。C每一行可选(2,0)或(0,2)，两者均排除(a,b)而有效；中点(1,1)纳入(a,b)，输出距1，失效。&quot;,
+      &quot;core_error_endorsement&quot;: false,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;行容许集是凸的&quot;
+        }
+      ]
+    },
+    {
+      &quot;root_cause&quot;: &quot;sum_convex_channel_rule_transferred_to_max&quot;,
+      &quot;level&quot;: &quot;material&quot;,
+      &quot;points&quot;: 10,
+      &quot;reason&quot;: &quot;注4.2将2.6整个通道命题平行移植到max型；其中2.6(4)的上界凸加权依赖求和，max型不能沿用。&quot;,
+      &quot;counterexample&quot;: &quot;取两相同离散分量d1=d2=d和φ=id。两个通道系数c1=c2=1均有效，w1=w2=1/2；max型行(.5,.5)输出上界只有.5d，小于真实d。吸收点对仍合法，反例在有限正距离上。&quot;,
+      &quot;core_error_endorsement&quot;: false,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;命题 2.6（通道量不变）。&quot;
+        }
+      ]
+    },
+    {
+      &quot;root_cause&quot;: &quot;infinite_threshold_misread_as_zero_matrix&quot;,
+      &quot;level&quot;: &quot;local&quot;,
+      &quot;points&quot;: 5,
+      &quot;reason&quot;: &quot;r_j为∞也可因所有正行和对应的Θ阈值为∞，不强制L=0。定理结论本身可直接按∞算术证明，但所交末尾边界句为假。&quot;,
+      &quot;counterexample&quot;: &quot;φ=id,L=E；ψ恒为⊥，Θ′全∞是合法坍缩矩阵。所有s_k=1且r_j=∞，L≠O。该错误只影响附加定理的一个可局部修正分支，不升critical。&quot;,
+      &quot;core_error_endorsement&quot;: false,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;若 $r_j=\\infty$，则所有 $s_k=0$，$L=O$。&quot;
+        }
+      ]
+    }
+  ],
+  &quot;ordinary_deduction_points&quot;: 25,
+  &quot;core_error_cap_applied&quot;: false,
+  &quot;scope_fidelity&quot;: &quot;保持原题对象和合法替代路线。错误为附加数学断言；不按OET风格或额外丰富度扣分。&quot;,
+  &quot;strict_reason&quot;: &quot;核心正向要求完整，故MC100；三项确证附加性质/证明断言错误扣10+10+5，RMC75。MCP003严格标准不豁免可分离材料错误，因此SMC失败。&quot;,
+  &quot;unresolved_questions&quot;: [],
+  &quot;delivered_attachments&quot;: [],
+  &quot;excluded_attachments&quot;: [
+    {
+      &quot;name&quot;: &quot;本地随机核验脚本&quot;,
+      &quot;reason&quot;: &quot;原文“本地脚本（不随答卷提交）”；没有附件，不作为交付或独立核验信用。&quot;
+    }
+  ],
+  &quot;profile_axes&quot;: {
+    &quot;proof&quot;: {
+      &quot;grade&quot;: 4,
+      &quot;core_status&quot;: &quot;established&quot;,
+      &quot;reason&quot;: &quot;原题必需的上/下矩阵、∞零距相容性和输出不可分辨矩阵定义及必要性质成立；以下确证错误都在附加凸性/max变体/证明边界句，不为核心定义、存在性和有效复合依赖。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;**定理 2.2**&quot;
+        },
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;**命题 1.2（响应函数刻画：Lip 与坍缩“对等”的精确含义）**&quot;
+        }
+      ]
+    },
+    &quot;fidelity&quot;: {
+      &quot;grade&quot;: 4,
+      &quot;core_scope_failure&quot;: false,
+      &quot;reason&quot;: &quot;联合盒阈值是明示的合法类别选择；保留CH1的非分离性和吸收元，区域/商表示具实际桥。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;“不可区分”指零距离&quot;
+        },
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;“输入落入一定范畴”指输入距离向量落入盒子&quot;
+        }
+      ]
+    },
+    &quot;discernment&quot;: {
+      &quot;grade&quot;: 2,
+      &quot;reason&quot;: &quot;识别并修正多项旧错误，核心判断正确，但仍把求和框架的凸性误推广到坍缩盒和max型，且∞阈值边界推理失准；自评完整正确过强。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;行容许集是凸的&quot;
+        },
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;命题 2.6（通道量不变）。&quot;
+        }
+      ]
+    },
+    &quot;depth&quot;: {
+      &quot;grade&quot;: 4,
+      &quot;reason&quot;: &quot;有效部分统一响应函数、直接/反向下界、联合坍缩盒、零相容/反射及扩展极值边界，并给Perov应用。只计已成立机制，不把错误变体计入深度。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;同一“响应函数”的两种读数&quot;
+        },
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;### 2.7 应用：Perov 型压缩原理&quot;
+        }
+      ]
+    },
+    &quot;closure&quot;: {
+      &quot;grade&quot;: 4,
+      &quot;reason&quot;: &quot;独立核心框架的定义、必要存在性、量词和表示桥完整；附带错误删除后核心仍独立可用。未交脚本不补证。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;本稿自包含，没有额外交付文件。&quot;
+        },
+        {
+          &quot;file&quot;: &quot;answer.md&quot;,
+          &quot;quote&quot;: &quot;**注 4.1（区域化）**&quot;
+        }
+      ]
+    }
+  },
+  &quot;review_boundary&quot;: &quot;Only this first normal final answer and explicitly delivered attachments. Previous answer is context, not a source of supplementary proof. AI review is not human approval.&quot;,
+  &quot;root_final_acceptance&quot;: {
+    &quot;reviewer_id&quot;: &quot;Codex coordinator&quot;,
+    &quot;reviewer_kind&quot;: &quot;ai&quot;,
+    &quot;human_review&quot;: &quot;pending&quot;,
+    &quot;accepted_at&quot;: &quot;2026-11-20T16:08:54.311333+00:00&quot;,
+    &quot;source_review_sha256&quot;: &quot;660ca11528ccf3a83b5901b581a01c9db82707a8a8e8f38ea7caf945ac62b181&quot;,
+    &quot;source_review_path&quot;: &quot;grading/fitting_dynamics/claude-sonnet-5.5-max--MG-MCP003.json&quot;,
+    &quot;scope&quot;: &quot;Source/first-final/explicit-attachment boundaries, shared claim arithmetic, fixed criteria, independent profile core gates and calibrated research tiers reviewed. Preliminary reviewer attribution retained.&quot;,
+    &quot;candidate_calls&quot;: 0
+  },
+  &quot;final_shared_claim_arithmetic&quot;: {
+    &quot;status&quot;: &quot;reviewed&quot;,
+    &quot;positive_completion&quot;: {
+      &quot;lower&quot;: 1.0,
+      &quot;upper&quot;: 1.0,
+      &quot;exact&quot;: 1.0
+    },
+    &quot;generic_deduction&quot;: 0.25,
+    &quot;baseline_deduction&quot;: 0.0,
+    &quot;applied_deduction&quot;: 0.25,
+    &quot;core_endorsement_cap&quot;: false,
+    &quot;strict_blocking&quot;: true,
+    &quot;core_endorsement_cap_applied&quot;: false,
+    &quot;net_completion&quot;: {
+      &quot;lower&quot;: 0.75,
+      &quot;upper&quot;: 0.75,
+      &quot;exact&quot;: 0.75
+    },
+    &quot;actual_loss&quot;: 0.25,
+    &quot;findings&quot;: 3,
+    &quot;distinct_charged_roots&quot;: 3,
+    &quot;embedded_reliability_removed&quot;: false,
+    &quot;finding_ids&quot;: [
+      &quot;claim-1&quot;,
+      &quot;claim-2&quot;,
+      &quot;claim-3&quot;
+    ]
+  }
+}
+
+</code></pre>
+</div>

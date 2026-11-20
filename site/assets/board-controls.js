@@ -1,7 +1,7 @@
 /* Per-board display preferences. Sorting and mathematical values stay source-owned. */
 (() => {
  'use strict';
- const scores=[{id:'capability',key:'mc'},{id:'partial',key:'rmc'},{id:'strict',key:'smc'}];
+ const scores=[{id:'strict',key:'smc'},{id:'partial',key:'rmc'},{id:'capability',key:'mc'}];
  const series={overall:scores,written:scores,lean:scores,research:scores,
   gap:[{id:'RG',key:'rg'},{id:'DG',key:'dg'}],
   rates:[{id:'reliability',key:'reliability'},{id:'attainment',key:'attainment'}],

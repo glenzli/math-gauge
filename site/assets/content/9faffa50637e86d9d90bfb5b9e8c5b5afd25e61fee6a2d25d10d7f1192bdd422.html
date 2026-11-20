@@ -1,0 +1,295 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h1>答卷审阅报告（修订稿）</h1>
+<h2>0. 总体结论</h2>
+<p>答卷的全部判断题结论和全部构造都正确。但它不算完全严格的完整作答，原因如下：</p>
+<ul>
+<li><strong>唯一的实质论证错误在 S3(1) 第 4 步。</strong> 这一步引用 S1 时，S1 的条件不成立。被断言的同构本身为真，可以局部修补（见 §3）。</li>
+<li><strong>两处中间断言为假，但不影响结论。</strong> 一处是 S2(3) 中&quot;被诱导的映射构成 C(X,kY)&quot;，另一处是 S5 中&quot;恰有一个集合不属于 𝒰&quot;。</li>
+<li><strong>若干要求的验证被省略。</strong> 包括 S3 关于 S 的自然性、α ↦ ev∘(α×I) 与所用伴随是否一致、映射空间之间诱导映射的连续性等。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>答卷结论</th>
+<th>结论</th>
+<th>论证状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>求值映射连续；柯里化双射及其自然性</td>
+<td>正确</td>
+<td>严格；自然性部分未验证 k₊、j* 的连续性</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>两种探针给出同一 k 拓扑；Nat(h_X,h_Y) ≅ C(kX,kY)；所有自然变换都由原拓扑连续映射诱导 ⇔ X 紧生成</td>
+<td>正确</td>
+<td>(1)(2) 严格；(3) 有一处错误的集合等同，结论不受影响</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>M(X,Y) = k C_co(kX,kY)</td>
+<td>构造正确</td>
+<td><strong>第 4 步误引 S1</strong>；关于 S 的自然性、与 ev 公式的一致性未验证</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>求值不必连续；第一可数 ⇒ kX = X</td>
+<td>正确</td>
+<td>严格，有小处省略</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>f 不必是同胚</td>
+<td>正确</td>
+<td>严格；&quot;恰有一个&quot;应为&quot;至少一个&quot;</td>
+</tr>
+<tr>
+<td>S6</td>
+<td>复合映射连续，满足结合律与单位律；h_f 同构 ⇔ k(f) 是同胚；第一可数时能升级为同胚</td>
+<td>正确</td>
+<td>严格；依赖 CGHaus 的标准定理，条件成立</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>1. S1</h2>
+<p><strong>核验成立的部分</strong></p>
+<ul>
+<li>求值映射的连续性：局部紧 Hausdorff 空间中，每点的任一开邻域 N 内都有开集 V，使 V̄ 紧且 V̄ ⊂ N。由此 [V̄,W]×V ⊂ ev⁻¹(W)。论证正确。</li>
+<li>Φ(g) = ev∘(g×id) 连续。</li>
+<li>Ψ(F) 的连续性只用到紧集 K 的广义管道引理：{z₀}×K ⊂ O 开 ⇒ 存在开集 V ∋ z₀ 使 V×K ⊂ O。正确，而且<strong>这一步不需要 X 局部紧</strong>（S3 的修补会用到这一点）。</li>
+<li>两个映射互逆，以及关于 Z 的自然性，正确。</li>
+</ul>
+<p><strong>省略</strong>
+关于 Y、X 的自然性只做了逐点等式，没有说明 C(X,k)∘g 和 C(j,Y)∘g 仍是连续映射。补充如下：</p>
+<ul>
+<li>后复合：k₊⁻¹[K,O′] = [K,k⁻¹O′]；</li>
+<li>预复合：j*⁻¹[K′,O] = [j(K′),O]，其中 j(K′) 是紧集。</li>
+</ul>
+<p>属轻微缺口。</p>
+<hr>
+<h2>2. S2</h2>
+<p><strong>(1) 正确。</strong></p>
+<ul>
+<li>方向 τ_k ⊂ τ_prof：profinite 探针本身就是紧 Hausdorff 探针。</li>
+<li>反方向：
+<ul>
+<li>β(K_disc) 是紧、零维的 Hausdorff 空间，因而属于 Prof。</li>
+<li>π: βD → K 是紧空间到 Hausdorff 空间的连续满射，因而是闭映射，从而是商映射。</li>
+</ul>
+</li>
+<li>省略：没有说明 βD 是 U 小的。补充：βD ⊂ P(P(D)) ∈ U。</li>
+</ul>
+<p><strong>(2) 正确。</strong></p>
+<ul>
+<li>点求值配合 i_s 的自然性，给出 α_S(f) = g∘f。</li>
+<li>两个事实合起来给出所需双射：
+<ul>
+<li>对 profinite 空间 S，有 C(S,Y) = C(S,kY)；</li>
+<li>kX 是关于 profinite 探针的终拓扑，且 S → X 与 S → kX 的连续映射相同。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) 结论正确，但有一处错误的集合等同。</strong></p>
+<p>答卷写：&quot;连续映射 f: X→Y 诱导的自然变换对应于集合 C(X,kY) ⊂ C(kX,kY)。&quot;这是错的。</p>
+<ul>
+<li>在 (2) 的双射下，h_f 对应的就是函数 f 本身，所以被诱导的映射构成的集合是 <strong>C(X,Y)</strong>。</li>
+<li>包含关系 C(X,Y) ⊂ C(kX,kY) 成立：对 k-开集 O 和探针 p，有 p⁻¹f⁻¹O = (fp)⁻¹O。</li>
+<li>而 C(X,kY) ⊊ C(X,Y) 可以真包含。反例：取 S5 中的超滤空间 Z，令 X = Y = Z。则 id_Z ∈ C(Z,Z)，但 kZ 是离散空间而 Z 不是，所以 id_Z ∉ C(Z,kZ)。</li>
+</ul>
+<p><strong>影响。</strong> 答卷字面上证明的是&quot;(∀Y: C(kX,kY) = C(X,kY)) ⇔ kX = X&quot;。它的必要性一侧假设更强，与题意不同。但实际推理可以原样移植：</p>
+<ul>
+<li>充分性：C(X,kY) ⊂ C(X,Y) ⊂ C(kX,kY)，所以结论成立。</li>
+<li>必要性：取 Y = kX，这时 C(X,Y) 恰好就是 C(X,kX)。</li>
+</ul>
+<p><strong>另有省略。</strong> 必要性用到了幂等性 k(kX) = kX，答卷只是断言了它。这条成立：紧 Hausdorff 空间到 X 的连续映射与到 kX 的连续映射完全相同，所以两边的探针相同。</p>
+<hr>
+<h2>3. S3</h2>
+<h3>3.1 底集、拓扑、Hausdorff 性：正确</h3>
+<ul>
+<li>底集是 C(kX,kY)，拓扑是 k C_co(kX,kY)。</li>
+<li>用单点紧集 [{x},O₁]、[{x},O₂] 可以分离不同的映射，所以 C_co(kX,kY) 是 Hausdorff 空间。</li>
+<li>k 化只会加细拓扑，因此 M 仍是 Hausdorff 空间，并且紧生成。</li>
+</ul>
+<h3>3.2 C(S,M) ≅ H_{X,Y}(S) 的论证</h3>
+<p><strong>第 1、2、3、5 步正确。</strong></p>
+<ul>
+<li>第 1 步：h_S×h_X ≅ h_{S×X}。</li>
+<li>第 2 步：k(S×X) = k(S×kX)，因为两边的探针相同。</li>
+<li>第 3 步：S 是局部紧 Hausdorff 空间，kX 是 Hausdorff k 空间，所以经典定理&quot;局部紧 Hausdorff 空间与 k 空间之积是 k 空间&quot;适用。
+<ul>
+<li>小缺口：答卷没有说明，在 Hausdorff 空间上，题目用探针定义的 k 拓扑与用紧子集定义的经典 k 拓扑一致。补充：探针的像 f(K) 是紧子集，而每个紧子集 C ⊂ X 的包含映射本身就是 U 小探针。</li>
+</ul>
+</li>
+<li>第 5 步：S 是紧 Hausdorff 空间，所以 C(S,N) = C(S,kN)。</li>
+</ul>
+<p><strong>第 4 步错误（本卷唯一的实质论证错误）。</strong></p>
+<p>答卷写：&quot;由 S1 的指数律（由于 S 局部紧 Hausdorff，置于紧开拓扑第一变量）：C(S×kX,kY) ≅ C(S,C_co(kX,kY))。&quot;</p>
+<ul>
+<li>S1 证明的是 C(Z,C_co(X,Y)) ≅ C(Z×X,Y)，要求局部紧的是映射空间的<strong>定义域</strong> X，参数空间 Z 可以任意。</li>
+<li>要得到答卷写的式子，需取 Z = S、X = kX，于是要求 kX 局部紧。题目没有这个条件，一般也不成立，例如 X = ℚ 时 kX = ℚ。</li>
+<li>若按&quot;S 局部紧&quot;来套用 S1，只能得到 C(kX,C_co(S,kY)) ≅ C(kX×S,kY)。这是另一个方向的柯里化。</li>
+<li>题目明确要求&quot;援引此前结果时说明其条件为何适用&quot;，所以这是一次条件不成立的引用，第 4 步没有得到证明。</li>
+</ul>
+<p><strong>被断言的同构为真。下面给出一个自足的修补，它只把 S1 用在合法的位置。</strong></p>
+<blockquote>
+<p><strong>引理.</strong> 设 S 是 U 小紧 Hausdorff 空间，A 是 Hausdorff k 空间（kA = A），W 是 Hausdorff 空间。则 g ↦ G，G(s,a) = g(s)(a)，给出双射 C(S, C_co(A,W)) ≅ C(k(S×A), W)。</p>
+<p><strong>证明.</strong>
+(a) C_co(A,W) 的拓扑是关于全体限制映射 r_B: C(A,W) → C_co(B,W)（B ⊂ A 紧）的始拓扑。</p>
+<ul>
+<li>每个 r_B 连续：对紧集 K′ ⊂ B，有 r_B⁻¹[K′,O] = [K′,O]。</li>
+<li>反之每个子基开集都形如 [K,O] = r_K⁻¹([K,O]_K)。</li>
+<li>所以 g 连续 ⇔ 对每个紧集 B，r_B∘g 连续。</li>
+</ul>
+<p>(b) B 是紧 Hausdorff 空间，因而局部紧 Hausdorff。对 Z := S、X := B、Y := W 用 S1，得：r_B∘g 连续 ⇔ G|_{S×B} 连续。</p>
+<p>(c) &quot;对所有紧集 B，G|_{S×B} 连续&quot; ⇔ &quot;对所有探针 p: K → S×A，G∘p 连续&quot;。</p>
+<ul>
+<li>⇒：取 B = pr_A(p(K))，则 p 经过 S×B。</li>
+<li>⇐：包含映射 S×B ↪ S×A 本身就是 U 小紧 Hausdorff 探针。</li>
+</ul>
+<p>(d) 由 k 拓扑的定义，&quot;对所有探针 p，G∘p 连续&quot; ⇔ G: k(S×A) → W 连续。</p>
+<p>(e) 从 G 出发时还需验证 g(s) ∈ C(A,W)。g(s) = G∘i_s，其中 i_s = k(a ↦ (s,a)): kA = A → k(S×A) 连续。</p>
+<p>柯里化在底层函数上是双射，而 (a)–(e) 表明两边的连续性条件互相对应。∎</p>
+</blockquote>
+<p><strong>修补结论。</strong> 取 A = kX、W = kY，再由第 2 步得 k(S×kX) = k(S×X)，于是 H_{X,Y}(S) ≅ C(k(S×X),kY) ≅ C(S,C_co(kX,kY)) = C(S,M)。</p>
+<p>这条修补路线连第 3 步（经典乘积定理）都不需要。另一种修补是：令 Z := S，直接用答卷在 S3(2) 中自己引用的 CGHaus 指数律 C(S,M) ≅ C(S×_k kX,kY)。</p>
+<p><strong>影响范围。</strong> 只影响 S3(1) 这一同构的证明。S3(2) 和 S6 都只依赖 S2 与 CGHaus 的标准定理，不依赖第 4 步，所以都不受影响。</p>
+<p><strong>关于 S 的自然性：只有断言，没有验证。</strong> 把整条双射链合起来，得到显式公式：</p>
+<p>φ ↦ η^φ，η^φ_T(σ,ψ) = [t ↦ φ(σt)(ψt)]。</p>
+<p>对 θ: S′ → S 有 η^{φθ}_T(σ′,ψ) = η^φ_T(θσ′,ψ)，即 η^{φθ} = η^φ∘(h_θ×I)。自然性成立，但答卷没有写出这一行。</p>
+<h3>3.3 ev 与 Nat(h_Z,h_M) ≅ Nat(h_Z×h_X,h_Y)</h3>
+<ul>
+<li>
+<p><strong>ev_T(φ,ψ) 连续：正确。</strong> 它由 CGHaus 中求值映射 M×_k kX → kY 的连续性得到；在 3.2 修补之后，也可以直接写成 ev_T(φ,ψ) = η^φ_T(id_T,ψ)。ev 的自然性正确。</p>
+</li>
+<li>
+<p><strong>双射链正确。</strong></p>
+<ul>
+<li>Nat(h_Z,h_M) ≅ C(kZ,M)，用到 kM = M；</li>
+<li>Nat(h_Z×h_X,h_Y) ≅ C(k(Z×X),kY)，且 k(Z×X) = kZ×_k kX；</li>
+<li>Steenrod 的 CGHaus 指数律适用：kZ、kX、kY 都是紧生成 Hausdorff 空间，CGHaus 的内部 hom 正是 k C_co（Hausdorff 空间上，紧子集与探针像给出相同的紧开拓扑）。</li>
+<li>答卷没有逐条核对这些条件，但条件都成立。</li>
+</ul>
+</li>
+<li>
+<p><strong>&quot;恰由 α ↦ ev∘(α×I) 实现&quot;：只有断言。</strong> 验证如下：设 α ↔ g ∈ C(kZ,M)，即 α_T(σ) = g∘σ。则</p>
+<p>(ev∘(α×I))_T(σ,ψ) = [t ↦ g(σt)(ψt)] = G∘(σ,ψ)，</p>
+<p>其中 G 是 g 的反柯里化。在 S2 的双射下，这个自然变换对应 G。因此 α ↦ ev∘(α×I) 正是三个双射的合成，所以是双射。结论成立，验证需由审阅补出。</p>
+</li>
+</ul>
+<h3>3.4 关于 X、Y 的自然性</h3>
+<ul>
+<li>答卷断言了 M(u,Y) 与 M(X,v) 的连续性，但没有证明。补充：
+<ul>
+<li>(ku)*⁻¹[K′,O] = [ku(K′),O]；</li>
+<li>(kv)₊⁻¹[K,O′] = [K,(kv)⁻¹O′]；</li>
+<li>再用 k 的函子性。</li>
+</ul>
+</li>
+<li>答卷给出的两条等式 ev_{X′}∘(M(u,Y)×I) = ev_X∘(I×h_u) 与 h_v∘ev_Y = ev_{Y′}∘(M(X,v)×I) 逐点验证成立：两边分别给出 φ(t)(uψ′t) 和 v(φ(t)(ψt))。</li>
+<li>由此推出同构关于 X、Y 的自然性只需一行，答卷没有写出。</li>
+</ul>
+<hr>
+<h2>4. S4</h2>
+<p><strong>(1) 结论&quot;不必连续&quot;正确，反例 X = ℚ、Y = ℝ 有效。</strong></p>
+<ul>
+<li>核验了以下要点：
+<ul>
+<li>ℚ 的紧子集 K 在 ℝ 中闭。若 K ⊃ (a,b)∩ℚ，则 K ⊃ [a,b]，与 K ⊂ ℚ 矛盾。所以 K 在 ℚ 中无内点。</li>
+<li>取 q ∈ V∖K，δ = dist(q,K) &gt; 0，用帐篷函数 f 得 f ∈ [K,(−ε,ε)] 但 f(q) = 2。</li>
+</ul>
+</li>
+<li>小处省略一：答卷说&quot;基开邻域形式为 [K,(−ε,ε)]&quot;，不准确，但无害。若 0 ∈ ∩[K_i,O_i]，取 ε 使 (−ε,ε) ⊂ ∩_{K_i≠∅} O_i，令 K = ∪K_i，则 [K,(−ε,ε)] ⊂ ∩[K_i,O_i]。而 U×V ⊂ ev⁻¹W 对更小的集合仍然成立。</li>
+<li>小处省略二：K = ∅ 时 dist 没有定义，可任取 δ = 1。</li>
+</ul>
+<p><strong>(2) 结论&quot;第一可数足以保证 kX = X&quot;正确。</strong></p>
+<ul>
+<li>递降的可数邻域基给出序列 x_n → x₀。K = {x_n} ∪ {x₀} 是 U 小紧 Hausdorff 子空间，它的包含映射是一个探针。论证严格。</li>
+</ul>
+<hr>
+<h2>5. S5</h2>
+<ul>
+<li><strong>结论与反例正确。</strong> id: kZ → Z 连续，且对 profinite 空间 S 有 C(S,kZ) = C(S,Z)，所以 h_f 的每个分量都是恒等双射，h_f 是自然同构。当 kZ ≠ Z 时 f 不是同胚。</li>
+<li><strong>超滤空间核验成立。</strong>
+<ul>
+<li>Z 是 Hausdorff 空间，用到 ℕ∖{n} ∈ 𝒰。</li>
+<li>Z 的紧子集都有限。</li>
+<li>{p} 不是开集，所以 kZ（离散）≠ Z。</li>
+</ul>
+</li>
+<li><strong>错误措辞：&quot;由超滤子性质，恰有一个集合不属于 𝒰&quot;。</strong> 当 K∩ℕ ∉ 𝒰 时，A₁、A₂ 两个都不属于 𝒰。正确说法是&quot;至少一个不属于&quot;：若两者都属于 𝒰，则 ∅ = A₁∩A₂ ∈ 𝒰，矛盾。后文&quot;不妨设 A₁ ∉ 𝒰&quot;只需要这一点，所以无害。</li>
+<li><strong>小处省略。</strong> 推出&quot;kZ 离散&quot;时用的是紧子集的说法，而不是探针的说法。补充：对探针 f，f(K) 是有限集，所以 f⁻¹(A) 是有限个闭纤维之并，因而闭。</li>
+</ul>
+<hr>
+<h2>6. S6</h2>
+<ul>
+<li><strong>(1) 正确。</strong>
+<ul>
+<li>构造路线是 CGHaus 中&quot;结合同构 → id×_k ev → ev → 柯里化&quot;，所用的都是 CGHaus 的标准事实：×_k 是范畴积，k 对乘积有函子性。</li>
+<li>结合律、单位律由&quot;CGHaus 中的态射由底层函数决定&quot;得到，论证正确。</li>
+</ul>
+</li>
+<li><strong>(2) 充要条件&quot;k(f): kX → kY 为同胚&quot;正确。</strong>
+<ul>
+<li>依据是 S2 的双射保持复合与恒等：(β∘α)_S(φ) = g′∘(g∘φ)。答卷只断言了这一点，验证只需一行。</li>
+<li>h_f 对应的连续映射是 k(f)。</li>
+</ul>
+</li>
+<li><strong>(3) 结论&quot;能升级&quot;正确。</strong> 由 S4(2) 得 kX = X、kY = Y。
+<ul>
+<li>附注：实际上只需 kY = Y。这时 f⁻¹ = (k f)⁻¹ 与连续映射 kX → X 复合，给出连续映射 Y → X，所以 f 是同胚。</li>
+<li>反过来，只有 kX = X 不够：X = kZ（可数离散空间，因而第一可数）、Y = Z、f = id 就是反例。</li>
+<li>这一附注不改变对答卷的评价。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>7. 问题清单（按严重程度）</h2>
+<ol>
+<li><strong>论证错误（结论为真）：S3(1) 第 4 步。</strong> 引用 S1 时要求 kX 局部紧，这一条件不成立。修补见 §3.2 的引理。只影响 S3(1) 的证明。</li>
+<li><strong>中间断言为假（结论不受影响）：</strong>
+<ul>
+<li>S2(3) 把被诱导的映射写成 C(X,kY)，应为 C(X,Y)；</li>
+<li>S5 的&quot;恰有一个&quot;应为&quot;至少一个&quot;。</li>
+</ul>
+</li>
+<li><strong>省略的验证：</strong>
+<ul>
+<li>S1：k₊、j* 的连续性；</li>
+<li>S2：βD ∈ U；k 化的幂等性；</li>
+<li>S3：
+<ul>
+<li>探针定义的 k 拓扑与紧子集定义的一致；</li>
+<li>关于 S 的自然性；</li>
+<li>α ↦ ev∘(α×I) 与伴随一致；</li>
+<li>M(u,Y)、M(X,v) 的连续性；</li>
+<li>关于 X、Y 的自然性方块；</li>
+<li>CGHaus 条件的核对；</li>
+</ul>
+</li>
+<li>S4(1)：邻域形式的归约，以及 K = ∅ 的情形；</li>
+<li>S6(2)：S2 的双射保持复合。</li>
+</ul>
+</li>
+</ol>
+<p><strong>总评：</strong> 结论层面全部正确，构造合法。但 S3 中核心同构的证明含一处无效引用，所以按&quot;证明须完整、引用须核对条件&quot;的原题要求，答卷不是完全严格的完整作答。补上 §3.2 的引理和上面列出的几行验证后，即成为完整证明。</p>
+<hr>
+<h2>本轮修订说明与自评</h2>
+<ul>
+<li><strong>保留：</strong> 上一版的全部实质判断。包括各阶段结论正确；S3 第 4 步是唯一的实质错误；S2(3) 的集合等同为假，但所用实例不受影响；S5 的&quot;恰有一个&quot;为错误措辞；以及各项省略。</li>
+<li><strong>新增或修正：</strong>
+<ul>
+<li>S3 的修补改写为一个自足的引理（§3.2）。它只把 S1 用在紧集 B 上，不需要经典乘积定理，并且补上了 g(s) ∈ C(A,W) 这一点。</li>
+<li>S4(1) 中邻域归约的表述改得更准确。上一版写&quot;ε = min ε_i&quot;，表述不够严密。</li>
+<li>S2(3) 指出幂等性的依据。</li>
+<li>S3(2) 逐条核对了 CGHaus 指数律的适用条件。</li>
+<li>S6(3) 新增附注：只需 kY = Y；只有 kX = X 不够，并给出反例。</li>
+</ul>
+</li>
+<li><strong>仍不确定：</strong> &quot;验证 X、Y 中的连续映射自然性&quot;指的是哪一个同构，题面不明确。§3.4 对 C(S,M) ≅ H 与 Nat 同构两种读法都做了核验，结论相同。</li>
+<li><strong>自评：</strong> 本报告对答卷的正误判断都给出了可逐行核查的依据，错误的影响范围也已界定。我没有发现本报告自身有未证实的断言。本任务是审阅，不涉及研究增量。</li>
+</ul>
+</div>

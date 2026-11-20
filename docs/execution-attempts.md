@@ -4,6 +4,16 @@
 
 该统计描述已留档的任务尝试过程，独立于 MC、RMC、SMC、两率、费用及异常分类。它不产生新的候选调用，也不改写原答、原评审或已有故障排除。
 
+首页的「运行与重试记录」跨评分版展示已留档的首答、自查与 1.2.0 续答。各批保留原始计数单位，首答数据来自完整尝试摘要和各模型公开运行摘要，续答数据来自续答资源报告。没有核实的尝试数、有效重试数或系统排除数显示为「—」。历史异常样本按原截点在同一附表内单列。
+
+## Astra 6.2 xHigh · 2026-11-20
+
+39道初答与三轮自查共44次物理调用：42次有效尝试全部正常交卷，1次明确容量错误与1次明确网络断流属于系统排除；没有消耗模型额度的重试。9道中性续答另有9次正常物理调用、9次有效尝试，因此本轮正式资源共53次物理调用／51次有效尝试／2次系统排除。独立canary预检为1个逻辑检查、2次物理调用，不进入39＋3＋9分母或正式资源。
+
+两次系统故障仍保留完整原生事件与请求记录，排除其有效模型事件、用量、费用和时间，不改写旧本地结算报告。CLI外层调用次数与实际工具往返HTTP请求次数分别记录；后者未知。原生正常交卷锁定采用选择，数学错误不会产生重试资格。
+
+The Astra 6.2 xHigh campaign retains 44 base physical invocations:42 effective attempts delivered normally, with one confirmed capacity failure and one confirmed network failure excluded as system retries. Nine neutral revisions add nine normal physical/effective attempts. Formal totals are 53 physical invocations, 51 effective attempts and two system exclusions; a separate one-slot/two-invocation canary is excluded. Unknown inner HTTP-call counts remain unknown.
+
 ## Carbon High
 
 来源是 `20261115` 答卷绑定的完整物理请求索引。统计覆盖该索引识别的来源批次，包含早期失败批次，以及后继续跑和三轮自查。

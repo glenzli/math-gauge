@@ -1,0 +1,1 @@
+window.MGEditionData("370e50b688fff6670b6ea9b6adeba4a043880930937f8950bff00e4386082a93",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/astra-6.2-xhigh/cases/MG-GR022.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"astra-6.2-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

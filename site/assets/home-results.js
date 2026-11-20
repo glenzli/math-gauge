@@ -1,7 +1,8 @@
 (() => {
- const {d,state,modes,el,f,node,result,headline,compareScores,short,table,points,href,download,start}=MG;
+ const {d,state,modes,el,f,node,result,headline,compareScores,compareModelOrder,rankedScores,short,table,points,href,download,start}=MG;
  const harnessName=m=>m.harness_display_name||m.harness.name;
- const visibleModels=()=>d.models;
+ const visibleModels=(scope='overall')=>(scope==='initiative'?[...d.models,...(d.pending_models||[])]:d.models)
+  .filter(m=>m.presentation_eligibility?.ranked!==false);
  const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
  const expanded=new Set(),renderedViews=new Map();
  const displayKey=(key,score=state.score)=>JSON.stringify([key,state.condition,score]);
@@ -35,7 +36,7 @@
  }
  editionCharts();
  function renderView(key,render){const value=displayKey('overall');if(renderedViews.get(key)!==value){render();renderedViews.set(key,value)}}
- const sortDefaults={...Object.fromEntries(d.policy.groups.map(g=>[g.id,'partial'])),gap:'RG',rates:'reliability'};
+ const sortDefaults={...Object.fromEntries(d.policy.groups.map(g=>[g.id,MG.presentationDefaultScore])),gap:'RG',rates:'reliability'};
  const sortChoices={...Object.fromEntries(d.policy.groups.map(g=>[g.id,d.score_modes])),gap:['RG','DG'],rates:['reliability','attainment']};
  const chartSort={...sortDefaults};
  function syncSorts(){
@@ -45,7 +46,7 @@
   Object.keys(sortDefaults).forEach(key=>{const value=q.get('sort-'+key);chartSort[key]=sortChoices[key].includes(value)?value:sortDefaults[key];document.querySelectorAll('[data-chart-sort="'+key+'"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sortValue===chartSort[key])))});
  }
  function orderedModels(value,ascending=false,key='overall'){
-  return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);const tie=()=>a.id.localeCompare(b.id);if(x==null||y==null)return x==null?(y==null?tie():1):-1;return (ascending?x-y:y-x)||tie()});
+  return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?compareModelOrder(a,b):1):-1;return (ascending?x-y:y-x)||compareModelOrder(a,b)});
  }
  function orderChart(id,models){
   const chart=el(id);if(!chart)return;
@@ -70,8 +71,9 @@
  }
  function ranking(){
   const b=el('ranking-body');b.replaceChildren();
-  visibleModels().sort(compareScores).forEach((m,i)=>{
-   const row=b.insertRow();row.style.setProperty('--model-ink',m.theme.ink);row.insertCell().append(node('span',String(i+1),'rank'+(i===0?' first':'')));
+  document.querySelectorAll('#ranking thead [data-display-mode]').forEach(cell=>cell.classList.toggle('primary-score',cell.dataset.displayMode===state.score));
+  rankedScores(visibleModels()).forEach(({model:m,place})=>{
+   const row=b.insertRow();row.style.setProperty('--model-ink',m.theme.ink);row.insertCell().append(node('span',place==null?'—':String(place),'rank'+(place===1?' first':'')));
    const wrap=node('div',null,'model'),symbol=node('span',null,'model-symbol'),text=node('div');symbol.style.background=m.theme.tint;symbol.setAttribute('aria-hidden','true');
    const icon=node('img');icon.src=m.logo.data_url;icon.alt='';symbol.append(icon);
    const name=node('a',m.label,'model-name');name.href=href('models/'+m.id+'/index.html');
@@ -81,7 +83,7 @@
    text.append(node('span','交卷 '+deliveryLabel(m),'mobile-delivery'));
    const delivery=row.insertCell();delivery.className='numeric delivery-cell';delivery.textContent=deliveryLabel(m);
    delivery.title='主动交卷／强收有内容／总初答题数';
-   d.display_score_modes.forEach(mode=>{const cell=row.insertCell();cell.dataset.displayMode=mode.id;cell.className='numeric score-cell'+(mode.id==='partial'?' primary-score':'');cell.append(node('span',f(headline(result(m,state.condition,mode.id))),'score-number'))});
+   d.display_score_modes.forEach(mode=>{const cell=row.insertCell();cell.dataset.displayMode=mode.id;cell.className='numeric score-cell'+(mode.id===state.score?' primary-score':'');cell.append(node('span',f(headline(result(m,state.condition,mode.id))),'score-number'))});
    const a=node('a','详细评测 →','record-link');a.href=name.href;a.setAttribute('aria-label',m.label+' 详细评测');row.insertCell().append(a);
   });
  }
@@ -114,8 +116,8 @@
    const views=Object.fromEntries(d.score_modes.map(mode=>[mode,Object.fromEntries(g.views[mode].map(r=>[r.model_id,r]))]));
    const items=g.views[score].filter(item=>byId[item.model_id]);
    orderChart('category-chart-groups-'+g.id,items.map(item=>byId[item.model_id]));
-   items.forEach((item,index)=>{
-    const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank==null?'—':index+1;r.insertCell().append(modelLink(m,score));
+   items.forEach(item=>{
+    const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank??'—';r.insertCell().append(modelLink(m,score));
     const harness=r.insertCell();harness.className='category-harness';harness.textContent=harnessName(m);
     d.display_score_modes.forEach(mode=>{const v=views[mode.id][m.id],c=r.insertCell();c.dataset.displayMode=mode.id;c.className='numeric score-cell'+(mode.id===score?' primary-score':'');if(v.value<0)c.classList.add('negative');c.append(node('span',f(v.value),'score-number'));c.title='完整分区间 '+f(v.lower)+'–'+f(v.upper)});
    });
@@ -147,6 +149,6 @@
   document.querySelectorAll('[data-model-note]').forEach(n=>n.hidden=!(n.closest('[data-board="initiative"]')?initiativeIds:visibleIds).has(n.dataset.modelNote));
   const selected=modes[state.score];el('leaderboard-desc').textContent='公开＋私有 · 按'+selected.abbreviation+'排序 · 满分100';el('score-explanation').textContent={capability:'累计有效数学成果。',partial:'按有效成果计分，扣除错误、回退和误报。',strict:'整题及规定自查轨迹全部达标才计分。'}[state.score];
   el('contributions-title').textContent=selected.abbreviation+' · 分类贡献';el('contribution-mode').textContent=selected.abbreviation;el('active-condition').textContent=MG.conditionLabel();
-  el('downloads').replaceChildren(...visibleModels().map(m=>{const a=node('a',short(m)+' · JSON ↓','download-link');a.href=download(m);return a}));
+  el('downloads').replaceChildren(...visibleModels().sort(compareModelOrder).map(m=>{const a=node('a',short(m)+' · JSON ↓','download-link');a.href=download(m);return a}));
  });
 })();

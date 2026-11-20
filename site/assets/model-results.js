@@ -24,7 +24,7 @@
   table('model-trajectory',['轮次 / 状态','原答事实'],[...rounds.map((r,i)=>['R'+(i+1)+' 完成义务',roundFact(r)]),['误报全部完成',rounds.every(r=>r.complete==null||r.delivery_verified===false)?'未核实':trajectory.major_false_complete_events.count+' / 3轮']]);
   const engineering=r.lean_formalization_breakdown||m.lean_formalization_breakdown;
   table('model-formalization',['任务','核实完成'],engineering.cases.map(c=>[c.case_id,c.complete_count==null?(c.status==='delivery_failed'?'未正常交卷':'未知'):c.complete_count+'/'+c.total+(c.submission_classification==='forced_content'?' · 强收工程':'' )]));
-  table('case-list',['公开题','题型',state.score==='strict'?'SMC 判定':modes[state.score].abbreviation+' 单题比例'],d.cases.map(c=>{const a=node('a',c.id+' · '+c.title);a.href=href('cases/'+c.id+'.html');return [a,c.category_title,taskValue(c.views[state.score][state.condition])]}));
+  table('case-list',['公开题','题型',state.score==='strict'&&!m.neutral_revision?'SMC 判定':modes[state.score].abbreviation+' 单题比例'],d.cases.map(c=>{const a=node('a',c.id+' · '+c.title);a.href=href('cases/'+c.id+'.html');return [a,c.category_title,taskValue(c.views[state.score][state.condition])]}));
   const cp=result(m,state.condition,'partial').claim_penalties;
   el('model-penalties').replaceChildren(metric('局部 / 实质 / 重大记录',cp.findings_by_severity.local+' / '+cp.findings_by_severity.material+' / '+cp.findings_by_severity.critical),metric('RMC 整题最高0分',cp.core_endorsement_tasks+'题'));
   const findings=el('model-findings');findings.replaceChildren();let count=0;

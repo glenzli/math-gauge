@@ -3,6 +3,7 @@
  'use strict';
  const root=document.getElementById('answer-times');if(!root)return;
  const data=JSON.parse(document.getElementById('timing-reference-data').textContent);
+ data.models=data.models.filter(model=>model.presentation_eligibility?.ranked!==false);
  const keys=['lean','weighted','median'],validSort=key=>keys.includes(key)?key:data.default_sort;
  const state={lang:'zh',sort:validSort(new URLSearchParams(location.search).get('sort-time'))};
  const messages={
@@ -16,6 +17,17 @@
   other:['仅比较当前采用答卷，已废弃的重跑不展示、不计入汇总。Gemini 3.8 合计原始运行与同工程续作，两段间等待不计入。','Only selected answers are compared; abandoned reruns are excluded from this display and its summaries. Gemini 3.8 sums its initial run and continuation of the same engineering, excluding the pause between them.'],
   doc:['完整计时说明 ↗','Full timing documentation ↗'],passed:['整题达标','SMC passed'],incomplete:['未完全达标','SMC not met'],delivered:['已交卷','Delivered'],nondelivery:['未正常交卷','No normal final answer'],notrun:['未运行','Not run'],missingClock:['无计时','No timing'],timed:['计时','Timed'],includes:['含','Includes']
  };
+ if(data.benchmark_version==='1.2.0')Object.assign(messages,{
+  subtitle:[`各模型共有计时的 ${data.daily_case_ids.length} 道非 Lean 题，另列整章形式化。单位为分钟。`,
+            `${data.daily_case_ids.length} shared non-Lean tasks plus a separate whole-chapter run. Times are shown in minutes.`],
+  note:['计入有效作答期间的工具与等待，以及有效尝试中未正常交卷的已知耗时。Harness、网络与硬件各异，仅供参考。',
+        'Times include tools, waits and known execution time for effective attempts that did not deliver a normal final. Harnesses, networks and hardware vary.'],
+  selection:['五类权重为 25:10:10:10:10，同类样本平分该类权重。中位数直接取各题耗时的中位数。',
+             'The five groups retain weights of 25:10:10:10:10, split equally within each group. The median is taken over individual task times.'],
+  missing:['所有模型使用同一组有原始计时的公开题。整章计时缺失时留空。','Every model uses the same public tasks with observed clocks. Missing whole-chapter timings stay blank.'],
+  other:['采纳的续答按实际时间加到对应样本题，直到原生首终态或截止。已确认的系统及网络故障只记在重试附表。',
+         'Adopted continuations add their elapsed time through the native terminal or cutoff. Confirmed system and network failures appear in the retry appendix.']
+ });
  const el=id=>document.getElementById(id),t=key=>messages[key][state.lang==='en'?1:0];
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const number=(value,digits=1)=>value.toLocaleString(state.lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:digits,maximumFractionDigits:digits});
@@ -52,16 +64,22 @@
   el('timing-sort').setAttribute('aria-label',t('title')+' · '+t('sort'));
   root.querySelectorAll('[data-timing-sort]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.timingSort===state.sort)));
   const shared=scale(data.models.flatMap(model=>keys.map(key=>value(model,key))));
-  const ordered=[...data.models].sort((a,b)=>{const x=value(a,state.sort),y=value(b,state.sort);return x==null?(y==null?a.id.localeCompare(b.id):1):y==null?-1:x-y||a.id.localeCompare(b.id)});
+  const modelOrder=(a,b)=>window.MG?.compareModelOrder?.(a.id,b.id)??a.id.localeCompare(b.id);
+  const ordered=[...data.models].sort((a,b)=>{const x=value(a,state.sort),y=value(b,state.sort);return x==null?(y==null?modelOrder(a,b):1):y==null?-1:x-y||modelOrder(a,b)});
   const chart=el('timing-chart');chart.setAttribute('aria-label',t('chart'));
   const caption=node('div',null,'timing-chart-caption'),legend=node('div',null,'timing-series-legend');
   keys.forEach(key=>{const item=node('span'),swatch=node('i',null,'timing-tone-swatch '+key);swatch.setAttribute('aria-hidden','true');item.append(swatch,node('span',t(key)));legend.append(item)});
   caption.append(node('span',t('unit')),legend);
   const sharedAxis=axis(shared),body=node('div',null,'timing-chart-body');
   ordered.forEach(model=>{
-   const row=node('div',null,'timing-row');row.dataset.timingModel=model.id;row.style.setProperty('--timing-brand',model.theme.color);row.setAttribute('role','group');row.setAttribute('aria-label',model.label);
+   const row=node('div',null,'timing-row');
+   row.dataset.timingModel=model.id;
+   row.dataset.provider=model.logo.label;
+   row.style.setProperty('--timing-brand',model.theme.color);
+   row.style.setProperty('--model-ink',model.theme.ink);
+   row.setAttribute('role','group');row.setAttribute('aria-label',model.label);
    const identity=node('div',null,'timing-model'),img=node('img');img.src=model.logo.data_url;img.alt=model.logo.label;
-   const name=node('div'),link=node('a',model.label);link.href=data.link_prefix+'models/'+encodeURIComponent(model.id)+'/index.html?lang='+state.lang+'&score=partial';
+   const name=node('div'),link=node('a',model.label);const modelPath=data.link_prefix+'models/'+encodeURIComponent(model.id)+'/index.html?lang='+state.lang+'&score=partial';link.href=window.MG?MG.href(modelPath):modelPath;
    name.append(link,node('span',model.harness,'timing-harness'));
    const chapterStatus=status(model,'lean',value(model,'lean')),dailyStatus=status(model,'weighted',value(model,'weighted'));
    const notes=node('div',null,'timing-run-notes');notes.append(node('span',t('leanShort')+' · '+chapterStatus.text,chapterStatus.failed?'fail':chapterStatus.passed?'pass':''));

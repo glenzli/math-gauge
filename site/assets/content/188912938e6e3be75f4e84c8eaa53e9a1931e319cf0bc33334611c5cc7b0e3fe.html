@@ -1,0 +1,207 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><pre><code class="language-json">{
+  &quot;schema&quot;: &quot;math-gauge.neutral-revision-mathematical-review/v1&quot;,
+  &quot;model_id&quot;: &quot;deepseek-v4.1-flash-1017&quot;,
+  &quot;case_id&quot;: &quot;MG-BC002&quot;,
+  &quot;task_id&quot;: &quot;R006&quot;,
+  &quot;response_sha256&quot;: &quot;d4fe4a27bcf822f26889a4162c72b28e91095d07b4b10f59f018eaba5c470738&quot;,
+  &quot;reviewer_id&quot;: &quot;Codex coordinator / source-bound mathematical review&quot;,
+  &quot;reviewer_kind&quot;: &quot;ai&quot;,
+  &quot;human_review&quot;: &quot;pending&quot;,
+  &quot;mathematical_verdict_finalized&quot;: true,
+  &quot;score_scale&quot;: 100,
+  &quot;MC&quot;: 100.0,
+  &quot;RMC&quot;: 95.0,
+  &quot;SMC&quot;: false,
+  &quot;positive_criteria&quot;: [
+    {
+      &quot;id&quot;: &quot;diagnosis&quot;,
+      &quot;earned_points&quot;: 33.333333333333336,
+      &quot;max_points&quot;: 33.333333333333336,
+      &quot;reason&quot;: &quot;正确分开强凸流和近端表示。&quot;,
+      &quot;evidence&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;model_specific_certificate&quot;,
+      &quot;earned_points&quot;: 33.333333333333336,
+      &quot;max_points&quot;: 33.333333333333336,
+      &quot;reason&quot;: &quot;z0=(0,1)上的三阶Jacobian反对称项确实非零。&quot;,
+      &quot;evidence&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;complete_correction&quot;,
+      &quot;earned_points&quot;: 33.333333333333336,
+      &quot;max_points&quot;: 33.333333333333336,
+      &quot;reason&quot;: &quot;流的全局估计、条件近端证书、反例范围和部署边界成立。&quot;,
+      &quot;evidence&quot;: []
+    }
+  ],
+  &quot;claim_deductions&quot;: [
+    {
+      &quot;id&quot;: &quot;moreau-gradient-identification&quot;,
+      &quot;root_cause&quot;: &quot;moreau-gradient-identification&quot;,
+      &quot;severity&quot;: &quot;local&quot;,
+      &quot;kind&quot;: &quot;false_assertion&quot;,
+      &quot;reason&quot;: &quot;给定e_r=inf(r(u)+|u-z|²/2)，实际∇e_r=z−prox_r，不是prox_r。可改为prox_r=∇(|z|²/2−e_r)；所用近端映射Jacobian对称性是正确的标准必要条件，三阶模型特定障碍独立核验成立，故不作核心封顶。&quot;,
+      &quot;strict_blocking&quot;: true,
+      &quot;core_endorsement&quot;: false,
+      &quot;covered_by&quot;: &quot;none&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;final-answer.md&quot;,
+          &quot;quote&quot;: &quot;T(z)=\\nabla e_r(z),\\qquad&quot;,
+          &quot;utf8_byte_start&quot;: 7071,
+          &quot;utf8_byte_end&quot;: 7096,
+          &quot;file_sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;
+        }
+      ]
+    }
+  ],
+  &quot;shared_claim_arithmetic&quot;: {
+    &quot;status&quot;: &quot;reviewed&quot;,
+    &quot;positive_completion&quot;: {
+      &quot;lower&quot;: 1.0,
+      &quot;upper&quot;: 1.0,
+      &quot;exact&quot;: 1.0
+    },
+    &quot;generic_deduction&quot;: 0.05,
+    &quot;baseline_deduction&quot;: 0.0,
+    &quot;applied_deduction&quot;: 0.05,
+    &quot;core_endorsement_cap&quot;: false,
+    &quot;strict_blocking&quot;: true,
+    &quot;core_endorsement_cap_applied&quot;: false,
+    &quot;net_completion&quot;: {
+      &quot;lower&quot;: 0.95,
+      &quot;upper&quot;: 0.95,
+      &quot;exact&quot;: 0.95
+    },
+    &quot;actual_loss&quot;: 0.05,
+    &quot;findings&quot;: 1,
+    &quot;distinct_charged_roots&quot;: 1,
+    &quot;embedded_reliability_removed&quot;: false,
+    &quot;finding_ids&quot;: [
+      &quot;moreau-gradient-identification&quot;
+    ]
+  },
+  &quot;mathematical_checks&quot;: [
+    &quot;z′=(-1,-3),z″=(13,18),H0=[[4,3],[3,5]],H′=-24·11ᵀ,H″=282·11ᵀ；J12−J21=-4t³+O(t⁴)，候选系数正确。&quot;,
+    &quot;只排除所有充分小正步长的近端表示，不把局部展开升成所有t的结论。&quot;,
+    &quot;强凸给全局流、距离e^-t及能量e^-2t界；三点证书为明示条件下的真命题。&quot;
+  ],
+  &quot;strict_reason&quot;: &quot;附加Moreau恒等式错误；不按候选误用TX式R3门槛判本背景题。&quot;,
+  &quot;profile_axes&quot;: {
+    &quot;proof&quot;: {
+      &quot;grade&quot;: 3,
+      &quot;reason&quot;: &quot;流估计、条件证书及本模型非近端Taylor障碍完整；Moreau势公式需局部修正。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;final-answer.md&quot;,
+          &quot;quote&quot;: &quot;T(z)=\\nabla e_r(z),\\qquad&quot;,
+          &quot;utf8_byte_start&quot;: 7071,
+          &quot;utf8_byte_end&quot;: 7096,
+          &quot;file_sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;
+        }
+      ],
+      &quot;core_status&quot;: &quot;local_gap&quot;
+    },
+    &quot;fidelity&quot;: {
+      &quot;grade&quot;: 4,
+      &quot;reason&quot;: &quot;保留给定势、流及条件近端表示，不将隐式Euler当精确流。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;final-answer.md&quot;,
+          &quot;quote&quot;: &quot;The cubic term already has unequal off-diagonal entries \\(-174\\ne-170\\), so the skew term is \\(-4\\tau^3+O(\\tau^4)\\). Hence, for every sufficiently small \\(\\tau&gt;0\\), \\(D\\Phi_\\tau(z_0)\\) is not symmetric in a neighborhood of \\(z_0\\). A proximal map's derivative is symmetric almost everywhere. This contradiction rules out (A26) for those \\(\\tau\\) and, in particular, rules out a universal “exact convex proximal block” interpretation. The exact flow remains valid as a contraction and a dissipative map; it is the unconditional proximal interpretation that fails.&quot;,
+          &quot;utf8_byte_start&quot;: 8558,
+          &quot;utf8_byte_end&quot;: 9124,
+          &quot;file_sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;
+        }
+      ],
+      &quot;core_scope_failure&quot;: false
+    },
+    &quot;discernment&quot;: {
+      &quot;grade&quot;: 2,
+      &quot;reason&quot;: &quot;识别真实背景漏洞，但附加Moreau公式未核实。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;final-answer.md&quot;,
+          &quot;quote&quot;: &quot;T(z)=\\nabla e_r(z),\\qquad&quot;,
+          &quot;utf8_byte_start&quot;: 7071,
+          &quot;utf8_byte_end&quot;: 7096,
+          &quot;file_sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;
+        }
+      ]
+    },
+    &quot;depth&quot;: {
+      &quot;grade&quot;: 3,
+      &quot;reason&quot;: &quot;显式完成平方和Jacobian三阶非交换障碍提供机制证书。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;final-answer.md&quot;,
+          &quot;quote&quot;: &quot;The cubic term already has unequal off-diagonal entries \\(-174\\ne-170\\), so the skew term is \\(-4\\tau^3+O(\\tau^4)\\). Hence, for every sufficiently small \\(\\tau&gt;0\\), \\(D\\Phi_\\tau(z_0)\\) is not symmetric in a neighborhood of \\(z_0\\). A proximal map's derivative is symmetric almost everywhere. This contradiction rules out (A26) for those \\(\\tau\\) and, in particular, rules out a universal “exact convex proximal block” interpretation. The exact flow remains valid as a contraction and a dissipative map; it is the unconditional proximal interpretation that fails.&quot;,
+          &quot;utf8_byte_start&quot;: 8558,
+          &quot;utf8_byte_end&quot;: 9124,
+          &quot;file_sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;
+        }
+      ]
+    },
+    &quot;closure&quot;: {
+      &quot;grade&quot;: 3,
+      &quot;reason&quot;: &quot;实质目标可由正确标准必要条件和已算Taylor项闭合，原稿势身份仍有局部错误。&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;final-answer.md&quot;,
+          &quot;quote&quot;: &quot;T(z)=\\nabla e_r(z),\\qquad&quot;,
+          &quot;utf8_byte_start&quot;: 7071,
+          &quot;utf8_byte_end&quot;: 7096,
+          &quot;file_sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;
+        }
+      ]
+    }
+  },
+  &quot;delivered_attachments&quot;: [
+    {
+      &quot;name&quot;: &quot;final-answer.md&quot;,
+      &quot;bytes&quot;: 12527,
+      &quot;sha256&quot;: &quot;80a7c287a5be9a07eb6b89409957fec4928ac7c57ba43e61cf962737952f5208&quot;,
+      &quot;delivery_quote&quot;: &quot;The complete final manuscript is in [final-answer.md](/Users/glenzli/lab/math-benchmarks/neutral-revisions-deepseek-v4.1-flash-1017-20261120/runs/deepseek-main-20261120/tasks/R006/fresh-context/delivered/final-answer.md).&quot;,
+      &quot;recovered_after_collection&quot;: true,
+      &quot;source_kind&quot;: &quot;original_workspace_recovery&quot;,
+      &quot;original_return_attachment_missing&quot;: true
+    }
+  ],
+  &quot;unresolved_questions&quot;: [],
+  &quot;no_hidden_reasoning_used_as_answer&quot;: true,
+  &quot;original_math_unmodified&quot;: true,
+  &quot;reviewed_at&quot;: &quot;2026-11-21T00:28:51.374996+00:00&quot;,
+  &quot;review_boundary&quot;: &quot;Exact first normal final plus explicitly named recovered original files; cutoff original work separately identified. No repair, cross-attempt union, old grade feedback or new candidate calls.&quot;,
+  &quot;source_materials&quot;: [
+    {
+      &quot;repository&quot;: &quot;public&quot;,
+      &quot;path&quot;: &quot;cases/background-check/MG-BC002/task.md&quot;,
+      &quot;bytes&quot;: 1993,
+      &quot;sha256&quot;: &quot;8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af&quot;
+    },
+    {
+      &quot;repository&quot;: &quot;public&quot;,
+      &quot;path&quot;: &quot;cases/background-check/MG-BC002/rubric.json&quot;,
+      &quot;bytes&quot;: 630,
+      &quot;sha256&quot;: &quot;a9664da66d113b6ac0098ba8997a6fa247281873ebad84f726f3757f6216fd59&quot;
+    },
+    {
+      &quot;repository&quot;: &quot;public&quot;,
+      &quot;path&quot;: &quot;cases/background-check/MG-BC002/reference.md&quot;,
+      &quot;bytes&quot;: 6153,
+      &quot;sha256&quot;: &quot;8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3&quot;
+    },
+    {
+      &quot;repository&quot;: &quot;public&quot;,
+      &quot;path&quot;: &quot;cases/background-check/MG-BC002/contract.json&quot;,
+      &quot;bytes&quot;: 2038,
+      &quot;sha256&quot;: &quot;c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f&quot;
+    }
+  ],
+  &quot;first_response_sha256&quot;: &quot;46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86&quot;,
+  &quot;first_review_sha256&quot;: &quot;11efeb22d3ad2b9c22e381ce1a3a54bb808a57dc248a31997ba2ff51c96e3618&quot;
+}
+
+</code></pre>
+</div>

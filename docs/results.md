@@ -1,6 +1,44 @@
 # 当前完整结果
 
-当前本地评价版为 **1.1.0**，已发布题包仍为1.0.0。六道TX按[新研究增量尺度统一复评](theorem-extension-reassessment.md)，原题、原答、原评与旧成绩保留。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，提交来源组件 **0.1.0**；RMC为默认主分。
+当前本地评分版为 **1.2.0**，已发布题包仍为1.0.0。新版按[中性续答规则](neutral-revision.md)采用非Lean失分题的一次续答：逐题80%首答＋20%续答，三个模式、家族权重与完整100分分母一致；Lean及三轮自查沿用。基础采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，续答组件 **0.1.0**；页面默认按SMC排序，指标顺序为SMC／RMC／MC。
+
+## 1.2.0：已完成续答
+
+| 模型 | SMC | RMC | MC | 续答题数 | 三项满分率 |
+|---|---:|---:|---:|---:|---:|
+| [Astra 6 (max)](../site/models/astra-6-max/index.html) | 91.33 | 95.01 | 95.01 | 6 | 100%（6／6） |
+| [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | 91.33 | 94.93 | 95.01 | 7 | 100%（7／7） |
+| [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | 91.33 | 94.57 | 94.57 | 6 | 100%（6／6） |
+| [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | 89.73 | 93.80 | 93.80 | 7 | 100%（7／7） |
+| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | 83.90 | 91.66 | 92.66 | 9 | 88.9%（8／9） |
+| [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | 83.23 | 92.36 | 93.61 | 10 | 80%（8／10） |
+| [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 81.33 | 91.70 | 92.70 | 6 | 100%（6／6） |
+| [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | 70.50 | 89.98 | 92.15 | 8 | 87.5%（7／8） |
+| [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 68.63 | 81.38 | 83.11 | 9 | 88.9%（8／9） |
+| [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | 64.75 | 80.03 | 81.25 | 9 | 55.6%（5／9） |
+| [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 62.48 | 92.97 | 95.11 | 15 | 53.3%（8／15） |
+| [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | 58.98 | 89.49 | 93.03 | 17 | 52.9%（9／17） |
+| [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | 57.22 | 89.96 | 92.30 | 17 | 35.3%（6／17） |
+| [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | 46.38 | 72.29 | 76.93 | 19 | 42.1%（8／19） |
+| [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | 26.25 | 64.09 | 76.93 | 26 | 3.8%（1／26） |
+
+共采用15个配置的171份续答，100份达到续答自身的三项满分。满分率的分母是各配置选中的全部续答题，失败交付也在分母内，首答三项全满的免测题不计入；该比例不按题目权重折算，不应当作同题排名。表中总分由共享评分器逐题80／20折算，仍保留首答失分和续答退步。
+
+首批3个配置采用22份：19次新调用和3份旧中性试答，采用发生在观察后，21份三项满分。随后6个GPT配置完成46题，39份三项满分；新增答卷由Sol 6.1 Max并行审核，关键数学判断另行复核。原研究的非计分身份、全部原答和各次初审保留，采用层另行绑定最终评审。全部续答为AI审核，人工数学审核仍待审。
+
+Astra 6 Max的一次请求在容量错误后到达截止。用户观察后授权使用相同父答、提示、型号与effort恢复，恢复答卷正常交付并获满分。本轮保留46道续答的47次物理请求。按用户另行确认的归因，容量故障只进入系统重试记录，恢复请求计入有效尝试、成本与耗时。
+
+原外部11个配置的200题中，本次4个配置的68份正常答卷已审核采用，31份续答自身三项满分；DeepSeek另回交26题，其中24份正常final，2题截止并已结算，1份续答自身三项全满；余下6个配置的106题待回交，GLM跳过。新增答卷的实际输入与父答、原生最终事件、明确交付文件和用量均绑定原件；两次本地封卷恢复没有新增作答。加上Astra 6.2 xHigh的新9份续答，172次来源执行请求中，171次有效尝试进入续答资源统计，含3份各计一次的旧中性试答；另1次确认的容量故障仅入系统重试。成本全额计入有效续答费用，耗时仍比较15个配置共有计时的同一12道公开题，另列整章形式化，累计执行时间与并行批次跨度分开。原内容两率和额外成果观察仍为首答诊断，数学画像另设首答／含续答切换。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
+
+[数学画像](mathematical-profile-revision.md)已对这171份既有续答完成855项独立五轴判断：论证、忠实度、审辨、深度和闭合逐题80／20折算，覆盖原35个数学家族。研究主动性始终只看首答，放在最后；严格完成度直接取所选阶段的正式SMC，不重复折算。另以独立记录更正三份首答画像中与自身证据矛盾的九个等级，在当前两视图中使用同一更正基线；原件、历史1.1.0和三项主分不变。人工数学审核仍待完成。
+
+当前八轴另有[开放研究能力](open-research.md)：独立审核22个配置的110份首答和32份已采用手稿续答，使用五个共同开放家族。它看明确要求研究时交出的机制、条件和闭合成果；研究主动性则观察未经邀请的推进，两者不互相换算。新轴不改变主分及原有七轴判断，1.1.0保持原七轴，1.0.0不增加画像。
+
+[续答满分率来源](../results/continuation-completion/v0.1.0/current.json) · [续答资源来源索引](../results/continuation-resources/v0.1.0/index.json)。公有文件只含允许公开的证据及匿名汇总，完整私有题包和评审仍在私库。这批更新尚未发布。
+
+## 1.1.0：首答与原三轮自查
+
+六道TX按[研究增量尺度统一复评](theorem-extension-reassessment.md)，原题、原答、原评与旧成绩保留。下表未加入1.2.0续答贡献。
 
 39道初答（公25／私14）、35个数学家族，另有固定三轮Lean自查。书面35／Lean35／研究30，始终按完整100分报告，未测项保留未知范围。
 
@@ -13,6 +51,7 @@
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | Claude Code | 94.32 | 92.00 | 59.42 | 39／0／39 |
 | [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | Codex CLI | 92.04 | 90.79 | 80.17 | 39／0／39 |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
+| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | Codex CLI | 90.89 | 89.89 | 81.00 | 39／0／39 |
 | [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | Unknown¹ | 91.10 | 89.68 | 78.00 | 39／0／39 |
 | [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | Claude Code | 91.36 | 88.80 | 54.92 | 39／0／39 |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.68 | 88.51 | 68.00 | 39／0／39 |
@@ -26,13 +65,42 @@
 | [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
 | [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
 | [Gemini 3.8 Flash (high)](../site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 59.39 | 39.21 | 13.75 | 38／1／39 |
-| [GLM 5.3 (max)](../site/models/glm-5.3-max/index.html) | Claude Code³ | 42.04 | 27.90 | 14.08 | 21／5／39 |
 
-排序先看所选口径；显示到两位小数仍同分时，依次用其余的RMC、SMC、MC降序比较。三项全同，再按有来源的初答测试时间升序；日期未知放后，同日按已知启动时刻比较；时刻缺失的排在该日已知时刻后，其余完全相同则保持稳定顺序。新批次用已记录的首次派题时刻，其余用留档公开初答中最早已记录的启动时间；这只是展示顺序，不新增评分，也不从档号或提交时间推测测试日期。
+总榜默认按 SMC、RMC、MC 依次比较。切到其他口径时，所选分数排第一，其余两项仍按 SMC、RMC、MC 的优先级比较。分项榜使用本项成绩独立排序。三项均已结算且公布到两位小数相同的模型共享名次，例如第 1、1、3 名。
+
+并列行、下载目录、续答汇总和运行记录按厂商与系列归组。同系列按型号标注的版本从新到旧，同型号按已知档位由高到低。成本、耗时和其他指标图仍先看各自指标，同值时沿用模型目录顺序。初答测试时间保存在来源记录里。
 
 主动交卷与强收有内容互斥；强收表示留有可审核数学内容，MC可以为0。三轮自查另列，执行状态与完整区间见模型档案。后续测试完成结算并选定留档后再上榜。
 
+### 部分测试：GLM
+
+[GLM 5.3 (max)](../site/models/glm-5.3-max/index.html)退出主榜及分项排行，保留详情和已有证据。39道初答中21份正常交卷、5份强收有内容，三轮Lean自查未执行。按1.1.0的已确认贡献为MC42.04、RMC27.90、SMC14.08／100，完整区间见模型页；这些数值不表示所有规定测项已完成。退出排行依据是测试流程尚未完成，不设数学低分剔除门槛，原有失败与未测状态不重判。
+
 ⁴ AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。
+
+## DeepSeek 中性续答 · 2026-11-20
+
+DeepSeek v4.1 Flash（1017，max）的26道中性续答已结算：24份正常交卷、1份截止原稿仅计MC、1题截止无正文。1.2.0成绩为 **MC76.93／RMC64.09／SMC26.25**，续答自身三项满分1／26。新增参考成本$8.45，连同首答及三轮自查合计$14.86。原final、补回的原始交付附件、判分与130项独立五轴判断均已绑定来源；未新增作答。[详细审核](../results/edition-reassessments/v1.2.0/deepseek-v4.1-flash-1017/20261110/REPORT.md)
+
+首答基线为MC76.7075／RMC64.2264／SMC25.8333；续答纳入后为MC76.9323／RMC64.0853／SMC26.2500。两题截止分别只计已核实原稿的MC78/100和无正文MC0，RMC／SMC均为0。该批新增的是原失分题中性续答，原39道初答及三轮自查、Lean成绩和历史审核不改。原内容两率与主动额外成果仍只读首答。
+
+DeepSeek v4.1 Flash (1017, max) has 26 settled neutral revisions:24 normal finals, one cutoff manuscript reviewed for MC only, and one cutoff with no deliverable content. Edition1.2.0 gives **MC76.93 / RMC64.09 / SMC26.25**, with one of26 revisions full in all modes. Revisions add $8.45 in reference cost, totaling $14.86 with the original answers and three self-checks. Native finals, recovered original delivery files, mathematical judgments and130 independent five-axis judgments remain source-bound; no candidates were called again. [Detailed review](../results/edition-reassessments/v1.2.0/deepseek-v4.1-flash-1017/20261110/REPORT.md)
+
+## Astra 6.2 xHigh · 2026-11-20
+
+本轮采用已完成的原答与原AI评审，不重跑候选。39道初答、三轮固定自查和9份中性续答全部正常交卷；1.1.0首答基线为SMC **81.0000**、RMC **89.8917**、MC **90.8917**，1.2.0为SMC **83.9000**、RMC **91.6633**、MC **92.6633**。9份续答中8份自身三项全满；原1.1.0判断、原始请求、首份正常交卷与封存工程保持来源绑定，该模型没有回填1.0.0成绩。
+
+Sol6.1Max审核22份非Lean首答、8份Lean首答与三轮自查及6份命题拓展续答；主聊天审核9份论证审阅／手稿首答与3份续答，并作Lean语义抽查及最终验收。C003初答与三轮均核实92/92，三轮诊断均30/30，保留原FULL／KEEP和实际源码。全部为AI数学审核，人工数学审核仍待完成；编译证据与运行边界另行保留。
+
+运行请求为gpt-6.2-astra/xhigh，通过OpenAI API、default服务档，使用Codex CLI0.169.1。53次数学物理调用包括51次有效尝试与2次已确认系统排除：1次容量错误、1次网络断流。独立canary预检的2次物理调用不进入正式分母或资源。42次基础交付记录580个本地命令完成事件，9份续答另有60个；允许本地工具及预置公共依赖，禁止外部检索和工具联网。后端SKU与内部HTTP调用数保持未知。
+
+首答内容可靠率 **100.00%**、完整目标达成率 **84.28%**，按共同697个承诺单元与149个完整目标独立审核；不把忠实性缺口直接转作内容错误。五份首答手稿核实 **4组**主动额外成果，续答中的受邀拓展不计入该观察。数学画像可在首答与含续答间切换，严格完成度分别读取81.00与83.90，主动研究性两阶段相同。
+
+51次有效尝试的完整原生用量合计46,604,269 tokens，按已留存Astra6.2 Standard短上下文费率折算为 **$77.744974**；基础42次为$63.7598564，续答9次为$13.9851176，续答资源全额计入。有效作答累计17,439.698899秒，确认系统重试的452.769696秒只留历史。初答中位数约3.26分钟，固定三轮另计；比较图仍采用原有12道共有公开非Lean题和独立整章计时，累计作答时长不当作同题速度或并行跨度。
+
+[模型详情与公开题证据](../site/models/astra-6.2-xhigh/index.html) · [首答记录](../results/v1.0.0/astra-6.2-xhigh/20261120/record.json) · [公开原答与评审](../results/v1.0.0/astra-6.2-xhigh/20261120/report.md) · [1.2.0续答采用层](../results/edition-reassessments/v1.2.0/astra-6.2-xhigh/20261120/public.json)。私有题文、原答、逐项判准与原生来源留在私库。这批入库和页面更新仅在本地，未提交、推送或发布。
+
+The completed Astra 6.2 xHigh answers and their original AI judgments are adopted without new candidate calls. All 39 initial tasks, three fixed self-checks and nine neutral revisions delivered normally. Its 1.1.0 baseline is SMC 81.0000 / RMC 89.8917 / MC 90.8917; edition 1.2.0 gives **SMC 83.9000 / RMC 91.6633 / MC 92.6633**, with eight of nine revisions full in all modes. Sol6.1Max and the root reviewer retain their actual review attribution; human mathematical review remains pending. Codex CLI0.169.1 used the OpenAI API's default service tier, with backend SKU and inner HTTP counts unknown. The 51 effective attempts cost **$77.744974** at the retained Standard short-context reference tariff and total 17,439.698899 seconds. Two confirmed system failures retain 452.769696 seconds in retry history only. First-answer content reliability is 100.00% and complete-goal attainment is 84.28%; four additional-result groups are verified across five first-answer manuscripts. Both remain first-answer diagnostics. The profile offers both stages, with strict completion 81.00 / 83.90 and unchanged initiative. Shared-task timing keeps the original 12-task sample and a separate chapter measurement. These changes are local.
 
 ## Claude Opus 5.5 (xHigh) · 2026-11-19
 
@@ -98,6 +166,7 @@ C003初答及三轮均核实92/92，原FULL／KEEP与源码分别保留。R1把�
 | [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | 99.90% | 90.92% |
 | [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | 100.00% | 90.92% |
 | [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | 100.00% | 90.45% |
+| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | 100.00% | 84.28% |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 94.22% | 85.84% |
 | [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | 99.73% | 87.57% |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 98.68% | 87.36% |
@@ -117,7 +186,7 @@ C003初答及三轮均核实92/92，原FULL／KEEP与源码分别保留。R1把�
 
 Carbon Medium内容可靠率93.5938864629%、完整目标达成率83.60%；697项断言与149项完整目标均已判定。本次只更新最后强收手稿的来源与相应成果判断，其余38题及固定三轮自查不改判，断言／目标契约与权重不变。
 
-[两率规则](../protocol/content-rates.md) · [主动额外成果观察](manuscript-observations.md)。旧19个模型的五道手稿已按完整原答、原先绑定的交付附件和共同边界重新核实；额外成果由51组更正为112组。最新Astra 6.2 Max的4组及Opus 5.5 xHigh的13组未重审。计组不使用高价值门槛，同一机制的定理、引理及直接推论合并；原任务本身的完成步骤不计额外。当前21模型覆盖100／105个已交付可审手稿槽，另5槽未正常交付；原观察、主分、两率及1.0.0数据保留。数学画像另经[原稿复核](mathematical-profile-recheck.md)：0.3.0补核全21模型的研究相关判断，并按用户选择实行整题及完整三轮自查验收；0.2.0原件保留。
+[两率规则](../protocol/content-rates.md) · [主动额外成果观察](manuscript-observations.md)。旧19个模型的五道手稿已按完整原答、原先绑定的交付附件和共同边界重新核实；额外成果由51组更正为112组。最新Astra 6.2 Max的4组及Opus 5.5 xHigh的13组未重审。计组不使用高价值门槛，同一机制的定理、引理及直接推论合并；原任务本身的完成步骤不计额外。当前21模型覆盖100／105个已交付可审手稿槽，另5槽未正常交付；原观察、主分、两率及1.0.0数据保留。数学画像另经[统一核心复核](mathematical-profile-recheck.md)：现行0.4.0覆盖全部21模型，论证按原题核心成立验收，严格完成度直接取正式SMC；当前工作树只保留现行画像。
 
 ## 记录与复算
 
