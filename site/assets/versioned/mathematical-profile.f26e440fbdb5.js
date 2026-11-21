@@ -6,7 +6,7 @@
 })(typeof window==='object'?window:null,()=>{
  'use strict';
  const AXES=['proof','fidelity','completion','discernment','initiative','depth','closure'];
- const BRANDS={openai:{label:'OpenAI',color:'#252525'},claude:{label:'Claude',color:'#d97757'},google:{label:'Google',color:'#45965d'},kimi:{label:'Kimi',color:'#3568d4'},deepseek:{label:'DeepSeek',color:'#6557d6'},glm:{label:'GLM',color:'#af7b15'}};
+ const BRANDS={openai:{label:'OpenAI',color:'#252525'},claude:{label:'Claude',color:'#d97757'},google:{label:'Google',color:'#45965d'},kimi:{label:'Kimi',color:'#3568d4'},deepseek:{label:'DeepSeek',color:'#4d6bfe'},glm:{label:'GLM',color:'#af7b15'}};
  const VARIANTS=[{dash:'',marker:'circle'},{dash:'7 3',marker:'square'},{dash:'2 3',marker:'triangle'},
   {dash:'12 4',marker:'diamond'},{dash:'9 3 2 3',marker:'plus'},{dash:'4 3 1 3',marker:'cross'},
   {dash:'15 3 2 3',marker:'hexagon'},{dash:'18 4 3 4',marker:'ring'},{dash:'6 3 6 3 1 3',marker:'pentagon'},

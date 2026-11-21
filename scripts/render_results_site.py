@@ -58,7 +58,7 @@ MODEL_THEMES = {
     "sol-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "terra-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "terra-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
-    "deepseek-v4.1-flash-1017": {"color": "#6557d6", "ink": "#48409d", "tint": "#f1effc"},
+    "deepseek-v4.1-flash-1017": {"color": "#4d6bfe", "ink": "#344bb5", "tint": "#eef1ff"},
     "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-hydrogen-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
