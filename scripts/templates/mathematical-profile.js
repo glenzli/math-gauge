@@ -73,11 +73,24 @@
   coverage:['新题覆盖按已判定的品味检查统计。旧题覆盖按该阶段可确定品味分的家族统计。','New-task coverage counts settled taste checkpoints. Retained coverage counts families with a determinate taste score for this stage.'],
   tasteCheckpoints:['品味检查已判定','Taste checks settled'],legacyTaste:['旧题有确值家族','Retained families scored'],
   strictSourceUnavailable:['旧题严格复核汇总未提供','Retained strict assessment unavailable']};
+ const valueTasteMessages={...strictTasteMessages,
+  scope:['研究主动性保留首答自发拓展基底，再吸收本题中研究能力既定范围之外的自主拓展档位。研究能力（C）进入数学深度和开放研究能力。数学审辨力使用本题品味 RMC。数学品味采用新题严格检查和旧题严格复核。两个阶段共用 1.3 主榜严格完成度。',
+   'Research initiative retains the unsolicited first-answer evidence and adds one extension level for work beyond the new task’s capacity scope. Capacity (C) contributes to depth and open research capability. Discernment uses task taste RMC. Mathematical taste combines new-task strict checks with retained strict reviews. Both stages use the official 1.3 SMC.'],
+  extension:['自主拓展','Autonomous extension']};
+ const strictCreditTasteMessages={...valueTasteMessages,
+  scope:['研究主动性保留首答自发拓展基底，再吸收本题中研究能力既定范围之外的自主拓展档位。研究能力（C）进入数学深度和开放研究能力。数学审辨力使用本题品味 RMC。数学品味采用新题通过检查部分的净信用和旧题严格复核。两个阶段共用 1.3 主榜严格完成度。',
+   'Research initiative retains unsolicited first-answer evidence and adds the extension level. Capacity (C) contributes to depth and open research capability. Discernment uses task taste RMC. Mathematical taste combines the net credit of passed checks with retained strict reviews. Both stages use the official 1.3 SMC.'],
+  coverage:['新题检查覆盖与严格净信用分开。旧题覆盖按本阶段品味有确值的家族统计。',
+   'New-task checkpoint coverage is shown separately from strict net credit. Retained coverage counts families with a determinate taste score for the selected stage.']};
  const strictTasteStates={
   'not-tested':['新题未测','New task untested'], 'review-pending':['品味待评','Taste review pending'],
   'insufficient-evidence':['检查证据不足','Insufficient checkpoint evidence'], 'delivery-failed':['未正常交付','No normal delivery'],
   unavailable:['品味检查未提供','Taste checkpoints unavailable']};
  const strictTasteSchema='math-gauge.independent-research-abilities/v4';
+ const valueTasteSchema='math-gauge.independent-research-abilities/v5';
+ const strictCreditTasteSchema='math-gauge.independent-research-abilities/v6';
+ const strictTasteCompanion=companion=>[strictTasteSchema,valueTasteSchema,strictCreditTasteSchema].includes(companion?.schema);
+ const valueTasteCompanion=companion=>[valueTasteSchema,strictCreditTasteSchema].includes(companion?.schema);
  const profileViews={radar:['雷达图','Radar'],bars:['按轴排名','Axis ranking'],table:['表格','Table']};
  const profileViewCopy={mode:['画像展示方式','Profile view'],axis:['排名维度','Ranking axis'],
   unranked:['证据未齐 · 未排名','Incomplete evidence · Unranked'],unknown:['未知','Unknown'],scale:['分数 · 0–100','Score · 0–100']};
@@ -88,6 +101,12 @@
   open_research:{zh:'原阶段的开放研究能力，加上本题的受邀自主与研究能力。',en:'Open research capability from the selected stage combined with invited autonomy and research capacity in the new task.'},
   discernment:{zh:'原阶段的数学审辨力，加上本题的数学品味。',en:'Mathematical discernment from the selected stage combined with mathematical taste on the new task.'},
   completion:{zh:'两个画像阶段都采用同一个 1.3 主榜 SMC。',en:'Both profile stages use the same 1.3 leaderboard SMC.'}
+ };
+ const valueDescriptions={...versionedDescriptions,
+  initiative:{zh:'首答的自发拓展基底，加上本题超出研究能力既定范围的自主拓展档位。',
+   en:'Unsolicited first-answer initiative plus a level for independent extension beyond the new task’s capacity scope.'},
+  open_research:{zh:'原阶段的开放研究能力，加上本题核验的研究能力（C）。',
+   en:'Open research capability from the selected stage plus verified research capacity (C) on the new task.'}
  };
  const axisContext={completion:['沿用主榜SMC的全部严格完成门槛，不另算家族平均完成率。','This retains every official SMC completion gate, without a separate family-average completion rate.'],
   initiative:['自发行为需要与问题忠实度一起看；不从主动程度推断能力上限。','Read this behavior together with problem fidelity; initiative does not determine a capability ceiling.'],
@@ -179,6 +198,8 @@
    const mixed=record?.stages?.[stage]?.[key],base=metrics[axis].coverage;
    metrics[axis]=displayMetric(mixed,mixed?.base_coverage||{unit:base.unit,planned:base.planned,reviewed:0});
   }
+  const extension=record?.autonomous_extension?.level;
+  if(['E0','E1','E2','E3'].includes(extension))metrics.initiative.extension_level=extension;
   const completion=record?.completion_v130,official=completion?.coverage;
   metrics.completion=displayMetric(completion,{unit:'fixed_weighted_category',planned:official?.planned??4,reviewed:official?.adjudicated??0});
   metrics[tasteAxis.id]=blended?blendedTasteMetric(record?.stages?.[stage]?.mathematical_taste,strict):tasteMetric(record?.mathematical_taste);
@@ -229,19 +250,23 @@
   }
   if(data.benchmark_version==='1.3.0'&&axes.length===9){
    const companion=data.independent_research_abilities;
-   const strict=companion?.schema===strictTasteSchema;
+   const strict=strictTasteCompanion(companion);
+   const strictCredit=companion?.schema===strictCreditTasteSchema;
+   const descriptions=valueTasteCompanion(companion)?valueDescriptions:versionedDescriptions;
    const blended=strict||companion?.schema==='math-gauge.independent-research-abilities/v3';
    const strictSources=!strict||companion.taste_blend?.independent_mode==='SMC'&&companion.taste_blend?.legacy_component_version==='0.2.0';
    const byModel=strictSources&&(blended||companion?.schema==='math-gauge.independent-research-abilities/v2')&&companion.edition==='1.3.0'&&
     companion.source_stages?.[stage]===(revised?'revision-inclusive':'first-answer')?companion.by_model:null;
    const weight=companion?.taste_blend?.legacy_percent;
    const described=Number.isInteger(weight)&&weight>0&&weight<100;
-   const displayedTaste=blended&&described?{...tasteAxis,description:strict?{
+   const displayedTaste=blended&&described?{...tasteAxis,description:strictCredit?{
+    zh:(100-weight)+'% 独立开放研究品味 SMC，保留已通过检查的净信用。'+weight+'% 六个旧题家族严格复核分，随画像阶段切换。',
+    en:(100-weight)+'% independent research taste SMC, using the net credit of passed checks. '+weight+'% strict review of six retained families at the selected stage.'}:strict?{
     zh:(100-weight)+'% 独立开放研究品味 SMC（三项严格检查），'+weight+'% 六个旧题家族按严格标准复核的百分制品味分。旧题证据随画像阶段切换。',
     en:(100-weight)+'% independent open research taste SMC (three strict checkpoints) and '+weight+'% strict 0–100 taste review of six retained families. The retained evidence follows the selected stage.'}:{
     zh:(100-weight)+'% 独立开放研究三稿品味 RMC，'+weight+'% 六个旧题家族直接评审。旧题证据随画像阶段切换。',
     en:(100-weight)+'% mathematical taste RMC on the three independent open research manuscripts and '+weight+'% direct taste reviews of six retained families. The retained evidence follows the selected stage.'}}:tasteAxis;
-   axes=[...axes.map(axis=>versionedDescriptions[axis.id]?{...axis,description:versionedDescriptions[axis.id]}:axis),displayedTaste];
+   axes=[...axes.map(axis=>descriptions[axis.id]?{...axis,description:descriptions[axis.id]}:axis),displayedTaste];
    models=models.map(model=>projectResearchMetrics(model,byModel?.[model.id],stage,blended,strict));
   }
   return models.length?{profile,axes,models,stage}:null;
@@ -263,8 +288,10 @@
   let lang='zh',selected=[],signature='',pinned=null,hovered=null,keyboard=null;
   const controls=new Map(),checkboxes=new Map(),series=new Map(),legendButtons=new Map();
   const tasteCompanion=data.independent_research_abilities;
-  const strictTaste=tasteCompanion?.schema===strictTasteSchema;
-  const tasteCopy=strictTaste?strictTasteMessages:tasteCompanion?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
+  const strictTaste=strictTasteCompanion(tasteCompanion);
+  const tasteCopy=tasteCompanion?.schema===strictCreditTasteSchema?strictCreditTasteMessages:
+   valueTasteCompanion(tasteCompanion)?valueTasteMessages:strictTaste?strictTasteMessages:
+   tasteCompanion?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
   const t=key=>(axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
   const viewText=pair=>pair[lang==='en'?1:0];
   const views=data.benchmark_version==='1.3.0'?buildViews():null;
@@ -284,7 +311,9 @@
    const task=metric.task_coverage;
    if(!task)return base;
    const componentsMissing=task.components_reviewed!==task.components_planned;
-   const observed=compactCoverage&&task.reviewed===task.planned&&!componentsMissing?'':t('newTask')+' '+task.reviewed+'/'+task.planned;
+   const extension=task.unit==='independent_extension_opportunity';
+   const observed=extension?t('extension')+' '+(metric.extension_level??task.reviewed+'/'+task.planned):
+    compactCoverage&&task.reviewed===task.planned&&!componentsMissing?'':t('newTask')+' '+task.reviewed+'/'+task.planned;
    const components=task.components_planned>1&&(!compactCoverage||componentsMissing)?' ('+t('components')+' '+task.components_reviewed+'/'+task.components_planned+')':'';
    return [metric.base_coverage?base:t('baseUnknown'),observed+components].filter(Boolean).join(' · ');};
   const separateCoverage=['formalization','open_research',tasteAxis.id];

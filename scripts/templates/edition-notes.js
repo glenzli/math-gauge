@@ -3,6 +3,8 @@
  'use strict';
  const {d,state,node,result,f}=MG,main=document.querySelector('main');if(!main)return;
  const isIndependent=d.benchmark_version==='1.3.0'&&!!d.research_preview;
+ const strictCredit=isIndependent&&d.research_preview.schema==='math-gauge.research-board-preview/v4';
+ const valueRevision=strictCredit||isIndependent&&d.research_preview.schema==='math-gauge.research-board-preview/v3';
  const isRevision=d.benchmark_version==='1.2.0'||isIndependent,english=()=>state.lang==='en';
  const text=(zh,en)=>english()?en:zh;
  const section=(id,title,collapsible=false)=>{
@@ -79,15 +81,24 @@
    const share=r.insertCell();share.className='guide-category-share';share.textContent=text(group.weight+'分 · '+group.weight+'%',group.weight+' points · '+group.weight+'%');
    const parts=r.insertCell();parts.className='guide-category-parts';parts.textContent=group.children.map(id=>{const part=d.policy.subcategories.find(item=>item.id===id);return names[id]+' '+(isIndependent?Number(part.weight.toFixed(2)):part.weight)}).join(' · ');
   });
-  if(isIndependent){const r=body.insertRow();r.append(node('th',text('独立开放研究','Independent open research')));r.insertCell().textContent=text('1题，固定3轮','1 task, 3 fixed rounds');r.insertCell().textContent='10 / 10%';r.insertCell().textContent=text('研究自主25% · 数学品味25% · 研究能力50%','Autonomy25% · Taste25% · Capacity50%');}
+  if(isIndependent){const r=body.insertRow();r.append(node('th',text('独立开放研究','Independent open research')));r.insertCell().textContent=text('1题，固定3轮','1 task, 3 fixed rounds');r.insertCell().textContent='10 / 10%';
+   const weights=d.research_preview.item_weights;
+   r.insertCell().textContent=valueRevision?text(`数学品味 ${weights.taste} · 研究能力 ${weights.capacity}（相对权重）`,
+    `Relative weights: Taste ${weights.taste} · Capacity ${weights.capacity}`):text('研究自主25% · 数学品味25% · 研究能力50%','Autonomy25% · Taste25% · Capacity50%');}
   guide.append(taxonomy);
   const explain=(heading,content,cls='')=>{const block=node('section',null,'guide-section '+cls);block.append(node('h3',heading),node('p',content));guide.append(block);return block};
   explain(text('汇总方法','How scores are combined'),text('逐题审核，相关变体先在同一数学家族内合并，再按固定权重汇总。未测保持未知，不把已测部分重新放大到100分。','Each task is reviewed; related variants are combined within their mathematical family, then aggregated with fixed weights. Unrun work stays unknown; measured coverage is never rescaled to 100.'));
   if(isIndependent){
-   const overall=explain(text('1.3总分','1.3 overall scores'),text(
+   const overall=explain(text('1.3总分','1.3 overall scores'),valueRevision?text(
+    'MC、RMC、SMC 各自汇总同口径分数。书面、Lean、辅助研究各占30%，独立开放研究题占10%。数学品味与研究能力按表中相对权重汇成一道题。MC 采用经核实的正面信用，RMC 计入有据的可靠性损失。未测分数留空，柱图显示已确认贡献，完整分保留未知区间。',
+    'MC, RMC and SMC each aggregate their own mode. Written proofs, Lean and supporting research contribute 30% each, and independent open research contributes 10%. Taste and capacity form one task with the relative weights shown above. MC uses verified positive credit. RMC accounts for supported reliability deductions. Unmeasured fields remain blank, and charts show confirmed contributions with unresolved intervals retained.'):text(
     'MC、RMC、SMC 各自汇总同口径分数。书面、Lean、辅助研究各占30%，独立开放研究题占10%。每种口径按25／25／50将 A／T／C 汇成一道题。MC 取独立补审的有效成果分，RMC 取连续可靠性评审分。未测分数留空，主榜柱图显示已确认贡献，完整分保留未知区间。',
     'MC, RMC and SMC each use scores from their own mode. Written proofs, Lean and supporting research contribute 30% each, and independent open research contributes 10%. Each mode combines A, T and C at 25/25/50 into one task. MC uses an independent review of valid results. RMC uses continuous reliability grades. Unmeasured fields remain blank, and the main chart shows confirmed credit with unresolved intervals retained.'));
-   overall.append(node('p',text(
+   overall.append(node('p',strictCredit?text(
+    '独立开放研究 SMC 只保留已通过检查部分的净信用。全部通过时保留该项实际 RMC，部分通过时按原成果与扣分归属保留通过部分的净信用。品味3项与能力5项的通过数单列，未定证据保留固定区间。自主拓展档位只折算研究主动性。',
+    'Independent open research SMC retains the net credit of passed checks. All checks passed preserves that component’s RMC. For mixed outcomes, the retained credit and original deductions are allocated to the respective checks. The three taste and five capacity pass counts are shown separately. Unresolved evidence retains fixed bounds. Autonomous extension contributes only to research initiative.'):valueRevision?text(
+    '独立开放研究 SMC 按检查点给分。数学品味的3项检查和研究能力的5项检查各自在分项内等权。全项通过另列为检查状态，未定检查点保留固定分母。自主拓展档位只折算数学画像的研究主动性。',
+    'Independent open research SMC gives equal credit per check within each component, with three taste checks and five capacity checks. The all-checks flag is reported separately. Unresolved checks retain fixed denominators. The autonomous extension level contributes only to research initiative in the profile.'):text(
     '独立开放研究 SMC 按检查点给分。A 的2个门槛、T 的3个方面、C 的5个硬方向各自在项内等权。全项通过另列为检查状态。例如 C 通过4／5时，该项 SMC 为80，状态为「未全项通过」。未定检查点保留固定分母。',
     'Independent open research SMC awards credit by checkpoint, equally within each component: 2 autonomy, 3 taste and 5 required capacity checks. All-checks status is shown separately. Passing 4 of 5 capacity checks gives capacity SMC of 80 even though not all checks passed. Unresolved checks keep their fixed denominator.')));
   }
@@ -97,11 +108,17 @@
   if(isRevision)branches.append(node('p',text('非Lean已知失分题 → 1次中性续答；首答三项全满免跑','Non-Lean tasks with known loss → 1 neutral continuation; first answers full in all three modes are exempt')));
   else branches.append(node('p',text('其余任务 → 按本版规则选定的首答计分','Other tasks → score the first-answer delivery selected by this edition')));
   if(isIndependent)branches.append(node('p',text('独立开放研究：同一全新求解会话，R1研究→冻结→R2独立推进→冻结→R3自审定稿；无方向反馈、无第四轮neutral continuation。只用固定材料、本地工具和预置依赖，禁外部检索；隔离与运行证据分别核验。','Independent research: one fresh solving session; freeze R1, continue independently in R2, freeze again, then self-audit and finalize R3. No directional feedback or fourth neutral round; fixed local materials only, with operational isolation verified separately.')));
-  if(isIndependent)branches.append(node('p',text('三轮均参与评审、各有侧重：研究自主重点看R1/R2的自主形成与推进；数学品味贯穿三轮、重点看R3核查取舍；研究能力核验R1成果、R2深化修正与R3自审闭合。早期正确成果不因R3未重交而排除；后轮推翻或收窄按实际真值与范围处理，重复成果不重复计分。','All three rounds are assessed with distinct emphases: autonomy focuses on formulation and independent progress in R1/R2; taste spans all rounds and emphasizes R3 selection; capacity examines R1 results, R2 advances and corrections, and R3 verification and closure. Valid earlier results need not be resubmitted in R3; later refutations and restrictions are respected, and repeated results are not counted again.')));
+  if(isIndependent)branches.append(node('p',valueRevision?text(
+   '数学品味考察 R1／R2 的研究主线和 R3 的价值判断、结构判断与成果取舍。研究能力核验三轮实际成果。早期有效成果继续作为证据，后轮推翻或收窄按实际真值和范围处理，重复成果只计一次。',
+   'Mathematical taste examines the research direction in R1 and R2 and the final manuscript’s judgments of value, structure and selection in R3. Capacity verifies actual results across all rounds. Earlier valid results remain evidence, subject to later refutations and scope restrictions. Repeated results receive credit once.'):text(
+   '三轮均参与评审、各有侧重：研究自主重点看R1/R2的自主形成与推进；数学品味贯穿三轮、重点看R3核查取舍；研究能力核验R1成果、R2深化修正与R3自审闭合。早期正确成果不因R3未重交而排除；后轮推翻或收窄按实际真值与范围处理，重复成果不重复计分。',
+   'All three rounds are assessed with distinct emphases: autonomy focuses on formulation and independent progress in R1/R2; taste spans all rounds and emphasizes R3 selection; capacity examines R1 results, R2 advances and corrections, and R3 verification and closure. Valid earlier results need not be resubmitted in R3; later refutations and restrictions are respected, and repeated results are not counted again.')));
   flow.append(branches);
   const metrics=node('section',null,'guide-section');metrics.append(node('h3',text('三种指标','Three score concepts')));
   const definitions=node('dl',null,'guide-metrics');
-  const strictDefinition=isIndependent?text(
+  const strictDefinition=strictCredit?text(
+   '默认排序指标。既有任务沿用整题与整章自查验收。独立开放研究保留通过检查的净信用。',
+   'The default sorting measure. Existing tasks retain their whole-task and chapter self-check rules. Independent open research keeps the net credit of passed checks.'):isIndependent?text(
    '默认排序指标。既有任务保留整题通过／不通过的验收规则，整章自查按完整三轮轨迹验收。独立开放研究使用分点 SMC。',
    'The default sorting measure. Existing tasks retain their whole-task pass/fail rules, including the complete three-round chapter self-check. Independent open research uses checkpoint-based SMC.'):
    text('默认排序指标。每份交付按整题通过／不通过验收；整章自查按完整三轮轨迹验收。','The default sorting measure. Each delivery passes or fails the whole task; chapter self-checks use the entire three-round trajectory.');

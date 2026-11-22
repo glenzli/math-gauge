@@ -11,8 +11,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
 from scripts.results_publication import atomic_write, data_literal
 from math_gauge import independent_research_score_modes as modes
+from math_gauge import independent_research_strict_credit as credit
+from math_gauge import independent_research_value as value_revision
 from math_gauge import legacy_taste_strict
-from math_gauge.research_profile import POLICY_PATH as PROFILE_POLICY_PATH
+from math_gauge.research_profile import POLICY_PATH as PROFILE_POLICY_PATH, VALUE_POLICY_PATH
 
 EDITION = '1.3.0'
 BASE = '1.2.0'
@@ -70,14 +72,25 @@ def prepare_research_preview(files, root):
     from math_gauge.independent_research_adoption import PUBLIC_PATH
     adopted_path, overlay_path = root / PUBLIC_PATH, root / modes.PUBLIC_PATH
     legacy_taste_path = root / legacy_taste_strict.PUBLIC_PATH
+    value_policy_path, value_path = root / value_revision.POLICY_PATH, root / value_revision.PUBLIC_PATH
+    strict_policy_path, strict_path = root / credit.PATH, root / credit.PUBLIC_PATH
+    revised = value_policy_path.is_file()
+    construct = 'independent-research-value-v0.2.0' if revised else 'independent-research-score-modes-v1.3.0'
+    if strict_policy_path.is_file():
+        construct = 'independent-research-strict-credit-v0.1.0'
     adopted_bytes = adopted_path.read_bytes() if adopted_path.is_file() else None
     overlay_bytes = overlay_path.read_bytes() if overlay_path.is_file() else None
     adopted = json.loads(adopted_bytes) if adopted_bytes is not None else None
     board, abilities, category_points = baseline_projection(json.loads(files['data.json']),
-        policy_path=policy, profile_policy_path=root/PROFILE_POLICY_PATH, score_modes_policy_path=root/modes.POLICY_PATH,
+        policy_path=policy, profile_policy_path=root/(VALUE_POLICY_PATH if revised else PROFILE_POLICY_PATH),
+        score_modes_policy_path=root/modes.POLICY_PATH,
         source_bytes=files['data.json'].encode(), adopted=adopted, adopted_bytes=adopted_bytes,
         overlay_bytes=overlay_bytes, legacy_taste_strict_policy_path=root/legacy_taste_strict.POLICY_PATH,
-        legacy_taste_strict_bytes=legacy_taste_path.read_bytes() if legacy_taste_path.is_file() else None)
+        legacy_taste_strict_bytes=legacy_taste_path.read_bytes() if legacy_taste_path.is_file() else None,
+        value_policy_path=value_policy_path if revised else None,
+        value_bytes=value_path.read_bytes() if value_path.is_file() else None,
+        strict_credit_policy_path=strict_policy_path if strict_policy_path.is_file() else None,
+        strict_credit_bytes=strict_path.read_bytes() if strict_path.is_file() else None)
     source_models={m['id']:m for m in json.loads(files['data.json'])['models']}
     for row in board['rows']:
         model=source_models[row['id']]
@@ -137,7 +150,7 @@ def prepare_research_preview(files, root):
                 coverage=copy.deepcopy(report['metrics']['earned']['coverage']))
             if mode == 'strict':
                 model_abilities['completion_v130']['coverage'] = copy.deepcopy(report['metrics']['overall']['coverage'])
-            report['score_construct'] = 'independent-research-score-modes-v1.3.0'
+            report['score_construct'] = construct
             report['base_edition'] = BASE
             suffix = {'partial':'','capability':'-capability','strict':'-strict'}[mode]
             download = dict(schema='math-gauge.independent-research-composite-display/v1',edition=EDITION,
@@ -151,9 +164,14 @@ def prepare_research_preview(files, root):
                 download['adoption_binding'] = copy.deepcopy(board['adoption'])
             if 'score_modes_binding' in board:
                 download['score_modes_binding'] = copy.deepcopy(board['score_modes_binding'])
+            if revised:
+                download['value_binding'] = copy.deepcopy(board['value_binding'])
+                download['item_weights'] = copy.deepcopy(board['item_weights'])
+            if 'strict_credit_binding' in board:
+                download['strict_credit_binding'] = copy.deepcopy(board['strict_credit_binding'])
             result['versions/1.3.0/downloads/'+model['id']+'-combined'+suffix+'-retry.json']=json.dumps(download,ensure_ascii=False,indent=2)+'\n'
         set_published_scores(model)
-        if adopted:
+        if adopted or revised:
             comparable = all(v['exact'] is not None for v in row['composites'].values())
             model['ranking_complete'] = comparable
             if not comparable:
@@ -182,7 +200,7 @@ def prepare_research_preview(files, root):
             scenes[item_chart]['bars'][row['model_id']][mode]['state'] = row['state']
     for key in ('chart-groups', item_chart):
         data['chart_scenes'][key] = scenes[key]
-    envelope['data']['score_construct'] = 'independent-research-score-modes-v1.3.0'
+    envelope['data']['score_construct'] = construct
     envelope['data']['research_preview']['base_edition'] = BASE
     envelope['data']['research_preview']['condition'] = 'nonlogical_retry_3'
     result['versions/1.3.0/data.json']=json.dumps(envelope['data'],ensure_ascii=False,indent=2)+'\n'

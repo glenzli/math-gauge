@@ -7,9 +7,10 @@ import unittest
 
 from math_gauge.independent_research_adoption import KIND, PUBLIC_PATH, SCHEMA
 from math_gauge import independent_research_score_modes as modes
+from math_gauge import independent_research_value as value
 from math_gauge import legacy_taste as taste, legacy_taste_strict as strict_taste
 from math_gauge.open_research import encoded, reference
-from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE, POLICY_PATH as PROFILE_POLICY_PATH
+from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE, POLICY_PATH as PROFILE_POLICY_PATH, VALUE_POLICY_PATH
 from math_gauge.taste_v130 import POLICY_FILE
 from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
 from scripts.results_research_preview import CONFIG, prepare_research_preview
@@ -242,6 +243,19 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
             (root / strict_taste.POLICY_PATH).write_bytes(strict_taste.POLICY_FILE.read_bytes())
             (root / strict_taste.PUBLIC_PATH).write_bytes(strict_legacy)
             outputs = prepare_research_preview(files, root)
+            value_policy, _ = value.load_policy()
+            value_policy['base_results_sha256'] = value._hash(inputs[modes.PUBLIC_PATH.as_posix()])
+            value_policy_raw = encoded(value_policy)
+            (root / value.POLICY_PATH).write_bytes(value_policy_raw)
+            (root / VALUE_POLICY_PATH).write_bytes((POLICY_FILE.parents[3] / VALUE_POLICY_PATH).read_bytes())
+            pending = prepare_research_preview(files, root)
+            revised_result = dict(schema=value.PUBLIC, version=value.VERSION, edition='1.3.0',
+                policy_sha256=value._hash(value_policy_raw), base_results_sha256=value_policy['base_results_sha256'],
+                candidate_calls_by_adoption=0, cohort=[MEASURED], models={MEASURED: dict(
+                    taste=dict(mc=10, rmc=0, strict=False), criteria=dict(planned=3, passed=1, unknown=0),
+                    extension_level='E1', source_sha256=value._hash(MARKER.encode()))})
+            (root / value.PUBLIC_PATH).write_bytes(encoded(revised_result))
+            revised = prepare_research_preview(files, root)
 
         self.assertEqual(outputs['data.json'], files['data.json'])
         self.assertEqual(outputs['data/editions/1.2.0/index.json'], files['data/editions/1.2.0/index.json'])
@@ -305,3 +319,17 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
         payload = installed['versions']['1.3.0']['payload']
         self.assertIn(ABILITY_FIELD, outputs[payload])
         self.assertTrue(all(MARKER not in contents for contents in outputs.values()))
+        self.assertTrue(all(MARKER not in contents for contents in revised.values()))
+        view = json.loads(revised['data/editions/1.3.0/index.json'])['data']
+        pending_view = json.loads(pending['data/editions/1.3.0/index.json'])['data']
+        pending_row = next(row for row in pending_view['research_preview']['rows'] if row['id'] == MEASURED)
+        row = next(row for row in view['research_preview']['rows'] if row['id'] == MEASURED)
+        self.assertIsNone(pending_row['components']['taste']['value'])
+        self.assertEqual(row['components'], dict(taste=dict(value=0, strict=False, state='reviewed'),
+                                                   capacity=dict(value=70, strict=True, state='reviewed')))
+        self.assertEqual(row['coverage']['components_planned'], 2)
+        model_path = f'versions/1.3.0/downloads/{MEASURED}-combined-retry.json'
+        revised_download = json.loads(revised[model_path])
+        self.assertEqual(revised_download['item_weights'], dict(taste=1, capacity=2))
+        self.assertEqual(revised_download[ABILITY_FIELD]['by_model'][MEASURED]['autonomous_extension']['level'], 'E1')
+        self.assertEqual(revised['data/editions/1.2.0/index.json'], files['data/editions/1.2.0/index.json'])

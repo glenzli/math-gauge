@@ -10,10 +10,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge import independent_research_adoption as adoption
 from math_gauge import independent_research_score_modes as modes
+from math_gauge import independent_research_strict_credit as credit
+from math_gauge import independent_research_value as value_revision
 from math_gauge import legacy_taste_strict
 from math_gauge.taste_v130 import POLICY_FILE
 from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE, SCHEMA as PROFILE_SCHEMA
-from math_gauge.research_profile import STAGES, load_policy as load_profile_policy, project_models
+from math_gauge.research_profile import (STAGES, STRICT_CREDIT_SCHEMA, VALUE_POLICY_PATH, VALUE_SCHEMA,
+                                         load_policy as load_profile_policy, project_models)
 
 ABILITY_FIELD = 'independent_research_abilities'
 
@@ -78,7 +81,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
                         score_modes_policy_path=modes.POLICY_FILE, source_bytes=None, adopted=None,
                         adopted_bytes=None, overlay_bytes=None,
                         legacy_taste_strict_policy_path=legacy_taste_strict.POLICY_FILE,
-                        legacy_taste_strict_bytes=None):
+                        legacy_taste_strict_bytes=None, value_policy_path=None, value_bytes=None,
+                        strict_credit_policy_path=None, strict_credit_bytes=None):
     """Build versioned public rows, ability aggregates and group points from the same score result."""
     source = ROOT / 'site/data.json'
     raw = (source_bytes if source_bytes is not None else source.read_bytes() if source_data is None
@@ -91,6 +95,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
     source_binding = dict(edition='1.2.0', sha256=hashlib.sha256(raw).hexdigest())
     score_policy_raw = Path(policy_path).read_bytes()
     policy_sha256 = hashlib.sha256(score_policy_raw).hexdigest()
+    if value_policy_path is not None and Path(profile_policy_path).name == PROFILE_POLICY_FILE.name:
+        profile_policy_path = Path(profile_policy_path).with_name(VALUE_POLICY_PATH.name)
     profile_policy, profile_policy_sha256 = load_profile_policy(profile_policy_path)
     score_modes_policy, score_modes_policy_sha256 = modes.load_policy(score_modes_policy_path)
     selected, overlay, score_modes_binding = {}, {}, None
@@ -109,10 +115,44 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
         if adopted is None:
             raise ValueError('Score modes need the original settled index')
         base_index_hash = hashlib.sha256(adopted_bytes).hexdigest()
-        overlay = modes.validate_public(json.loads(overlay_bytes), adopted, base_index_hash,
-                                        score_modes_policy, score_modes_policy_sha256)['models']
+        retained = modes.validate_public(json.loads(overlay_bytes), adopted, base_index_hash,
+                                        score_modes_policy, score_modes_policy_sha256)
+        overlay = retained['models']
         score_modes_binding = dict(policy_sha256=score_modes_policy_sha256,
             index_sha256=hashlib.sha256(overlay_bytes).hexdigest(), base_index_sha256=base_index_hash)
+    if value_bytes is not None and value_policy_path is None:
+        raise ValueError('Revised value grades require their versioned policy')
+    revised = value_policy_path is not None
+    value_models, value_binding, value_index = {}, None, None
+    strict_models, strict_binding = {}, None
+    score_policy = score_modes_policy
+    if revised:
+        score_policy, value_policy_hash = value_revision.load_policy(value_policy_path)
+        retained_hash = score_modes_binding['index_sha256'] if score_modes_binding else None
+        if retained_hash is not None and retained_hash != score_policy['base_results_sha256']:
+            raise ValueError('Independent value grades bind different retained score-mode results')
+        if value_bytes is not None:
+            if retained_hash is None:
+                raise ValueError('Independent value grades need the fixed retained score-mode results')
+            value_index = value_revision.validate_public(value_revision._json(value_bytes), adopted, retained,
+                                                         score_policy, value_policy_hash)
+            value_models = value_index['models']
+        value_binding = dict(policy_sha256=value_policy_hash, base_results_sha256=score_policy['base_results_sha256'],
+                             index_sha256=hashlib.sha256(value_bytes).hexdigest() if value_bytes is not None else None)
+    if strict_credit_policy_path is not None:
+        if value_bytes is None or value_binding is None:
+            raise ValueError('Strict credit requires the adopted value and score-mode indexes')
+        strict_policy, strict_hash = credit.load_policy(strict_credit_policy_path)
+        credit.bind_policy(strict_policy, score_policy, value_policy_sha256=value_binding['policy_sha256'],
+                           value_results_sha256=value_binding['index_sha256'],
+                           score_modes_results_sha256=score_modes_binding['index_sha256'])
+        if strict_credit_bytes is not None:
+            strict_models = credit.validate_public(credit._json(strict_credit_bytes), retained, value_index,
+                                                   strict_policy, strict_hash)['models']
+        strict_binding = dict(policy_sha256=strict_hash, value_results_sha256=value_binding['index_sha256'],
+            index_sha256=hashlib.sha256(strict_credit_bytes).hexdigest() if strict_credit_bytes is not None else None)
+    elif strict_credit_bytes is not None:
+        raise ValueError('Strict-credit results require their versioned policy')
     def order(model):
         ranks = model['ranking_values']
         return tuple((ranks.get(k) is None, -(ranks.get(k) or 0))
@@ -122,16 +162,25 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
         reports = dict(MC=model['capability']['nonlogical_retry_3'],
                        RMC=model['retry']['combined'], SMC=model['strict']['nonlogical_retry_3'])
         identifier = model['id']
-        result = modes.project_scores(reports, score_modes_policy, adopted=selected.get(identifier),
-                                      overlay=overlay.get(identifier))
+        if revised:
+            result = value_revision.project_scores(reports, score_policy, adopted=selected.get(identifier),
+                                                   retained=overlay.get(identifier), review=value_models.get(identifier))
+        else:
+            result = modes.project_scores(reports, score_policy, adopted=selected.get(identifier),
+                                          overlay=overlay.get(identifier))
+        if strict_binding is not None:
+            result = credit.project_scores(result, reports['SMC'], score_policy, row=strict_models.get(identifier))
         rows.append(public_row(identifier, model['label'], result, kind=kind))
         profile_reports[identifier] = result
         category_points[identifier] = result['category_points']
     legacy_policy = json.loads(score_policy_raw)
-    board = dict(schema='math-gauge.research-board-preview/v2', edition='1.3.0',
+    board_schema = 'math-gauge.research-board-preview/v3' if revised else 'math-gauge.research-board-preview/v2'
+    if strict_binding is not None:
+        board_schema = 'math-gauge.research-board-preview/v4'
+    board = dict(schema=board_schema, edition='1.3.0',
         kind=kind, category={k: legacy_policy['category'][k] for k in ('id', 'zh', 'en')}, rank_eligible=False,
         default_order='retained-base-SMC', weights_ratified=False,
-        source_binding=source_binding, rows=rows, weight_frame=score_modes_policy['group_weights'])
+        source_binding=source_binding, rows=rows, weight_frame=score_policy['group_weights'])
     if adopted is not None:
         board['adoption'] = dict(batch_sha256=adopted['batch_sha256'],
             index_sha256=hashlib.sha256(adopted_bytes).hexdigest(), cohort=adopted['cohort'],
@@ -143,7 +192,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
                                                             data, source_binding['sha256'], policy=taste_policy)
     abilities = project_models(data, profile_reports, profile_policy, legacy_policy['new_axis_denominators'],
                               legacy_taste_strict=legacy_results['models'] if legacy_results is not None else None)
-    companion = dict(schema=PROFILE_SCHEMA, edition='1.3.0', base_edition='1.2.0', source_stages=dict(STAGES),
+    profile_schema = STRICT_CREDIT_SCHEMA if strict_binding is not None else VALUE_SCHEMA if revised else PROFILE_SCHEMA
+    companion = dict(schema=profile_schema, edition='1.3.0', base_edition='1.2.0', source_stages=dict(STAGES),
         source_binding=source_binding, policy_sha256=policy_sha256, profile_policy_sha256=profile_policy_sha256,
         score_modes_policy_sha256=score_modes_policy_sha256,
         taste_blend=dict(profile_policy['mathematical_taste']), by_model=abilities)
@@ -157,6 +207,12 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
     if score_modes_binding is not None:
         board['score_modes_binding'] = score_modes_binding
         companion['score_modes_binding'] = score_modes_binding
+    if value_binding is not None:
+        board.update(value_binding=value_binding, item_weights=score_policy['item_weights'])
+        companion['value_binding'] = value_binding
+    if strict_binding is not None:
+        board['strict_credit_binding'] = strict_binding
+        companion['strict_credit_binding'] = strict_binding
     return board, companion, category_points
 
 

@@ -1,12 +1,18 @@
 (function (root) {
   'use strict';
   const axes = [['autonomy', '研究自主'], ['taste', '数学品味'], ['capacity', '研究能力']];
-  const axisIds = axes.map(([id]) => id);
+  const labelsEn = {autonomy:'Research autonomy', taste:'Mathematical taste', capacity:'Research capacity'};
+  const initials = {autonomy:'A', taste:'T', capacity:'C'};
   const checks = {autonomy: 2, taste: 3, capacity: 5};
   const modes = ['MC', 'RMC', 'SMC'];
   const scoreOrder = ['SMC', 'RMC', 'MC'];
   const styling = {MC: 'capability', RMC: 'partial', SMC: 'strict'};
   const scoreModeSchema = 'math-gauge.research-board-preview/v2';
+  const valueSchema = 'math-gauge.research-board-preview/v3';
+  const strictCreditSchema = 'math-gauge.research-board-preview/v4';
+  const valueBoard = board => [valueSchema, strictCreditSchema].includes(board.schema);
+  const scoreModeBoard = board => board.schema === scoreModeSchema || valueBoard(board);
+  const boardAxes = board => valueBoard(board) ? axes.slice(1) : axes;
   const states = { 'not-tested': '未测', unreviewed: '待评', 'insufficient-evidence': '证据不足', 'delivery-failed': '未正常交付' };
   const statuses = {
     'not-tested': ['未测', 'Not tested'], 'review-pending': ['待评', 'Review pending'],
@@ -16,6 +22,7 @@
   const esc = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const keys = (obj, expected) => obj && Object.keys(obj).sort().join('|') === [...expected].sort().join('|');
   const score = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 100;
+  const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
   function bounds(value) {
     return keys(value, ['exact', 'lower', 'upper']) && score(value.lower) && score(value.upper) && value.lower <= value.upper &&
       (value.exact === null || score(value.exact) && value.exact === value.lower && value.exact === value.upper);
@@ -27,7 +34,7 @@
       ['reviewed', 'not-tested', 'review-pending', 'insufficient-evidence', 'delivery-failed'].includes(state) &&
       (!['not-tested', 'review-pending'].includes(state) || exact === null);
   }
-  function validateModes(row, unmeasured) {
+  function validateModes(row, axisIds, unmeasured, strictCredit) {
     const {score_modes: values, criteria} = row;
     if (!keys(values, modes) || !keys(criteria, axisIds)) throw new Error('Unexpected score modes or private criteria');
     for (const mode of modes) {
@@ -47,15 +54,28 @@
         throw new Error('Unexpected public check counts');
       }
     }
+    if (strictCredit) {
+      const {SMC, RMC, MC} = values;
+      const upper = view => [view.item, ...axisIds.map(axis => view.components[axis])].map(metric => metric.upper);
+      const reliable = upper(RMC), positive = upper(MC);
+      // Unresolved upper bounds round outward, while exact scores round to nearest.
+      const exceeds = (n, limit) => n - limit > 1e-9;
+      if (upper(SMC).some((n, i) => exceeds(n, reliable[i])) || reliable.some((n, i) => exceeds(n, positive[i]))) {
+        throw new Error('Strict credit must stay within retained reliable and positive credit');
+      }
+    }
   }
   function validate(data) {
     const baseline = data.kind === 'existing-model-unmeasured';
     const settled = data.kind === 'settled-selected-configurations';
-    const scoreModes = data.schema === scoreModeSchema;
+    const scoreModes = scoreModeBoard(data), revised = valueBoard(data), strictCredit = data.schema === strictCreditSchema;
+    const displayAxes = boardAxes(data), axisIds = displayAxes.map(([id]) => id);
     const fields = ['schema', 'edition', 'kind', 'category', 'rank_eligible', 'default_order', 'weights_ratified', 'rows'];
     if (baseline || settled) fields.push('source_binding');
     if (settled) fields.push('adoption');
     if (scoreModes && Object.hasOwn(data, 'score_modes_binding')) fields.push('score_modes_binding');
+    if (revised) fields.push('value_binding', 'item_weights');
+    if (strictCredit) fields.push('strict_credit_binding');
     if (!keys(data, fields) ||
         (!scoreModes && data.schema !== 'math-gauge.research-board-preview/v1') || data.edition !== '1.3.0' || (!baseline && !settled && data.kind !== 'synthetic-fixture') ||
         data.rank_eligible !== false || data.weights_ratified !== false || data.default_order !== 'retained-base-SMC' ||
@@ -63,8 +83,23 @@
       throw new Error('Unrecognized local display projection');
     }
     if (fields.includes('score_modes_binding') && (!keys(data.score_modes_binding, ['policy_sha256', 'index_sha256', 'base_index_sha256']) ||
-        !Object.values(data.score_modes_binding).every(hash => typeof hash === 'string' && /^[a-f0-9]{64}$/.test(hash)))) {
+        !Object.values(data.score_modes_binding).every(hash))) {
       throw new Error('Invalid score-mode source binding');
+    }
+    if (revised) {
+      const binding = data.value_binding;
+      if (!keys(binding, ['policy_sha256', 'base_results_sha256', 'index_sha256']) || !hash(binding.policy_sha256) ||
+          !hash(binding.base_results_sha256) || binding.index_sha256 !== null && !hash(binding.index_sha256) ||
+          data.score_modes_binding && binding.base_results_sha256 !== data.score_modes_binding.index_sha256 ||
+          !keys(data.item_weights, axisIds) || !Object.values(data.item_weights).every(n => Number.isInteger(n) && n > 0)) {
+        throw new Error('Invalid value score source binding or item weights');
+      }
+    }
+    if (strictCredit) {
+      const binding = data.strict_credit_binding;
+      if (!keys(binding, ['policy_sha256', 'value_results_sha256', 'index_sha256']) || !hash(binding.policy_sha256) ||
+          !hash(binding.value_results_sha256) || binding.value_results_sha256 !== data.value_binding.index_sha256 ||
+          binding.index_sha256 !== null && !hash(binding.index_sha256)) throw new Error('Invalid strict-credit source binding');
     }
     if ((baseline || settled) && (!keys(data.source_binding, ['edition', 'sha256']) || data.source_binding.edition !== '1.2.0' || !/^[a-f0-9]{64}$/.test(data.source_binding.sha256))) throw new Error('Unbound baseline');
     const uniqueIds = ids => Array.isArray(ids) && ids.length && new Set(ids).size === ids.length;
@@ -78,19 +113,22 @@
     for (const row of data.rows) {
       if (!keys(row, rowFields) ||
           !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== data.kind || typeof row.label !== 'string' ||
-          !(score(row.base_smc) || bounds(row.base_smc)) || !keys(row.components, axes.map(a => a[0])) || !bounds(row.strict_overall) || !bounds(row.composite) || !keys(row.composites, ['MC','RMC','SMC']) || !Object.values(row.composites).every(bounds) || !keys(row.confirmed,['MC','RMC','SMC']) || !Object.values(row.confirmed).every(score) || !score(row.strict_confirmed) || !keys(row.delivery,['planned','normal','unknown']) || row.delivery.planned!==45 || !Number.isInteger(row.delivery.normal) || !Number.isInteger(row.delivery.unknown) || row.delivery.normal<0 || row.delivery.unknown<0 || row.delivery.normal+row.delivery.unknown>45 || !bounds(row.item) ||
+          !(score(row.base_smc) || bounds(row.base_smc)) || !keys(row.components, axisIds) || !bounds(row.strict_overall) || !bounds(row.composite) || !keys(row.composites, ['MC','RMC','SMC']) || !Object.values(row.composites).every(bounds) || !keys(row.confirmed,['MC','RMC','SMC']) || !Object.values(row.confirmed).every(score) || !score(row.strict_confirmed) || !keys(row.delivery,['planned','normal','unknown']) || row.delivery.planned!==45 || !Number.isInteger(row.delivery.normal) || !Number.isInteger(row.delivery.unknown) || row.delivery.normal<0 || row.delivery.unknown<0 || row.delivery.normal+row.delivery.unknown>45 || !bounds(row.item) ||
           ![0, 100, null].includes(row.task_strict) || !keys(row.coverage, ['planned', 'reviewed', 'components_planned', 'components_reviewed']) ||
-          row.coverage.planned !== 1 || row.coverage.components_planned !== 3 || ![0, 1].includes(row.coverage.reviewed) ||
-          ![0, 1, 2, 3].includes(row.coverage.components_reviewed)) throw new Error('Unexpected row or private payload');
+          row.coverage.planned !== 1 || row.coverage.components_planned !== axisIds.length || ![0, 1].includes(row.coverage.reviewed) ||
+          !Number.isInteger(row.coverage.components_reviewed) || row.coverage.components_reviewed < 0 ||
+          row.coverage.components_reviewed > axisIds.length) throw new Error('Unexpected row or private payload');
       const unmeasured = baseline || (settled && !data.adoption.cohort.includes(row.id));
       if (unmeasured && (row.task_strict !== null || row.coverage.reviewed !== 0 || row.coverage.components_reviewed !== 0 || row.strict_overall.exact !== null || row.composite.exact !== null)) throw new Error('Unmeasured model acquired a research result');
-      if (scoreModes) validateModes(row, unmeasured);
+      if (scoreModes) validateModes(row, axisIds, unmeasured, strictCredit);
       seen.add(row.id);
-      for (const [key] of axes) {
+      for (const [key] of displayAxes) {
         const component = row.components[key];
+        if (!keys(component, ['state', 'value', 'strict'])) throw new Error('Unexpected component fields');
         if (unmeasured && (component.state !== 'not-tested' || component.value !== null || component.strict !== null)) throw new Error('Unmeasured component acquired a grade');
-        if (settled && !unmeasured && !['reviewed', 'insufficient-evidence', 'delivery-failed'].includes(component.state)) throw new Error('Adopted component is still pending');
-        if (!keys(component, ['state', 'value', 'strict']) || ![true,false,null].includes(component.strict) || !(component.state === 'reviewed' ? score(component.value) :
+        const pendingRevision = revised && component.state === 'unreviewed';
+        if (settled && !unmeasured && !pendingRevision && !['reviewed', 'insufficient-evidence', 'delivery-failed'].includes(component.state)) throw new Error('Adopted component is still pending');
+        if (![true,false,null].includes(component.strict) || !(component.state === 'reviewed' ? score(component.value) :
             Object.hasOwn(states, component.state) && component.value === null)) throw new Error('Unknown and zero must remain distinct');
       }
     }
@@ -108,7 +146,7 @@
   }
   function render(data, search = '') {
     validate(data);
-    if (data.schema === scoreModeSchema) return renderResearchBoard(data, search, new Map(), false);
+    if (scoreModeBoard(data)) return renderResearchBoard(data, search, new Map(), false);
     // Deliberately preserve the supplied SMC row order; no A/T/C arithmetic or reranking here.
     const rows = data.rows.map(row => `<tr data-model="${esc(row.id)}"><td class="model"><strong>${esc(row.label)}</strong><span class="fixture-label">${row.kind === 'synthetic-fixture' ? 'FIXTURE' : '1.2.0 基准'}</span></td>` +
       `<td class="base">${typeof row.base_smc === 'number' ? row.base_smc.toFixed(2) : '未知'}</td>` + axes.map(([key, label]) =>
@@ -121,7 +159,7 @@
       `<th class="total" rowspan="2" scope="col">独立数值综合<br>RMC 基准</th></tr><tr>` + axes.map(([key, label]) =>
         `<th id="${key}" class="component-head" scope="col">${label}</th>`).join('') + `</tr></thead><tbody>${rows}</tbody></table>`;
   }
-  function readBoard(search) {
+  function readBoard(search, axisIds) {
     const query = new URLSearchParams(search);
     const requested = query.get('independent-tab');
     const tab = axisIds.includes(requested) ? requested : 'overall';
@@ -176,14 +214,14 @@
     return grade.state === 'not-tested' ? `<span class="state" data-unmeasured aria-label="${esc(label)}"></span>` :
       `<span class="state">${esc(label)}</span>`;
   }
-  function checkpointCell(row, field, en) {
+  function checkpointCell(row, field, en, axisIds) {
     if (untested(row) || !row.criteria) return '';
     const count = axis => {
       const {passed, planned, unknown} = row.criteria[axis];
       return `${passed}/${planned}${unknown ? (en ? ` (${unknown} unknown)` : `（${unknown} 未知）`) : ''}`;
     };
     if (field) return count(field);
-    return axes.map(([axis], index) => `${['A', 'T', 'C'][index]} ${count(axis)}`).join(' · ');
+    return axisIds.map(axis => `${initials[axis]} ${count(axis)}`).join(' · ');
   }
   function allChecksCell(row, field, en) {
     if (untested(row)) return '';
@@ -191,17 +229,18 @@
     if (flag === null) return en ? 'Unknown' : '未知';
     return flag ? (en ? 'All passed' : '全项通过') : (en ? 'Not all passed' : '未全项通过');
   }
-  function renderTable(rows, field, sort, en) {
-    const raw = field ? [] : en ? ['Autonomy', 'Taste', 'Capacity'] : axes.map(([, label]) => label);
+  function renderTable(rows, field, sort, en, displayAxes) {
+    const axisIds = displayAxes.map(([id]) => id);
+    const raw = field ? [] : displayAxes.map(([id, label]) => en ? labelsEn[id] : label);
     const headers = modes.map(mode => `<th scope="col" class="numeric" data-independent-score="${mode}"${mode === sort ? ' aria-sort="descending"' : ''}>${mode}</th>`).join('');
     const body = rows.map(({row, rank}) => {
       const scores = modes.map(mode => `<td class="numeric" data-independent-score="${mode}">${tableGrade(gradeFor(row, mode, field), en)}</td>`).join('');
       const components = field ? '' : axisIds.map(axis => `<td class="numeric">${tableGrade(gradeFor(row, 'RMC', axis), en)}</td>`).join('');
-      return `<tr data-model="${esc(row.id)}"><td class="numeric">${rank ?? ''}</td><th scope="row">${esc(row.label)}</th>${scores}${components}<td class="numeric independent-checks">${checkpointCell(row, field, en)}</td><td class="numeric">${allChecksCell(row, field, en)}</td></tr>`;
+      return `<tr data-model="${esc(row.id)}"><td class="numeric">${rank ?? ''}</td><th scope="row">${esc(row.label)}</th>${scores}${components}<td class="numeric independent-checks">${checkpointCell(row, field, en, axisIds)}</td><td class="numeric">${allChecksCell(row, field, en)}</td></tr>`;
     }).join('');
     return `<div class="table-wrap"><table class="compact independent-research-ranking${field ? '' : ' overall'}" data-independent-primary="${sort}"><thead><tr><th scope="col">#</th><th scope="col">${en ? 'Model' : '模型'}</th>${headers}${raw.map(label => `<th scope="col" class="numeric">${label} RMC</th>`).join('')}<th scope="col" class="numeric">${en ? 'Checks passed' : '检查点通过'}</th><th scope="col" class="numeric">${en ? 'All checks' : '全项检查'}</th></tr></thead><tbody>${body}</tbody></table></div>`;
   }
-  function renderChart(rows, field, models, en) {
+  function renderChart(rows, field, models, en, axisIds) {
     const palette = (value, fallback) => /^#[\da-f]{6}$/i.test(value) ? value : fallback;
     const chart = rows.map(({row}) => {
       const model = models.get(row.id), ink = palette(model?.theme?.ink, '#445b8c');
@@ -212,7 +251,7 @@
         const bar = value === null ? '' : `<span class="score-bar mode-${styling[mode]}" aria-hidden="true" style="left:0;width:${value}%"></span>`;
         return `<div class="metric-bar-row" data-score-mode="${styling[mode]}"><div class="bar-track">${bar}</div><span class="score-readout"><small>${mode}</small><span class="chart-value" title="${esc(label)}" aria-label="${esc(`${mode} ${label}`)}">${text}</span></span></div>`;
       }).join('');
-      const checks = [checkpointCell(row, field, en), allChecksCell(row, field, en)].filter(Boolean).join(' · ');
+      const checks = [checkpointCell(row, field, en, axisIds), allChecksCell(row, field, en)].filter(Boolean).join(' · ');
       const detail = checks ? `<small class="independent-chart-checks">${esc(checks)}</small>` : '';
       return `<div class="bar-group" data-model="${esc(row.id)}" data-provider="${esc(provider)}" role="group" aria-label="${esc(row.label)}" style="--model-color:${color};--model-ink:${ink}"><div class="chart-model"><div>${esc(row.label)}${detail}</div></div><div class="metric-bars">${bars}</div></div>`;
     }).join('');
@@ -220,14 +259,15 @@
     return `<div class="score-figure"><div class="horizontal-score-chart independent-research-chart"><div class="score-x-axis">${ticks}</div>${chart}</div></div>`;
   }
   function renderResearchBoard(board, search, models, en) {
-    const {tab, field, sort, view} = readBoard(search);
-    const labels = en ? ['Overall', 'Research autonomy', 'Mathematical taste', 'Research capacity'] : ['总榜', ...axes.map(([, label]) => label)];
+    const displayAxes = boardAxes(board), axisIds = displayAxes.map(([id]) => id);
+    const {tab, field, sort, view} = readBoard(search, axisIds);
+    const labels = [en ? 'Overall' : '总榜', ...displayAxes.map(([id, label]) => en ? labelsEn[id] : label)];
     const tabs = ['overall', ...axisIds].map((key, index) => `<button type="button" role="tab" data-independent-tab="${key}" aria-selected="${tab === key}">${labels[index]}</button>`).join('');
     const sortButtons = scoreOrder.map(mode => `<button type="button" data-independent-sort="${mode}" aria-pressed="${sort === mode}">${mode}</button>`).join('');
     const viewButtons = ['chart', 'table'].map(name => `<button type="button" data-independent-view="${name}" aria-pressed="${view === name}">${en ? (name === 'chart' ? 'Chart' : 'Table') : (name === 'chart' ? '图表' : '表格')}</button>`).join('');
     const rows = rankedRows(board.rows, field, sort);
     return `<div class="panel-head"><div><h2>${en ? 'Independent Open Research' : '独立开放研究排行榜'}</h2><p class="panel-desc">${en ? 'One three-round task · 10% of the overall score' : '1 道三轮任务 · 主榜权重 10%'}</p></div><div class="board-toolbar independent-research-controls"><div class="segmented" role="group" aria-label="${en ? 'Sort by score' : '按分数排序'}">${sortButtons}</div><div class="board-view segmented" role="group" aria-label="${en ? 'Chart or table' : '图表或表格'}">${viewButtons}</div></div></div><div class="segmented category-tabs" role="tablist" aria-label="${en ? 'Independent Open Research categories' : '独立开放研究分类'}">${tabs}</div>` +
-      (view === 'chart' ? renderChart(rows, field, models, en) : renderTable(rows, field, sort, en));
+      (view === 'chart' ? renderChart(rows, field, models, en, axisIds) : renderTable(rows, field, sort, en, displayAxes));
   }
   const api = { validate, render };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
@@ -246,6 +286,47 @@
     const [tab, panel] = template.content.cloneNode(true).children;
     tabs.append(tab);
     supporting.insertAdjacentElement('afterend', panel);
+  }
+  function showCheckpoints(doc, rows, en) {
+    const heading = en ? 'Checks passed' : '检查通过数';
+    const ids = ['taste', 'capacity'];
+    const table = doc.getElementById('category-ranking-'+categoryId);
+    const header = table?.tHead?.rows[0];
+    if (header) {
+      let label = header.querySelector('[data-research-checkpoints]');
+      if (!label) {
+        label = doc.createElement('th');
+        label.scope = 'col';
+        label.className = 'independent-checks';
+        label.dataset.researchCheckpoints = '';
+        header.append(label);
+      }
+      label.textContent = heading;
+      for (const tr of table.tBodies[0].rows) {
+        const link = tr.querySelector('.model-name');
+        const id = link && new URL(link.href, doc.baseURI).pathname.match(/\/models\/([^/]+)\//)?.[1];
+        if (!rows.has(id)) continue;
+        const cell = tr.querySelector('[data-research-checkpoints]') || tr.insertCell();
+        cell.dataset.researchCheckpoints = '';
+        cell.className = 'independent-checks';
+        cell.textContent = checkpointCell(rows.get(id), null, en, ids);
+      }
+    }
+    const chart = doc.getElementById('category-chart-groups-'+categoryId);
+    for (const group of chart?.children || []) {
+      const row = rows.get(group.dataset.model);
+      const label = row && checkpointCell(row, null, en, ids);
+      const title = group.querySelector('.chart-model > div');
+      if (!title || !label) continue;
+      let note = title.querySelector('[data-research-checkpoints]');
+      if (!note) {
+        note = doc.createElement('small');
+        note.dataset.researchCheckpoints = '';
+        note.className = 'independent-chart-checks';
+        title.append(note);
+      }
+      note.textContent = ' · '+heading+' '+label;
+    }
   }
   function decorate() {
     const mg = typeof MG !== 'undefined' ? MG : root.MG;
@@ -276,6 +357,8 @@
       scope.textContent = text;
     }
     const rows = new Map(board.rows.map(r=>[r.id,r]));
+    const strictCredit = board.schema === strictCreditSchema;
+    if (strictCredit) showCheckpoints(doc, rows, en);
     for (const row of doc.querySelectorAll('#ranking-body tr')) {
       const link=row.querySelector('.model-name');if(!link)continue;
       const id=new URL(link.href,doc.baseURI).pathname.match(/\/models\/([^/]+)\//)?.[1];
@@ -291,14 +374,18 @@
       if(u.origin===location.origin && /\/models\/|\/method\.html$/.test(u.pathname)){u.searchParams.set('edition','1.2.0');link.href=u.href;link.dataset.fixedEdition='';}
     }
     for(const legend of doc.querySelectorAll('#leaderboard .legend-item[data-display-mode]')) {
-      const labels={strict:'SMC综合',partial:'RMC综合',capability:board.schema===scoreModeSchema?'MC综合':'MC基准综合'};
+      const labels={strict:'SMC综合',partial:'RMC综合',capability:scoreModeBoard(board)?'MC综合':'MC基准综合'};
       if(legend.lastChild?.nodeType===3)legend.lastChild.textContent=labels[legend.dataset.displayMode];
     }
     for(const cell of doc.querySelectorAll('#ranking thead .delivery-cell'))cell.textContent=en?'Delivery rate / 45':'整体交付率 / 45';
     const desc=doc.getElementById('leaderboard-desc'); if(desc)desc.textContent=board.adoption?(en?'1.3 settled full-scope comparisons · other confirmed contributions retained':'1.3完整范围的已结算比较 · 其他配置保留已确认贡献'):(en?'1.3 confirmed contribution · ten research points unmeasured':'1.3已确认贡献排序 · 新增10分未测，完整分仍未知');
     const explanation=doc.getElementById('score-explanation');
-    if(explanation&&mg.state.score==='strict')explanation.textContent=en?'Existing tasks retain whole-task and self-check acceptance; independent open research uses checkpoint-based SMC.':'既有任务按整题与自查轨迹验收；独立开放研究按检查点计 SMC。';
+    if(explanation&&mg.state.score==='strict')explanation.textContent=strictCredit?
+      (en?'Independent open research keeps the net credit of passed checks. The original tasks retain their acceptance rules.':'独立开放研究保留已通过检查的净信用，既有任务沿用原验收规则。'):
+      (en?'Existing tasks retain whole-task and self-check acceptance; independent open research uses checkpoint-based SMC.':'既有任务按整题与自查轨迹验收；独立开放研究按检查点计 SMC。');
     const category=doc.getElementById('category-tab-research');if(category)category.textContent=en?'Supporting research':'辅助研究';
+    const supportingTitle=doc.querySelector('#category-panel-research h3');
+    if(supportingTitle)supportingTitle.textContent=en?'Supporting research leaderboard':'辅助研究排行榜';
     const context=doc.querySelector('#category-leaderboards .section-context');
     if (context) context.textContent=en?'Each category sorts independently':'各类独立排序';
     const tab=doc.getElementById('category-tab-'+categoryId);
@@ -309,6 +396,7 @@
     if (categoryDesc) {
       const weight=board.weight_frame[categoryId];
       categoryDesc.textContent=en?`Category / 100 · overall weight ${weight}%`:`类内满分100 · 总榜权重${weight}%`;
+      if (strictCredit) categoryDesc.textContent+=en?' · Checks passed shown separately':' · 单列检查通过数';
     }
     for (const readout of doc.querySelectorAll('[data-research-category-state]')) {
       const display=categoryStatus(readout.dataset.researchCategoryState, mg.state.lang);

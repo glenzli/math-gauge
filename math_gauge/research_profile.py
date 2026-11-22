@@ -11,7 +11,10 @@ from .scoring import _average, _bound, _interval, _percent
 
 POLICY_PATH = Path('protocol/mathematical-taste/v1.3.0/profile-policy.json')
 POLICY_FILE = Path(__file__).resolve().parents[1] / POLICY_PATH
+VALUE_POLICY_PATH = POLICY_PATH.with_name('profile-policy-v2.json')
 SCHEMA = 'math-gauge.independent-research-abilities/v4'
+VALUE_SCHEMA = 'math-gauge.independent-research-abilities/v5'
+STRICT_CREDIT_SCHEMA = 'math-gauge.independent-research-abilities/v6'
 STAGES = dict(first='first-answer', revision='revision-inclusive')
 _FIELDS = ('lower', 'upper', 'exact')
 _TASTE_CHECKS = REQUIRED_CRITERIA['taste']
@@ -22,15 +25,20 @@ _ROUTES = {
     'open_research_v130': ('open_research', {'autonomy', 'capacity'}),
     'discernment_v130': ('discernment', {'taste'}),
 }
+_VALUE_POLICY = 'math-gauge.independent-research-profile-policy/v4'
+_VALUE_ROUTES = dict(_ROUTES, initiative_v130=('initiative', {'autonomous_extension'}),
+                     open_research_v130=('open_research', {'capacity'}))
 
 
 def load_policy(path):
     raw = Path(path).read_bytes()
     policy = json.loads(raw)
+    schema = policy.get('schema')
+    routes = _VALUE_ROUTES if schema == _VALUE_POLICY else _ROUTES
     if (set(policy) != {'schema', 'edition', 'base_edition', 'routes', 'mathematical_taste'}
-            or policy['schema'] != 'math-gauge.independent-research-profile-policy/v3'
+            or schema not in ('math-gauge.independent-research-profile-policy/v3', _VALUE_POLICY)
             or policy['edition'] != '1.3.0' or policy['base_edition'] != '1.2.0'
-            or set(policy['routes']) != set(_ROUTES)):
+            or set(policy['routes']) != set(routes)):
         raise ValueError('Invalid independent research profile policy')
     taste = policy['mathematical_taste']
     if (set(taste) != {'legacy_percent', *_TASTE_SOURCES}
@@ -38,7 +46,7 @@ def load_policy(path):
             or type(taste['legacy_percent']) is not int or not 0 < taste['legacy_percent'] < 100):
         raise ValueError('Invalid fixed mathematical taste profile blend')
     for axis, route in policy['routes'].items():
-        base_axis, components = _ROUTES[axis]
+        base_axis, components = routes[axis]
         if (set(route) != {'base_axis', 'item_percent', 'component_weights'}
                 or route['base_axis'] != base_axis or type(route['item_percent']) is not int
                 or not 0 < route['item_percent'] < 100
@@ -99,10 +107,11 @@ def _blend_axis(base, grades, route):
     confirmed = _average([(base_confirmed,) * 3, (item_interval[0],) * 3], weights)[2]
     base_metric = None if base is None else dict(
         {key: base[key] for key in _FIELDS}, confirmed=base.get('confirmed', base['lower']))
+    unit = 'independent_extension_opportunity' if 'autonomous_extension' in parts else 'independent_open_research_task'
     return dict(_published_metric(combined, confirmed), base_axis=route['base_axis'],
         base_metric=base_metric, base_coverage=_base_coverage(base, route['base_axis']),
         task_metric=_published_metric(item_interval, item_interval[0]),
-        task_coverage=dict(unit='independent_open_research_task', planned=1,
+        task_coverage=dict(unit=unit, planned=1,
             reviewed=int(measured_parts == len(parts)), components_planned=len(parts), components_reviewed=measured_parts),
         base_weight=weights[0] / 100, item_weight=weights[1] / 100, component_weights=dict(parts))
 
@@ -117,7 +126,7 @@ def _independent_taste_smc(report):
         return dict(lower=0, upper=100, exact=None, confirmed=0, state=missing_state, coverage=coverage)
     if (metric is None or counts is None or counts['planned'] != _TASTE_CHECKS
             or type(counts['unknown']) is not int or not 0 <= counts['unknown'] <= _TASTE_CHECKS
-            or (metric['exact'] is None) != (counts['unknown'] > 0)):
+            or (not report.get('strict_credit') and (metric['exact'] is None) != (counts['unknown'] > 0))):
         raise ValueError('Mathematical taste SMC must retain its settled checkpoint coverage')
     coverage['reviewed'] = _TASTE_CHECKS - counts['unknown']
     return dict({key: metric[key] for key in (*_FIELDS, 'confirmed', 'state')}, coverage=coverage)
@@ -153,12 +162,21 @@ def project_models(data, reports, policy, denominators, *, legacy_taste_strict=N
         ids.update(dict.fromkeys(row['id'] for row in data['profile_models']
                                 if row.get('presentation_eligibility', {}).get('ranked') is not False))
     projected = {}
+    revised_value = policy['schema'] == _VALUE_POLICY
     for identifier in ids:
         report = reports.get(identifier)
-        grades = report['subscores'] if report is not None else {}
+        grades = dict(report['subscores']) if report is not None else {}
         row = {}
-        for component, axis, denominator in [('autonomy', 'open_research_autonomy', 'open_research_autonomy'),
-                                             ('taste', 'independent_taste', 'mathematical_taste')]:
+        raw_metrics = [('taste', 'independent_taste', 'mathematical_taste')]
+        if revised_value:
+            extension = (report or {}).get('autonomous_extension', dict(level=None, fraction=None))
+            fraction = extension['fraction']
+            grades['autonomous_extension'] = None if fraction is None else 100 * fraction
+            row['autonomous_extension'] = dict(extension, coverage=dict(unit='independent_extension_opportunity',
+                planned=1, reviewed=int(fraction is not None), rounds=3))
+        else:
+            raw_metrics.insert(0, ('autonomy', 'open_research_autonomy', 'open_research_autonomy'))
+        for component, axis, denominator in raw_metrics:
             value = grades.get(component)
             planned = denominators[denominator]['planned']
             row[axis] = dict(lower=0 if value is None else value, upper=100 if value is None else value, exact=value,

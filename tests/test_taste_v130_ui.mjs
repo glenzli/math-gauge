@@ -129,6 +129,59 @@ function scoreModeBoard(source = fixture) {
   return board;
 }
 
+function valueBoard() {
+  const board = scoreModeBoard();
+  board.schema = 'math-gauge.research-board-preview/v3';
+  board.value_binding = {policy_sha256:'a'.repeat(64),base_results_sha256:'b'.repeat(64),index_sha256:'c'.repeat(64)};
+  board.item_weights = {taste:1,capacity:2};
+  const [assessed,zero,insufficient,unmeasured] = board.rows;
+  board.rows = [assessed,zero,insufficient,unmeasured];
+  zero.components.taste.value = 0;
+  zero.score_modes.RMC.components.taste = modeMetric(0);
+  insufficient.score_modes.RMC.components.taste = modeMetric(null,'insufficient-evidence');
+  for (const row of board.rows) {
+    delete row.components.autonomy;
+    delete row.criteria.autonomy;
+    for (const mode of Object.values(row.score_modes)) delete mode.components.autonomy;
+    const reviewed = Object.values(row.components).filter(grade=>grade.state==='reviewed').length;
+    row.coverage = {planned:1,reviewed:Number(reviewed===2),components_planned:2,components_reviewed:reviewed};
+  }
+  return board;
+}
+
+function strictCreditBoard(board = valueBoard()) {
+  board.schema = 'math-gauge.research-board-preview/v4';
+  board.strict_credit_binding = {policy_sha256:'d'.repeat(64),value_results_sha256:board.value_binding.index_sha256,
+    index_sha256:'e'.repeat(64)};
+  for (const row of board.rows) row.score_modes.SMC = structuredClone(row.score_modes.RMC);
+  const row = board.rows[0];
+  row.score_modes.SMC.components.capacity = modeMetric(73);
+  return board;
+}
+
+test('current category shows only scored taste and capacity with distinct evidence states', () => {
+  const board = valueBoard();
+  const table = ui.render(board,'?view-independent=table&independent-tab=autonomy');
+  const rows = Object.fromEntries([...table.matchAll(/<tr data-model="([^"]+)">([\s\S]*?)<\/tr>/g)]
+    .map(([,id,row])=>[id,row]));
+  assert.match(table,/数学品味 RMC/);
+  assert.match(table,/研究能力 RMC/);
+  assert.doesNotMatch(table,/data-independent-tab="autonomy"|研究自主/);
+  assert.match(rows['fixture-alpha'],/>65\.00</);
+  assert.match(rows['fixture-beta'],/>0\.00</);
+  assert.match(rows['fixture-gamma'],/>证据不足</);
+  assert.match(rows['fixture-delta'],/data-unmeasured aria-label="未测"><\/span>/);
+  for (const mutate of [
+    board => {board.rows[0].score_modes.SMC.components.taste.quote='private';},
+    board => {board.rows[0].components.autonomy={state:'reviewed',value:100,strict:true};},
+    board => {board.rows[0].extension={evidence:'private'};},
+    board => {board.value_binding.path='private';},
+  ]) {
+    const changed = valueBoard(); mutate(changed);
+    assert.throws(()=>ui.validate(changed));
+  }
+});
+
 test('the category supplies whole-item scores and keeps point SMC separate from all-check status', () => {
   const data = scoreModeBoard();
   assert.doesNotThrow(()=>ui.validate(data));
@@ -138,6 +191,24 @@ test('the category supplies whole-item scores and keeps point SMC separate from 
   assert.equal(row.score_modes.SMC.components.capacity.exact, 80);
   assert.equal(row.task_strict, 0);
   assert.deepEqual(row.criteria.capacity, {planned:5, passed:4, unknown:0});
+});
+
+test('strict net credit and check counts remain distinct public fields', () => {
+  const board = strictCreditBoard();
+  const row = board.rows[0];
+  const html = ui.render(board,'?view-independent=table&independent-tab=capacity');
+  const cells = html.match(/<tr data-model="fixture-alpha">([\s\S]*?)<\/tr>/)[1];
+  assert.match(cells,/data-independent-score="SMC">73\.00</);
+  assert.match(cells,/independent-checks">4\/5</);
+  assert.match(cells,/未全项通过/);
+  row.score_modes.SMC.components.capacity = modeMetric(81);
+  assert.throws(()=>ui.validate(board),/retained reliable and positive credit/);
+  row.score_modes.SMC.components.capacity = modeMetric(73);
+  row.score_modes.RMC.item = modeMetric(87.3333333333);
+  row.score_modes.SMC.item = {...modeMetric(null,'review-pending'),upper:87.3333333334};
+  assert.doesNotThrow(()=>ui.validate(board),'an outward-rounded uncertain upper bound retains its exact ceiling');
+  board.strict_credit_binding.reason = 'private';
+  assert.throws(()=>ui.validate(board),/source binding/);
 });
 
 test('the native board controller stores the fourth category view independently', () => {
@@ -175,7 +246,7 @@ test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older 
     insertRow(){const part=node('tr');this.append(part);return part;},
     insertCell(){const part=node('td');this.append(part);return part;}});
   const flatten = element => [element.textContent,...element.children.map(flatten)].filter(Boolean).join(' ');
-  const guide = (edition,lang) => {
+  const guide = (edition,lang,researchPreview={}) => {
     const shell = node('details');
     Object.assign(shell.dataset,{tasks:'39',public:'25',private:'14',families:'35',total:'100'});
     const document={querySelector:selector=>selector==='[data-assessment-guide]'?shell:selector==='main'?{}:null,
@@ -183,7 +254,7 @@ test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older 
     const independent=edition==='1.3.0';
     const groups=['written','lean','research'].map((id,index)=>({id,weight:independent?30:index<2?35:30,children:[]}));
     if(independent)groups.push({id:'independent_open_research',weight:10,children:[]});
-    const d={benchmark_version:edition,research_preview:independent?{}:null,models:[],policy:{groups,subcategories:[]}};
+    const d={benchmark_version:edition,research_preview:independent?researchPreview:null,models:[],policy:{groups,subcategories:[]}};
     vm.runInNewContext(source,{document,location:new URL('https://example.test/index.html'),URL,window:{addEventListener(){}},
       MG:{d,state:{lang},node,href:value=>value}});
     const descendants=element=>[element,...element.children.flatMap(descendants)];
@@ -196,6 +267,14 @@ test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older 
   assert.deepEqual(current.rows.map(row=>row.children[0].textContent),['书面证明','Lean','辅助研究','独立开放研究']);
   assert.equal(current.rows.reduce((sum,row)=>sum+parseFloat(row.children[2].textContent),0),100);
   assert.match(guide('1.3.0','en').text,/checkpoint.*capacity SMC of 80/);
+  const revised = guide('1.3.0','zh',valueBoard());
+  assert.match(revised.text,/数学品味 1 · 研究能力 2/);
+  assert.match(revised.text,/自主拓展档位只折算数学画像的研究主动性/);
+  assert.doesNotMatch(revised.text,/25／25／50|研究自主25%/);
+  const retainedCredit = guide('1.3.0','zh',strictCreditBoard());
+  assert.match(retainedCredit.text,/全部通过时保留该项实际 RMC/);
+  assert.match(retainedCredit.text,/检查.*通过数单列/);
+  assert.doesNotMatch(retainedCredit.text,/各自在分项内等权/);
   const older = guide('1.2.0','zh');
   assert.match(older.text,/每份交付按整题通过／不通过验收/);
   assert.doesNotMatch(older.text,/检查点/);
@@ -221,6 +300,8 @@ test('the lexical MG controller installs one native category and leaves the main
     insertBefore(node,last){this.children.splice(this.children.indexOf(last),0,node);node.parent=this;}
     remove(){if(this.parent)this.parent.children.splice(this.parent.children.indexOf(this),1);if(this.id)nodes.delete(this.id);}
     insertAdjacentElement(_,node){(this.adjacent??=[]).push(node);nodes.set(node.id,node);}
+    querySelector(selector){return selector==='[data-research-checkpoints]'?this.children.find(x=>Object.hasOwn(x.dataset,'researchCheckpoints')):null;}
+    insertCell(){const cell=new Element('td');this.append(cell);return cell;}
   }
   const table=new Element('table'),wrap=new Element('div'),head=new Element('tr'),body=new Element('tr');
   table.closest=()=>wrap;table.tHead={rows:[head],insertRow(){const r=new Element('tr');this.rows.push(r);return r;}};
@@ -240,8 +321,14 @@ test('the lexical MG controller installs one native category and leaves the main
   const html=new Element('html');
   const key='independent_open_research',tabs=new Element('div'),supporting=new Element('section');
   const tab=new Element('button'),panel=new Element('section'),title=new Element('h3'),description=new Element('p');
+  const supportingTab=new Element('button'),supportingTitle=new Element('h3');
+  const categoryTable=new Element('table'),categoryHeader=new Element('tr'),categoryRow=new Element('tr');
+  categoryTable.tHead={rows:[categoryHeader]};categoryTable.tBodies=[{rows:[categoryRow]}];
+  categoryRow.querySelector=selector=>selector==='.model-name'?link:Element.prototype.querySelector.call(categoryRow,selector);
   tab.id='category-tab-'+key;panel.id='category-panel-'+key;
   nodes.set('category-panel-research',supporting);
+  nodes.set('category-tab-research',supportingTab);
+  nodes.set('category-ranking-'+key,categoryTable);
   nodes.set('independent-research-category-template',{content:{cloneNode:()=>({children:[tab,panel]})}});
   const scoreCells=['not-tested','insufficient-evidence','review-pending',null].map(state=>{
     const cell=new Element('span');
@@ -249,12 +336,24 @@ test('the lexical MG controller installs one native category and leaves the main
     cell.textContent=state?'—':'0.00';return cell;
   });
   const selectors={'#category-leaderboards .category-tabs':tabs,
+    '#category-panel-research h3':supportingTitle,
     ['#category-panel-'+key+' h3']:title,['#category-panel-'+key+' .panel-desc']:description};
   const document={documentElement:html,baseURI:'https://example.test/index.html?edition=1.3.0',
     getElementById:id=>nodes.get(id)||null,createElement:tag=>new Element(tag),querySelector:selector=>selectors[selector]??null,
     querySelectorAll:selector=>selector==='#ranking-body tr'?[body]:selector==='a[href]'?[link]:
       selector==='[data-research-category-state]'?scoreCells.filter(cell=>cell.dataset.researchCategoryState):[]};
-  const research={...scoreModeBoard(board),weight_frame:{[key]:10}};
+  const research=scoreModeBoard(board);
+  research.item_weights={taste:1,capacity:2};
+  research.value_binding={policy_sha256:'a'.repeat(64),base_results_sha256:'b'.repeat(64),index_sha256:'c'.repeat(64)};
+  for (const row of research.rows) {
+    delete row.components.autonomy;
+    delete row.criteria.autonomy;
+    for (const view of Object.values(row.score_modes)) delete view.components.autonomy;
+    row.coverage.components_planned=2;
+    row.coverage.components_reviewed=row.coverage.reviewed*2;
+  }
+  strictCreditBoard(research);
+  research.weight_frame={[key]:10};
   const data={benchmark_version:'1.3.0',research_preview:research,models:board.rows.map(r=>({id:r.id,label:r.label,theme:{ink:'#445b8c'}}))};
   nodes.set('category-leaderboards',new Element('section'));
   const location=new URL('https://example.test/index.html?edition=1.3.0&score=capability&profile-stage=first#assessment-guide');
@@ -274,7 +373,11 @@ test('the lexical MG controller installs one native category and leaves the main
   assert.deepEqual(tabs.children,[tab]);
   assert.deepEqual(supporting.adjacent,[panel]);
   assert.ok(!nodes.has('independent-research-leaderboards'));
-  assert.equal(description.textContent,'类内满分100 · 总榜权重10%');
+  assert.equal(description.textContent,'类内满分100 · 总榜权重10% · 单列检查通过数');
+  assert.equal(categoryHeader.children[0].textContent,'检查通过数');
+  assert.match(categoryRow.children[0].textContent,/C 4\/5/);
+  assert.equal(supportingTab.textContent,'辅助研究');
+  assert.equal(supportingTitle.textContent,'辅助研究排行榜');
   assert.deepEqual(scoreCells.map(cell=>cell.textContent),['','证据不足','待评','0.00']);
   assert.equal(scoreCells[0].attrs['aria-label'],'未测');
   assert.equal(location.searchParams.get('profile-stage'),'first');
@@ -292,4 +395,10 @@ test('the lexical MG controller installs one native category and leaves the main
   assert.match(resourceHeadings[2].adjacent[0].textContent,/Scores, costs and timings/);
   assert.deepEqual(scoreCells.map(cell=>cell.textContent),['','Insufficient evidence','Review pending','0.00']);
   assert.equal(scoreCells[0].attrs['aria-label'],'Not tested');
+  assert.equal(supportingTab.textContent,'Supporting research');
+  assert.equal(supportingTitle.textContent,'Supporting research leaderboard');
+  assert.equal(categoryHeader.children[0].textContent,'Checks passed');
+  assert.equal(categoryRow.children.length,1,'re-render leaves one diagnostic column');
+  vm.runInNewContext("MG.state.lang = 'zh'; MGResearchPreview.decorate();",context);
+  assert.equal(supportingTitle.textContent,'辅助研究排行榜');
 });
