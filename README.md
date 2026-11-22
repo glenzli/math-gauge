@@ -18,6 +18,8 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 现在的前沿模型，数学能力已经很强。[FrontierMath](https://epoch.ai/frontiermath)、[BrokenArXiv](https://matharena.ai/?comp=overall--brokenarxiv) 等评测，也为了解它们提供了很好的参考。不过，在编写 [OET（算子演化论）](https://glenzli.com/books/oet/) 的过程中，我还是会遇到一些问题：有的推导写得流畅，仔细检查却少了条件；有的回答看似正确，实际上已经把问题换成了模型更熟悉的样子。
 
+连 RH（黎曼猜想）的 AI 辅助证明，也已通过 [Lean 与 Mathlib 社区对命题和证明的独立核验](https://leanprover-community.github.io/blog/posts/riemann-hypothesis/)。在这样的进展下，我觉得 benchmark 若只是不断提高题目难度，意义已经很有限；我更想知道模型能否稳定、忠实、严谨地参与实际数学工作。
+
 在我自己的数学工作中，往往是先有一个想法，再慢慢理清概念、寻找合适的表示，把推导和证明展开。有些思路未必走在模型熟悉的套路上，我会更看重它能否跟住原来的问题，认真检查每一步，守住条件和意图。它可以质疑、举反例，也可以提出别的做法，但要把理由和与原问题的关系讲清楚。
 
 这一路，我的主力也从早期的 Gemini、Claude 逐渐换成了 GPT 系列。使用中，我慢慢摸到了不同模型的强项、盲点和风格；但模型还在不断进步，过去的经验也需要更新。我于是想做一套贴近自己数学工作的 benchmark，把日常需要的推导、审阅、背景核查和 Lean 形式化整理成题，看各个模型实际做得怎样，再决定接下来选谁做主力、怎样分工。Math Gauge 就是这样来的。
@@ -52,7 +54,7 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 [Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=zh) 已完成 39 道初答、三轮 Lean 自查和 18 道中性续答。1.2.0 成绩为 **SMC 61.17／RMC 86.54／MC 93.08**；18 份续答中 2 份自身三项全满。分项、原答、运行条件与参考资源见[本轮结果](docs/results.md#gemini-4-neon-xhigh--2026-11-22)。
 
-成本计入有效首答、自查和采用续答的完整开销；耗时比较 12 道共有计时的公开非 Lean 题，整章形式化单列。数学画像可切换首答与含续答，并独立区分[开放研究能力和研究主动性](docs/open-research.md)。内容可靠率、完整目标达成率与主动额外成果仍是首答诊断。
+成本计入有效首答、自查和采用续答的完整开销；耗时比较 12 道共有计时的公开非 Lean 题，整章形式化单列。九轴数学画像可切换首答与含续答，单列[形式化能力](docs/formalization-profile.md)，并独立区分[开放研究能力和研究主动性](docs/open-research.md)。内容可靠率、完整目标达成率与主动额外成果仍是首答诊断。
 
 GLM 5.3、Gemini 3.8 Flash 与 Gemini 4 Argon 不再纳入 1.2.0；1.1.0 及更早的成绩、原答与评审保留。其他入选配置待回交时可查看旧版成绩。当前结果采用 **AI 审核，另有部分人工抽审**，各批次保留实际评审归属，Neon 的人工数学审核仍待完成。见[审核方式](docs/review-process.md)与[续答说明](docs/neutral-revision.md)。
 
@@ -66,6 +68,15 @@ GLM 5.3、Gemini 3.8 Flash 与 Gemini 4 Argon 不再纳入 1.2.0；1.1.0 及更�
 [![Math Gauge 中文成本与 RMC 前沿](docs/screenshots/cost-frontier-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&cost-axis=cost&cost-score=partial#cost-frontier)
 
 [![Math Gauge 中文耗时与 RMC 前沿](docs/screenshots/time-frontier-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&cost-axis=time&cost-score=partial#cost-frontier)
+
+</details>
+
+<details>
+<summary>九轴数学画像</summary>
+
+形式化能力采用Lean整体SMC，包含语义审计、工程形式化和三轮对齐自查；两阶段沿用同一批成绩，不增加模型测试或改变主榜分数。
+
+[![Math Gauge 九轴数学画像](docs/screenshots/mathematical-profile-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&profile-stage=first#mathematical-profile)
 
 </details>
 

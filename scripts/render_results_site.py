@@ -757,6 +757,11 @@ def render_category_leaderboards(data):
                       +'</span></figcaption>'+grouped_bars(data, group)+'</figure>'
                       '<div class="table-wrap" data-view-pane="table" hidden><table class="compact category-ranking" id="category-ranking-'
                       +cid+'"></table></div>'
+                      '<details class="category-subcategories" id="category-subcategories-'+cid+'">'
+                      '<summary><span>子类成绩</span><span class="subcategory-mode" data-subcategory-mode>SMC</span></summary>'
+                      '<p class="panel-desc">按当前分类的排序口径展示；每格为总榜贡献分 / 该项满分。</p>'
+                      '<div class="table-wrap"><table class="compact subcategory-table" id="subcategory-table-'+cid+'"></table></div>'
+                      '</details>'
                       +(render_subboard(data.get('manuscript_observations'), chart_renderer=horizontal_chart, controls=board_settings('initiative', [('groups','已核实额外成果组'),('coverage','审阅覆盖')])) if group['id']=='research' else '')
                       +'</section>')
     return ('<section id="category-leaderboards" aria-labelledby="category-leaderboards-title">'
@@ -764,7 +769,7 @@ def render_category_leaderboards(data):
             '<span class="section-context">三个大类独立排序</span></div><div class="panel">'
             '<div role="tablist" class="segmented category-tabs" aria-label="分类排行榜">'+''.join(tabs)+'</div>'
             '<p class="category-ranking-note">各分类可独立选择排序口径。</p>'
-            +''.join(panels)+'<p class="panel-foot">类内成绩满分100；计入总榜的贡献见下表。</p></div></section>')
+            +''.join(panels)+'<p class="panel-foot">类内成绩满分100；展开子类查看计入总榜的贡献，完整明细见模型详情。</p></div></section>')
 
 
 def is_fully_evaluated(model):
@@ -898,7 +903,7 @@ def write_site(destination, *, source_root=ROOT):
     if attempts is not None:
         files['downloads/execution-attempts.json'] = json.dumps(attempts,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.css", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "edition-notes.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js", "mathematical-profile.js", "mathematical-profile.css"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.css", "home-results.js", "category-subcategories.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "edition-notes.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js", "mathematical-profile.js", "mathematical-profile.css"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     files['assets/execution-anomalies.css'] = (Path(__file__).parent/'templates/execution-anomalies.css').read_text()

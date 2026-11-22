@@ -101,7 +101,7 @@
   const navigation={ranking:text('排行榜','Rankings'),categories:text('分项成绩','Category scores'),revision:text('续答增量','Continuation gains'),method:text('方法与数据','Method & data'),'method-short':text('方法','Method'),library:text('题库','Task library'),release:text('1.0.0 分发说明','1.0.0 distribution'),guide:text('其他 Harness 运行指南','External harness guide')};
   document.querySelectorAll('[data-header-label]').forEach(label=>label.textContent=navigation[label.dataset.headerLabel]);
   const note=document.querySelector('.category-ranking-note');
-  if(note){let link=note.querySelector('[data-header-contribution]');if(!link){link=node('a');link.href='#capability-section';link.setAttribute('data-header-contribution','');note.append(' ',link)}link.textContent=text('权重与分数构成 →','Weights and score contributions →');}
+  if(note){let link=note.querySelector('[data-header-contribution]');if(!link){link=node('a');link.setAttribute('data-header-contribution','');note.append(' ',link)}link.href='#assessment-guide';link.textContent=text('权重与计分方法 →','Weights and scoring →');link.onclick=()=>{const guide=document.getElementById('assessment-guide');if(guide)guide.open=true};}
  }
  function render(){
   header();

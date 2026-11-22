@@ -43,10 +43,19 @@
   scope:['开放研究能力看明确要求研究时实际交出的机制、条件和闭合成果；完成原题即可得最高档。末位研究主动性只观察未被要求时是否自行展开，不表示能力上限或越高越合适。其余轴与主分不变。','Open research capability evaluates mechanisms, justified conditions and closed results under an explicitly open request; completing the actual task can earn the highest grade. Initiative, shown last, describes unsolicited first-answer behavior, not a capability ceiling or automatic suitability. Other axes and main scores are unchanged.'],
   openResearch:['开放研究','Open research']
  };
+ const formalizationMessages={
+  description:['论证、研究与形式化 · 每轴0–100','Reasoning, research and formalization · 0–100 per axis'],
+  meanings:['九轴含义与范围','What the nine axes measure'],
+  chart:['九轴数学画像，固定0至100刻度','Nine-axis mathematical profile, fixed scale from 0 to 100'],
+  coverage:['形式化能力取Lean整体SMC，含语义审计、工程和三轮对齐自查；开放研究能力独立使用五个共同开放家族；严格完成度取正式SMC；其余评审轴沿用35家族。各轴覆盖分别展示，不按雷达面积排名。','Formalization projects SMC for the full Lean category: audits, engineering and three-round alignment self-checks. Open research independently uses five common open-task families; strict completion copies official SMC; the other reviewed axes retain 35 families. Coverage is separate per axis, and polygon area is not a ranking.'],
+  scope:['形式化能力采用Lean整体SMC：审计10分、工程15分、三轮对齐自查10分；每题与整条自查须全部要求达标，两个阶段使用同一初答与原有自查轨迹。开放研究能力看明确开放请求下的研究交付；末位研究主动性观察首答自发行为。','Formalization uses full Lean SMC: audits (10), engineering (15) and the three-round self-check trajectory (10). Every required task/trajectory condition must pass. Both stages use the same initial answers and prescribed trajectory. Open research concerns explicitly requested research; initiative, shown last, describes unsolicited first-answer behavior.'],
+  formalization:['Lean子类','Lean subcategories']
+ };
  const axisContext={completion:['沿用主榜SMC的全部严格完成门槛，不另算家族平均完成率。','This retains every official SMC completion gate, without a separate family-average completion rate.'],
   initiative:['自发行为需要与问题忠实度一起看；不从主动程度推断能力上限。','Read this behavior together with problem fidelity; initiative does not determine a capability ceiling.'],
   depth:['衡量实际成立的机制、自然范围与结构解释。','This concerns mechanisms, natural scope and structural insight that have actually been established.'],
-  closure:['衡量实际交付的实质结果是否证明完整、依赖齐全、范围明确。','This concerns complete proofs, dependencies and explicit scope for the substantive results actually delivered.']};
+  closure:['衡量实际交付的实质结果是否证明完整、依赖齐全、范围明确。','This concerns complete proofs, dependencies and explicit scope for the substantive results actually delivered.'],
+  formalization:['复用已核准的Lean整体SMC（35分映射为100）；含语义审计、初答工程及原有三轮自查。首答与含续答同值。','This projects official Lean SMC (35 points mapped to 100), including audits, initial engineering and the original three-round trajectory. Both stages use the same values.']};
  Object.assign(messages,{continuation:['含续答','Include continuations'],
   continued:['续答','continued'],full:['满分率','full-score rate']});
  const finite=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=100;
@@ -117,6 +126,20 @@
    models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,
     open_research:supplied.get(model.id)?.[revised?'revision':'first']||capability.pending_metric}}));
   }
+  const formalization=data.benchmark_version==='1.2.0'?data.formalization_profile:null;
+  if(formalization){
+   const valid=metric=>validMetric(metric)&&metric.coverage.unit==='lean_subcategory'&&metric.coverage.planned===3;
+   if(formalization.schema!=='math-gauge.formalization-profile/v1'||formalization.version!=='0.1.0'||
+    formalization.benchmark_version!=='1.2.0'||formalization.axis?.id!=='formalization'||
+    !formalization.axis.label?.zh||!formalization.axis.label?.en||!formalization.axis.description?.zh||
+    !formalization.axis.description?.en||!Array.isArray(formalization.models)||
+    new Set(formalization.models.map(row=>row.id)).size!==formalization.models.length||
+    formalization.models.some(row=>!valid(row.metric)))return null;
+   const supplied=new Map(formalization.models.map(row=>[row.id,row.metric]));
+   if(models.some(model=>!supplied.has(model.id)))return null;
+   axes=[axes[0],formalization.axis,...axes.slice(1)];
+   models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,formalization:supplied.get(model.id)}}));
+  }
   return models.length?{profile,axes,models,stage}:null;
  }
  function mount(win){
@@ -131,10 +154,10 @@
   const svg=(tag,attrs={})=>{const item=document.createElementNS(svgNS,tag);for(const [key,value]of Object.entries(attrs))item.setAttribute(key,String(value));return item};
   let lang='zh',selected=[],signature='',pinned=null,hovered=null,keyboard=null;
   const controls=new Map(),checkboxes=new Map(),series=new Map(),legendButtons=new Map();
-  const t=key=>(axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
-  const coverage=metric=>metric.coverage.unit==='open_research_family'?t('openResearch')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.unit==='benchmark_subcategory'?t('smc')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.reviewed+'/'+metric.coverage.planned+' '+t('settled');
-  const settledCoverage=model=>{const counts=axes.filter(axis=>!['completion','open_research'].includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
-   return (low===high?low:low+'–'+high)+'/35 '+t('settled')+(model.profile_metrics.open_research?' · '+coverage(model.profile_metrics.open_research):'')};
+  const t=key=>(axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
+  const coverage=metric=>metric.coverage.unit==='lean_subcategory'?t('formalization')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.unit==='open_research_family'?t('openResearch')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.unit==='benchmark_subcategory'?t('smc')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.reviewed+'/'+metric.coverage.planned+' '+t('settled');
+  const settledCoverage=model=>{const counts=axes.filter(axis=>!['completion','open_research','formalization'].includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
+   return (low===high?low:low+'–'+high)+'/35 '+t('settled')+(model.profile_metrics.formalization?' · '+coverage(model.profile_metrics.formalization):'')+(model.profile_metrics.open_research?' · '+coverage(model.profile_metrics.open_research):'')};
   const appendLogo=(target,model)=>{if(model.logo?.data_url){const image=node('img');image.src=model.logo.data_url;image.alt='';target.append(image)}};
   function marker(parent,shape,x,y,color){
    let mark;const r=3.5;

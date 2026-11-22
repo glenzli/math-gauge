@@ -239,10 +239,15 @@ def neutral_revision_data(root, base_data, *, transition=None):
         if research is not None:
             data['open_research'] = research
             data['sources'].append(research['source'])
+        from math_gauge.formalization_profile import load_public as load_formalization_profile
+        formalization = load_formalization_profile(root, benchmark_version='1.2.0')
+        if formalization is not None:
+            data['formalization_profile'] = formalization
+            data['sources'].append(formalization['source'])
         # Authenticate full archived companions above, then project the current
         # edition's explicit cohort without modifying any source report.
         for key in ('mathematical_profile', 'mathematical_profile_baseline',
-                    'mathematical_profile_revision', 'open_research'):
+                    'mathematical_profile_revision', 'open_research', 'formalization_profile'):
             if data.get(key) is not None:
                 data[key]['models'] = [row for row in data[key]['models'] if row['id'] in selected_ids]
     data['gap_diagnostics'] = gap_diagnostics(data['models'])

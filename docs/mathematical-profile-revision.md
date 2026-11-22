@@ -1,9 +1,10 @@
 # 数学画像的两个阶段
 
-评分版1.2.0提供“首答／含续答”切换。首答以原0.4.0画像和另列的证据一致性更正为基线；含续答使用已经采用的中性续答及逐题独立复评。当前页面另加入独立评审的[开放研究能力](open-research.md)，形成八轴；原有七轴和主榜权重不因此变化。现有五轴续答评审覆盖17个配置的206份既有续答，其他配置的续答画像保持待测，没有重新答题。
+评分版1.2.0提供“首答／含续答”切换。首答以原0.4.0画像和另列的证据一致性更正为基线；含续答使用已经采用的中性续答及逐题独立复评。当前九轴画像另含独立评审的[开放研究能力](open-research.md)和复用Lean整体SMC的[形式化能力](formalization-profile.md)；原有七轴和主榜权重不因此变化。现有五轴续答评审覆盖17个配置的206份既有续答，其他配置的续答画像保持待测，没有重新答题。
 
 | 维度 | 首答 | 含续答 |
 |---|---|---|
+| 形式化能力 | Lean整体SMC：语义审计10分、工程15分、三轮对齐自查10分，35分映射到共同刻度 | 同一初答与原有三轮自查成绩，不再80／20折算；修复不回填初答工程 |
 | 论证能力、问题忠实度、数学审辨力、数学深度、成果闭合度 | 原题及实际首答的独立数学判断，含明确采用的基线更正 | 入选题各自按80%首答等级＋20%续答等级合成，再按原家族权重聚合 |
 | 严格完成度 | 正式1.1.0 SMC | 正式1.2.0 SMC，直接读取、不再折算一次 |
 | 开放研究能力 | 五个共同开放手稿家族的独立0–4档判断 | 已采用手稿续答单独评审，逐题80／20合成；未选中家族保持首答 |
@@ -37,7 +38,7 @@ Astra 6.2 xHigh在两套阶段均可单独选中比较；严格完成度直接�
 
 ## English
 
-Assessment 1.2.0 offers first-answer and revision-inclusive views. The current eight-axis profile separately adds [open research capability](open-research.md) while preserving the seven source axes and all main scores. Five original capability axes retain the 35-family weights and blend selected task grades as 80% first answer plus 20% adopted revision. Research initiative remains first-answer-only and is shown last as a behavioral trait. Strict completion reads official SMC for the chosen stage, without another blend. The new axis uses five common explicitly open manuscript families, with separate coverage and independent judgments of original answers and adopted continuations. Its current cohort excludes GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon while retaining their historical evidence.
+Assessment 1.2.0 offers first-answer and revision-inclusive views. The current nine-axis profile adds [open research capability](open-research.md) and a source-bound [formalization projection](formalization-profile.md) while preserving the seven source axes and all main scores. Formalization projects SMC for the entire Lean category: audits (10), initial engineering (15) and the prescribed three-round self-check trajectory (10). Both stages retain the same 35-point aggregate; repairs do not replace initial engineering credit. Five original capability axes retain the 35-family weights and blend selected task grades as 80% first answer plus 20% adopted revision. Research initiative remains first-answer-only and is shown last as a behavioral trait. Strict completion reads official SMC for the chosen stage, without another blend. Open research uses five common explicitly open manuscript families, with separate coverage and independent judgments of original answers and adopted continuations. The current cohort excludes GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon while retaining their historical evidence.
 
 The current review covers 206 existing revisions across 17 configurations and 1,030 independent axis judgments, with no new candidate calls. Exempt tasks and all Lean evidence stay unchanged. Regressions count; missing revision judgments stay unknown. A full main score cannot substitute for a profile judgment. Revision task counts, full-score rates and score deltas are supplementary observations over each model's own loss set, not a common second examination or a new score. Source answers and original judgments are retained; private mathematical evidence remains private. Reviews are AI assessments with human mathematical review pending.
 

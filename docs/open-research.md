@@ -68,3 +68,7 @@ The table follows the current1.2.0 cohort and compares two research traits witho
 For example, Sol 6.1 Max scores 100 on open research capability and 18.57 on initiative. The first says it reached the rubric ceiling on these five explicitly open tasks; the second describes unsolicited progress across the first-answer suite. Neither establishes a general research ceiling or a cause in a provider’s model settings.
 
 [完整标准](../protocol/open-research.md) · [独立来源索引](../results/open-research/v0.1.0/index.json) · [数学画像](../site/index.html?edition=1.2.0#mathematical-profile)
+
+当前九轴画像另有[形式化能力](formalization-profile.md)：投影Lean整体SMC，含审计、工程与三轮自查，两个阶段同值，与本页独立评审的开放研究能力分开。
+
+The current nine-axis profile also includes [formalization](formalization-profile.md), a projection of existing full Lean SMC, including audits, engineering and the three-round trajectory that is identical across stages and separate from independently reviewed open research capability.

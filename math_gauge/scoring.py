@@ -3,6 +3,7 @@
 from collections import Counter
 from copy import deepcopy
 from fractions import Fraction
+import math
 from pathlib import Path
 
 from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independent_attempts,
@@ -3886,6 +3887,37 @@ def summarize_manuscript_observations(review, source_policy, observation_policy)
             'families': rows, 'new_candidate_calls': 0, 'main_scores_modified': False,
             'reviewer_kind': 'ai', 'human_review': 'pending', 'post_observation': True,
             'formal_comparison_eligible': False}
+
+
+def profile_formalization_metric(report):
+    """Project the full35-point Lean SMC group, retaining every strict gate.
+
+    Audit10, initial engineering15 and the whole selfcheck trajectory10 keep
+    their existing weights. Task/trajectory failures receive no partial strict
+    credit. Project the supplied aggregate; never rescore source obligations or
+    replace initial engineering with a later repair.
+    """
+    if (report.get('schema') != 'math-gauge.assessment-score-aggregate/v1'
+            or report.get('score_mode') != 'strict'
+            or report.get('attempt_condition') != 'nonlogical_retry_3'):
+        raise ValueError('Formalization profile requires selected first-answer SMC')
+    source = report['contributions']['lean']
+    coverage = source['coverage']
+    if coverage['planned'] != 3 or type(coverage['adjudicated']) is not int or not 0 <= coverage['adjudicated'] <= 3:
+        raise ValueError('Formalization retains all three Lean subcategories')
+    for key in ('confirmed', 'lower', 'upper'):
+        value = source[key]
+        if type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 35:
+            raise ValueError('Invalid verified formalization contribution')
+    known = source['complete'] and source['exact'] is not None
+    low = source['confirmed'] if known else source['lower']
+    high = low if known else source['upper']
+    if not low <= source['confirmed'] <= high:
+        raise ValueError('Invalid formalization uncertainty interval')
+    scale = lambda value: float(Fraction(str(value)) * 100 / 35)
+    return dict(exact=scale(low) if known else None, confirmed=scale(source['confirmed']),
+        lower=scale(low), upper=scale(high), unknown_weight=scale(high-low),
+        coverage=dict(unit='lean_subcategory', planned=3, reviewed=coverage['adjudicated']))
 
 
 def profile_strict_completion_metric(report):

@@ -18,6 +18,8 @@ I really like the phrase "soaking the nut."
 
 Today's frontier models already have very strong mathematical abilities, and benchmarks such as [FrontierMath](https://epoch.ai/frontiermath) and [BrokenArXiv](https://matharena.ai/?comp=overall--brokenarxiv) offer useful points of reference. Yet while writing [OET (Operator Evolution Theory)](https://glenzli.com/books/oet/), I still run into problems: an argument can read smoothly but omit a necessary assumption, or an answer can look correct after quietly changing the question into something more familiar to the model.
 
+Even an AI-assisted proof of the Riemann hypothesis (RH) has now passed [independent checks of both its statement and proof by the Lean and Mathlib communities](https://leanprover-community.github.io/blog/posts/riemann-hypothesis/). Against that backdrop, I see limited value in a benchmark that only keeps raising problem difficulty. I want to know how reliably, faithfully and rigorously a model can participate in actual mathematical work.
+
 In my own mathematical work, I often start with an idea, then gradually clarify the concepts, find a useful representation and work through the derivations and proofs. Some of these ideas do not follow routes familiar to a model. I care about whether it can keep track of the original question, check each step carefully and preserve the assumptions and intent. It can challenge an idea, give a counterexample or suggest another approach, but it needs to explain its reasons and how that approach relates to the original problem.
 
 Over the course of this work, I moved from mainly using Gemini and Claude to GPT models for most tasks. I gradually got a feel for their different strengths, blind spots and styles. But models keep improving, so those impressions need to be revisited. That gave me the idea for a benchmark tailored to my own mathematical work. I could turn the derivations, argument reviews, background checks and Lean formalization I need help with into tasks, compare what the models actually deliver, and use the results to choose my main model and decide how to divide the work. That is how Math Gauge began.
@@ -52,7 +54,7 @@ The leaderboard opens **1.2.0**, sorted by SMC, with controls for SMC / RMC / MC
 
 [Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=en) completed 39 initial tasks, three Lean self-checks and 18 neutral revisions. Its 1.2.0 scores are **SMC 61.17 / RMC 86.54 / MC 93.08**; two of its 18 revisions are full in all three modes. See the [run results](docs/results.md#gemini-4-neon-xhigh--2026-11-22) for categories, original answers, execution conditions and reference resources.
 
-Costs include the full resource use of effective initial answers, self-checks and adopted revisions. Timing compares 12 commonly timed public non-Lean tasks, with whole-chapter formalization separate. Mathematical profiles offer first-answer and revision-inclusive stages and independently distinguish [open research capability from research initiative](docs/open-research.md). Content reliability, complete-goal attainment and additional-result observations remain first-answer diagnostics.
+Costs include the full resource use of effective initial answers, self-checks and adopted revisions. Timing compares 12 commonly timed public non-Lean tasks, with whole-chapter formalization separate. Nine-axis mathematical profiles offer first-answer and revision-inclusive stages, separately show [formalization](docs/formalization-profile.md), and distinguish [open research capability from research initiative](docs/open-research.md). Content reliability, complete-goal attainment and additional-result observations remain first-answer diagnostics.
 
 GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon are withdrawn from 1.2.0; their 1.1.0 and earlier scores, original answers and reviews are retained. Other selected configurations awaiting returns remain available in earlier editions. Results use **AI review, with partial human spot checks**, retaining actual reviewer attribution by batch. Human mathematical review of Neon remains pending. See the [review process](docs/review-process.md) and [revision notes](docs/neutral-revision.md).
 
@@ -66,6 +68,15 @@ Both plots show the current 1.2.0 RMC view. Cost uses archived API reference tar
 [![Math Gauge English cost–RMC frontier](docs/screenshots/cost-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=cost&cost-score=partial#cost-frontier)
 
 [![Math Gauge English time–RMC frontier](docs/screenshots/time-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=time&cost-score=partial#cost-frontier)
+
+</details>
+
+<details>
+<summary>Nine-axis mathematical profile</summary>
+
+Formalization uses full Lean SMC, including semantic audits, initial engineering and the three-round alignment self-check trajectory. Both stages retain the same results, with no new candidate calls or changes to main scores.
+
+[![Math Gauge nine-axis mathematical profile](docs/screenshots/mathematical-profile-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&profile-stage=first#mathematical-profile)
 
 </details>
 

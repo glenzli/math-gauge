@@ -236,6 +236,11 @@ MESSAGES.update({
     '公开＋私有合并成绩，满分100。': 'Combined public and private results, out of 100.',
     '可能范围：': 'Possible ranges: ', '已交卷': 'Answers delivered',
     '子类': 'Subcategory',
+    '子类成绩': 'Subcategory scores',
+    '按当前分类的排序口径展示；每格为总榜贡献分 / 该项满分。':
+        'Uses this category’s selected score mode; cells show overall contribution / available points.',
+    '类内成绩满分100；展开子类查看计入总榜的贡献，完整明细见模型详情。':
+        'Category scores are out of 100. Expand subcategories for overall contributions; model pages retain full details.',
     '贡献分 / 该项满分；相关变体在家族内聚合。': 'Earned / available points; related variants aggregate within families.',
     '92项义务，按最后规定轮次计分。': '92 obligations, scored using the last prescribed round.',
     '公开25题；私有14题计入合并成绩。': '25 public tasks; 14 private tasks included in combined results.',

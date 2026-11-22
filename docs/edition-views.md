@@ -14,7 +14,9 @@
 
 切换只改变所查看的版本；模型选择、语言、计分方式和图表排序仍按当前链接保留。发布题包、实际答题版本和评分版本分别记录。
 
-当前1.2.0数学画像为八轴，独立加入[开放研究能力](open-research.md)，“研究主动性”放在最后并保持首答行为含义。1.1.0沿用原七轴，1.0.0不增加画像；首答／含续答的选择独立于总榜计分方式。
+当前1.2.0数学画像为九轴，包含独立评审的[开放研究能力](open-research.md)和采用Lean整体SMC的[形式化能力](formalization-profile.md)。“研究主动性”放在最后并保持首答行为含义；形式化两个阶段同值。1.1.0沿用原七轴，1.0.0不增加画像；首答／含续答的选择独立于总榜计分方式。
+
+主页各分类榜的“子类成绩”默认收起，沿用该分类独立选择的SMC／RMC／MC口径与模型顺序，显示原始总榜贡献分及满分。权重与计分入口打开评测指南；模型详情保留完整贡献明细，主页不再另列重复的分类贡献表。
 
 ## 数据与界面如何分开
 
@@ -35,4 +37,6 @@ Edition1.2.0 blends each selected non-Lean loss task as80% first answer and20% o
 
 Structured public page data is versioned separately from shared UI code. Mathematical prose is content-addressed and loaded as needed; historical editions do not duplicate full HTML sites. Direct local-file viewing uses safe data registration. Missing or mismatched data produces an explicit error instead of substituting another edition. Private task evidence remains private.
 
-The current 1.2.0 profile has eight axes, separately adding [open research capability](open-research.md) and showing first-answer research initiative last. Edition 1.1.0 retains seven axes; 1.0.0 has no profile. Profile stage is independent of the leaderboard score mode.
+The current 1.2.0 profile has nine axes, adding independently reviewed [open research capability](open-research.md) and a full-Lean-SMC [formalization projection](formalization-profile.md). First-answer research initiative remains last; formalization is identical across stages. Edition 1.1.0 retains seven axes; 1.0.0 has no profile. Profile stage is independent of the leaderboard score mode.
+
+Each homepage category has a collapsed **Subcategory scores** disclosure. It follows that category’s own SMC/RMC/MC choice and saved model order, showing original overall contributions and available points. The weights link opens the assessment guide; model pages retain full contribution details without a duplicate homepage contribution table.

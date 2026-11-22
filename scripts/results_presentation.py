@@ -109,6 +109,8 @@ def project_payload(data):
             shared['mathematical_profile_baseline'] = copy.deepcopy(data['mathematical_profile_baseline'])
         if data.get('open_research') is not None:
             shared['open_research'] = copy.deepcopy(data['open_research'])
+        if data.get('formalization_profile') is not None:
+            shared['formalization_profile'] = copy.deepcopy(data['formalization_profile'])
         shared["models"] = [model_view(model) for model in data["models"]]
         shared["category_leaderboards"] = [pick(board, ("id", "views"))
                                             for board in data["category_leaderboards"]]

@@ -1,10 +1,10 @@
 (() => {
- const {d,state,modes,el,f,node,result,headline,compareScores,compareModelOrder,rankedScores,short,table,points,href,download,start}=MG;
+ const {d,state,modes,el,f,node,result,headline,compareScores,compareModelOrder,rankedScores,short,table,href,download,start}=MG;
  const harnessName=m=>m.harness_display_name||m.harness.name;
  const visibleModels=(scope='overall')=>(scope==='initiative'?[...d.models,...(d.pending_models||[])]:d.models)
   .filter(m=>m.presentation_eligibility?.ranked!==false);
  const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
- const expanded=new Set(),renderedViews=new Map();
+ const renderedViews=new Map();
  const displayKey=(key,score=state.score)=>JSON.stringify([key,state.condition,score]);
  function editionCharts(){
   Object.entries(d.chart_scenes||{}).forEach(([id,scene])=>{
@@ -87,23 +87,6 @@
    const a=node('a','详细评测 →','record-link');a.href=name.href;a.setAttribute('aria-label',m.label+' 详细评测');row.insertCell().append(a);
   });
  }
- function taxonomy(){
-  const t=el('capabilities');t.replaceChildren();const head=t.createTHead().insertRow(),columns=[];
-  const first=node('th','模型');first.scope='col';head.append(first);
-  d.policy.groups.forEach(g=>{
-   const cell=node('th'),btn=node('button',(expanded.has(g.id)?'▾ ':'▸ ')+g.title,'category-toggle');cell.scope='col';
-   btn.id='taxonomy-toggle-'+g.id;btn.setAttribute('aria-expanded',String(expanded.has(g.id)));btn.setAttribute('aria-controls','capabilities');
-   btn.setAttribute('aria-label',(expanded.has(g.id)?'收起':'展开')+g.title+'的子类成绩');
-   btn.onclick=()=>{if(expanded.has(g.id))expanded.delete(g.id);else expanded.add(g.id);taxonomy();MGI18n.apply(state.lang);el(btn.id).focus({preventScroll:true})};
-   cell.append(btn,node('span',' / '+g.weight,'category-weight'));head.append(cell);columns.push({item:g,total:true});
-   if(expanded.has(g.id))g.children.forEach(id=>{const c=d.policy.subcategories.find(c=>c.id===id),h=node('th',c.title+' / '+c.weight,'taxonomy-child-heading');h.scope='col';head.append(h);columns.push({item:c,total:false})});
-  });
-  const body=t.createTBody();
-  visibleModels().sort(compareScores).forEach(m=>{
-   const row=body.insertRow(),label=node('th');label.scope='row';label.append(modelLink(m));row.append(label);
-   columns.forEach(({item,total})=>{const c=row.insertCell();c.className=total?'taxonomy-total':'taxonomy-child';c.textContent=points(m,item.id,item.weight);const v=result(m).contributions[item.id];c.title='完整贡献区间 '+f(v.lower)+'–'+f(v.upper)+' / '+item.weight});
-  });
- }
  function categoryRanking(){
   d.category_leaderboards.forEach(g=>{
    const byId=Object.fromEntries(visibleModels(g.id).map(m=>[m.id,m]));
@@ -143,7 +126,7 @@
   };
  });
  start(()=>{
-  syncSorts();renderView('ranking',ranking);renderView('taxonomy',taxonomy);categoryRanking();auxiliaryCharts();
+  syncSorts();renderView('ranking',ranking);categoryRanking();auxiliaryCharts();
   orderChart('chart-groups',visibleModels().sort(compareScores));
   const visibleIds=new Set(visibleModels().map(m=>m.id)),initiativeIds=new Set(visibleModels('initiative').map(m=>m.id));
   const historyIds=new Set([...d.models,...(d.pending_models||[]),...(d.partial_models||[])].map(m=>m.id));
@@ -151,7 +134,6 @@
    n.hidden=n.closest('.run-history-snapshot')?d.benchmark_version==='1.2.0'&&!historyIds.has(n.dataset.modelNote):!(n.closest('[data-board="initiative"]')?initiativeIds:visibleIds).has(n.dataset.modelNote);
   });
   const selected=modes[state.score];el('leaderboard-desc').textContent='公开＋私有 · 按'+selected.abbreviation+'排序 · 满分100';el('score-explanation').textContent={capability:'累计有效数学成果。',partial:'按有效成果计分，扣除错误、回退和误报。',strict:'整题及规定自查轨迹全部达标才计分。'}[state.score];
-  el('contributions-title').textContent=selected.abbreviation+' · 分类贡献';el('contribution-mode').textContent=selected.abbreviation;el('active-condition').textContent=MG.conditionLabel();
   el('downloads').replaceChildren(...visibleModels().sort(compareModelOrder).map(m=>{const a=node('a',short(m)+' · JSON ↓','download-link');a.href=download(m);return a}));
  });
 })();

@@ -367,6 +367,53 @@ test('old editions keep seven axes and an invalid new research denominator is re
  assert.equal(ui.prepare(data,compare),null);
 });
 
+function formalizationFixture(){
+ const data=researchFixture();
+ data.formalization_profile={schema:'math-gauge.formalization-profile/v1',version:'0.1.0',benchmark_version:'1.2.0',
+  axis:{id:'formalization',label:{zh:'形式化能力',en:'Formalization'},
+   description:{zh:'Lean整体SMC，含审计、工程与自查',en:'Full Lean SMC: audits, engineering and self-checks'}},
+  models:data.models.map(model=>({id:model.id,metric:{exact:65,confirmed:65,lower:65,upper:65,
+   unknown_weight:0,coverage:{unit:'lean_subcategory',planned:3,reviewed:3}}}))};
+ return data;
+}
+
+test('nine axes preserve full Lean SMC through stage, language and score-mode changes',()=>{
+ const data=formalizationFixture(),original=structuredClone(data.mathematical_profile);
+ const first=ui.prepare(data,compare,'first'),last=ui.prepare(data,compare,'revision');
+ assert.equal(first.axes.length,9);assert.equal(first.axes[1].id,'formalization');
+ assert.deepEqual(first.models[0].profile_metrics.formalization,last.models[0].profile_metrics.formalization);
+ assert.deepEqual(first.axes.slice(-2).map(axis=>axis.id),['open_research','initiative']);
+ const f=fixture(data,'?edition=1.2.0&profile-models=astra-6-max&profile-stage=first&score=partial');
+ let points=nodesBelow(f.el('chart')).filter(node=>node.getAttribute('data-profile-point'));
+ assert.equal(points.length,9);
+ f.el('continuation').checked=true;f.el('continuation').fire('change');
+ points=nodesBelow(f.el('chart')).filter(node=>node.getAttribute('data-profile-point'));
+ assert.equal(points.find(node=>node.getAttribute('data-profile-point')==='formalization').getAttribute('data-value'),'65');
+ assert.match(f.el('values').children[2].children[0].children[2].children[1].textContent,/3\/3/);
+ f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
+ assert.match(f.el('meanings-title').textContent,/nine/);
+ assert.equal(new URL(f.win.location.href).searchParams.get('score'),'partial');
+ assert.deepEqual(data.mathematical_profile,original);
+});
+
+test('unknown formalization is a ninth-axis gap and never becomes a measured zero',()=>{
+ const data=formalizationFixture(),m=data.formalization_profile.models[0].metric;
+ Object.assign(m,{exact:null,confirmed:25,lower:25,upper:75,unknown_weight:50});m.coverage.reviewed=1;
+ const ready=ui.prepare(data,compare),shape=ui.geometry(ready.axes,ready.models.find(row=>row.id===ids[0]).profile_metrics);
+ assert.equal(shape.vertices.length,9);assert.equal(shape.vertices[1],null);
+ assert.ok(shape.intervals.some(value=>value.axis==='formalization'&&value.lower===25&&value.upper===75));
+ data.benchmark_version='1.1.0';assert.equal(ui.prepare(data,compare).axes.length,7);
+});
+
+test('formalization rejects a changed denominator, duplicate or missing selected model',()=>{
+ const data=formalizationFixture();data.formalization_profile.models[0].metric.coverage.planned=35;
+ assert.equal(ui.prepare(data,compare),null);
+ const missing=formalizationFixture();missing.formalization_profile.models.shift();
+ assert.equal(ui.prepare(missing,compare),null);
+ const duplicate=formalizationFixture();duplicate.formalization_profile.models.push(duplicate.formalization_profile.models[0]);
+ assert.equal(ui.prepare(duplicate,compare),null);
+});
+
 test('the newly admitted Astra configuration has its own stable same-brand style',()=>{
  const models=['astra-6-max','astra-6-xhigh','sol-6.2-max','sol-6.1-max','sol-6.1-xhigh',
   'terra-6.1-max','terra-6.1-xhigh','dot-underlying-model-20261108','sol-6.2-xhigh','astra-6.2-max','astra-6.2-xhigh'];
