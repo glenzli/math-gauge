@@ -54,7 +54,7 @@ The leaderboard opens **1.2.0**, sorted by SMC, with controls for SMC / RMC / MC
 
 Costs include the full resource use of effective initial answers, self-checks and adopted revisions. Timing compares 12 commonly timed public non-Lean tasks, with whole-chapter formalization separate. Mathematical profiles offer first-answer and revision-inclusive stages and independently distinguish [open research capability from research initiative](docs/open-research.md). Content reliability, complete-goal attainment and additional-result observations remain first-answer diagnostics.
 
-GLM 5.3 and Gemini 3.8 Flash are withdrawn from 1.2.0; their 1.1.0 and earlier scores, original answers and reviews are retained. Other selected configurations awaiting returns remain available in earlier editions. Results use **AI review, with partial human spot checks**, retaining actual reviewer attribution by batch. Human mathematical review of Neon remains pending. See the [review process](docs/review-process.md) and [revision notes](docs/neutral-revision.md).
+GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon are withdrawn from 1.2.0; their 1.1.0 and earlier scores, original answers and reviews are retained. Other selected configurations awaiting returns remain available in earlier editions. Results use **AI review, with partial human spot checks**, retaining actual reviewer attribution by batch. Human mathematical review of Neon remains pending. See the [review process](docs/review-process.md) and [revision notes](docs/neutral-revision.md).
 
 [![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en)
 

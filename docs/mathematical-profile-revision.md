@@ -31,13 +31,13 @@
 
 Astra 6.2 xHigh在两套阶段均可单独选中比较；严格完成度直接使用首答SMC81.00与含续答SMC83.90。研究主动性始终沿用同一首答判断；首答两率和4组主动额外成果另列，不作为画像等级的换算输入。
 
-新开放研究轴对五个共同手稿家族的首答和已采用续答独立审核，逐份记录建模、机制、条件边界和证明闭合的依据；当前展示按1.2.0入选配置过滤，GLM 5.3与Gemini 3.8 Flash只保留历史资料。核心缺口不能用其他成果抵补，附带错误只有通过明确的删除依赖检查后才可与已成立核心分开；原错误及SMC判决仍保留。完整标准、全部模型对照和来源索引见[开放研究说明](open-research.md)。
+新开放研究轴对五个共同手稿家族的首答和已采用续答独立审核，逐份记录建模、机制、条件边界和证明闭合的依据；当前展示按1.2.0入选配置过滤，GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon只保留历史资料。核心缺口不能用其他成果抵补，附带错误只有通过明确的删除依赖检查后才可与已成立核心分开；原错误及SMC判决仍保留。完整标准、全部模型对照和来源索引见[开放研究说明](open-research.md)。
 
 [完整方法](../protocol/mathematical-profile-revision.md) · [首答画像说明](mathematical-profile-recheck.md) · [续答规则](neutral-revision.md)
 
 ## English
 
-Assessment 1.2.0 offers first-answer and revision-inclusive views. The current eight-axis profile separately adds [open research capability](open-research.md) while preserving the seven source axes and all main scores. Five original capability axes retain the 35-family weights and blend selected task grades as 80% first answer plus 20% adopted revision. Research initiative remains first-answer-only and is shown last as a behavioral trait. Strict completion reads official SMC for the chosen stage, without another blend. The new axis uses five common explicitly open manuscript families, with separate coverage and independent judgments of original answers and adopted continuations. Its current cohort excludes GLM 5.3 and Gemini 3.8 Flash while retaining their historical evidence.
+Assessment 1.2.0 offers first-answer and revision-inclusive views. The current eight-axis profile separately adds [open research capability](open-research.md) while preserving the seven source axes and all main scores. Five original capability axes retain the 35-family weights and blend selected task grades as 80% first answer plus 20% adopted revision. Research initiative remains first-answer-only and is shown last as a behavioral trait. Strict completion reads official SMC for the chosen stage, without another blend. The new axis uses five common explicitly open manuscript families, with separate coverage and independent judgments of original answers and adopted continuations. Its current cohort excludes GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon while retaining their historical evidence.
 
 The current review covers 189 existing revisions across 16 configurations and 945 independent axis judgments, with no new candidate calls. Exempt tasks and all Lean evidence stay unchanged. Regressions count; missing revision judgments stay unknown. A full main score cannot substitute for a profile judgment. Revision task counts, full-score rates and score deltas are supplementary observations over each model's own loss set, not a common second examination or a new score. Source answers and original judgments are retained; private mathematical evidence remains private. Reviews are AI assessments with human mathematical review pending.
 

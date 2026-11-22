@@ -54,7 +54,7 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 成本计入有效首答、自查和采用续答的完整开销；耗时比较 12 道共有计时的公开非 Lean 题，整章形式化单列。数学画像可切换首答与含续答，并独立区分[开放研究能力和研究主动性](docs/open-research.md)。内容可靠率、完整目标达成率与主动额外成果仍是首答诊断。
 
-GLM 5.3 与 Gemini 3.8 Flash 不再纳入 1.2.0；1.1.0 及更早的成绩、原答与评审保留。其他入选配置待回交时可查看旧版成绩。当前结果采用 **AI 审核，另有部分人工抽审**，各批次保留实际评审归属，Neon 的人工数学审核仍待完成。见[审核方式](docs/review-process.md)与[续答说明](docs/neutral-revision.md)。
+GLM 5.3、Gemini 3.8 Flash 与 Gemini 4 Argon 不再纳入 1.2.0；1.1.0 及更早的成绩、原答与评审保留。其他入选配置待回交时可查看旧版成绩。当前结果采用 **AI 审核，另有部分人工抽审**，各批次保留实际评审归属，Neon 的人工数学审核仍待完成。见[审核方式](docs/review-process.md)与[续答说明](docs/neutral-revision.md)。
 
 [![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 

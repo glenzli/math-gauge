@@ -36,9 +36,9 @@ Adopted manuscript continuations receive independent judgments and blend 80% fir
 
 ## 本轮结果 / Results
 
-下表按当前1.2.0入选配置展示两种研究特征，不据此另排综合名次。五个共同手稿家族的首答及采用续答均独立审核；含续答栏为逐题80／20合成值，“—”表示尚未采用续答，不是0。Neon的开放研究能力为90.00，研究主动性为29.05。GLM 5.3与Gemini 3.8 Flash退出本版，历史资料保留。
+下表按当前1.2.0入选配置展示两种研究特征，不据此另排综合名次。五个共同手稿家族的首答及采用续答均独立审核；含续答栏为逐题80／20合成值，“—”表示尚未采用续答，不是0。Neon的开放研究能力为90.00，研究主动性为29.05。GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon退出本版，历史资料保留。
 
-The table follows the current1.2.0 cohort and compares two research traits without creating another overall ranking. Original answers and adopted continuations on the five common manuscript families are independently reviewed. The revised column uses the per-family80/20 blend; a dash means no adopted revision stage, not zero. Neon scores90.00 on open research capability and29.05 on initiative. GLM5.3 and Gemini3.8 Flash are withdrawn from this edition, with historical evidence retained.
+The table follows the current1.2.0 cohort and compares two research traits without creating another overall ranking. Original answers and adopted continuations on the five common manuscript families are independently reviewed. The revised column uses the per-family80/20 blend; a dash means no adopted revision stage, not zero. Neon scores90.00 on open research capability and29.05 on initiative. GLM5.3, Gemini3.8 Flash and Gemini4 Argon are withdrawn from this edition, with historical evidence retained.
 
 | 模型 / Model | 开放能力·首答 / Capability: first | 开放能力·含续答 / Capability: revised | 研究主动性 / Initiative |
 |---|---:|---:|---:|
@@ -47,7 +47,6 @@ The table follows the current1.2.0 cohort and compares two research traits witho
 | Claude Sonnet 5.5 (max) | 90.00 | 92.00 | 24.29 |
 | DeepSeek v4.1 Flash (max) | 80.00 | 83.00 | 6.43 |
 | Gemini 4 Neon (xHigh) | 90.00 | 90.00 | 29.05 |
-| Gemini 4 Argon (high) | 80.00 | — | 11.43 |
 | Gemini 4 Carbon (high) | 90.00 | — | 15.00 |
 | Gemini 4 Carbon (medium) | 90.00 | — | 17.86 |
 | Gemini 4 Hydrogen (xhigh) | 90.00 | — | 16.43 |

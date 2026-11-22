@@ -16,7 +16,7 @@ from scripts import score_neutral_revisions as scorer
 from scripts import adopt_neutral_revision_batch as batches
 
 
-GONE = ['gemini-3.8-flash-high', 'glm-5.3-max']
+GONE = ['gemini-3.8-flash-high', 'glm-5.3-max', 'gemini-4-argon']
 
 
 def reference(path):

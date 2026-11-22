@@ -8,7 +8,7 @@
 python3 scripts/export_revision_bundles.py --private-root /PRIVATE/REPOSITORY --out /PRIVATE/NEW-OUTPUT
 ```
 
-每个模型及effort配置有独立目录及压缩包。`candidate/`仅含通用标准／中性邀请，以及各题原题、全部提供材料、自己的完整原答（含自评）和明确交付附件。`operator/`保留题号与别名映射及不透明来源散列；真实源路径、原成绩与完整选择依据保存在不外发的 `evaluator/` 索引。执行时只向候选提供单题材料或构造的请求。私有原题和原答不进入公共仓库、网站或公开发行包。1.2.0默认导出只使用本版显式选定的模型集合；GLM 5.3与Gemini 3.8 Flash已下架，不进入默认导出，显式指定也会拒绝。既有分发包不改写；Dot保留未知后端与未核实的effort，不推断型号。
+每个模型及effort配置有独立目录及压缩包。`candidate/`仅含通用标准／中性邀请，以及各题原题、全部提供材料、自己的完整原答（含自评）和明确交付附件。`operator/`保留题号与别名映射及不透明来源散列；真实源路径、原成绩与完整选择依据保存在不外发的 `evaluator/` 索引。执行时只向候选提供单题材料或构造的请求。私有原题和原答不进入公共仓库、网站或公开发行包。1.2.0默认导出只使用本版显式选定的模型集合；GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon已下架，不进入默认导出，显式指定也会拒绝。既有分发包不改写；Dot保留未知后端与未核实的effort，不推断型号。
 
 2026-11-20的历史外部交付选中11个当时尚未完成续答的配置，共200题，每个配置单独回交一份`RETURN.zip`。9个GPT配置的68份续答已在本地采用，不进入这次外部待跑包；GLM跳过。总包只便于下载分发，不能把各模型原答混入同一候选上下文。具体文件、题数和散列以随包`INDEX.json`为准，执行者从`README.zh.md`开始。
 
@@ -35,5 +35,5 @@ returns. Candidate and operator projections are separate. Every package remains
 local/private; only per-model counts and opaque hashes form its public-safe
 summary. Imported answers await source and mathematical review and do not alter
 scores automatically. For edition1.2.0, default and explicitly selected exports use
-the same declared model cohort. GLM5.3 and Gemini3.8 Flash are withdrawn; their
+the same declared model cohort. GLM5.3, Gemini3.8 Flash and Gemini4 Argon are withdrawn; their
 existing packages and edition1.1.0 or earlier evidence remain unchanged.
