@@ -268,7 +268,10 @@ def check(public_root,private_root=None):
             private_ref = descriptor(private_root,Path(private_root)/Path(ref['path']).parent/'private.json')
             verify_pair(public_root,private_root,ref,private_ref,
                         base_reports=source['reports'],assessment_policy=assessment)
-        result.append(dict(model_id=mid,scores={m:public['_scores'][m]['metrics']['earned']['confirmed'] for m in MODES}))
+        from math_gauge.theorem_extension_amendments import load_public as load_amendment
+        amendment=load_amendment(public_root,mid,original_adoption=ref)
+        current=public['_scores'] if amendment is None else amendment['_revised']
+        result.append(dict(model_id=mid,scores={m:current[m]['metrics']['earned']['confirmed'] for m in MODES}))
     return dict(benchmark_version=TARGET,models=result,pending_models=len(transition['pending_models']),adoption_new_candidate_calls=0)
 
 

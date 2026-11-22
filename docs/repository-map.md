@@ -12,3 +12,7 @@
 - `deliveries/`：被Git忽略的当前交付包，供用户取走。
 
 旧版本、旧成绩和备选题使用Git历史恢复，不在当前工作树另设历史库。日常运行不自动成为永久档案；用户明确指定固定留档时，按[正式记录合同](../protocol/result-record.md)收集。
+
+`theorem_extension_amendments.py` 验证六题原答复核的来源绑定更正；`scripts/amend_theorem_extension_reviews.py` 采用与核验更正，三评分及与既有续答的重组仍由 `scoring.py` 负责。原始评审与原生父答桥保持原字节。
+
+`mathematical_profile_review_amendments.py` 单独验证独立画像漏评更正；首答及含续答轴值使用原始画像合同和共享评分器重算，不从TX研究档位换算，不改旧画像或续答父史。

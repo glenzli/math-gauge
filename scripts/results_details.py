@@ -345,7 +345,7 @@ def review_markdown(review):
         if key in review:
             lines.append(key+'：'+str(review[key]))
     diagnostic = review.get('group_diagnostic') or review
-    rows = next((diagnostic[k] for k in ('criteria','stages','dimensions','obligations','credit_units')
+    rows = next((diagnostic[k] for k in ('criteria','stages','dimensions','obligations','credit_units','units')
                  if isinstance(diagnostic.get(k), list)), [])
     for index, row in enumerate(rows, 1):
         key = next((row[k] for k in ('criterion_id','stage_id','dimension_id','id','obligation_id') if k in row), str(index))
@@ -411,6 +411,18 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
                 label+=' 待补原记录复核。'
             current += panel('提交来源','<div class="prose"><p>'+html.escape(label)+'</p></div>')
         current += panel('判定与主要理由', '<div class="prose"><ul class="findings">'+reasons+'</ul></div>')
+        amendment = model.get('tx_review_amendment')
+        if amendment and cid in {'MG-TX001','MG-TX002'}:
+            ref = next(r['review'] for r in amendment['public_reviews'][condition] if r['case_id']==cid)
+            raw = evidence_bytes(root, ref)
+            review = json.loads(raw)
+            content = '<div class="prose"><p><strong>B'+str(review['baseline_B'])+' · R'+str(review['old_R'])+' → R'+str(review['new_R'])+'</strong></p>'
+            content += '<p data-lang-content="zh">原答统一复核更正；使用同一研究尺度与原始答卷，没有重新测试。原审核保留，续答沿用实际交付。</p>'
+            content += '<p data-lang-content="en" hidden>Correction after a uniform review of the original answers under the same research rubric. No candidate was retested; earlier reviews and actual continuations are retained.</p>'
+            content += markdown.add(review['reason']+'\n\n'+review['attained'])+'</div>'
+            content += '<p class="panel-foot">'+source_link(ref['path'], page, 'Review correction ↗', root=root)+'</p>'
+            current += panel('TX · 复核更正 / Review correction', content)
+            item['sources'].append({'path':ref['path'],'sha256':ref['sha256'],'role':'review_amendment','raw':raw})
         initial = model.get('initial_assessment')
         if initial and cid in {'MG-TX001','MG-TX002'}:
             ref = next(r['review'] for r in initial['public_reviews'][condition] if r['case_id']==cid)
@@ -650,6 +662,8 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
             source_projection = projection
             if model.get('tx_calibration'):
                 projection = json.loads(evidence_bytes(root,model['tx_calibration']['public_tasks']))
+            if model.get('tx_review_amendment'):
+                projection = json.loads(evidence_bytes(root,model['tx_review_amendment']['public_tasks']['baseline']))
             claims = json.loads(evidence_bytes(folder,record['public_claim_review']))['conditions']
             model['public_claims'] = {c:claims[c]['cases'] for c in CONDITIONS}
             rows = {r['case_id']:r for r in record['public_deliveries']}
@@ -677,6 +691,8 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
             projection = json.loads(evidence_bytes(folder,record['public_task_scores']))
             if model.get('tx_calibration'):
                 projection = json.loads(evidence_bytes(root,model['tx_calibration']['public_tasks']))
+            if model.get('tx_review_amendment'):
+                projection = json.loads(evidence_bytes(root,model['tx_review_amendment']['public_tasks']['baseline']))
             if set(projection['public_case_ids']) != set(catalog):
                 raise ValueError('Native public projection differs from the fixed public catalog')
             native_rows = {row['case_id']:row for row in record['public_deliveries']}
@@ -722,6 +738,8 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
         source_projection = projection
         if model.get('tx_calibration'):
             projection = json.loads(evidence_bytes(root,model['tx_calibration']['public_tasks']))
+        if model.get('tx_review_amendment'):
+            projection = json.loads(evidence_bytes(root,model['tx_review_amendment']['public_tasks']['baseline']))
         for cid in projection['public_case_ids']:
             entry = catalog[cid]
             evidence = {c: public_evidence(folder, record, cid, c,

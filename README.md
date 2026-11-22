@@ -52,7 +52,9 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 榜单默认显示 **1.2.0**，按 SMC 排序，可切换 SMC／RMC／MC、分项成绩与模型详情。目前有 **17 个已结算配置、206 份中性续答**，其中 102 份达到续答自身的三项满分。各模型续答的是自己的失分题，满分率不表示同题排名。[完整结果](docs/results.md)保留成绩表与逐批说明，[版本切换](docs/edition-views.md)说明旧版入口。
 
-[Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=zh) 已完成 39 道初答、三轮 Lean 自查和 18 道中性续答。1.2.0 成绩为 **SMC 61.17／RMC 86.54／MC 93.08**；18 份续答中 2 份自身三项全满。分项、原答、运行条件与参考资源见[本轮结果](docs/results.md#gemini-4-neon-xhigh--2026-11-22)。
+[Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=zh) 已完成 39 道初答、三轮 Lean 自查和 18 道中性续答。1.2.0 成绩为 **SMC 61.17／RMC 86.98／MC 93.52**；18 份续答中 2 份自身三项全满。分项、原答、运行条件与参考资源见[本轮结果](docs/results.md#gemini-4-neon-xhigh--2026-11-22)。
+
+六道研究拓展题已完成[原答统一复核](docs/theorem-extension-review-corrections.md)，补回五处漏评；榜单、分项和下方截图均已更新。
 
 成本计入有效首答、自查和采用续答的完整开销；耗时比较 12 道共有计时的公开非 Lean 题，整章形式化单列。九轴数学画像可切换首答与含续答，单列[形式化能力](docs/formalization-profile.md)，并独立区分[开放研究能力和研究主动性](docs/open-research.md)。内容可靠率、完整目标达成率与主动额外成果仍是首答诊断。
 

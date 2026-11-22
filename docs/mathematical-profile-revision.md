@@ -28,11 +28,13 @@
 
 公开只提供各轴合并值、覆盖、阶段及不透明散列；私有题号、原答、逐题理由与引文保持私有。复评采用Sol 6.1 Max分组审核及协调者独立评审、统一复核，逐题保留实际评审归属；AI审核、实际形式验证与人工批准分别记录，人工数学审核仍待完成。新增候选调用为0。
 
-原9个配置的340项判断保留，Claude／Kimi四个配置的340项判断继续采用；Astra 6.2 xHigh另有45项，DeepSeek另有130项独立五轴判断，Neon另有90项，合计945项。另经独立复核，三份旧首答画像的论证、忠实度和审辨等级与其自身引用的原评审证据不一致，分别由4档更正为2档；其余维度不变。这九项更正采用独立的来源绑定记录，在当前1.2.0的首答与含续答两种视图中使用同一基线。它们不计作续答退步，不更改MC／RMC／SMC；原0.4.0文件与历史1.1.0视图保留。更正仍为AI审核、人工待审。
+原9个配置的340项判断保留，Claude／Kimi四个配置的340项判断继续采用；Astra 6.2 xHigh另有45项，DeepSeek另有130项独立五轴判断，Neon另有90项，Hydrogen另有85项，合计1,030项。另经独立复核，三份旧首答画像的论证、忠实度和审辨等级与其自身引用的原评审证据不一致，分别由4档更正为2档；其余维度不变。这九项更正采用独立的来源绑定记录，在当前1.2.0的首答与含续答两种视图中使用同一基线。它们不计作续答退步，不更改MC／RMC／SMC；原0.4.0文件与历史1.1.0视图保留。更正仍为AI审核、人工待审。
 
-Astra 6.2 xHigh在两套阶段均可单独选中比较；严格完成度直接使用首答SMC81.00与含续答SMC83.90。研究主动性始终沿用同一首答判断；首答两率和4组主动额外成果另列，不作为画像等级的换算输入。
+Astra 6.2 xHigh在两套阶段均可单独选中比较；严格完成度直接使用首答SMC82.67与含续答SMC85.23。研究主动性始终沿用同一首答判断；首答两率和4组主动额外成果另列，不作为画像等级的换算输入。
 
 新开放研究轴对五个共同手稿家族的首答和已采用续答独立审核，逐份记录建模、机制、条件边界和证明闭合的依据；当前展示按1.2.0入选配置过滤，GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon只保留历史资料。核心缺口不能用其他成果抵补，附带错误只有通过明确的删除依赖检查后才可与已成立核心分开；原错误及SMC判决仍保留。完整标准、全部模型对照和来源索引见[开放研究说明](open-research.md)。
+
+六题原答复核另独立更正Astra 6.2 xHigh公有轨道题的深度与主动性：同机制四份原答均已按4／4评定，本份统一由2／0改为4／4；不由R档推算。首答深度85.24、研究主动性11.43，含续答深度87.10，主动性仍为11.43。原始画像与旧评保留，严格完成度继续直接读取已更正的SMC。[复核依据](theorem-extension-review-corrections.md)
 
 [完整方法](../protocol/mathematical-profile-revision.md) · [首答画像说明](mathematical-profile-recheck.md) · [续答规则](neutral-revision.md)
 
@@ -44,4 +46,6 @@ The current review covers 206 existing revisions across 17 configurations and 1,
 
 A separate source-bound correction resolves three old first-answer profiles whose proof, fidelity and discernment grades contradicted their own cited evidence: those nine grades change from4 to2, with all other axes retained. Both current1.2.0 views use the same corrected baseline. This is not a revision regression and does not change MC, RMC or SMC. Original0.4.0 files and archived1.1.0 views remain unchanged. The axes cover applicable work across the full35-family suite, rather than only the theorem-extension tasks.
 
-Astra 6.2 xHigh is selectable in both profile stages. Its strict completion reads the official first-answer 81.00 or revision-inclusive 83.90 directly; initiative retains the same first-answer judgment. First-answer content rates and the four surplus groups remain separate observations.
+Astra 6.2 xHigh is selectable in both profile stages. Its strict completion reads the official first-answer 82.67 or revision-inclusive 85.23 directly; initiative retains the same first-answer judgment. First-answer content rates and the four surplus groups remain separate observations.
+
+A separate review corrects Astra 6.2 xHigh’s orbit-task grades to 4 for depth and 4 for initiative, matching four independently checked answers using the same mechanism. These grades come from the original proof, rather than its R tier. First-answer depth is 85.24 and initiative is 11.43; revision-inclusive depth is 87.10, with the same first-answer initiative. Original profile evidence and historical 1.1 traits are retained.

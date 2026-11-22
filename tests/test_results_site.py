@@ -124,7 +124,17 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertEqual(revised['neutral_revision']['base_report_sha256'],
                                  current['source_bindings']['private_report_sha256'])
                 self.assertEqual(revised['metrics']['lean'], current['metrics']['lean'])
-                return revised
+                current = revised
+        amendment = model.get('tx_review_amendment')
+        if amendment is not None:
+            from math_gauge.theorem_extension_amendments import load_public
+            selected = load_public(ROOT,model['id'])
+            self.assertEqual(selected['_selection'],amendment['manifest'])
+            if revision is not None and condition == 'nonlogical_retry_3':
+                self.assertEqual(selected['original_adoption'],revision['manifest'])
+                current=selected['_revised'][mode]
+            else:
+                current=selected['_baseline'][mode][condition]
         return current
 
     def test_progress_tracks_pending_built_tasks_not_failures_or_unbuilt_weight(self):
@@ -234,9 +244,9 @@ class CurrentSiteTests(unittest.TestCase):
                 downloads.add('downloads/execution-anomalies.json')
             if SITE.load_attempt_history(SITE.ROOT) is not None:
                 downloads.add('downloads/execution-attempts.json')
-            # Explicitly delivered same-round source files are public downloads
-            # too. Accept only files linked by the selected original answer and
-            # authenticate every byte through that answer's retained manifest.
+            # The complete delivered same-round engineering archive is public,
+            # including its native-file-URI source index. Authenticate every
+            # member through the selected answer's retained manifest.
             from math_gauge.records import evidence_bytes
             for model in self.source_data['models']:
                 folder = ROOT / Path(model['source_record']).parent
@@ -262,8 +272,6 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertIs(manifest['cross_round_union'], False)
                     answer = original.decode('utf-8')
                     for name, item in manifest['files'].items():
-                        if '(' + name + ')' not in answer and '(./' + name + ')' not in answer:
-                            continue
                         target = 'downloads/engineering/' + source['sha256'] + '/' + name
                         downloads.add(target)
                         self.assertEqual(before[target], evidence_bytes(folder, item))
@@ -271,9 +279,13 @@ class CurrentSiteTests(unittest.TestCase):
             from math_gauge.records import evidence_bytes
             for model in self.data['models']:
                 manifest = json.loads(evidence_bytes(ROOT, model['neutral_revision']['manifest']))
+                selected = manifest['scores']
+                if model.get('tx_review_amendment'):
+                    from math_gauge.theorem_extension_amendments import load_public
+                    selected = load_public(ROOT, model['id'])['revised']
                 for mode, suffix in [('partial',''), ('capability','-capability'), ('strict','-strict')]:
                     path='downloads/'+model['id']+'-combined'+suffix+'-retry.json'
-                    self.assertEqual(before[path], evidence_bytes(ROOT, manifest['scores'][mode]))
+                    self.assertEqual(before[path], evidence_bytes(ROOT, selected[mode]))
             source_downloads=set()
             for model in self.source_data['models']:
                 for mode, suffix in [('partial',''), ('capability','-capability'), ('strict','-strict')]:
@@ -561,6 +573,11 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertEqual(displayed,first, 'The primary-parent revision must not migrate into single_attempt')
                 base = json.loads(evidence_bytes(ROOT,manifest['base_reports'][mode]['nonlogical_retry_3']))
                 displayed_base = self.initial_admission_display_score(base) if model.get('initial_assessment') else base
+                if model.get('tx_review_amendment'):
+                    from math_gauge.theorem_extension_amendments import load_public
+                    correction=load_public(ROOT,model['id'])
+                    self.assertEqual(correction['original_adoption'],model['neutral_revision']['manifest'])
+                    displayed_base=correction['_baseline'][mode]['nonlogical_retry_3']
                 self.assertEqual(displayed_base, SITE.selected_result(source[model['id']],mode))
 
     def test_unreviewed_fixed_rounds_keep_the_source_coverage_unknown(self):
@@ -671,8 +688,9 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertEqual(row['response']['sha256'], task['response_sha256'])
                     self.assertEqual(row['source']['response_sha256'], task['response_sha256'])
                     self.assertTrue(any(s['sha256'] == row['review']['sha256'] for s in evidence['sources']))
-                self.assertEqual(len(review.get('criteria', review.get('dimensions', []))), 6)
-                criterion = review.get('criteria', review.get('dimensions'))[0]
+                criteria=review.get('criteria', review.get('dimensions', review.get('units', [])))
+                self.assertEqual(len(criteria), 6)
+                criterion = criteria[0]
                 key = next(criterion[k] for k in ('id', 'criterion_id', 'dimension_id') if k in criterion)
                 self.assertIn(key, review_markdown(evidence['review']))
 

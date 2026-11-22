@@ -45,7 +45,7 @@ class ContinuationCompletionDisplayTests(unittest.TestCase):
         page = render(data, anomaly_reference=load_public(ROOT), attempt_reference=load_attempts(ROOT),
                       continuation_resources=resources, source_root=ROOT)
         self.assertIn('id="assessment-guide"', page)
-        self.assertIn('id="capabilities"', page)
+        self.assertIn('id="category-leaderboards"', page)
         self.assertIn('id="downloads"', page)
         self.assertNotIn('score-structure', page)
         self.assertEqual(page.count('id="execution-anomalies"'), 1)

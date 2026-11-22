@@ -151,6 +151,8 @@ def _evidence(value, sources, roots):
 
 
 class BaselineCorrectionInputs:
+    corrected_axes = CORRECTED_AXES
+
     def __init__(self, raw, *, roots):
         data = json.loads(raw)
         fixed = dict(schema='math-gauge.mathematical-profile-baseline-correction-adoption/v1',

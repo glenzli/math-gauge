@@ -2612,13 +2612,17 @@ def score_theorem_extension_calibration_overlay(base, policy, *, calibration, mo
     Historical task inputs, all non-TX task objects and selfcheck stay intact.
     """
     from .theorem_extension_calibration import CalibrationInputs, TARGET, VERSION
+    from .theorem_extension_amendments import ReviewAmendmentInputs
     policy = validate_assessment_policy(policy)
     if not isinstance(calibration, CalibrationInputs) or policy['version'] != '0.9.0':
         raise ValueError('TX reassessment requires its validated source calibration component')
     selected = calibration.for_score(base, mode=mode, condition=condition)
+    amendment = isinstance(calibration, ReviewAmendmentInputs)
     if (base.get('schema') != 'math-gauge.assessment-score/v1'
             or base.get('scoring_method_version') != policy['version']
-            or base.get('tx_calibration') is not None):
+            or base.get('tx_calibration') is not None and not amendment
+            or base.get('neutral_revision') is not None
+            or base.get('tx_review_amendment') is not None):
         raise ValueError('TX calibration requires a current, unmodified effective base report')
     child = next(c for c in policy['subcategories'] if c['id'] == 'theorem-extension')
     if child['families'] != 6 or child['weight'] != 10 or child['aggregation'] != 'family':
@@ -2671,11 +2675,12 @@ def score_theorem_extension_calibration_overlay(base, policy, *, calibration, mo
             task['submission_assessment']['prior_completion'] = {
                 key: None if v is None else float(v)
                 for key, v in zip(('lower', 'upper', 'exact'), prior)}
-        task['tx_calibration'] = dict(source_review_sha256=task.get('review_sha256'),
+        task['tx_review_amendment' if amendment else 'tx_calibration'] = dict(source_review_sha256=task.get('review_sha256'),
             review_sha256=row['review_sha256'], old_R=old_R, new_R=new_R)
         if task.get('response_sha256') is not None:
             task['review_sha256'] = row['review_sha256']
-            task['judgment_source'] = 'source_bound_theorem_extension_calibration'
+            task['judgment_source'] = ('source_bound_theorem_extension_review_amendment' if amendment
+                                       else 'source_bound_theorem_extension_calibration')
         interval = _boolean(passed) if mode == 'strict' else value
         family_values.setdefault(task['family_id'], []).append(interval)
     if len(family_values) != 6:
@@ -2714,15 +2719,50 @@ def score_theorem_extension_calibration_overlay(base, policy, *, calibration, mo
         unknown=sum(t['strict_pass'] is None for t in result['tasks']) + missing)
     result['source_benchmark_version'] = selected['source_benchmark_version']
     result['benchmark_version'] = TARGET
-    result['tx_calibration'] = dict(version=VERSION, benchmark_version=TARGET,
+    result['tx_review_amendment' if amendment else 'tx_calibration'] = dict(version=VERSION, benchmark_version=TARGET,
         source_benchmark_version=selected['source_benchmark_version'],
         source_score_benchmark_version=base['benchmark_version'], policy_sha256=selected['policy_sha256'],
         inputs_sha256=selected['inputs_sha256'], base_report_sha256=selected['base_sha256'][mode][condition],
         reviewed_cases=6, reviewer_kind='ai', human_review='pending', post_observation=True)
-    result['source_bindings'] = dict(base.get('source_bindings', {}),
-        theorem_extension_calibration_inputs_sha256=selected['inputs_sha256'],
-        theorem_extension_calibration_policy_sha256=selected['policy_sha256'],
-        theorem_extension_calibration_base_report_sha256=selected['base_sha256'][mode][condition])
+    prefix = 'theorem_extension_review_amendment' if amendment else 'theorem_extension_calibration'
+    result['source_bindings'] = dict(base.get('source_bindings', {}), **{
+        prefix + '_inputs_sha256': selected['inputs_sha256'],
+        prefix + '_policy_sha256': selected['policy_sha256'],
+        prefix + '_base_report_sha256': selected['base_sha256'][mode][condition]})
+    return result
+
+
+def score_neutral_revision_after_review_amendment(base, corrected, policy, *, revision, mode):
+    """Reblend the same delivered revision after an authenticated A1 review correction.
+
+    The native parent bridge and adopted revision are validated against their
+    actual historical parent before entering here. No frozen parent, runtime,
+    revision score or selected task is rewritten by this derived assessment.
+    """
+    from .benchmarks import identity
+    from .neutral_revision import RevisionInputs
+    import hashlib
+    import json
+    if not isinstance(revision, RevisionInputs):
+        raise ValueError('Review amendment requires the validated original revision')
+    selected = deepcopy(revision.for_score(base, mode=mode))
+    amendment = corrected.get('tx_review_amendment', {})
+    if amendment.get('base_report_sha256') != selected['base_sha256'][mode]:
+        raise ValueError('Review amendment and revision have different original parents')
+    old = {t['case_id']: t for t in base['tasks']}
+    new = {t['case_id']: t for t in corrected['tasks']}
+    if old.keys() != new.keys() or any(
+            old[cid] != new[cid] for cid in old if old[cid]['subcategory'] != 'theorem-extension'):
+        raise ValueError('Review amendment changed an unrelated original task')
+    if any(old[cid].get('response_sha256') != new[cid].get('response_sha256') for cid in old):
+        raise ValueError('Review amendment replaced an original answer')
+    selected['base_identities'][mode] = identity(corrected)
+    selected['base_sha256'][mode] = hashlib.sha256(
+        (json.dumps(corrected, ensure_ascii=False, indent=2) + '\n').encode()).hexdigest()
+    adapted = RevisionInputs(json.dumps(selected, ensure_ascii=False, sort_keys=True,
+                                       separators=(',', ':')).encode())
+    result = score_neutral_revision_overlay(corrected, policy, revision=adapted, mode=mode)
+    result['tx_review_amendment']['original_revision_inputs_sha256'] = selected['inputs_sha256']
     return result
 
 
@@ -4053,7 +4093,7 @@ def score_mathematical_profile_baseline_corrections(score, corrections, *, model
                 raise ValueError('Baseline correction no longer matches its original grade')
             rows[correction['id']]['axes'][axis] = dict.fromkeys(('lower','upper','exact'), judgment['to'])
     if selected:
-        for axis in CORRECTED_AXES:
+        for axis in corrections.corrected_axes:
             low = high = Fraction()
             families = {}
             for contract in corrections.contracts['tasks']:

@@ -156,6 +156,9 @@ def _neutral_baseline(root, model, adoption):
               for mode, refs in adoption['base_reports'].items()}
     expected = ({mode: {condition: project_score(report) for condition, report in refs.items()}
                  for mode, refs in source.items()} if model.get('initial_assessment') is not None else source)
+    if model.get('tx_review_amendment'):
+        from math_gauge.theorem_extension_amendments import load_public as load_tx_amendment
+        expected = load_tx_amendment(root,model['id'],original_baseline=source)['_baseline']
     require(displayed == expected, 'Neutral display lost its authenticated original or initial-admission projection')
     return source
 
@@ -182,6 +185,11 @@ def neutral_revision_data(root, base_data, *, transition=None):
         adopted = load_public(root, ref)
         baseline = _neutral_baseline(root, model, adopted)
         scores = adopted['_scores']
+        from math_gauge.theorem_extension_amendments import load_public as load_tx_amendment, apply_model
+        amendment = load_tx_amendment(root, mid, original_baseline=baseline, original_adoption=ref)
+        if amendment is not None:
+            baseline, scores = amendment['_baseline'], amendment['_revised']
+            apply_model(model, amendment, revised=True)
         model['neutral_revision_delta'] = score_neutral_revision_delta(baseline, scores)
         model['retry']['combined'] = copy.deepcopy(scores['partial'])
         for mode in ('capability', 'strict'):
@@ -261,6 +269,21 @@ def neutral_revision_data(root, base_data, *, transition=None):
         for model in data['models']:
             model['neutral_revision_completion'] = copy.deepcopy(by_id[model['id']])
         data['sources'].append(completion['source'])
+    from math_gauge.theorem_extension_amendments import project_profile_completion, INDEX_PATH as TX_AMENDMENTS
+    if any(model.get('tx_review_amendment') for model in data['models']):
+        first, revised = {}, {}
+        for model in data['models']:
+            if model.get('tx_review_amendment'):
+                amendment = load_tx_amendment(root, model['id'])
+                first[model['id']] = amendment['_baseline']['strict']['nonlogical_retry_3']
+                revised[model['id']] = amendment['_revised']['strict']
+        for key in ('mathematical_profile', 'mathematical_profile_baseline'):
+            project_profile_completion(data.get(key), first)
+        project_profile_completion(data.get('mathematical_profile_revision'), revised)
+        data['sources'].append({'path':TX_AMENDMENTS,
+            'sha256':hashlib.sha256((Path(root)/TX_AMENDMENTS).read_bytes()).hexdigest()})
+    from math_gauge.mathematical_profile_review_amendments import apply_public as apply_profile_review_amendments
+    apply_profile_review_amendments(root,data)
     return data
 
 
@@ -482,9 +505,15 @@ def prepare_neutral_publication(files, root, current_data, *, base_data, base_ti
     projections = {}
     for model in current_data['models']:
         adoption = load_public(root, model['neutral_revision']['manifest'])
-        projections[model['id']] = adoption['_public_tasks']
+        amendment = None
+        if model.get('tx_review_amendment'):
+            from math_gauge.theorem_extension_amendments import load_public as load_tx_amendment
+            amendment = load_tx_amendment(root, model['id'])
+        projections[model['id']] = (adoption['_public_tasks'] if amendment is None
+                                    else amendment['_public_tasks']['revised'])
         for mode, suffix in [('partial', ''), ('capability', '-capability'), ('strict', '-strict')]:
-            prepared['downloads/'+model['id']+'-combined'+suffix+'-retry.json'] = evidence_bytes(root, adoption['scores'][mode])
+            selected = adoption['scores'][mode] if amendment is None else amendment['revised'][mode]
+            prepared['downloads/'+model['id']+'-combined'+suffix+'-retry.json'] = evidence_bytes(root, selected)
     scenes = chart_scenes(current_data)
     evidence_sections = _neutral_evidence_sections(root, current_data)
     config_pattern = re.compile(r'(<script type="application/json" id="edition-config">)([\s\S]*?)(</script>)')

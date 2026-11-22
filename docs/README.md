@@ -7,7 +7,7 @@
 | 整理DeepSeek已经跑出的答复 | [原答恢复说明](deepseek-result-recovery.md) |
 | 了解正式记录、自评与最终轨迹 | [记录合同](../protocol/result-record.md) |
 | 阅读当前题目及选题范围 | [题目目录](../cases/README.md) · [选题说明](selection.md) |
-| 理解评分和证据边界 | [评分标准](../protocol/benchmark-scoring.md) · [评测协议](../protocol/evaluation.md) |
+| 理解评分和证据边界 | [评分标准](../protocol/benchmark-scoring.md) · [评测协议](../protocol/evaluation.md) · [TX 原答复核](theorem-extension-review-corrections.md) |
 | 核验当前作者与工程证据 | [验证说明](verification.md) |
 | 维护项目结构与实现 | [目录地图](repository-map.md) |
 

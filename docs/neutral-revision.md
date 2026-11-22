@@ -47,6 +47,8 @@ GLM 5.3在1.1.0保留原“部分测试”展示：39题中21份正常交卷、5
 
 DeepSeek本次26题由Codex coordinator按完整交卷及补回的原文件复核：1题续答自身三项全满，24题正常final；1题截止原稿仅评MC，另1题无正文计0。补件未产生新候选调用，原生final和已有原附件均保持原字节。新增判断的实际AI归属与五轴引文单独留存。[本批报告](../results/edition-reassessments/v1.2.0/deepseek-v4.1-flash-1017/20261110/REPORT.md)
 
+首答的事后审核更正通过[独立补充层](theorem-extension-review-corrections.md)重放原门槛与80／20计分；运行时冻结的续答选择、父答桥、调用和资源证据不改写。
+
 ## English
 
 Edition1.2.0 adds one neutral revision for each non-Lean task with a confirmed loss in any of MC, RMC or SMC. The candidate receives the original task, its own complete first answer, generic standards and a neutral invitation, with no external grade, case-specific review or reference. Tasks already full in all three modes are exempt. Lean results remain unchanged.
@@ -56,3 +58,5 @@ Each selected task uses **80% of its first score plus20% of its revision score**
 The local edition includes 206 revisions across 17 configurations, with 102 full in all three unrounded modes. The previous15 configurations retain their171 original revisions and judgments; Gemini4 Neon adds18 normal finals, two full in all modes; Gemini 4 Hydrogen adds17 normal finals, none full in all modes. Inputs, complete parent answers, actual deliveries and AI reviewer attribution remain source-bound. Human mathematical review remains pending.
 
 Of the original200 tasks packaged across11 external configurations,94 have returned from five configurations:three Claude configurations, Kimi and DeepSeek. They comprise92 normal finals and two settled cutoff deliveries. At that time,106 tasks across six configurations remained unreturned and GLM was skipped; that historical distribution record is retained. By user selection, GLM5.3, Gemini3.8 Flash and Gemini4 Argon are now withdrawn from the1.2.0 cohort, pending list, profiles and default exports, independently of score thresholds. Their1.1.0 and earlier displays, A1 answers, reviews and frozen packages remain unchanged. All206 effective adopted continuations enter resource accounting in full, with each reused pilot counted once and pure system failures retained separately in retry history. Confirmed system failures remain in retry history. The homepage compares17 configurations on the same12 shared public non-Lean tasks, with the chapter run separate. Kimi uses the retained Standard reference rather than its native unknown-basis amount; DeepSeek uses the unchanged archived peak tariff and inclusive-cache receipt normalization. Original content rates and surplus observations remain first-answer diagnostics. The published task suite remains1.0.0; this adoption is local.
+
+Post-observation corrections to first-answer reviews use a [separate addendum](theorem-extension-review-corrections.md). The shared scorer replays the original gates and80/20 blend without rewriting frozen revision selections, native parent bridges, calls or resource evidence.

@@ -446,6 +446,18 @@ def build_data(source_root=ROOT, *, assessment_version=None):
     if requested == '1.2.0':
         from scripts.results_editions import neutral_revision_data
         return neutral_revision_data(root, data)
+    if requested == '1.1.0':
+        from math_gauge.theorem_extension_amendments import load_public as load_tx_amendment, apply_model, project_profile_completion
+        strict_scores = {}
+        for model in data['models']:
+            amendment = load_tx_amendment(root, model['id'])
+            if amendment is not None:
+                apply_model(model, amendment)
+                set_published_scores(model)
+                strict_scores[model['id']] = amendment['_baseline']['strict']['nonlogical_retry_3']
+        project_profile_completion(data.get('mathematical_profile'), strict_scores)
+        data['gap_diagnostics'] = gap_diagnostics(models)
+        data['category_leaderboards'] = category_rankings(models, policy['groups'], result_selector=selected_result)
     return data
 
 

@@ -1,6 +1,8 @@
 # 当前完整结果
 
-当前本地评分版为 **1.2.0**，已发布题包仍为1.0.0。新版按[中性续答规则](neutral-revision.md)采用非Lean失分题的一次续答：逐题80%首答＋20%续答，三个模式、家族权重与完整100分分母一致；Lean及三轮自查沿用。基础采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，续答组件 **0.1.0**；页面默认按SMC排序，指标顺序为SMC／RMC／MC。
+当前评分版为 **1.2.0**，已发布题包仍为1.0.0。新版按[中性续答规则](neutral-revision.md)采用非Lean失分题的一次续答：逐题80%首答＋20%续答，三个模式、家族权重与完整100分分母一致；Lean及三轮自查沿用。基础采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，续答组件 **0.1.0**；页面默认按SMC排序，指标顺序为SMC／RMC／MC。
+
+本页成绩已纳入[六道 TX 原答复核更正](theorem-extension-review-corrections.md)，原答与旧评保持原字节。
 
 ## 1.2.0：已完成续答
 
@@ -9,15 +11,15 @@
 | [Astra 6 (max)](../site/models/astra-6-max/index.html) | 91.33 | 95.01 | 95.01 | 6 | 100%（6／6） |
 | [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | 91.33 | 94.93 | 95.01 | 7 | 100%（7／7） |
 | [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | 91.33 | 94.57 | 94.57 | 6 | 100%（6／6） |
-| [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | 89.73 | 93.80 | 93.80 | 7 | 100%（7／7） |
-| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | 83.90 | 91.66 | 92.66 | 9 | 88.9%（8／9） |
-| [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | 83.23 | 92.36 | 93.61 | 10 | 80%（8／10） |
+| [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | 89.73 | 94.25 | 94.25 | 7 | 100%（7／7） |
+| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | 85.23 | 93.00 | 94.00 | 9 | 88.9%（8／9） |
+| [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | 83.23 | 92.80 | 94.05 | 10 | 80%（8／10） |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 81.33 | 91.70 | 92.70 | 6 | 100%（6／6） |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | 70.50 | 89.98 | 92.15 | 8 | 87.5%（7／8） |
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 68.63 | 81.38 | 83.11 | 9 | 88.9%（8／9） |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | 64.75 | 80.03 | 81.25 | 9 | 55.6%（5／9） |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 62.48 | 92.97 | 95.11 | 15 | 53.3%（8／15） |
-| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | 61.17 | 86.54 | 93.08 | 18 | 11.1%（2／18） |
+| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | 61.17 | 86.98 | 93.52 | 18 | 11.1%（2／18） |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | 58.98 | 89.49 | 93.03 | 17 | 52.9%（9／17） |
 | [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | 57.22 | 89.96 | 92.30 | 17 | 35.3%（6／17） |
 | [Gemini 4 Hydrogen (xHigh)](../site/models/gemini-4-hydrogen-xhigh/index.html) | 48.25 | 78.83 | 89.82 | 17 | 0%（0／17） |
@@ -45,16 +47,16 @@ Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 H
 | [Astra 6 (max)](../site/models/astra-6-max/index.html) | Codex CLI | 93.76 | 93.76 | 89.17 | 39／0／39 |
 | [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | Codex CLI | 93.76 | 93.66 | 89.17 | 39／0／39 |
 | [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | Codex CLI | 93.21 | 93.21 | 89.17 | 39／0／39 |
-| [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | Codex CLI | 92.25 | 92.25 | 87.17 | 39／0／39 |
+| [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | Codex CLI | 92.81 | 92.81 | 87.17 | 39／0／39 |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | Claude Code | 94.32 | 92.00 | 59.42 | 39／0／39 |
-| [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | Codex CLI | 92.04 | 90.79 | 80.17 | 39／0／39 |
+| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | Codex CLI | 92.56 | 91.56 | 82.67 | 39／0／39 |
+| [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | Codex CLI | 92.59 | 91.34 | 80.17 | 39／0／39 |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
-| [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | Codex CLI | 90.89 | 89.89 | 81.00 | 39／0／39 |
 | [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | Unknown¹ | 91.10 | 89.68 | 78.00 | 39／0／39 |
 | [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | Claude Code | 91.36 | 88.80 | 54.92 | 39／0／39 |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.68 | 88.51 | 68.00 | 39／0／39 |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
-| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | AGY CLI | 91.91 | 85.42 | 60.42 | 39／0／39 |
+| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | AGY CLI | 92.47 | 85.97 | 60.42 | 39／0／39 |
 | [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 92.89 | 80.85 | 64.50 | 38／1／39 |
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | Codex CLI | 82.07 | 80.30 | 65.67 | 39／0／39 |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
@@ -79,7 +81,7 @@ Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 H
 
 ## Gemini 4 Neon xHigh · 2026-11-22
 
-39道初答、三轮固定Lean自查与18份中性续答均正常交卷。1.1.0首答基线为 **MC91.9094／RMC85.4178／SMC60.4167**；1.2.0为 **MC93.0801／RMC86.5376／SMC61.1667**。18份续答中2份自身三项全满，其余保留有效贡献及具体错误；满分率不是同题排名。Sol6.1Max分组审核，主聊天复核并定稿，原始评审与最终判断分别留存；人工数学审核仍待完成。
+39道初答、三轮固定Lean自查与18份中性续答均正常交卷。1.1.0首答基线为 **MC92.4650／RMC85.9733／SMC60.4167**；1.2.0为 **MC93.5245／RMC86.9820／SMC61.1667**。18份续答中2份自身三项全满，其余保留有效贡献及具体错误；满分率不是同题排名。Sol6.1Max分组审核，主聊天复核并定稿，原始评审与最终判断分别留存；人工数学审核仍待完成。
 
 整章形式化初答及三轮自查均核实92／92，诊断准确、无回退，完整三轮轨迹通过。初答内容可靠率 **91.17%**、完整目标达成率 **84.92%**，按共同697个承诺单元和149个完整目标独立审核。数学画像另有首答与含续答阶段，两率仍只描述首答。
 
@@ -89,7 +91,7 @@ API Standard参考成本合计 **$137.8559499**，基础42份为$88.9622955，18
 
 [模型详情](../site/models/gemini-4-neon-xhigh/index.html) · [首答与三轮记录](../results/v1.0.0/gemini-4-neon-xhigh/20261122/record.json) · [续答采用层](../results/edition-reassessments/v1.2.0/gemini-4-neon-xhigh/20261122/public.json) · [资源汇总](../results/continuation-resources/v0.1.0/gemini-4-neon-xhigh-20261122.json)。私有题文、原答、判准与完整执行来源留在私库。
 
-Gemini 4 Neon (xHigh) delivered all 39 initial answers, three fixed Lean self-checks and 18 neutral revisions normally. Its first-answer baseline is MC91.9094 / RMC85.4178 / SMC60.4167; edition1.2.0 gives **MC93.0801 / RMC86.5376 / SMC61.1667**. Two of18 revisions are full in all modes. All four chapter deliveries verified92/92 with accurate diagnosis and no regression. First-answer content reliability is91.17% and complete-goal attainment84.92%. Effective deliveries total **$137.8559499** at the retained Standard API reference tariff, including revisions in full. Thirteen confirmed system interruptions remain in retry history only. The shared12-task timing sample and separate41.94-minute chapter measurement are known; one other first-answer duration remains unknown because its clocks disagree. Sol6.1Max group reviews and the root's final judgments retain their attribution; human mathematical review remains pending.
+Gemini 4 Neon (xHigh) delivered all 39 initial answers, three fixed Lean self-checks and 18 neutral revisions normally. Its first-answer baseline is MC92.4650 / RMC85.9733 / SMC60.4167; edition1.2.0 gives **MC93.5245 / RMC86.9820 / SMC61.1667**. Two of18 revisions are full in all modes. All four chapter deliveries verified92/92 with accurate diagnosis and no regression. First-answer content reliability is91.17% and complete-goal attainment84.92%. Effective deliveries total **$137.8559499** at the retained Standard API reference tariff, including revisions in full. Thirteen confirmed system interruptions remain in retry history only. The shared12-task timing sample and separate41.94-minute chapter measurement are known; one other first-answer duration remains unknown because its clocks disagree. Sol6.1Max group reviews and the root's final judgments retain their attribution; human mathematical review remains pending.
 
 ## DeepSeek 中性续答 · 2026-11-20
 
@@ -101,19 +103,19 @@ DeepSeek v4.1 Flash (1017, max) has 26 settled neutral revisions:24 normal final
 
 ## Astra 6.2 xHigh · 2026-11-20
 
-本轮采用已完成的原答与原AI评审，不重跑候选。39道初答、三轮固定自查和9份中性续答全部正常交卷；1.1.0首答基线为SMC **81.0000**、RMC **89.8917**、MC **90.8917**，1.2.0为SMC **83.9000**、RMC **91.6633**、MC **92.6633**。9份续答中8份自身三项全满；原1.1.0判断、原始请求、首份正常交卷与封存工程保持来源绑定，该模型没有回填1.0.0成绩。
+本轮采用已完成的原答与原AI评审，不重跑候选。39道初答、三轮固定自查和9份中性续答全部正常交卷；1.1.0首答基线为SMC **82.6667**、RMC **91.5583**、MC **92.5583**，1.2.0为SMC **85.2333**、RMC **92.9967**、MC **93.9967**。9份续答中8份自身三项全满；原1.1.0判断、原始请求、首份正常交卷与封存工程保持来源绑定，该模型没有回填1.0.0成绩。
 
 Sol6.1Max审核22份非Lean首答、8份Lean首答与三轮自查及6份命题拓展续答；主聊天审核9份论证审阅／手稿首答与3份续答，并作Lean语义抽查及最终验收。C003初答与三轮均核实92/92，三轮诊断均30/30，保留原FULL／KEEP和实际源码。全部为AI数学审核，人工数学审核仍待完成；编译证据与运行边界另行保留。
 
 运行请求为gpt-6.2-astra/xhigh，通过OpenAI API、default服务档，使用Codex CLI0.169.1。53次数学物理调用包括51次有效尝试与2次已确认系统排除：1次容量错误、1次网络断流。独立canary预检的2次物理调用不进入正式分母或资源。42次基础交付记录580个本地命令完成事件，9份续答另有60个；允许本地工具及预置公共依赖，禁止外部检索和工具联网。后端SKU与内部HTTP调用数保持未知。
 
-首答内容可靠率 **100.00%**、完整目标达成率 **84.28%**，按共同697个承诺单元与149个完整目标独立审核；不把忠实性缺口直接转作内容错误。五份首答手稿核实 **4组**主动额外成果，续答中的受邀拓展不计入该观察。数学画像可在首答与含续答间切换，严格完成度分别读取81.00与83.90，主动研究性两阶段相同。
+首答内容可靠率 **100.00%**、完整目标达成率 **84.28%**，按共同697个承诺单元与149个完整目标独立审核；不把忠实性缺口直接转作内容错误。五份首答手稿核实 **4组**主动额外成果，续答中的受邀拓展不计入该观察。数学画像可在首答与含续答间切换，严格完成度分别读取82.67与85.23，研究主动性两阶段相同。
 
 51次有效尝试的完整原生用量合计46,604,269 tokens，按已留存Astra6.2 Standard短上下文费率折算为 **$77.744974**；基础42次为$63.7598564，续答9次为$13.9851176，续答资源全额计入。有效作答累计17,439.698899秒，确认系统重试的452.769696秒只留历史。初答中位数约3.26分钟，固定三轮另计；比较图仍采用原有12道共有公开非Lean题和独立整章计时，累计作答时长不当作同题速度或并行跨度。
 
-[模型详情与公开题证据](../site/models/astra-6.2-xhigh/index.html) · [首答记录](../results/v1.0.0/astra-6.2-xhigh/20261120/record.json) · [公开原答与评审](../results/v1.0.0/astra-6.2-xhigh/20261120/report.md) · [1.2.0续答采用层](../results/edition-reassessments/v1.2.0/astra-6.2-xhigh/20261120/public.json)。私有题文、原答、逐项判准与原生来源留在私库。这批入库和页面更新仅在本地，未提交、推送或发布。
+[模型详情与公开题证据](../site/models/astra-6.2-xhigh/index.html) · [首答记录](../results/v1.0.0/astra-6.2-xhigh/20261120/record.json) · [公开原答与评审](../results/v1.0.0/astra-6.2-xhigh/20261120/report.md) · [1.2.0续答采用层](../results/edition-reassessments/v1.2.0/astra-6.2-xhigh/20261120/public.json)。私有题文、原答、逐项判准与原生来源留在私库。
 
-The completed Astra 6.2 xHigh answers and their original AI judgments are adopted without new candidate calls. All 39 initial tasks, three fixed self-checks and nine neutral revisions delivered normally. Its 1.1.0 baseline is SMC 81.0000 / RMC 89.8917 / MC 90.8917; edition 1.2.0 gives **SMC 83.9000 / RMC 91.6633 / MC 92.6633**, with eight of nine revisions full in all modes. Sol6.1Max and the root reviewer retain their actual review attribution; human mathematical review remains pending. Codex CLI0.169.1 used the OpenAI API's default service tier, with backend SKU and inner HTTP counts unknown. The 51 effective attempts cost **$77.744974** at the retained Standard short-context reference tariff and total 17,439.698899 seconds. Two confirmed system failures retain 452.769696 seconds in retry history only. First-answer content reliability is 100.00% and complete-goal attainment is 84.28%; four additional-result groups are verified across five first-answer manuscripts. Both remain first-answer diagnostics. The profile offers both stages, with strict completion 81.00 / 83.90 and unchanged initiative. Shared-task timing keeps the original 12-task sample and a separate chapter measurement. These changes are local.
+The completed Astra 6.2 xHigh answers and their original AI judgments are adopted without new candidate calls. All 39 initial tasks, three fixed self-checks and nine neutral revisions delivered normally. Its 1.1.0 baseline is SMC 82.6667 / RMC 91.5583 / MC 92.5583; edition 1.2.0 gives **SMC 85.2333 / RMC 92.9967 / MC 93.9967**, with eight of nine revisions full in all modes. Sol6.1Max and the root reviewer retain their actual review attribution; human mathematical review remains pending. Codex CLI0.169.1 used the OpenAI API's default service tier, with backend SKU and inner HTTP counts unknown. The 51 effective attempts cost **$77.744974** at the retained Standard short-context reference tariff and total 17,439.698899 seconds. Two confirmed system failures retain 452.769696 seconds in retry history only. First-answer content reliability is 100.00% and complete-goal attainment is 84.28%; four additional-result groups are verified across five first-answer manuscripts. Both remain first-answer diagnostics. The profile offers both stages, with strict completion 82.67 / 85.23 and unchanged initiative. Shared-task timing keeps the original 12-task sample and a separate chapter measurement.
 
 ## Claude Opus 5.5 (xHigh) · 2026-11-19
 

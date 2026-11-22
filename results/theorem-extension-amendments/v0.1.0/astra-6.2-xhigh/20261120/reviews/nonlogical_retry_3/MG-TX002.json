@@ -1,0 +1,30 @@
+{
+  "schema": "math-gauge.theorem-extension-calibration-review/v1",
+  "version": "0.1.0",
+  "case_id": "MG-TX002",
+  "answer_sha256": "74d9ce82e4028310ac2728eb65e421200179a6288d39986abf27b52269b44062",
+  "source_review_sha256": "782323e68e121bb78ebd57ff69af74b42bd4cfa79567db7456411e23780e12f8",
+  "baseline_B": 2,
+  "old_R": 1,
+  "new_R": 3,
+  "policy_sha256": "5c43272773477bceb43e1087c7f363e984300dc7d805f9ff946b0489e7ac76ab",
+  "standard_sha256": "8394afa8aa936ba4eb9cae937483fb3268a90ab52b9585a6ea977e17cbfa98d9",
+  "reviewer_kind": "ai",
+  "reviewer": [
+    "GPT-6.1 Sol Max / tx_public_uniform_audit_20261122",
+    "Codex primary evaluator: independent comparison and final adoption"
+  ],
+  "human_review": "pending",
+  "post_observation": true,
+  "status": "reviewed",
+  "reason": "建议R1→R3。与Astra6.2Max、Astra6Max、Terra两配置的数学状态和更新机制相同。将“交换两坐标”的现成证明复用、冗余边界代数消去、列补码拼接及反向配对均为0.1.0明许的常规步骤；不应只因未把已证机制装配成命名编码而降档。",
+  "attained": "B2不变。原答明确证明所有内部第一坐标的逐状态等价，再以“交换两个坐标”使用同一证明得到第二坐标频率。第一行与末第二坐标互补，按两坐标计数解出基线均值。\n全部行/列占用是可逆完整状态：占用行递增、占用列递减唯一配对。原答给内部逐位移位与足够的互补交界；另一交界由每状态行/列总数相等直接消去。列取补并拼接是固定b个1的循环右移。措辞边界：列逐态等式未另印，原文是在转置复用同一论证后表述列频率；接受的是该明示对称证明内部的同一移位机制，并非原文已经明列四组公式。",
+  "not_attained": "R3最高档已达；未把原文未交付的具体轨道成员、精确计数或固定点公式倒记为实际成果。",
+  "citations": [
+    {
+      "quote": "令 \\(h_i\\) 为 \\(I(A)\\) 中第一坐标为 \\(i\\) 的点的最大第二坐标，空列取 \\(h_i=0\\)。因为 \\(I(A)\\) 是下闭集，所以 \\(h_1\\ge\\cdots\\ge h_a\\)。对每个 \\(1\\le i<a\\)，有\n\\[\n\\begin{aligned}\nA\\text{ 中出现第一坐标 }i\n&\\iff h_i>h_{i+1}\\\\\n&\\iff R(A)\\text{ 中出现第一坐标 }i+1.\n\\end{aligned}\n\\]\n这是因为 \\(A\\) 恰由 \\(I(A)\\) 的极大元素组成。两列高度下降时，\\((i,h_i)\\) 是 \\(I(A)\\) 的极大元素，而 \\((i+1,h_{i+1}+1)\\) 是补集的极小元素。两列等高时，第 \\(i\\) 列没有这样的极大元素，第 \\(i+1\\) 列也没有这样的极小元素。\n\n由 \\(A\\) 与 \\(R(A)\\) 同分布，各个第一坐标在 \\(A\\) 中出现的概率都相同，记为 \\(p\\)。交换两个坐标可知，各个第二坐标出现的概率也都相同，记为 \\(q\\)。再看第一列，\\(R(A)\\) 中出现第一坐标 \\(1\\) 当且仅当 \\(h_1<b\\)，也就是 \\(A\\) 中没有出现第二坐标 \\(b\\)。因此 \\(p=1-q\\)。\n\n反链中任意两点的第一坐标互异，第二坐标也互异，所以按两种坐标分别计数得到\n\\[\n\\mathbb E|A|=ap=bq.\n\\]\n结合 \\(p+q=1\\)，便有\n\\[\n\\frac1{|O|}\\sum_{A\\in O}|A|=\\mathbb E|A|=\\frac{ab}{a+b}.\n\\]",
+      "start_byte": 132,
+      "end_byte": 1323
+    }
+  ]
+}
