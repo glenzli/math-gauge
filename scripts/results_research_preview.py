@@ -49,6 +49,8 @@ def prepare_research_preview(files, root):
             else:unknown+=1
         if adopted and row['id'] in adopted['models']:
             normal += adopted['models'][row['id']]['normal_rounds']
+        else:
+            unknown += 3
         row['delivery']=dict(planned=45,normal=normal,unknown=unknown)
     envelope['data']['research_preview'] = board
     # Project new composite metrics from shared scoring, retaining all old payloads.

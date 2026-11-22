@@ -82,6 +82,21 @@
     if (!table) return;
     doc.documentElement.setAttribute('data-independent-research-preview','');
     const en = mg.state.lang === 'en';
+    const referenceScope = en ? 'Reference for retained 1.2.0 answers' : '1.2.0 采用答卷参考';
+    const frontierScope = en ? 'Scores, costs and timings are all from 1.2.0' : '图中成绩、成本和耗时均来自 1.2.0';
+    for (const [headingId, text] of [['cost-title', referenceScope], ['timing-title', referenceScope], ['cost-frontier-title', frontierScope]]) {
+      const heading = doc.getElementById(headingId);
+      if (!heading) continue;
+      const id = `${headingId}-baseline-scope`;
+      let scope = doc.getElementById(id);
+      if (!scope) {
+        scope = doc.createElement('p');
+        scope.id = id;
+        scope.className = 'panel-desc';
+        heading.insertAdjacentElement('afterend', scope);
+      }
+      scope.textContent = text;
+    }
     const title = en ? 'Independent Open Research' : '独立开放研究';
     let note = doc.getElementById('independent-research-preview-note');
     if (!note) { note = doc.createElement('p'); note.id = 'independent-research-preview-note'; note.className = 'panel-desc independent-research-note'; doc.getElementById('leaderboard').prepend(note); }

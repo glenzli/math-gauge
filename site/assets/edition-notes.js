@@ -90,6 +90,7 @@
   if(isRevision)branches.append(node('p',text('非Lean已知失分题 → 1次中性续答；首答三项全满免跑','Non-Lean tasks with known loss → 1 neutral continuation; first answers full in all three modes are exempt')));
   else branches.append(node('p',text('其余任务 → 按本版规则选定的首答计分','Other tasks → score the first-answer delivery selected by this edition')));
   if(isIndependent)branches.append(node('p',text('独立开放研究：同一全新求解会话，R1研究→冻结→R2独立推进→冻结→R3自审定稿；无方向反馈、无第四轮neutral continuation。只用固定材料、本地工具和预置依赖，禁外部检索；隔离与运行证据分别核验。','Independent research: one fresh solving session; freeze R1, continue independently in R2, freeze again, then self-audit and finalize R3. No directional feedback or fourth neutral round; fixed local materials only, with operational isolation verified separately.')));
+  if(isIndependent)branches.append(node('p',text('三轮均参与评审、各有侧重：研究自主重点看R1/R2的自主形成与推进；数学品味贯穿三轮、重点看R3核查取舍；研究能力核验R1成果、R2深化修正与R3自审闭合。早期正确成果不因R3未重交而排除；后轮推翻或收窄按实际真值与范围处理，重复成果不重复计分。','All three rounds are assessed with distinct emphases: autonomy focuses on formulation and independent progress in R1/R2; taste spans all rounds and emphasizes R3 selection; capacity examines R1 results, R2 advances and corrections, and R3 verification and closure. Valid earlier results need not be resubmitted in R3; later refutations and restrictions are respected, and repeated results are not counted again.')));
   flow.append(branches);
   const metrics=node('section',null,'guide-section');metrics.append(node('h3',text('三种指标','Three score concepts')));
   const definitions=node('dl',null,'guide-metrics');

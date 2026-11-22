@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from math_gauge import independent_research_adoption as adoption
 from math_gauge import taste_v130 as flow
+import test_independent_research_review as trajectory_fixture
 import test_taste_v130 as fixture_support
 
 descriptor = fixture_support.descriptor
@@ -24,7 +25,7 @@ class AdoptionTests(unittest.TestCase):
         self.run = self.root / 'run'
         (self.run / 'control').mkdir(parents=True)
         self.rows, self.executions, self.reviews = [], {}, {}
-        self.registration = None
+        self.registration, self.review_policy = None, None
         for name in ('fixture-a', 'fixture-b'):
             fixture = fixture_support.ProtocolFixture('runTest')
             fixture.setUp()
@@ -34,9 +35,13 @@ class AdoptionTests(unittest.TestCase):
             # explicitly mocked below; no fabricated native request is executed.
             fixture.seal = lambda rid, _seal=original_seal, **kw: _seal(rid, kind='operator-attestation', **kw)
             review = fixture.review()
+            fixture_policy = trajectory_fixture.write_policy(fixture)
+            if self.registration is None:
+                self.registration = fixture.registration
+                self.review_policy = fixture_policy
+            review = trajectory_fixture.reviewed_trajectory(fixture, review, fixture_policy)
             review['reviewer_id'] = 'Sol 6.1 Max'
             review['reviewer_context_id'] = 'independent-' + name
-            self.registration = self.registration or fixture.registration
             control = self.run / 'control' / name
             control.mkdir()
             shutil.copytree(fixture.state, control / 'state')
@@ -65,8 +70,10 @@ class AdoptionTests(unittest.TestCase):
         write_json(self.plan_path, self.plan)
         shutil.copyfile(self.plan_path, self.run / 'control/plan.json')
         self.selection = self.root / 'selection.json'
+        policy_raw = self.review_policy.read_bytes()
         self.source = dict(schema=adoption.SELECTION, plan=descriptor(self.plan_path, self.root),
-            run_root=str(self.run), models=self.rows)
+            run_root=str(self.run), models=self.rows,
+            review_policy=dict(path=str(self.review_policy), bytes=len(policy_raw), sha256=hashlib.sha256(policy_raw).hexdigest()))
 
     def prepare(self):
         write_json(self.selection, self.source)
@@ -92,9 +99,34 @@ class AdoptionTests(unittest.TestCase):
         self.assertEqual(value['cohort'], ['fixture-a', 'fixture-b'])
         self.assertEqual(value['native_round_dispatches'], 6)
         self.assertEqual(value['models']['fixture-a']['axes']['capacity']['score'], 80)
+        self.assertEqual(value['review_policy_sha256'], self.source['review_policy']['sha256'])
         text = adoption.encoded(value).decode()
-        for private in ('Pure synthetic private review marker', 'Synthetic assessment', 'CASE-FIXTURE', 'quote', str(self.root)):
+        for private in ('Pure synthetic private review marker', 'Synthetic assessment', 'CASE-FIXTURE', 'quote',
+                        'TRAJECTORY-PRIVATE-RUBRIC-SENTINEL', 'trajectory-review-policy.json', str(self.root)):
             self.assertNotIn(private, text)
+
+    def test_legacy_selection_review_and_aggregate_are_explicitly_rejected(self):
+        current = self.prepare()
+        old_projection = deepcopy(current)
+        old_projection['schema'] = 'math-gauge.independent-research-adoption/v1'
+        old_projection.pop('review_policy_sha256')
+        with self.assertRaisesRegex(ValueError, 'projection v2'):
+            adoption.validate_public(old_projection)
+        policy = self.source.pop('review_policy')
+        self.source['schema'] = 'math-gauge.independent-research-review-selection/v1'
+        with self.assertRaisesRegex(ValueError, 'selection v2'):
+            self.prepare()
+        self.source.update(schema=adoption.SELECTION, review_policy=policy)
+        self.reviews['fixture-a']['schema'] = flow.REVIEW
+        self.reviews['fixture-a'].pop('review_policy_sha256')
+        self.update_review('fixture-a')
+        with self.assertRaisesRegex(ValueError, 'whole-trajectory review'):
+            self.prepare()
+
+    def test_policy_descriptor_does_not_accept_replaced_bytes(self):
+        self.review_policy.write_bytes(self.review_policy.read_bytes() + b'\n')
+        with self.assertRaisesRegex(ValueError, 'source bytes changed'):
+            self.prepare()
 
     def test_no_partial_or_duplicate_cohort_is_adopted(self):
         self.source['models'] = self.rows[:1]

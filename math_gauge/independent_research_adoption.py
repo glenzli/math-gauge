@@ -8,11 +8,12 @@ import hashlib
 import json
 from pathlib import Path
 
+from . import independent_research_review as trajectory_review
 from . import taste_v130 as flow
 
 
-SCHEMA = 'math-gauge.independent-research-adoption/v1'
-SELECTION = 'math-gauge.independent-research-review-selection/v1'
+SCHEMA = 'math-gauge.independent-research-adoption/v2'
+SELECTION = 'math-gauge.independent-research-review-selection/v2'
 PUBLIC_PATH = 'protocol/mathematical-taste/v1.3.0/settled-results.json'
 
 
@@ -69,11 +70,14 @@ def prepare(selection_path, public_root):
     selection_path = flow._safe_absolute(selection_path)
     selection_raw = selection_path.read_bytes()
     source = json.loads(selection_raw)
-    _need(set(source) == {'schema', 'plan', 'run_root', 'models'} and source['schema'] == SELECTION,
-          'Expected a complete independent-research review selection')
+    _need(set(source) == {'schema', 'plan', 'run_root', 'models', 'review_policy'} and source['schema'] == SELECTION,
+          'Expected a complete whole-trajectory research review selection v2')
     plan_path, plan_raw = _external(selection_path.parent, source['plan'])
     public_root = flow._safe_absolute(public_root)
     plan, registration = load_plan(plan_path, public_root)
+    review_policy, policy_raw = _external(selection_path.parent, source['review_policy'])
+    review_policy_hash = trajectory_review.policy_sha256(registration, review_policy)
+    _need(review_policy_hash == _hash(policy_raw), 'Selected trajectory policy changed during validation')
     run_root = flow._safe_absolute(source['run_root'])
     _need((run_root / 'control/plan.json').read_bytes() == plan_raw, 'Execution and review selected different frozen plans')
     expected = [row['id'] for row in plan['cohort']]
@@ -94,7 +98,7 @@ def prepare(selection_path, public_root):
         _need(review['reviewer_kind'] == 'ai' and review['human_review'] == 'pending',
               'Fixtures and invented human approval cannot enter a real cohort')
         if execution['outcome'] == 'normal-finals':
-            axes = flow.validate_review(registration, state, review_path)
+            axes = trajectory_review.validate_review(registration, state, review_path, review_policy)
             status = 'reviewed'
         else:
             _need(set(review) == {'schema', 'execution_sha256', 'reviewer_kind', 'human_review',
@@ -125,26 +129,29 @@ def prepare(selection_path, public_root):
         dispatches += len(execution['rounds'])
     result = dict(schema=SCHEMA, edition=flow.EDITION, kind='settled-selected-cohort',
         source_binding=deepcopy(plan['baseline']), policy_sha256=_hash(flow.POLICY_FILE.read_bytes()),
+        review_policy_sha256=review_policy_hash,
         batch_sha256=_hash(plan_raw), cohort=expected, models={key: selected[key] for key in expected},
         reviewer=dict(requested_model='gpt-6.1-sol', requested_effort='max', reviewer_kind='ai',
                       human_review='pending', backend_identity_independently_verified=False),
         native_round_dispatches=dispatches, candidate_calls_by_adoption=0)
     _need(selection_path.read_bytes() == selection_raw and plan_path.read_bytes() == plan_raw,
           'Selection or plan changed during validation')
+    _need(trajectory_review.policy_sha256(registration, review_policy) == review_policy_hash,
+          'Selected trajectory policy changed during validation')
     return validate_public(result)
 
 
 def validate_public(value):
     """Reject private additions, unknown/zero conflation and partial batch writes."""
-    _need(set(value) == {'schema', 'edition', 'kind', 'source_binding', 'policy_sha256', 'batch_sha256',
+    _need(set(value) == {'schema', 'edition', 'kind', 'source_binding', 'policy_sha256', 'review_policy_sha256', 'batch_sha256',
         'cohort', 'models', 'reviewer', 'native_round_dispatches', 'candidate_calls_by_adoption'}
         and value['schema'] == SCHEMA and value['edition'] == flow.EDITION
         and value['kind'] == 'settled-selected-cohort' and value['candidate_calls_by_adoption'] == 0,
-        'Unrecognized public adoption projection')
+        'Expected the whole-trajectory public adoption projection v2')
     baseline = value['source_binding']
     _need(set(baseline) == {'edition', 'path', 'sha256'} and baseline['edition'] == '1.2.0'
           and baseline['path'] == 'site/data.json', 'Adoption needs the fixed common 1.2 baseline')
-    for h in (baseline['sha256'], value['policy_sha256'], value['batch_sha256']):
+    for h in (baseline['sha256'], value['policy_sha256'], value['review_policy_sha256'], value['batch_sha256']):
         _need(isinstance(h, str) and len(h) == 64 and all(c in '0123456789abcdef' for c in h), 'Opaque SHA256 required')
     cohort = value['cohort']
     _need(isinstance(cohort, list) and cohort and len(set(cohort)) == len(cohort)

@@ -119,7 +119,7 @@ test('the existing index table is enhanced using the original lexical MG control
       const buttons=[...String(this.innerHTML).matchAll(new RegExp(attr+'="([^"]+)"','g'))].map(m=>({dataset:{[key]:m[1]}}));
       this.cache[selector]={html:this.innerHTML,buttons};return buttons;
     }
-    insertAdjacentElement(_,node){nodes.set(node.id,node);}
+    insertAdjacentElement(_,node){(this.adjacent??=[]).push(node);nodes.set(node.id,node);}
   }
   const table=new Element('table'),wrap=new Element('div'),head=new Element('tr'),body=new Element('tr');
   table.closest=()=>wrap;table.tHead={rows:[head],insertRow(){const r=new Element('tr');this.rows.push(r);return r;}};
@@ -131,6 +131,9 @@ test('the existing index table is enhanced using the original lexical MG control
   const link={href:'https://example.test/models/'+board.rows[0].id+'/index.html?edition=1.3.0',dataset:{}};
   body.querySelector=()=>link;
   for(const [id,node] of [['ranking',table],['leaderboard',new Element('section')],['leaderboard-desc',new Element('p')]])nodes.set(id,node);
+  const resourceHeadings=['cost-title','timing-title','cost-frontier-title'].map(id=>{
+    const heading=new Element('h2');nodes.set(id,heading);return heading;
+  });
   const html=new Element('html');
   const document={documentElement:html,baseURI:'https://example.test/index.html?edition=1.3.0',
     getElementById:id=>nodes.get(id)||null,createElement:tag=>new Element(tag),querySelector:()=>null,
@@ -146,6 +149,8 @@ test('the existing index table is enhanced using the original lexical MG control
   assert.equal(body.cells.length,8,'main table retains only original overall columns');
   assert.ok(body.cells.every(c=>!Object.hasOwn(c.dataset,'independentCell')));
   assert.equal(new URL(link.href).searchParams.get('edition'),'1.2.0');
+  for(const heading of resourceHeadings)assert.match(heading.adjacent[0].textContent,/1\.2\.0/);
+  assert.match(resourceHeadings[2].adjacent[0].textContent,/成绩、成本和耗时/);
   assert.equal(wrap.hidden,false); // fixture starts visible; controller must not force it on
   wrap.hidden=true;context.MGResearchPreview.decorate();assert.equal(wrap.hidden,true);
   const independent=nodes.get('independent-research-leaderboards');
@@ -158,4 +163,10 @@ test('the existing index table is enhanced using the original lexical MG control
   assert.ok(!independent.innerHTML.includes('<td class="numeric">0</td>'));
   context.MGResearchPreview.decorate();
   assert.equal(table.tHead.rows.length,1,'rerender must not add project columns');
+  vm.runInContext("MG.state.lang = 'en'; MGResearchPreview.decorate();",context);
+  for(const heading of resourceHeadings){
+    assert.equal(heading.adjacent.length,1,'rerender keeps one visible resource scope per panel');
+    assert.match(heading.adjacent[0].textContent,/1\.2\.0/);
+  }
+  assert.match(resourceHeadings[2].adjacent[0].textContent,/Scores, costs and timings/);
 });

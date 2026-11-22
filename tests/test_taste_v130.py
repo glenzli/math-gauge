@@ -233,7 +233,8 @@ class ProtocolFixture(unittest.TestCase):
         review['axes']['capacity']['strict'] = None
         self.validate(review)
 
-    def test_capacity_gate_must_cite_actual_final_not_deleted_earlier_work(self):
+    def test_frozen_initial_contract_retains_its_original_R3_restriction(self):
+        # Current batch reviews use independent_research_review's bound supplement.
         review = self.review()
         review['gates']['capacity']['C0']['evidence'] = [self.citation('R1')]
         with self.assertRaises(ValueError): self.validate(review)
@@ -405,6 +406,11 @@ class SharedHomepageEditionTests(unittest.TestCase):
         view=json.loads(result['data/editions/1.3.0/index.json'])['data']
         self.assertEqual(view['research_preview']['weight_frame'],dict(written=30,lean=30,research=30,independent_open_research=10))
         rows={r['id']:r for r in view['research_preview']['rows']}
+        for row in rows.values():
+            delivery=row['delivery']
+            self.assertEqual(delivery['planned'],45)
+            self.assertGreaterEqual(delivery['unknown'],3)
+            self.assertLessEqual(delivery['normal']+delivery['unknown'],45)
         for model in view['models']:
             source=model['strict']['nonlogical_retry_3']['metrics']['earned']
             self.assertIsNone(source['exact'])

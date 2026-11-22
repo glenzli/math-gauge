@@ -15,6 +15,7 @@ PLAN_SCHEMA = "math-gauge.independent-research-batch-plan/v1"
 EXECUTION_SCHEMA = "math-gauge.independent-research-execution/v1"
 BATCH_SCHEMA = "math-gauge.independent-research-execution-summary/v1"
 NATIVE_ORIGIN = "codex-app-server"
+PARALLEL_DISPATCH_SCHEMA = "math-gauge.independent-research-parallel-dispatch/v1"
 PERMISSION_PROFILE = "independent-research-local"
 ROUNDS = flow.ROUNDS
 BUDGETS = {"native_seconds": None, "native_output_tokens": None,
@@ -300,98 +301,128 @@ def _collect_attachments(text, work):
     return files, errors
 
 
+def execute_one(
+    root, prepared_data, plan, registration, model, transport_factory, *,
+    register_thread, preflight_ref=None, fixture=False, parallel_dispatch=None,
+):
+    """Run one configuration through the same three-round collection boundary."""
+    _require(prepared_data["fixture_only"] is fixture, "Fixture and native plans must stay separate")
+    _require(fixture or preflight_ref is not None, "Native execution needs verified preflight")
+    _require(model in plan["cohort"], "Model must belong to the frozen cohort")
+    registration_data = json.loads((root / "control/registration.json").read_bytes())
+    origin = "fixture" if fixture else NATIVE_ORIGIN
+    model_id = model["id"]
+    control = root / "control" / model_id
+    control.mkdir(mode=0o700)
+    state, work = control / "state", root / "workspaces" / model_id
+    context = uuid.uuid4().hex
+    prompt = flow.reveal(registration, state, work, "R1", context)
+    rounds, thread, outcome = [], None, "not-started"
+    try:
+        with transport_factory(model, control, work) as transport:
+            thread = transport.start()
+            _require(isinstance(thread, str) and thread, "Expected a fresh native thread")
+            register_thread(thread)
+            previous = None
+            for index, rid in enumerate(ROUNDS):
+                if index:
+                    prompt = flow.reveal(registration, state, work, rid, context)
+                request = turn_request(100 + index, thread, model["model"], model["effort"],
+                                       prompt.read_bytes().decode("utf-8"),
+                                       _r1_materials(registration_data, work) if index == 0 else ())
+                request_path = control / f"{rid}.request.ndjson"
+                write_bytes(request_path, json_bytes(request))
+                capture = transport.turn(request, rid)
+                events_path = control / f"{rid}.native.ndjson"
+                write_bytes(events_path, b"".join(capture["lines"]))
+                result = parse_turn(request, capture["lines"], cutoff=capture["cutoff"])
+                final, delivery = result.pop("final"), result["delivery"]
+                answer, attachments, attachment_errors = None, [], []
+                if final is not None:
+                    attachments, attachment_errors = _collect_attachments(final.decode(), work)
+                    answer = work / f"answer-{rid}.md"
+                    write_bytes(answer, final)
+                boundary_kind = {"normal-final": "first-normal-final", "delivery-failed": "deadline"}.get(
+                    delivery, "native-terminal" if result["terminal"] else "unavailable")
+                times = capture["received_at"]
+                boundary = times[result["final_event_index"]] if final is not None else capture["boundary_at"]
+                obs = control / f"{rid}.operator.json"
+                write_json(obs, {"schema": "math-gauge.research-round-observation/v1", "round": rid,
+                    "context_id": context, "request_id": f"{thread}/{request['id']}",
+                    "kind": "fixture" if fixture else "operator-attestation", "delivery": delivery,
+                    "first_normal_final": True if final is not None else None,
+                    "boundary": {"kind": boundary_kind, "at": boundary},
+                    "native_terminal": result["terminal"], "raw": descriptor(work, answer) if answer else None,
+                    "delivered_files": attachments})
+                flow.seal_final(registration, state, work, rid, context, answer, obs)
+                seal = descriptor(root, state / f"{rid}.seal.json")
+                rounds.append({**result, "round": rid, "request": descriptor(root, request_path),
+                    "wire_events": descriptor(root, events_path), "seal": seal,
+                    "observation": descriptor(root, state / f"{rid}.observation.json"),
+                    "attachment_diagnostics": attachment_errors,
+                    "previous_seal_sha256": previous, "sent_at": capture["sent_at"],
+                    "received_at": times, "boundary_at": capture["boundary_at"],
+                    "sealed_at": utc(), "cutoff": capture["cutoff"], "pid_evidence": capture["pids"]})
+                previous = seal["sha256"]
+                outcome = "normal-finals" if index == 2 and final is not None else delivery
+                if delivery != "normal-final":
+                    break
+    except (OSError, ValueError, RuntimeError, KeyError, TypeError, TimeoutError) as error:
+        outcome = "unresolved" if thread is not None else "not-started"
+        write_json(control / "controller-error.json", {"class": type(error).__name__, "error": str(error)})
+    manifest = control / "execution.json"
+    artifacts = {name: descriptor(root, control / name) for name in (
+        "app-server.stdin.ndjson", "app-server.stdout.ndjson", "app-server.stderr.txt", "process-exit.json")
+        if (control / name).is_file()}
+    summary = {"schema": EXECUTION_SCHEMA, "origin": origin,
+        "model_id": model_id, "requested_model": model["model"], "requested_effort": model["effort"],
+        "observed_backend_sku": None, "observed_backend_reasoning_effort": None,
+        "context_id": context, "native_context_id": thread, "state": state.relative_to(root).as_posix(),
+        "registration_sha256": plan["registration"]["sha256"], "plan_sha256": prepared_data["plan_sha256"],
+        "preflight": preflight_ref, "budgets": BUDGETS, "rounds": rounds, "outcome": outcome,
+        "artifacts": artifacts,
+        "app_server": descriptor(root, control / "app-server.json") if (control / "app-server.json").exists() else None,
+        "provider_request_count": None, "finished_at": utc()}
+    if parallel_dispatch is not None:
+        summary["parallel_dispatch"] = parallel_dispatch
+    write_json(manifest, summary)
+    return {"model_id": model_id, "outcome": outcome, "execution": descriptor(root, manifest)}
+
+
+def write_batch_summary(root, prepared_data, plan, rows, *, fixture=False):
+    """Merge collected evidence once, in the source plan's order."""
+    by_model = {row["model_id"]: row for row in rows}
+    expected = [model["id"] for model in plan["cohort"]]
+    _require(len(by_model) == len(rows) and set(by_model) <= set(expected),
+             "Batch rows must belong to unique frozen configurations")
+    summary = {
+        "schema": BATCH_SCHEMA, "origin": "fixture" if fixture else NATIVE_ORIGIN,
+        "plan_sha256": prepared_data["plan_sha256"],
+        "registration_sha256": plan["registration"]["sha256"],
+        "cohort": [by_model.get(model_id, {"model_id": model_id, "outcome": "not-started", "execution": None})
+                   for model_id in expected],
+        "finished_at": utc(),
+    }
+    write_json(root / "batch-summary.json", summary)
+    return summary
+
+
 def execute_queue(run_root, transport_factory, *, preflight_ref=None, fixture=False):
     """Process each model serially. The transport never sees evaluator paths or feedback."""
     root, prepared_data, plan, registration = prepared(run_root)
-    _require(prepared_data["fixture_only"] is fixture, "Fixture and native plans must stay separate")
-    _require(fixture or preflight_ref is not None, "Native execution needs verified preflight")
-    registration_data = json.loads((root / "control/registration.json").read_bytes())
-    origin = "fixture" if fixture else NATIVE_ORIGIN
     rows, seen_threads = [], set()
+
+    def register_thread(thread):
+        _require(thread not in seen_threads, "Expected a fresh, unique native thread")
+        seen_threads.add(thread)
+
     for model in plan["cohort"]:
-        model_id = model["id"]
-        control = root / "control" / model_id
-        control.mkdir(mode=0o700)
-        state, work = control / "state", root / "workspaces" / model_id
-        context = uuid.uuid4().hex
-        prompt = flow.reveal(registration, state, work, "R1", context)
-        rounds, thread, outcome = [], None, "not-started"
-        try:
-            with transport_factory(model, control, work) as transport:
-                thread = transport.start()
-                _require(isinstance(thread, str) and thread and thread not in seen_threads,
-                         "Expected a fresh, unique native thread")
-                seen_threads.add(thread)
-                previous = None
-                for index, rid in enumerate(ROUNDS):
-                    if index:
-                        prompt = flow.reveal(registration, state, work, rid, context)
-                    request = turn_request(100 + index, thread, model["model"], model["effort"],
-                                           prompt.read_bytes().decode("utf-8"),
-                                           _r1_materials(registration_data, work) if index == 0 else ())
-                    request_path = control / f"{rid}.request.ndjson"
-                    write_bytes(request_path, json_bytes(request))
-                    capture = transport.turn(request, rid)
-                    events_path = control / f"{rid}.native.ndjson"
-                    write_bytes(events_path, b"".join(capture["lines"]))
-                    result = parse_turn(request, capture["lines"], cutoff=capture["cutoff"])
-                    final, delivery = result.pop("final"), result["delivery"]
-                    answer, attachments, attachment_errors = None, [], []
-                    if final is not None:
-                        attachments, attachment_errors = _collect_attachments(final.decode(), work)
-                        answer = work / f"answer-{rid}.md"
-                        write_bytes(answer, final)
-                    boundary_kind = {"normal-final": "first-normal-final", "delivery-failed": "deadline"}.get(
-                        delivery, "native-terminal" if result["terminal"] else "unavailable")
-                    times = capture["received_at"]
-                    boundary = times[result["final_event_index"]] if final is not None else capture["boundary_at"]
-                    obs = control / f"{rid}.operator.json"
-                    write_json(obs, {"schema": "math-gauge.research-round-observation/v1", "round": rid,
-                        "context_id": context, "request_id": f"{thread}/{request['id']}",
-                        "kind": "fixture" if fixture else "operator-attestation", "delivery": delivery,
-                        "first_normal_final": True if final is not None else None,
-                        "boundary": {"kind": boundary_kind, "at": boundary},
-                        "native_terminal": result["terminal"], "raw": descriptor(work, answer) if answer else None,
-                        "delivered_files": attachments})
-                    flow.seal_final(registration, state, work, rid, context, answer, obs)
-                    seal = descriptor(root, state / f"{rid}.seal.json")
-                    rounds.append({**result, "round": rid, "request": descriptor(root, request_path),
-                        "wire_events": descriptor(root, events_path), "seal": seal,
-                        "observation": descriptor(root, state / f"{rid}.observation.json"),
-                        "attachment_diagnostics": attachment_errors,
-                        "previous_seal_sha256": previous, "sent_at": capture["sent_at"],
-                        "received_at": times, "boundary_at": capture["boundary_at"],
-                        "sealed_at": utc(), "cutoff": capture["cutoff"], "pid_evidence": capture["pids"]})
-                    previous = seal["sha256"]
-                    outcome = "normal-finals" if index == 2 and final is not None else delivery
-                    if delivery != "normal-final":
-                        break
-        except (OSError, ValueError, RuntimeError, KeyError, TypeError, TimeoutError) as error:
-            outcome = "unresolved" if thread is not None else "not-started"
-            write_json(control / "controller-error.json", {"class": type(error).__name__, "error": str(error)})
-        manifest = control / "execution.json"
-        artifacts = {name: descriptor(root, control / name) for name in (
-            "app-server.stdin.ndjson", "app-server.stdout.ndjson", "app-server.stderr.txt", "process-exit.json")
-            if (control / name).is_file()}
-        write_json(manifest, {"schema": EXECUTION_SCHEMA, "origin": origin,
-            "model_id": model_id, "requested_model": model["model"], "requested_effort": model["effort"],
-            "observed_backend_sku": None, "observed_backend_reasoning_effort": None,
-            "context_id": context, "native_context_id": thread, "state": state.relative_to(root).as_posix(),
-            "registration_sha256": plan["registration"]["sha256"], "plan_sha256": prepared_data["plan_sha256"],
-            "preflight": preflight_ref, "budgets": BUDGETS, "rounds": rounds, "outcome": outcome,
-            "artifacts": artifacts,
-            "app_server": descriptor(root, control / "app-server.json") if (control / "app-server.json").exists() else None,
-            "provider_request_count": None, "finished_at": utc()})
-        rows.append({"model_id": model_id, "outcome": outcome, "execution": descriptor(root, manifest)})
-        if outcome in {"unresolved", "not-started"}:
+        row = execute_one(root, prepared_data, plan, registration, model, transport_factory,
+                          register_thread=register_thread, preflight_ref=preflight_ref, fixture=fixture)
+        rows.append(row)
+        if row["outcome"] in {"unresolved", "not-started"}:
             break
-    rows.extend({"model_id": model["id"], "outcome": "not-started", "execution": None}
-                for model in plan["cohort"][len(rows):])
-    result = {"schema": BATCH_SCHEMA, "origin": origin, "plan_sha256": prepared_data["plan_sha256"],
-              "registration_sha256": plan["registration"]["sha256"], "cohort": rows,
-              "finished_at": utc()}
-    write_json(root / "batch-summary.json", result)
-    return result
+    return write_batch_summary(root, prepared_data, plan, rows, fixture=fixture)
 
 
 def validate_execution(run_root: Path, execution_ref: dict, plan: dict, *, allow_fixture=False) -> dict:
@@ -416,6 +447,15 @@ def validate_execution(run_root: Path, execution_ref: dict, plan: dict, *, allow
         preflight = json.loads(_read(root, data["preflight"], "control/preflight.json"))
         _require(preflight["status"] == "passed" and preflight["plan_sha256"] == data["plan_sha256"],
                  "Execution lacks a passed native preflight")
+        parallel_ref = data.get("parallel_dispatch")
+        if parallel_ref is not None:
+            dispatch = json.loads(_read(root, parallel_ref, "control/parallel-dispatch-freeze.json"))
+            _require(dispatch["schema"] == PARALLEL_DISPATCH_SCHEMA
+                     and dispatch["source_plan_sha256"] == data["plan_sha256"]
+                     and dispatch["preflight"] == data["preflight"]
+                     and model_id in dispatch["remaining_priority"]
+                     and _stamp(dispatch["frozen_at"]) <= _stamp(data["rounds"][0]["sent_at"]),
+                     "Parallel execution lacks its separate, earlier dispatch freeze")
         server = json.loads(_read(root, data["app_server"], f"{control}/app-server.json"))
         _require(server["thread_id"] == thread and server["configured_model"] == row["model"]
                  and server["configured_effort"] == row["effort"] and server["parent_pid"] > 0,
