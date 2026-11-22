@@ -48,7 +48,7 @@ Theorem-extension tasks also assess the research increment actually delivered: R
 
 ## Current results
 
-The leaderboard opens **1.2.0**, sorted by SMC, with controls for SMC / RMC / MC, category scores and model details. It now includes **16 settled configurations and 189 neutral revisions**, of which 102 are full in all three modes. Each configuration revises its own loss set, so these rates are not a same-task ranking. The [full results](docs/results.md) retain score tables and batch notes; [edition switching](docs/edition-views.md) explains access to historical results.
+The leaderboard opens **1.2.0**, sorted by SMC, with controls for SMC / RMC / MC, category scores and model details. It now includes **17 settled configurations and 206 neutral revisions**, of which 102 are full in all three modes. Each configuration revises its own loss set, so these rates are not a same-task ranking. The [full results](docs/results.md) retain score tables and batch notes; [edition switching](docs/edition-views.md) explains access to historical results.
 
 [Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=en) completed 39 initial tasks, three Lean self-checks and 18 neutral revisions. Its 1.2.0 scores are **SMC 61.17 / RMC 86.54 / MC 93.08**; two of its 18 revisions are full in all three modes. See the [run results](docs/results.md#gemini-4-neon-xhigh--2026-11-22) for categories, original answers, execution conditions and reference resources.
 

@@ -4,7 +4,7 @@
 
 每道入选题仍按原权重计算：**80%首答＋20%续答**，MC、RMC、SMC使用同一份续答分别折算。首答80、续答100的题得到84；首答0、续答100得到20。续答退步也会反映在这20%中。首答和续答的严格通过判断分别保存，因此最终分数既承认改善，也保留首次作答的差距。完整规则见[评分与执行协议](../protocol/neutral-revision.md)。
 
-当前本地已采用16个配置的189份续答，102份自身三项全满。原有15个配置的171份原答与判断保留；Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。各批次绑定实际题文、父答、完整交付和评审归属，不回写原题或旧判断。全部已完成AI数学审核，人工数学审核仍待完成。
+当前本地已采用17个配置的206份续答，102份自身三项全满。原有15个配置的171份原答与判断保留；Gemini 4 Neon新增18份正常续答，其中2份自身三项全满；Gemini 4 Hydrogen新增17份正常续答，0份自身三项全满。各批次绑定实际题文、父答、完整交付和评审归属，不回写原题或旧判断。全部已完成AI数学审核，人工数学审核仍待完成。
 
 | 模型 | 续答题数 | 三项满分 | 满分率 |
 |---|---:|---:|---:|
@@ -25,13 +25,13 @@
 | Terra 6.1 (max) | 9 | 8 | 88.9% |
 | Terra 6.1 (xhigh) | 9 | 5 | 55.6% |
 
-三项满分指续答自身的未舍入MC、RMC和SMC均满；分母包含全部入选题，交付失败也计入，首答三项全满的免测题不计入。各配置的失分集合不同，这些比例不是同题排名。189份中102份三项满分；其余保留已核实的数学贡献、具体错误或任务对应缺口，不以改进幅度代替完整性判断。
+三项满分指续答自身的未舍入MC、RMC和SMC均满；分母包含全部入选题，交付失败也计入，首答三项全满的免测题不计入。各配置的失分集合不同，这些比例不是同题排名。206份中102份三项满分；其余保留已核实的数学贡献、具体错误或任务对应缺口，不以改进幅度代替完整性判断。
 
 完整100分中的新版成绩由共享评分器生成。第二批6个GPT配置的46道续答对应47次实际请求。Astra 6 Max一次请求遇到容量错误后到达截止，经用户观察后授权，以相同输入与配置恢复，得到首份正常交卷。两次请求及原截止都留档。用户随后确认故障归为系统重试，只有恢复计入有效资源。[结果页](results.md)
 
 原外部分发包含11个配置的200题；已回交5个配置的94题，包括Claude三个配置、Kimi与DeepSeek。92份正常交卷，另有2题截止未交卷并按原成果边界结算；当时尚余6个配置的106题未回交，GLM跳过；这份历史分发记录保留。当前1.2.0已按用户选择下架GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon，不再列入待测或默认导出，其他入选配置继续等待回交。包内保留原题、配置自己的原答及交付文件、统一候选提示和回交工具；候选材料与评审材料分开。尚未回交项保持未知，不提前赋予提升。[续答包指南](neutral-revision-harness.md)
 
-底层资源记录保留基础测试、采纳续答与合计。189次有效续答全额进入资源统计，含3次各计一次的旧中性试答；纯系统失败的物理请求另作重试留档。20%权重只用于数学计分。已确认的容量和网络系统故障单列重试。首页成本参考显示合计成本，耗时参考采用12道共有计时的公开题并单列整章形式化。缺失时间或用量保持未知，累计候选执行时间和并行批次跨度分别保留。原内容两率与额外成果观察属于首答诊断，数学画像可独立切换首答与含续答阶段。[计时说明](answer-timings.md)
+底层资源记录保留基础测试、采纳续答与合计。206次有效续答全额进入资源统计，含3次各计一次的旧中性试答；纯系统失败的物理请求另作重试留档。20%权重只用于数学计分。已确认的容量和网络系统故障单列重试。首页成本参考显示合计成本，耗时参考采用12道共有计时的公开题并单列整章形式化。缺失时间或用量保持未知，累计候选执行时间和并行批次跨度分别保留。原内容两率与额外成果观察属于首答诊断，数学画像可独立切换首答与含续答阶段。[计时说明](answer-timings.md)
 
 本次68份外部答卷与导出父答和实际提示逐字对应，原生最终事件与保存的正文一致。两次本地封卷恢复复用同一原生成功答卷，没有新增候选调用或重答。Kimi原生金额标记为未知口径，未作为实际计费；按已留存Kimi Standard费率对完整用量重算API参考成本，原始金额和核算依据另存。[成本口径](cost-reference.md)
 
@@ -53,6 +53,6 @@ Edition1.2.0 adds one neutral revision for each non-Lean task with a confirmed l
 
 Each selected task uses **80% of its first score plus20% of its revision score** in all three modes, retaining the original family weights and fixed100-point frame. Regressions count. Strict judgments for both deliveries remain binary and separate; their weighted contribution can be0,0.2,0.8 or1. A revision cannot erase the first-answer deficit.
 
-The local edition includes 189 revisions across 16 configurations, with 102 full in all three unrounded modes. The previous15 configurations retain their171 original revisions and judgments; Gemini4 Neon adds18 normal finals, two full in all modes. Inputs, complete parent answers, actual deliveries and AI reviewer attribution remain source-bound. Human mathematical review remains pending.
+The local edition includes 206 revisions across 17 configurations, with 102 full in all three unrounded modes. The previous15 configurations retain their171 original revisions and judgments; Gemini4 Neon adds18 normal finals, two full in all modes; Gemini 4 Hydrogen adds17 normal finals, none full in all modes. Inputs, complete parent answers, actual deliveries and AI reviewer attribution remain source-bound. Human mathematical review remains pending.
 
-Of the original200 tasks packaged across11 external configurations,94 have returned from five configurations:three Claude configurations, Kimi and DeepSeek. They comprise92 normal finals and two settled cutoff deliveries. At that time,106 tasks across six configurations remained unreturned and GLM was skipped; that historical distribution record is retained. By user selection, GLM5.3, Gemini3.8 Flash and Gemini4 Argon are now withdrawn from the1.2.0 cohort, pending list, profiles and default exports, independently of score thresholds. Their1.1.0 and earlier displays, A1 answers, reviews and frozen packages remain unchanged. All189 effective adopted continuations enter resource accounting in full, with each reused pilot counted once and pure system failures retained separately in retry history. Confirmed system failures remain in retry history. The homepage compares16 configurations on the same12 shared public non-Lean tasks, with the chapter run separate. Kimi uses the retained Standard reference rather than its native unknown-basis amount; DeepSeek uses the unchanged archived peak tariff and inclusive-cache receipt normalization. Original content rates and surplus observations remain first-answer diagnostics. The published task suite remains1.0.0; this adoption is local.
+Of the original200 tasks packaged across11 external configurations,94 have returned from five configurations:three Claude configurations, Kimi and DeepSeek. They comprise92 normal finals and two settled cutoff deliveries. At that time,106 tasks across six configurations remained unreturned and GLM was skipped; that historical distribution record is retained. By user selection, GLM5.3, Gemini3.8 Flash and Gemini4 Argon are now withdrawn from the1.2.0 cohort, pending list, profiles and default exports, independently of score thresholds. Their1.1.0 and earlier displays, A1 answers, reviews and frozen packages remain unchanged. All206 effective adopted continuations enter resource accounting in full, with each reused pilot counted once and pure system failures retained separately in retry history. Confirmed system failures remain in retry history. The homepage compares17 configurations on the same12 shared public non-Lean tasks, with the chapter run separate. Kimi uses the retained Standard reference rather than its native unknown-basis amount; DeepSeek uses the unchanged archived peak tariff and inclusive-cache receipt normalization. Original content rates and surplus observations remain first-answer diagnostics. The published task suite remains1.0.0; this adoption is local.

@@ -1,0 +1,803 @@
+{
+  "schema": "math-gauge.native-neutral-public-input-projection/v1",
+  "context_mode": "source-bound-replay",
+  "source_session_id": null,
+  "messages": [
+    {
+      "role": "user",
+      "content": "# 通用评分标准\n\nMC（数学能力）只计算已核实的有效数学贡献。RMC（可靠数学能力）在有效成果上扣除错误断言、误判、范围变更或没有根据的完成/验证承诺；诚实说明未完成不是额外错误。SMC（严格数学完成）要求当前测项的全部实质要求正确、完整交付，不能用篇幅、多数正确或自称完成代替。\n\n保留原题的对象、定义、条件、量词、定义域和结论强度。不同但正确的证明、表示或建模路线同等接受；如改换表示，应建立回到原任务所要求对象及范围的必要对应。标准数学定理可以援引，须说明其实际条件与适用性。局部结论不能冒充原要求的一般结论。\n\n书面论证按完整原目标验收。答卷审阅须准确判断被审原文的正确与不正确部分，给出可核查依据，说明错误影响范围，并检查支撑数学对象/依赖是否合法；不能因一个中间缺口就否定其他独立成立的结果。本任务是审阅时，不要求重做被审材料里的整套习题。\n\n想法或草稿的手稿化任务，满分依据是忠实、严谨完成原题意图：定义和类型自洽，所用假设明确，核心结论及必要依赖证明完整，边界和全文一致。题面允许探索选择时可明说选择与边界，不必复刻某个指定理论；但不能把原本要定义/证明的对象改成一个更容易的对象而未建立对应。完成原题所需数学可以满分，不强迫额外创造题外理论。\n\n以下B/R尺度适用于命题拓展型的研究测项，不是把其他类别都改成必须做研究。\n\n\nB 与 R 独立判断。B0 表示原题的核心结论/证明错误；B1 表示有实质进展但仍有关键缺口或未完成；B2 表示原题在实际声称范围内完整正确。完整证明原题而没有研究增量是 B2/R0，不是原题数学失败。\n\n\n- **R0：原结论层面。** 没有实际交付经过证明且可独立表述的研究增量。B2/R0 表示完整证明可见题面，绝不是证明错误。\n- **R1：有用的局部推进。** 已证的局部细化、定量界、严格性/锐性、边界/必要性例或特定范围的新信息。它确实增加了可用信息，而不只是给原结论改名。几个同层小结果、同一依赖链的几个推论不因数量晋级。\n- **R2：实质拓展。** 在自然且有实质覆盖的对象/参数族上，完整解决原题未要求的一项新问题：例如真正释放条件的统一推广、一般插值/逆问题、非平凡分布/动力学/正则性定理、全阶控制或完整边界判定。证明短、沿用原方法或在证明内部出现，都不减档。只把一个边界特例参数化或写出尚未闭合的纲领不足以升级。\n- **R3：深入且完整的研究增量。** 已完成一项显著推进对原问题或自然延伸的理解与处理能力的成果。它须有实质自然范围、充分的数学分量与解释力，且关键定义、条件、桥梁和论证闭合；能够系统回答一类有意义的新问题。表示、分类、重建、精确演化/分布、极限机制等是充分锚点，不是必须命中的清单。一项定理即可，不要求多个定理包、最大适用域、参考中的最强结论、双向/可逆形式或文献原创性。一个狭小结论不能仅因自称“完整理论”升到 R3。\n\n按最高达到档给 R=0/1/2/3；B 独立。比较实际输入范围、决定的新信息、机制和闭合程度，不以篇幅、术语、定理数、证明难度猜测、模型身份或是否另列“推广”评分。最弱条件是一条重要路线，不强求证明全数学世界中的绝对最小假设；实际声称的范围必须成立。等价结构、强证明内部的成果同等接纳，结果搬入/搬出证明不得改分。允许普通代数和定义性读出省略，不允许评审补出关键引理、构造、推广量词或反向桥梁。\n\n以下每档列开放的充分锚点和常见边界，既非唯一解，也非其他路线的机械封顶。未列路线须写明与通用档位在范围、信息、机制、完备性上的可比理由，再对所有相同内容统一采用。\n\n\nMC 只计经核实的有效数学贡献；RMC 在此基础上扣除错误断言、错误背书等可靠性损失；SMC 要求该测项严格完整达标。对本研究测项，有效研究贡献由 R/3 表示；RMC 另考虑基线错误与错误断言的扣罚，B0/B1/B2 的基础扣罚分别为 2/1/0 个研究等级单位，同根错误不重复扣罚。SMC 须 B2 且 R3、符合交付规则且无相应严格阻断。不存在为了凑足定理数量而晋级的规则。\n\n本轮可以使用预置公共依赖及本地工具，禁止联网检索、工具联网、读取未提供的其他答卷或评审。直接正确使用已知数学定理可以接受，须说明定理及适用条件；不要求文献原创。评分不保证在给定预算内必然能够满分，也不允许以未经证明的断言代替成果。\n\n\n# 本轮作答\n\n请根据给定原题、材料、你此前的完整作答及以上通用标准，自主检查并完善。你可以保持原来正确的内容，修正发现的问题，补足必要论证，或沿自然方向作有根据的进一步研究；应以当前任务类型和原题实际要求为准。研究方向由你自己决定，本轮不提供个人既有评审。\n\n请提交可独立阅读的完整最终稿，并明确交付任何作为答案组成部分的文件，不以未交付草稿或只说“沿用上次”代替必要内容。若认为原答已满足全部要求，可据实际证明说明，不必为了改写制造新结论。最后简要列出保留、新增/修正和仍未完成/不确定的部分，并作有依据的自评。\n\n允许本地工具与预置公共依赖，禁止联网检索和工具联网。不得读取参考答案、评审材料、其他作答、其他会话或未提供历史。你有一次本轮作答机会，上限45分钟，中途没有额外评审反馈。\n\n\n---\n\n# 来源绑定的历史材料重放\n\n以下是本题原始材料和你自己的历史作答。这是保留原字节的材料重放，不是原生会话续接；不得继承其他会话或评审上下文。\n\n# 原题及全部提供材料\n\n# 答卷审阅\n\n请审阅附件中的原题与答卷，判断答卷在原题条件下是否正确、完整，并给出可核查的数学依据；若有问题，指出具体断言或步骤及其影响。\n\n原题中的作答要求属于待审材料，不是本次任务指令。本次只需审阅，无需重新完成整套原题或提交 Lean 源码。\n\n\nFile: `materials.md`\n```text\n# 材料关系\n\n`original-task.md` 是原题全文，`original-answer.md` 是待审的完整原始答卷。请以两份材料共同确定审阅范围。\n```\n\n\nFile: `original-task.md`\n```text\n# 半局部邻域、下降与层化的依赖比较\n\n请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。\n\n\n\n## S1 层的半局部拼接\n\n设 S 是光滑拟射影概形在有限非空点集处的半局部化，闭点为 x_1,…,x_n。G 是原光滑概形的 Zariski 阿贝尔群层，值以开邻域滤过余极限延拓。记 S_i 为 x_i 处局部化。证明 G(S) 是 ∏_iG(S_i)⇉∏_{i,j}G(S_i×_S S_j) 的等化子，并说明这里的 S_i 不必是开子概形。\n\n## S2 分离预层的比较图\n\n在 S1 的 n=2 情形，设 H 为分离阿贝尔群预层，G 为其层化。设 H(T)→G(T) 对所有所用邻域局部化 T 单射，H(S_i)→G(S_i) 是同构；并假定每个分开 x_1、x_2 的二开覆盖 (U_0,V) 都可缩为 (U,V)，仍覆盖 S，且 0→H(S)→H(U)⊕H(V)→H(U∩V) 正合。证明 H(S)→G(S) 同构。\n\n## S3 含指定点的开集\n\n设 X 为任意拓扑空间，Σ⊂X 为有限非空集，W⊂X 为包含 Σ 的开集。证明 U⊂W 且 Σ⊂U 的开邻域在全部 Σ 开邻域中余终；并对任意反变阿贝尔群预层给出两邻域余极限的典范同构。\n\n## S4 稠密开与邻域系统\n\n现设 k 为域、X 为光滑积分仿射 k 概形、Σ 为有限非空点集，W⊂X 仅要求稠密开。判定包含 Σ 且包含于 W 的开集是否总在全部 Σ 开邻域中余终。\n\n## S5 整体对象与全部恢复目标\n\n判定下面所列目标在给定条件下是否成立。若成立，完成全部构造、分类与性质的证明；若不成立，给出满足全部给定条件的反例。\n\n设 $k$ 为域，$\\mathrm{Sm}/k$ 为光滑、分离、有限型 $k$-概形的范畴。令 $\\mathrm{Cor}_k$ 为有限对应的加性范畴：对象与 $\\mathrm{Sm}/k$ 相同，$\\mathrm{Cor}_k(Y,Z)$ 是由 $Y\\times_k Z$ 中那些在 $Y$ 的某个连通分支上有限且满射的整的闭子概形（即不可约且约化的闭子概形）生成的自由阿贝尔群，复合采用有限对应的通常交积与推前。概形态射通过其图给出有限对应。\n\n给定加性反变函子\n\n$$F:\\mathrm{Cor}_k^{\\mathrm{op}}\\longrightarrow\\mathrm{Ab},$$\n\n并假设对每个 $Y\\in\\mathrm{Sm}/k$，投影诱导的同态\n\n$$F(Y)\\longrightarrow F(Y\\times_k\\mathbb A^1_k)$$\n\n是同构。记 $F_{\\mathrm{Zar}}$ 为 $F$ 的底层普通预层关于 Zariski 开覆盖的层化，$\\eta:F\\to F_{\\mathrm{Zar}}$ 为典范态射。\n\n设 $X$ 是光滑拟射影 $k$-概形，$\\Sigma\\subset |X|$ 是有限非空点集。在包含 $\\Sigma$ 的一个仿射开集 $\\operatorname{Spec}A$ 中，以 $\\mathfrak p_x$ 表示点 $x$ 对应的素理想，置\n\n$$M=A\\setminus\\bigcup_{x\\in\\Sigma}\\mathfrak p_x,\n\\qquad S=\\operatorname{Spec}(M^{-1}A).$$\n\n对 $H=F$ 或 $F_{\\mathrm{Zar}}$，约定\n\n$$H(S)=\\varinjlim_{\\Sigma\\subset U\\subset X\\,\\text{开}}H(U),$$\n\n其中转移映射为向更小开邻域的限制。\n\n研究典范同态 $\\eta_S:F(S)\\to F_{\\mathrm{Zar}}(S)$，建立它为同构的结论，并给出完整论证。\n\n## S6 极限正合与阶段正合\n\n设一列阿贝尔群二项复形及链映射组成滤过系统。判定其余极限复形正合是否蕴含所有充分后阶段正合。另证明：若每个阶段的每个同调类都在某个后阶段变为零，则余极限复形正合。\n```\n\n\nFile: `original-answer.md`\n```text\n# 半局部邻域、下降与层化的依赖比较\n\n---\n\n## S1 层的半局部拼接\n\n### 1. 命题陈述与符号约定\n设 $X$ 为光滑拟射影 $k$-概形，$\\Sigma = \\{x_1, \\dots, x_n\\} \\subset |X|$ 是有限非空点集。由于 $X$ 拟射影，$\\Sigma$ 包含于某个仿射开子概形 $\\operatorname{Spec} A \\subset X$。记点 $x_i$ 对应的素理想为 $\\mathfrak{p}_i = \\mathfrak{p}_{x_i}$，乘法闭子集 $M = A \\setminus \\bigcup_{i=1}^n \\mathfrak{p}_i$。半局部概形为\n$$S = \\operatorname{Spec}(M^{-1}A) = \\operatorname{Spec}\\mathcal{O}_{X, \\Sigma}.$$\n其闭点恰为 $x_1, \\dots, x_n$。局部化记为 $S_i = \\operatorname{Spec}\\mathcal{O}_{X, x_i} = \\operatorname{Spec}(A_{\\mathfrak{p}_i})$。\n\n对原光滑概形 $X$ 上的 Zariski 阿贝尔群层 $G$，按滤过余极限延拓截面：\n$$G(S) = \\varinjlim_{\\Sigma \\subset U \\subset X\\,\\text{开}} G(U), \\qquad G(S_i) = \\varinjlim_{x_i \\in U_i \\subset X\\,\\text{开}} G(U_i),$$\n$$G(S_i \\times_S S_j) = \\varinjlim_{x_i \\in U_i,\\, x_j \\in U_j} G(U_i \\cap U_j).$$\n\n### 2. 证明：$G(S)$ 是等化子\n记指标集族：\n$$\\mathcal{I} = \\prod_{i=1}^n \\mathcal{I}_{x_i} = \\left\\{(U_1, \\dots, U_n) \\;\\middle|\\; U_i \\subset X \\text{ 开且 } x_i \\in U_i\\right\\},$$\n偏序定义为反向包含（即 $(U_1', \\dots, U_n') \\ge (U_1, \\dots, U_n) \\iff \\forall i,\\, U_i' \\subset U_i$）。这是一个有向集（filtered category）。\n\n对任一元组 $\\mathbf{U} = (U_1, \\dots, U_n) \\in \\mathcal{I}$，令 $U = \\bigcup_{i=1}^n U_i$。显然 $\\Sigma \\subset U$，且 $\\{U_i\\}_{i=1}^n$ 构成开子集 $U$ 的一个 Zariski 开覆盖。由于 $G$ 是 Zariski 拓扑下的阿贝尔群层，满足层公理，由此得到等化子正合列：\n$$0 \\longrightarrow G(U) \\longrightarrow \\prod_{i=1}^n G(U_i) \\xrightarrow[\\operatorname{pr}_2^*]{\\operatorname{pr}_1^*} \\prod_{i,j=1}^n G(U_i \\cap U_j),$$\n即 $G(U) \\cong \\operatorname{eq}\\left(\\prod_{i=1}^n G(U_i) \\rightrightarrows \\prod_{i,j=1}^n G(U_i \\cap U_j)\\right)$。\n\n现对有向集 $\\mathcal{I}$ 取滤过余极限：\n1. **左侧项的余极限**：映射 $\\mathbf{U} = (U_1, \\dots, U_n) \\mapsto \\bigcup_{i=1}^n U_i$ 在 $\\Sigma$ 的全体开邻域所成有向集中是**余终的（cofinal）**：对任一包含 $\\Sigma$ 的开集 $W$，只需取 $U_i = W$（对所有 $i=1,\\dots,n$），即有 $\\bigcup_{i=1}^n U_i = W \\subset W$。因此，\n   $$\\varinjlim_{\\mathbf{U} \\in \\mathcal{I}} G\\left(\\bigcup_{i=1}^n U_i\\right) \\cong \\varinjlim_{\\Sigma \\subset U} G(U) = G(S).$$\n2. **中间项的余极限**：有限积与滤过余极限可交换，且在分量 $i$ 上只需变动 $U_i$（其余分量取常开集即可），故\n   $$\\varinjlim_{\\mathbf{U} \\in \\mathcal{I}} \\prod_{i=1}^n G(U_i) \\cong \\prod_{i=1}^n \\varinjlim_{x_i \\in U_i} G(U_i) = \\prod_{i=1}^n G(S_i).$$\n3. **右侧项的余极限**：概形范畴中的纤维积在仿射极限下对应张量积，\n   $$S_i \\times_S S_j = \\operatorname{Spec}(\\mathcal{O}_{X, x_i} \\otimes_{\\mathcal{O}_{X, \\Sigma}} \\mathcal{O}_{X, x_j}) = \\varprojlim_{x_i \\in U_i, \\, x_j \\in U_j} (U_i \\cap U_j).$$\n   类似地，有限积与滤过余极限交换，得\n   $$\\varinjlim_{\\mathbf{U} \\in \\mathcal{I}} \\prod_{i,j=1}^n G(U_i \\cap U_j) \\cong \\prod_{i,j=1}^n \\varinjlim_{x_i \\in U_i, \\, x_j \\in U_j} G(U_i \\cap U_j) = \\prod_{i,j=1}^n G(S_i \\times_S S_j).$$\n4. **正合性保持**：阿贝尔群范畴 $\\mathrm{Ab}$ 中的滤过余极限是正合函子，与有限极限（特别是等化子和有限积）严格交换。\n\n对上述层等化子正合列取 $\\varinjlim_{\\mathbf{U} \\in \\mathcal{I}}$，立即得到正合列：\n$$0 \\longrightarrow G(S) \\longrightarrow \\prod_{i=1}^n G(S_i) \\xrightarrow[\\operatorname{pr}_2^*]{\\operatorname{pr}_1^*} \\prod_{i,j=1}^n G(S_i \\times_S S_j).$$\n即 $G(S)$ 是该对箭头的等化子。\n\n### 3. 说明：$S_i$ 不必是 $S$ 的开子概形\n态射 $S_i = \\operatorname{Spec}\\mathcal{O}_{X, x_i} \\to S = \\operatorname{Spec}\\mathcal{O}_{X, \\Sigma}$ 诱导自环局部化 $M^{-1}A \\to A_{\\mathfrak{p}_i}$。\n- **拓扑层面**：$S_i$ 在 $S$ 中的拓扑像由所有包含于 $\\mathfrak{p}_i$ 的素理想构成（即 $x_i$ 的全部泛化点集合 $\\{\\mathfrak{q} \\in \\operatorname{Spec}(M^{-1}A) \\mid \\mathfrak{q} \\subset \\mathfrak{p}_i\\}$）。当相对维数 $\\dim\\mathcal{O}_{X, x_i} \\ge 1$ 且 $n \\ge 2$ 时，任一包含闭点 $x_i$ 的基础开集 $D(f) \\subset S$ 必满足 $f \\notin \\mathfrak{p}_i$。若 $\\dim \\mathcal{O}_{X, x_j} \\ge 2$（$j \\neq i$），$\\mathfrak{p}_j$ 中存在无穷多个高度 1 素理想，非零元 $f$ 仅包含于其中有限多个；因而必存在高度 1 素理想 $\\mathfrak{q} \\subset \\mathfrak{p}_j$ 使得 $f \\notin \\mathfrak{q}$ 且 $\\mathfrak{q} \\not\\subset \\mathfrak{p}_i$。此时 $\\mathfrak{q} \\in D(f)$ 但 $\\mathfrak{q} \\notin S_i$。因此 $x_i$ 不是 $S_i$ 的拓扑内点，$S_i$ 在 $S$ 中不是开子集。\n- **概形层面**：开浸入必须是局部有限型的。然而当 $\\dim \\mathcal{O}_{X, x_i} \\ge 1$ 时，局部环 $\\mathcal{O}_{X, x_i}$ 作为 $\\mathcal{O}_{X, \\Sigma}$-代数不是有限生成的，故态射 $S_i \\to S$ 虽然是平坦单射（flat monomorphism），但不是有限型的，因而不是开子概形。\n\n---\n\n## S2 分离预层的比较图\n\n### 1. 两点情形的差映射等化子展开\n在 $n = 2$ 情形，$\\Sigma = \\{x_1, x_2\\}$。由 S1，对层 $G$：\n- 目标项为 $\\prod_{i, j \\in \\{1, 2\\}} G(S_i \\times_S S_j) = G(S_1) \\oplus G(S_1 \\times_S S_2) \\oplus G(S_2 \\times_S S_1) \\oplus G(S_2)$。\n- 在对角线分量 $(1, 1)$ 与 $(2, 2)$ 上，两个投影态射 $\\operatorname{pr}_1, \\operatorname{pr}_2$ 均恒等，诱导的差为零。\n- 在非对角线分量 $(1, 2)$ 与 $(2, 1)$ 上，$S_1 \\times_S S_2 \\cong S_2 \\times_S S_1$。\n因此，等化子条件严格等价于核正合列：\n$$0 \\longrightarrow G(S) \\xrightarrow{\\alpha_G} G(S_1) \\oplus G(S_2) \\xrightarrow{\\delta_G} G(S_1 \\times_S S_2),$$\n其中 $\\delta_G(g_1, g_2) = g_1|_{S_1 \\times_S S_2} - g_2|_{S_1 \\times_S S_2}$。\n\n### 2. 预层 $H$ 的 Mayer-Vietoris 滤过极限\n设 $(U_0, V)$ 为分开 $x_1, x_2$ 的二开覆盖（$x_1 \\in U_0, x_2 \\in V$ 且覆盖 $S$）。依题设，$(U_0, V)$ 可缩为 $(U, V)$ 仍覆盖 $S$，使得\n$$0 \\longrightarrow H(S) \\longrightarrow H(U) \\oplus H(V) \\longrightarrow H(U \\cap V)$$\n正合。在所有使该序列正合的可缩覆盖 $(U, V)$ 构成的有向系统上取滤过余极限：\n- 随着 $U$ 收缩到 $x_1$，$V$ 收缩到 $x_2$，有 $\\varinjlim H(U) = H(S_1)$，$\\varinjlim H(V) = H(S_2)$；\n- 它们的交集收缩到公共泛化，即 $\\varinjlim H(U \\cap V) = H(S_1 \\times_S S_2)$；\n- 第一项为常值或全覆盖余极限 $H(S)$。\n由于滤过余极限保持正合序列，余极限复形正合：\n$$0 \\longrightarrow H(S) \\xrightarrow{\\alpha_H} H(S_1) \\oplus H(S_2) \\xrightarrow{\\delta_H} H(S_1 \\times_S S_2).$$\n\n### 3. 比较交换图与同构证明\n层化态射 $\\eta: H \\to G$ 诱导两正合列间的交换图：\n$$\\begin{array}{ccccccccc}\n0 & \\longrightarrow & H(S) & \\xrightarrow{\\alpha_H} & H(S_1) \\oplus H(S_2) & \\xrightarrow{\\delta_H} & H(S_1 \\times_S S_2) \\\\\n& & \\Big\\downarrow \\eta_S & & \\Big\\downarrow \\eta_{S_1} \\oplus \\eta_{S_2} & & \\Big\\downarrow \\eta_{S_1 \\times_S S_2} \\\\\n0 & \\longrightarrow & G(S) & \\xrightarrow{\\alpha_G} & G(S_1) \\oplus G(S_2) & \\xrightarrow{\\delta_G} & G(S_1 \\times_S S_2)\n\\end{array}$$\n\n根据题目假设：\n1. **中坚直箭头 $\\eta_{S_1} \\oplus \\eta_{S_2}$**：由 $H(S_i) \\to G(S_i)$（$i=1,2$）是同构，故其中坚直映射为**同构**。\n2. **右坚直箭头 $\\eta_{S_1 \\times_S S_2}$**：$T = S_1 \\times_S S_2$ 为所用邻域局部化，题设 $H(T) \\to G(T)$ 单射，故右坚直映射为**单射**。\n3. **单射性**：题设已给定 $H(S) \\to G(S)$ 单射；亦可由图追逐导出：$\\alpha_H$ 单射且中坚直箭头同构，故 $\\eta_S$ 必为单射。\n4. **满射性（图追逐）**：\n   任取 $g \\in G(S)$。考虑其在底行的像 $\\alpha_G(g) \\in G(S_1) \\oplus G(S_2)$，由底行正合，$\\delta_G(\\alpha_G(g)) = 0$。\n   因中坚直箭头是满射，存在唯一 $(h_1, h_2) \\in H(S_1) \\oplus H(S_2)$ 满足\n   $$(\\eta_{S_1} \\oplus \\eta_{S_2})(h_1, h_2) = \\alpha_G(g).$$\n   考察 $\\delta_H(h_1, h_2) \\in H(S_1 \\times_S S_2)$，由右侧方块交换性：\n   $$\\eta_{S_1 \\times_S S_2}\\big(\\delta_H(h_1, h_2)\\big) = \\delta_G\\big((\\eta_{S_1} \\oplus \\eta_{S_2})(h_1, h_2)\\big) = \\delta_G(\\alpha_G(g)) = 0.$$\n   由于右坚直映射 $\\eta_{S_1 \\times_S S_2}$ 是**单射**，必有\n   $$\\delta_H(h_1, h_2) = 0.$$\n   由顶行在中间项的正合性，存在 $h \\in H(S)$ 使得 $\\alpha_H(h) = (h_1, h_2)$。\n   再由左侧方块交换性：\n   $$\\alpha_G(\\eta_S(h)) = (\\eta_{S_1} \\oplus \\eta_{S_2})(\\alpha_H(h)) = (\\eta_{S_1} \\oplus \\eta_{S_2})(h_1, h_2) = \\alpha_G(g).$$\n   因底行 $\\alpha_G$ 是单射，故\n   $$\\eta_S(h) = g.$$\n   这证明了 $\\eta_S$ 是满射。\n\n综上，$\\eta_S: H(S) \\to G(S)$ 是同构。\n\n---\n\n## S3 含指定点的开集\n\n### 1. 余终性证明\n设 $X$ 为任意拓扑空间，$\\Sigma \\subset X$ 为有限非空集，$W \\subset X$ 为包含 $\\Sigma$ 的开集。\n令\n$$\\mathcal{I} = \\{V \\subset X \\mid V \\text{ 为开集且 } \\Sigma \\subset V\\},$$\n偏序定义为反向包含（即 $V_1 \\le V_2 \\iff V_2 \\subset V_1$）。这是一个有向偏序集。\n令\n$$\\mathcal{I}_W = \\{U \\subset W \\mid U \\text{ 为开集且 } \\Sigma \\subset U\\},$$\n视作 $\\mathcal{I}$ 的全子偏序集（包含函子记为 $\\iota: \\mathcal{I}_W \\hookrightarrow \\mathcal{I}$）。\n\n欲证 $\\mathcal{I}_W$ 在 $\\mathcal{I}$ 中余终（cofinal / final）：\n1. **支配性**：对任意 $V \\in \\mathcal{I}$，取 $U = V \\cap W$。\n   - 因为 $V$ 开且 $W$ 开，故 $U$ 是 $X$ 的开集；\n   - 因为 $\\Sigma \\subset V$ 且 $\\Sigma \\subset W$，故 $\\Sigma \\subset V \\cap W = U$；\n   - 因为 $U \\subset W$，故 $U \\in \\mathcal{I}_W$；\n   - 同时 $U = V \\cap W \\subset V$，在有向集偏序中即 $V \\le U$。\n2. **相容性**：若 $U_1, U_2 \\in \\mathcal{I}_W$ 且 $V \\le U_1, U_2$（即 $U_1 \\subset V, U_2 \\subset V$），则取 $U_3 = U_1 \\cap U_2 \\in \\mathcal{I}_W$，满足 $U_1 \\le U_3$ 且 $U_2 \\le U_3$。\n\n因此，$\\mathcal{I}_W$ 在 $\\mathcal{I}$ 中余终。\n\n### 2. 预层余极限的典范同构\n设 $\\mathcal{F}$ 为 $X$ 上的任意反变阿贝尔群预层。\n包含函子 $\\iota: \\mathcal{I}_W \\to \\mathcal{I}$ 诱导余极限间的典范同态：\n$$\\phi: \\varinjlim_{U \\in \\mathcal{I}_W} \\mathcal{F}(U) \\longrightarrow \\varinjlim_{V \\in \\mathcal{I}} \\mathcal{F}(V), \\qquad [s]_U \\longmapsto [s]_U.$$\n反之，构造态射：对任意 $V \\in \\mathcal{I}$，限制映射 $\\mathcal{F}(V) \\to \\mathcal{F}(V \\cap W)$ 与典范映射 $\\mathcal{F}(V \\cap W) \\to \\varinjlim_{U \\in \\mathcal{I}_W} \\mathcal{F}(U)$ 复合，得到族\n$$\\psi_V: \\mathcal{F}(V) \\longrightarrow \\varinjlim_{U \\in \\mathcal{I}_W} \\mathcal{F}(U).$$\n当 $V_2 \\subset V_1$ 时，由预层限制映射的传递性知族 $\\{\\psi_V\\}_{V \\in \\mathcal{I}}$ 与转移映射相容。由滤过余极限的泛性质，存在唯一的群同态：\n$$\\psi: \\varinjlim_{V \\in \\mathcal{I}} \\mathcal{F}(V) \\longrightarrow \\varinjlim_{U \\in \\mathcal{I}_W} \\mathcal{F}(U).$$\n易验：\n- 对任意 $U \\in \\mathcal{I}_W$，$U \\cap W = U$，故 $\\psi \\circ \\phi = \\mathrm{id}_{\\varinjlim_{U \\in \\mathcal{I}_W} \\mathcal{F}(U)}$；\n- 对任意 $V \\in \\mathcal{I}$，$V \\cap W \\subset V$ 在有向系统中给出等价类，故 $\\phi \\circ \\psi = \\mathrm{id}_{\\varinjlim_{V \\in \\mathcal{I}} \\mathcal{F}(V)}$。\n因此，$\\phi$ 是两邻域余极限之间的**典范同构**。\n\n---\n\n## S4 稠密开与邻域系统\n\n### 1. 判定结论\n**结论：不成立（否定）。**\n包含 $\\Sigma$ 且包含于 $W$ 的开集族**不一定**在全部 $\\Sigma$ 开邻域中余终。\n\n### 2. 反例与充分论证\n满足题设全部前提的反例构造如下：\n- **基域**：取任意域 $k$。\n- **概形**：取 $X = \\mathbb{A}^1_k = \\operatorname{Spec} k[t]$。$X$ 是光滑、积分、仿射 $k$-概形。\n- **有限非空点集**：取 $\\Sigma = \\{0\\}$，即原点（对应极大理想 $(t)$）。\n- **稠密开子集**：取 $W = X \\setminus \\{0\\} = D(t) = \\operatorname{Spec} k[t, t^{-1}]$。\n  因为 $X$ 是整概形且 $W$ 非空，故 $W$ 是 $X$ 的稠密开子集。满足前提要求。\n\n**检验余终性**：\n考察集合族 $\\mathcal{I}_W = \\{U \\subset X \\mid U \\text{ 为开集},\\, \\Sigma \\subset U \\subset W\\}$。\n- 若存在 $U \\in \\mathcal{I}_W$，则必须满足 $\\Sigma \\subset U$，即 $0 \\in U$；\n- 但同时必须满足 $U \\subset W = X \\setminus \\{0\\}$，即 $0 \\notin U$。\n两者矛盾！因此，\n$$\\mathcal{I}_W = \\emptyset.$$\n然而，$\\Sigma = \\{0\\}$ 在 $X$ 中的全部开邻域构成的族 $\\mathcal{I} = \\{V \\subset X \\text{ 开} \\mid 0 \\in V\\}$ 是非空的（例如包含 $X$ 本身及所有 $D(f)$ 其中 $f(0) \\neq 0$）。\n\n空集在非空有向集（无论考虑对象支配性还是范畴余终性）中**绝不余终**。\n（注：若在此类空族上取形式余极限，将退化为始对象 0，而截面余极限为局部环 $\\mathcal{O}_{X, 0} = k[t]_{(t)} \\neq 0$）。\n\n**适用条件说明**：\n包含 $\\Sigma$ 且包含于 $W$ 的开集在全部 $\\Sigma$ 开邻域中余终的**充要条件**是 $\\Sigma \\subset W$（即 S3 所设条件）。当且仅当存在 $x \\in \\Sigma$ 满足 $x \\notin W$ 时，该开集族为空，余终性必然失效。\n\n---\n\n## S5 整体对象与全部恢复目标\n\n### 1. 判定结论\n**结论：目标在给定条件下成立。**\n典范同态 $\\eta_S: F(S) \\to F_{\\mathrm{Zar}}(S)$ 是同构。\n\n---\n\n### 2. 构造、分类与基础定理\n\n#### (1) 带转移预层的图态射与限制\n范畴 $\\mathrm{Cor}_k$ 中态射是有限对应。存在典范图嵌入函子 $\\mathrm{Sm}/k \\to \\mathrm{Cor}_k$：对态射 $f: Y \\to Z$，对应图子概形 $\\Gamma_f \\subset Y \\times Z$。因此反变函子 $F: \\mathrm{Cor}_k^{\\mathrm{op}} \\to \\mathrm{Ab}$ 限制在概形态射上即为通常的 Zariski 预层，对开浸入 $j: U \\hookrightarrow Y$，限制映射即 $F(j) = j^*: F(Y) \\to F(U)$。\n\n#### (2) 同伦不变性（$\\mathbb{A}^1$-homotopy invariance）\n假设对所有 $Y \\in \\mathrm{Sm}/k$，投影诱导同构 $F(Y) \\xrightarrow{\\sim} F(Y \\times \\mathbb{A}^1)$。由此，若两个有限对应 $\\alpha, \\beta \\in \\mathrm{Cor}_k(Y, Z)$ 是 $\\mathbb{A}^1$-同伦的（即存在 $H \\in \\mathrm{Cor}_k(Y \\times \\mathbb{A}^1, Z)$ 分别限制在 $0, 1$ 截面上为 $\\alpha, \\beta$），则在群同态上必有 $F(\\alpha) = F(\\beta)$。\n\n#### (3) Voevodsky 层化定理（Voevodsky's Sheafification Theorem）\n依据 Voevodsky 经典定理（*Cohomological Theory of Presheaves with Transfers*, Theorem 3.1.11 及 Mazza-Voevodsky-Weibel *Lectures on Motivic Cohomology*, Theorem 4.18/5.7）：\n- Zariski 层化 $F_{\\mathrm{Zar}}$ 具有唯一的带转移预层结构，使 $\\eta: F \\to F_{\\mathrm{Zar}}$ 是带转移预层的态射；\n- $F_{\\mathrm{Zar}}$ 保持同伦不变性；\n- $F_{\\mathrm{Zar}}$ 自动是 Nisnevich 拓扑下的层，且两者的层上同调群对任意光滑概形一致。\n\n---\n\n### 3. 性质证明一：$F$ 的分离性与 $\\eta_S$ 的单射性\n\n#### 定理（稠密开浸入单射性）\n设 $Y \\in \\mathrm{Sm}/k$ 是连通光滑整概形，$W \\subset Y$ 是稠密开子集。则限制映射\n$$F(Y) \\longrightarrow F(W)$$\n是单射。\n\n**证明论证**：\n设余维数 $\\ge 1$ 的闭集为 $Z = Y \\setminus W$。依 Artin 初等纤维化定理（Elementary Fibration Theorem），在 $Y$ 的局部存在标准三元组（standard triple）$(p: C \\to B, Z \\subset C \\subset \\bar{C})$，其中 $\\bar{C} \\to B$ 是相对光滑射影曲线，$Z$ 有限满射于仿射底 $B$。\n利用仿射直线上有限对应的高斯除法与移动引理，在曲线纤维上可在代数闭链群中构造有理同伦：恒等对应 $\\mathrm{id}_C$ 在模去由有限转移生成的边界后同伦于一个支撑避开 $Z$ 的闭链 $\\Phi \\in \\mathrm{Cor}_k(C, W)$。\n由此同伦性知：若截面 $s \\in F(Y)$ 在 $W$ 上的限制为 0，则由传递转移构造可知 $s = \\Phi^*(s|_W) = 0$。因此 $F(Y) \\to F(W)$ 单射。\n\n#### 单射性推论\n1. **$F$ 是 Zariski 分离预层**：若开覆盖 $(U_\\alpha)$ 上 $s|_{U_\\alpha} = 0$，则 $s$ 在稠密集 $\\bigcup U_\\alpha$ 上处处为 0，由上述单射性知 $s = 0$。\n2. **局部化单射性**：由于 $F \\to F_{\\mathrm{Zar}}$ 在截面上滤过由局部重合定义，分离预层到其层化的典范态射 $F(U) \\to F_{\\mathrm{Zar}}(U)$ 对任一开子集 $U$ 均是单射。\n3. 对任意半局部化 $S$（及其任何局部化和纤维积 $T$），由滤过余极限保持单射性知：\n   $$\\eta_S: F(S) \\longrightarrow F_{\\mathrm{Zar}}(S) \\quad \\text{与} \\quad \\eta_T: F(T) \\longrightarrow F_{\\mathrm{Zar}}(T) \\quad \\text{均是单射}。$$\n这完全确认了 S2 所需的单射性条件。\n\n---\n\n### 4. 性质证明二：单点基期 ($|\\Sigma| = 1$)\n设 $\\Sigma = \\{x\\}$，则 $S = S_x = \\operatorname{Spec}\\mathcal{O}_{X, x}$。\n按定义：\n$$F(S_x) = \\varinjlim_{x \\in U} F(U) = F_x \\quad (\\text{预层 } F \\text{ 在 } x \\text{ 处的茎}),$$\n$$F_{\\mathrm{Zar}}(S_x) = \\varinjlim_{x \\in U} F_{\\mathrm{Zar}}(U) = (F_{\\mathrm{Zar}})_x \\quad (\\text{层化 } F_{\\mathrm{Zar}} \\text{ 在 } x \\text{ 处的茎}).$$\n依据拓扑空间上预层层化的根本泛性质：**预层的层化诱导所有点处的茎同构**，即\n$$\\eta_x: F_x \\stackrel{\\sim}{\\longrightarrow} (F_{\\mathrm{Zar}})_x.$$\n因此当 $|\\Sigma| = 1$ 时，$\\eta_{S_x}: F(S_x) \\xrightarrow{\\sim} F_{\\mathrm{Zar}}(S_x)$ 是**自然的同构**。\n\n---\n\n### 5. 性质证明三：Mayer-Vietoris 邻域收缩与归纳步\n\n设 $|\\Sigma| = n \\ge 2$。\n由 S3，半局部邻域计算完全可在包含 $\\Sigma$ 的仿射开子概形 $\\operatorname{Spec} A$ 中进行。\n\n1. **两开覆盖的收缩引理（MVW Lemma 4.22 / 5.7）**：\n   对任何将 $\\Sigma$ 分开为 $\\Sigma_1$ 与 $\\Sigma_2$ 的开邻域 $U_0 \\supset \\Sigma_1$ 与 $V \\supset \\Sigma_2$，利用曲线纤维化中有限对应对切触截面的移动技术，存在可缩开邻域 $U \\subset U_0$（仍包含 $\\Sigma_1$），使得差截面可经同伦由交集推回两翼，从而保证 Mayer-Vietoris 序列：\n   $$0 \\longrightarrow F(S) \\longrightarrow F(U) \\oplus F(V) \\longrightarrow F(U \\cap V)$$\n   在有向滤过收缩下严格正合。\n2. **两点情形同构（应用 S2）**：\n   在 $n = 2$ 情形：\n   - 援引 S1，层 $F_{\\mathrm{Zar}}$ 满足核正合列 $0 \\to F_{\\mathrm{Zar}}(S) \\to F_{\\mathrm{Zar}}(S_1) \\oplus F_{\\mathrm{Zar}}(S_2) \\to F_{\\mathrm{Zar}}(S_1 \\times_S S_2)$；\n   - 援引前述分离性，$\\eta_T$ 对所有所用局部化均单射；\n   - 援引单点基期，$\\eta_{S_1}$ 与 $\\eta_{S_2}$ 为同构；\n   - 援引收缩引理，顶行 $0 \\to F(S) \\to F(S_1) \\oplus F(S_2) \\to F(S_1 \\times_S S_2)$ 正合；\n   - 严格适用 S2，四引理图追逐立即给出 $\\eta_S: F(S) \\xrightarrow{\\sim} F_{\\mathrm{Zar}}(S)$ 是同构。\n3. **点数 $n$ 的有限归纳**：\n   设结论对闭点数 $< n$ 的所有半局部化成立。将 $\\Sigma$ 划分为 $\\Sigma' = \\{x_1, \\dots, x_{n-1}\\}$ 与 $\\{x_n\\}$，记 $S'$ 为 $\\Sigma'$ 处的半局部化。\n   由归纳假设，$F(S') \\cong F_{\\mathrm{Zar}}(S')$ 且 $F(S_n) \\cong F_{\\mathrm{Zar}}(S_n)$。\n   将 $S$ 视作由 $S'$ 与 $S_n$ 拼接，构造比较梯形图：\n   $$\\begin{array}{ccccccccc}\n   0 & \\longrightarrow & F(S) & \\longrightarrow & F(S') \\oplus F(S_n) & \\longrightarrow & F(S' \\times_S S_n) \\\\\n   & & \\Big\\downarrow \\eta_S & & \\Big\\downarrow \\eta_{S'} \\oplus \\eta_{S_n} & & \\Big\\downarrow \\eta_{S' \\times_S S_n} \\\\\n   0 & \\longrightarrow & F_{\\mathrm{Zar}}(S) & \\longrightarrow & F_{\\mathrm{Zar}}(S') \\oplus F_{\\mathrm{Zar}}(S_n) & \\longrightarrow & F_{\\mathrm{Zar}}(S' \\times_S S_n)\n   \\end{array}$$\n   - 中坚直映射为同构（由归纳假设）；\n   - 右坚直映射为单射（由分离性）；\n   - 两行均正合（顶行由同伦转移 MV 给出，底行由层的拼接 S1 给出）。\n   由四引理（S2 证明完全相同的图追逐），$\\eta_S: F(S) \\to F_{\\mathrm{Zar}}(S)$ 必为同构。\n\n综上所述，对任意有限非空点集 $\\Sigma$ 处的半局部化 $S$，典范同态 $\\eta_S: F(S) \\to F_{\\mathrm{Zar}}(S)$ 是同构。\n\n---\n\n## S6 极限正合与阶段正合\n\n### 1. 第一问：余极限正合判定\n**判定结论：不成立（否定）。**\n余极限复形正合**不能**蕴含所有充分后阶段正合。\n\n#### 反例与充分证明\n设滤过指标集为非负整数 $(\\mathbb{N}, \\le)$。\n构造阿贝尔群二项复形滤过系统 $(C_\\bullet^{(i)}, d_i)_{i \\in \\mathbb{N}}$ 如下：\n- **各阶段复形**：对每个 $i \\in \\mathbb{N}$，令\n  $$C_1^{(i)} = \\mathbb{Z}, \\qquad C_0^{(i)} = \\mathbb{Z},$$\n  微分算子 $d_i: C_1^{(i)} \\to C_0^{(i)}$ 为乘以 2，即 $d_i(x) = 2x$。\n  各阶段复形同调群为：\n  $$H_1(C_\\bullet^{(i)}) = \\ker(d_i) = 0,$$\n  $$H_0(C_\\bullet^{(i)}) = \\operatorname{coker}(d_i) = \\mathbb{Z} / 2\\mathbb{Z} \\neq 0.$$\n  因此，对**任意** $i \\in \\mathbb{N}$，$C_\\bullet^{(i)}$ 均**不正合**（在第 0 项同调非零）。\n- **链映射过渡态射**：\n  对每个 $i \\in \\mathbb{N}$，链映射 $\\phi_i = (\\alpha_i, \\beta_i): C_\\bullet^{(i)} \\to C_\\bullet^{(i+1)}$ 定义为：\n  $$\\alpha_i: C_1^{(i)} \\to C_1^{(i+1)}, \\quad \\alpha_i(x) = 2x,$$\n  $$\\beta_i: C_0^{(i)} \\to C_0^{(i+1)}, \\quad \\beta_i(y) = 2y.$$\n  检验链映射交换性：\n  $$d_{i+1}(\\alpha_i(x)) = 2 \\cdot (2x) = 4x = 2 \\cdot (2x) = \\beta_i(d_i(x)).$$\n  图表严格交换，构成良定的链复形滤过系统。\n- **余极限复形**：\n  在系统下，过渡映射为不断乘以 2，因此\n  $$\\varinjlim_{i \\in \\mathbb{N}} C_1^{(i)} = \\varinjlim (\\mathbb{Z} \\xrightarrow{\\times 2} \\mathbb{Z} \\xrightarrow{\\times 2} \\cdots) \\cong \\mathbb{Z}\\left[\\frac{1}{2}\\right],$$\n  $$\\varinjlim_{i \\in \\mathbb{N}} C_0^{(i)} = \\varinjlim (\\mathbb{Z} \\xrightarrow{\\times 2} \\mathbb{Z} \\xrightarrow{\\times 2} \\cdots) \\cong \\mathbb{Z}\\left[\\frac{1}{2}\\right].$$\n  余极限微分算子\n  $$d_\\infty = \\varinjlim d_i: \\mathbb{Z}\\left[\\frac{1}{2}\\right] \\longrightarrow \\mathbb{Z}\\left[\\frac{1}{2}\\right]$$\n  即为乘以 2。\n  因为 2 在环 $\\mathbb{Z}[1/2]$ 中可逆，乘 2 是**群同构**！\n  因此：\n  $$\\ker(d_\\infty) = 0 \\implies H_1(C_\\bullet) = 0,$$\n  $$\\operatorname{coker}(d_\\infty) = 0 \\implies H_0(C_\\bullet) = 0.$$\n  余极限复形 $C_\\bullet$ **严格正合**。\n\n然而，对任意阶段 $i \\in \\mathbb{N}$，阶段复形同调均为 $\\mathbb{Z}/2\\mathbb{Z} \\neq 0$。不存在任何 $i_0$ 使得当 $i \\ge i_0$ 时阶段复形正合。\n\n---\n\n### 2. 第二问：同调类消亡蕴含余极限正合的证明\n\n设 $(C_\\bullet^{(i)}, \\phi_{ij})_{i \\in I}$ 是有向集 $I$ 上的阿贝尔群链复形滤过系统，其余极限复形记为 $C_\\bullet = \\varinjlim_{i \\in I} C_\\bullet^{(i)}$。\n\n#### 证明途径（包含函子同构与直接元素追逐双重视角）：\n\n**方法一：利用同调函子与滤过余极限的交换性**\n1. 在阿贝尔群范畴 $\\mathrm{Ab}$ 中，滤过余极限是正合函子，因而与有限极限及有限余极限可交换。\n   由于链复形的同调定义为\n   $$H_n(C_\\bullet) = \\operatorname{coker}\\big(\\operatorname{im}(d_{n+1}) \\hookrightarrow \\ker(d_n)\\big),$$\n   它完全由有限极限（核）和有限余极限（像、余核）有限步复合而成。因此，同调函子与滤过余极限自然交换：\n   $$H_n(C_\\bullet) = H_n\\left(\\varinjlim_{i \\in I} C_\\bullet^{(i)}\\right) \\cong \\varinjlim_{i \\in I} H_n(C_\\bullet^{(i)}).$$\n2. 任取余极限同调群中的元素 $\\xi \\in \\varinjlim_{i \\in I} H_n(C_\\bullet^{(i)})$。\n   由滤过余极限的定义，存在某个阶段 $i \\in I$ 及同调类 $c \\in H_n(C_\\bullet^{(i)})$，使得 $\\xi$ 由 $c$ 代表，即 $\\xi = \\iota_i(c)$（其中 $\\iota_i: H_n(C_\\bullet^{(i)}) \\to \\varinjlim H_n(C_\\bullet^{(k)})$ 为规范投射）。\n3. 根据题设条件：“每个阶段的每个同调类都在某个后阶段变为零”，对于该同调类 $c \\in H_n(C_\\bullet^{(i)})$，必然存在 $j \\ge i$ 使得\n   $$H_n(\\phi_{ij})(c) = 0 \\in H_n(C_\\bullet^{(j)}).$$\n4. 于是，在余极限中：\n   $$\\xi = \\iota_i(c) = \\iota_j\\big(H_n(\\phi_{ij})(c)\\big) = \\iota_j(0) = 0.$$\n   由于 $\\xi$ 是任意选取的，故\n   $$\\varinjlim_{i \\in I} H_n(C_\\bullet^{(i)}) = 0.$$\n   结合第 1 步的同构，得 $H_n(C_\\bullet) \\cong 0$。即余极限复形在每一项均正合。\n\n**方法二：元素追逐（直接验证 $\\ker(d_n) = \\operatorname{im}(d_{n+1})$）**\n1. 设 $z \\in \\ker(d_n^\\infty) \\subset C_n$。\n2. 由 $C_n = \\varinjlim C_n^{(i)}$，存在 $i_1 \\in I$ 和 $z_{i_1} \\in C_n^{(i_1)}$ 代表 $z$。\n3. 其微分 $d_n^\\infty(z) = 0 \\in C_{n-1}$，由于 $C_{n-1}$ 是滤过余极限，存在 $i_2 \\ge i_1$ 使得在阶段 $i_2$ 上，\n   $$d_n^{(i_2)}\\big(\\phi_{i_1 i_2}(z_{i_1})\\big) = 0.$$\n   记 $z' = \\phi_{i_1 i_2}(z_{i_1}) \\in C_n^{(i_2)}$，则 $z' \\in \\ker(d_n^{(i_2)})$ 是阶段 $i_2$ 的循环元，定义了同调类 $[z'] \\in H_n(C_\\bullet^{(i_2)})$。\n4. 依题设，存在 $j \\ge i_2$ 使得 $\\phi_{i_2 j}$ 将同调类 $[z']$ 映为 0。\n   这意味着元 $z'' = \\phi_{i_2 j}(z') \\in C_n^{(j)}$ 是一个**边界元**：\n   存在 $w_j \\in C_{n+1}^{(j)}$ 满足\n   $$d_{n+1}^{(j)}(w_j) = z''.$$\n5. 将 $w_j$ 映至余极限 $C_{n+1}$，记其像为 $w \\in C_{n+1}$。由链映射微分与余极限相容性：\n   $$d_{n+1}^\\infty(w) = [d_{n+1}^{(j)}(w_j)] = [z''] = z.$$\n   这证明了 $z \\in \\operatorname{im}(d_{n+1}^\\infty)$。\n6. 因此 $\\ker(d_n^\\infty) \\subset \\operatorname{im}(d_{n+1}^\\infty)$，结合复形公理 $\\operatorname{im} \\subset \\ker$，恒有 $\\ker(d_n^\\infty) = \\operatorname{im}(d_{n+1}^\\infty)$。\n\n余极限复形严格正合。证毕。\n```\n\n\n# 你此前的完整最终答复（原文，含全部自评）：`previous-answer.md`\n\n```text\n{}\n# 审阅结论总览\n\n经对照原题 [original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md) 与待审答卷 [original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md)（材料关系见 [materials.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/materials.md)），答卷各部分的判定结论如下：\n\n| 题号 | 最终结论是否正确 | 论证是否完整/严格 | 核心问题摘要 |\n| --- | --- | --- | --- |\n| **S1** | 等化子结论正确 | **有实质错误与缺失** | 第 3 节对「$\\dim \\mathcal{O}_{X, x_i} \\ge 1 \\implies \\mathcal{O}_{X, x_i}$ 非有限生成 $\\mathcal{O}_{X, \\Sigma}$-代数」的断言**错误**（1 维曲线及 $n=1$ 均反例）；拓扑证明缺失同连通分支及 $\\mathfrak{q}\\not\\subset\\mathfrak{p}_i$ 的论证；未证 $U_i\\cap U_j$ 在 $S_i\\cap S_j$ 开邻域中的余终性。 |\n| **S2** | 正确 | **有关键逻辑跳跃** | 未界定 $U_0, V, U$ 为 $S$ 的开子集（若为 $X$ 的开集则限制映射 $H(S)\\to H(U)$ 不存在）且漏掉「分开」条件 $x_2\\notin U_0, x_1\\notin V$；未证明使 MV 列正合的覆盖构成**有向系统**及与 $S_1, S_2, S_1\\times_S S_2$ 邻域系统的**余终性**。 |\n| **S3** | 正确 | **完整、严格** | 支配性、相容性与双向典范同构构造均严密无误。 |\n| **S4** | 正确 | **完整、严格** | 反例 $X=\\mathbb{A}^1_k, \\Sigma=\\{0\\}, W=D(t)$ 满足全部前提且论证充分。 |\n| **S5** | 目标成立的结论正确 | **核心证明存在致命错误与大段缺失** | **定理（稠密开浸入单射性）及其推论 1、2 均错误**（反例：$F=\\mathrm{Pic}$）；由此导致将 S2 直接套用于 $H=F$ 及 $T=S_1\\times_S S_2,\\,S'\\times_S S_n$ 的单射性基础失效；核心几何引理（半局部单射性、MV 收缩引理）几乎空缺；未说明引用的 Voevodsky 定理条件、未处理一般域 $k$（有限域/非完美域）与非闭点/可比较点 $\\Sigma$。 |\n| **S6** | 正确 | **完整、严格** | 第一问反例与第二问两种证明均准确无误。 |\n\n总体判断：**答卷在 S3、S4、S6 上正确且完整；在 S2 上主干对但关键余极限前置验证缺失；在 S1 的反例说明与 S5 的主干论证上存在明确数学错误与重要证明缺口，不能视为完整无误的解答。**\n\n---\n\n## 逐题详细审阅\n\n### S1：层的半局部拼接\n\n* **对应文本**：[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L7-L9)，[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L5-L44)。\n\n1. **第 1–2 节（等化子证明）基本正确，存在两处小缺口**：\n   * 在 [original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L14) 与 [L30-L33](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L30-L33)，答卷直接将 $G(S_i \\times_S S_j)$ 写作 $\\varinjlim_{x_i \\in U_i,\\, x_j \\in U_j} G(U_i \\cap U_j)$。按题意 [original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L9)「值以开邻域滤过余极限延拓」，若把 $G(S_i \\times_S S_j)$ 理解为延拓至 $S_i \\cap S_j \\subset X$ 全体开邻域 $W$ 的余极限 $\\varinjlim_{S_i\\cap S_j\\subset W} G(W)$，需补充说明 $\\{U_i\\cap U_j \\mid x_i\\in U_i, x_j\\in U_j\\}$ 在其中余终（在仿射开集 $\\operatorname{Spec} A$ 上，若 $W\\cap \\operatorname{Spec} A = \\operatorname{Spec} A \\setminus V(I)$ 包含 $S_i\\cap S_j$，则 $I$ 在 $(A\\setminus \\mathfrak{p}_i)(A\\setminus \\mathfrak{p}_j)^{-1}A$ 中生成单位理想，故存在 $f\\notin \\mathfrak{p}_i, g\\notin \\mathfrak{p}_j$ 使 $fg\\in I$，从而 $D(f)\\cap D(g)=D(fg)\\subset W$）。此外，[L31](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L31) 中 $\\varprojlim (U_i\\cap U_j)$ 应取仿射开邻域这一余终子族（或说明 $X$ 拟射影从而分离，故仿射开集之交仍仿射），[L33](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L33) 对对角项 $i=j$ 写成两个独立变量 $U_i, U_j$ 略显记号不严（实际上 $\\{(U,U)\\}\\hookrightarrow \\{(U,V)\\}$ 余终，极限相同）。\n   * [L8](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L8) 额外假设了基概形为域 $k$，原题未明写基域，但在域或仿射基上拟射影概形的有限点集确实落在某个仿射开子概形中。\n\n2. **第 3 节（说明 $S_i$ 不必是开子概形）存在明确错误与缺漏**：\n   * **概形层面断言错误**（[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L43)）：\n     答卷断言：「然而当 $\\dim \\mathcal{O}_{X, x_i} \\ge 1$ 时，局部环 $\\mathcal{O}_{X, x_i}$ 作为 $\\mathcal{O}_{X, \\Sigma}$-代数不是有限生成的，故态射 $S_i \\to S$ ……因而不是开子概形。」\n     **该断言为假**，可给出两类直接反例：\n     1. **$n=1$ 情形**：无论 $\\dim \\mathcal{O}_{X, x_1}$ 多大，$S_1 = S$，$\\mathcal{O}_{X, x_1} = \\mathcal{O}_{X, \\Sigma}$，显然有限生成且 $S_1 \\to S$ 是开浸入。\n     2. **$n\\ge 2$ 且 $\\dim \\mathcal{O}_{X, x_i} = 1$（光滑曲线）**：取 $X = \\mathbb{A}^1_k = \\operatorname{Spec} k[t]$，$\\Sigma = \\{x_1, x_2\\}$（$x_1=(t),\\, x_2=(t-1)$）。此时 $\\dim \\mathcal{O}_{X, x_1} = \\dim k[t]_{(t)} = 1 \\ge 1$，但任何 $f(t)\\in k[t]\\setminus (t)$ 均可写作 $(t-1)^m g(t)$（$t\\nmid g,\\, (t-1)\\nmid g$，故 $g\\in M$），因此\n        $$\\mathcal{O}_{X, x_1} = k[t]_{(t)} = (M^{-1}k[t])\\left[\\frac{1}{t-1}\\right],$$\n        作为 $\\mathcal{O}_{X, \\Sigma}$-代数由单个元素 $(t-1)^{-1}$ 有限生成，$S_1 = D(t-1) = S \\setminus \\{x_2\\}$ **确是 $S$ 的开子概形**。\n   * **拓扑层面论证缺失两个前提/步骤**（[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L42)）：\n     1. **未要求 $x_i, x_j$ 处于同一连通分支**：若 $X = \\mathbb{A}^2_k \\sqcup \\mathbb{A}^2_k$，$x_1, x_2$ 分处不同连通分支，则 $\\dim \\mathcal{O}_{X, x_1} = \\dim \\mathcal{O}_{X, x_2} = 2$，$n=2$，但 $S = S_1 \\sqcup S_2$，从而 $S_1$ 仍为 $S$ 的开子概形；同时 $f \\notin \\mathfrak{p}_i$（如取第一分支上为 $1$、第二分支上为 $0$ 的幂等元）不再能保证「非零元 $f$ 仅包含于 $\\mathfrak{p}_j$ 中有限多个高度 1 素理想」。\n     2. **漏证 $\\mathfrak{q}\\not\\subset \\mathfrak{p}_i$**：即便 $x_i, x_j$ 在同一连通分支且 $\\dim \\mathcal{O}_{X, x_j} \\ge 2$，当 $\\dim \\mathcal{O}_{X, x_i} \\ge 2$ 时，$\\mathfrak{p}_i \\cap \\mathfrak{p}_j$ 中也可能存在无穷多个高度 1 素理想（例如 $X=\\mathbb{A}^3_k$ 中过两闭点的曲面）。因此仅凭「$\\mathfrak{p}_j$ 有无穷多个高度 1 素理想且 $f$ 只在有限个中」不能直接推出存在避开 $\\mathfrak{p}_i$ 的 $\\mathfrak{q}\\subset \\mathfrak{p}_j$；需用素理想避开引理对 $\\mathfrak{p}_j$ 避开 $\\mathfrak{p}_i$ 及 $(f)$ 在 $A_{\\mathfrak{p}_j}$ 中的有限个极小素理想 $\\mathfrak{q}_1,\\dots,\\mathfrak{q}_r$，取 $g \\in \\mathfrak{p}_j \\setminus (\\mathfrak{p}_i \\cup \\bigcup_{k=1}^r \\mathfrak{q}_k)$，再取 $A_{\\mathfrak{p}_j}$ 中包含 $g$ 的高度 1 素理想 $\\mathfrak{q}$。\n     3. 小瑕疵：「相对维数 $\\dim \\mathcal{O}_{X, x_i}$」应为局部环的 Krull 维数。\n\n* **影响**：S1 的主命题（等化子刻画）证明基本成立；但第 3 节给出的「不成立开子概形」的充分条件在 1 维与多连通分支情形反例频出，使该说明在严格性上存在明显漏洞。\n\n---\n\n### S2：分离预层的比较图\n\n* **对应文本**：[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L11-L13)，[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L47-L96)。\n\n1. **第 1 节与第 3 节正确**：\n   * [L50-L56](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L50-L56) 将 $n=2$ 的 S1 等化子化为核正合列 $0 \\to G(S) \\to G(S_1)\\oplus G(S_2) \\to G(S_1\\times_S S_2)$ 正确（$S_i\\to S$ 为单态射故 $S_i\\times_S S_i \\cong S_i$）。\n   * [L68-L95](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L68-L95) 的比较图与四引理图追逐完全严密。\n\n2. **第 2 节（[L58-L67](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L58-L67)）存在重要逻辑跳步**：\n   * **未界定 $U_0, V, U$ 所在的拓扑空间与 $H(U)$ 的定义**：在正合列 $0\\to H(S)\\to H(U)\\oplus H(V)\\to H(U\\cap V)$ 中，若 $U, V$ 只是 $X$ 的开集且不覆盖 $S$ 全部（$U$ 不含 $x_2$），则并不存在自然限制映射 $H(S)\\to H(U)$；它们必须是 **$S$ 的开子集**（此时 $U\\subset S$，故 $H(S)=\\varinjlim_{S\\subset \\widetilde{W}\\subset X} H(\\widetilde{W}) \\to H(U):=\\varinjlim_{U\\subset \\widetilde{U}\\subset X} H(\\widetilde{U})$ 自然存在）。答卷对此未加任何界定。\n   * **漏写「分开 $x_1, x_2$」的条件**：[L59](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L59) 写为 `（x_1 \\in U_0, x_2 \\in V 且覆盖 S）`，漏掉了 $x_2 \\notin U_0$ 且 $x_1 \\notin V$。\n   * **未证明「使该序列正合的可缩覆盖 $(U, V)$」构成有向系统及余终性**（[L61-L65](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L61-L65)）：\n     1. 两个使 MV 序列正合的覆盖 $(U_1, V_1), (U_2, V_2)$ 之交 $(U_1\\cap U_2, V_1\\cap V_2)$ **未必自动保持正合**，必须再次对 $(U_1\\cap U_2, V_1\\cap V_2)$ 应用题设收缩条件（先验证 $S=S_1\\cup S_2\\subset (U_1\\cap U_2)\\cup(V_1\\cap V_2)$，仍为分开覆盖，再缩出新的正合覆盖）才能证明该指标集是有向偏序集。\n     2. 欲得 [L62-L63](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L62-L63) 的 $\\varinjlim H(U)=H(S_1)$、$\\varinjlim H(V)=H(S_2)$、$\\varinjlim H(U\\cap V)=H(S_1\\times_S S_2)$，需证明对任意 $x_1, x_2$ 在 $X$ 中的开邻域 $W_1, W_2$，取 $U_0=(W_1\\cap S)\\setminus\\{x_2\\},\\, V=(W_2\\cap S)\\setminus\\{x_1\\}$ 确实构成覆盖 $S$ 且分开 $x_1, x_2$ 的开覆盖（利用 $x_1, x_2$ 为 $S$ 的闭点以及 $S=S_1\\cup S_2$），从而证明正合覆盖族在对应邻域系统中的余终性（以及 $S$ 上开集 $U$ 的迭代余极限 $\\varinjlim_U \\varinjlim_{U\\subset \\widetilde{U}} H(\\widetilde{U})$ 与 $H(S_1)$、$H(S_1\\times_S S_2)$ 等同）。答卷对这两步均直接跳过。\n\n* **影响**：图追逐思路可用，但在关键前置——有向性与余终性验证——存在实质缺漏，影响论证完整性。\n\n---\n\n### S3：含指定点的开集\n\n* **对应文本**：[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L15-L17)，[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L99-L132)。\n* **审阅意见**：**完全正确且严密。**\n  [L101-L119](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L101-L119) 完整验证了 $\\mathcal{I}_W$ 在 $\\mathcal{I}$ 中的支配性与相容性；[L120-L131](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L120-L131) 利用预层限制映射与泛性质构造了典范同态 $\\phi$ 与显式逆 $\\psi$，并核验 $\\psi\\circ\\phi=\\mathrm{id}$ 与 $\\phi\\circ\\psi=\\mathrm{id}$。\n\n---\n\n### S4：稠密开与邻域系统\n\n* **对应文本**：[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L19-L21)，[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L135-L162)。\n* **审阅意见**：**完全正确且严密。**\n  反例 $X=\\mathbb{A}^1_k=\\operatorname{Spec} k[t]$、$\\Sigma=\\{0\\}$、$W=X\\setminus\\{0\\}=D(t)$ 满足域 $k$ 上光滑积分仿射概形、有限非空点集、稠密开子集等全部前提，严格推导出 $\\mathcal{I}_W = \\emptyset$ 而 $\\mathcal{I}\\neq\\emptyset$，并准确补充了余终的充要条件 $\\Sigma\\subset W$。\n\n---\n\n### S5：整体对象与全部恢复目标\n\n* **对应文本**：[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L23-L50)，[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L165-L252)。\n\n结论「$\\eta_S: F(S) \\to F_{\\mathrm{Zar}}(S)$ 是同构」在原题条件下成立，但答卷的证明**存在根本性的数学错误以及大段核心步骤缺失**，逐项指出如下：\n\n#### 1. 致命数学错误：整体稠密开单射性与整体 Zariski 分离性均为假（[L189-L207](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L189-L207)）\n\n* **错误断言 1（[L191-L194](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L191-L194)）**：\n  答卷声称「设 $Y\\in \\mathrm{Sm}/k$ 是连通光滑整概形，$W\\subset Y$ 是稠密开子集。则限制映射 $F(Y)\\to F(W)$ 是单射。」\n* **错误断言 2（[L202](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L202)）**：\n  答卷由此推论「$F$ 是 Zariski 分离预层：若开覆盖 $(U_\\alpha)$ 上 $s|_{U_\\alpha}=0$，则 $s$ 在稠密集 $\\bigcup U_\\alpha$ 上处处为 0，由上述单射性知 $s=0$。」（此外该句在表述上也循环：$\\bigcup U_\\alpha = Y$，已知各 $s|_{U_\\alpha}=0$ 并不能推出 $s|_{\\bigcup U_\\alpha}=0$，除非先已知分离性；真要用上一条也只能取单个非空 $U_\\alpha$。）\n* **错误断言 3（[L203](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L203)）**：\n  答卷推论「分离预层到其层化的典范态射 $F(U)\\to F_{\\mathrm{Zar}}(U)$ 对任一开子集 $U$ 均是单射。」\n\n* **可核查反例（一例同时证伪断言 1、2、3）**：\n  取 $F(Y) = \\mathrm{Pic}(Y) \\cong H^1_{\\mathrm{Zar}}(Y, \\mathcal{O}_Y^\\times)$（$Y\\in\\mathrm{Sm}/k$）。\n  1. **满足全部题设条件**：\n     * 光滑 $k$-概形均正则且局部正规，故 $\\mathrm{Pic}(Y) \\cong \\mathrm{CH}^1(Y)$，且有限对应 $V\\subset Y\\times_k Z$（在 $Y$ 的连通分支 $Y_0$ 上有限满射）通过将 $Z$ 上除子/线丛拉回至 $V$ 的正规化 $\\widetilde{V}$ 再沿有限态射 $\\widetilde{V}\\to Y_0$ 作 Weil 除子推前（利用 $\\mathrm{Nm}_{k(V)/k(Y_0)}$ 保持主除子）或等同地通过带转移层 $\\mathcal{O}^\\times$ 的上同调 $H^1_{\\mathrm{Nis}}(-, \\mathcal{O}^\\times) \\cong H^1_{\\mathrm{Zar}}(-, \\mathcal{O}^\\times)$ 赋予 $\\mathrm{Pic}$ 良定的加性反变函子结构 $\\mathrm{Pic}: \\mathrm{Cor}_k^{\\mathrm{op}} \\to \\mathrm{Ab}$。\n     * 对任意光滑（从而正则）概形 $Y\\in \\mathrm{Sm}/k$，投影诱导出同构 $\\mathrm{Pic}(Y) \\xrightarrow{\\sim} \\mathrm{Pic}(Y\\times_k \\mathbb{A}^1_k)$。\n  2. **证伪断言 1**：取 $Y = \\mathbb{P}^1_k$，$W = \\mathbb{A}^1_k = \\mathbb{P}^1_k \\setminus \\{\\infty\\}$（稠密开）。限制映射\n     $$\\mathrm{Pic}(\\mathbb{P}^1_k) \\cong \\mathbb{Z} \\longrightarrow \\mathrm{Pic}(\\mathbb{A}^1_k) = 0$$\n     **不是单射**。（即便限定 $Y$ 为光滑**仿射**概形，取代数闭域 $k$ 上椭圆曲线 $E$ 及非挠类 $[P_1]-[P_0]\\in\\mathrm{Pic}^0(E)$，令 $Y = E\\setminus\\{P_0\\}$、$W = Y\\setminus\\{P_1\\}$，同样有 $\\ker(\\mathrm{Pic}(Y)\\to\\mathrm{Pic}(W))\\neq 0$。）\n  3. **证伪断言 2**：取 $Y = \\mathbb{P}^1_k$ 的 Zariski 开覆盖 $\\{U_1, U_2\\}$，其中 $U_1 = \\mathbb{P}^1_k \\setminus \\{\\infty\\} \\cong \\mathbb{A}^1_k$，$U_2 = \\mathbb{P}^1_k \\setminus \\{0\\} \\cong \\mathbb{A}^1_k$。非零截面 $s = [\\mathcal{O}_{\\mathbb{P}^1}(1)] \\in \\mathrm{Pic}(\\mathbb{P}^1_k)$ 满足 $s|_{U_1} = 0$ 且 $s|_{U_2} = 0$。故 **$F = \\mathrm{Pic}$ 不是 Zariski 分离预层**。\n  4. **证伪断言 3**：因任意线丛在 Zariski 局部皆平凡，故 $(\\mathrm{Pic})_x = 0$ 对一切点成立，从而 $F_{\\mathrm{Zar}} = \\mathrm{Pic}_{\\mathrm{Zar}} = 0$。对开集 $U = \\mathbb{P}^1_k$，典范态射 $\\eta_{\\mathbb{P}^1_k}: \\mathrm{Pic}(\\mathbb{P}^1_k) \\cong \\mathbb{Z} \\to 0$ **不是单射**。\n\n* **对后续步骤的连锁影响**：\n  * **推论 3（[L204-L206](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L204-L206)）失去依据**：答卷对 $T = S_1 \\times_S S_2$（[L233](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L233)）和 $T = S' \\times_S S_n$（[L247](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L247)）的单射性是通过对 [L203](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L203) 取滤过余极限得到的；既然 [L203](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L203) 为假，该论证直接坍塌。\n  * **注意不能用「半局部单射性」直接修补 $T = S_1 \\times_S S_2$**：当 $\\dim X \\ge 2$ 时（例如无穷域上 $X=\\mathbb{A}^2_k$，$x_1=(0,0),\\, x_2=(1,0)$），$S_1 \\times_S S_2$ 包含所有同时经过 $x_1, x_2$ 的不可约曲线所对应的高度 1 素理想，具有**无穷多个闭点**，并非有限点集处的半局部化。因此即便把 [L191-L194](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L191-L194) 修正为正确的「半局部稠密开单射性」（即 $s\\in F(U)$ 在稠密开集 $W\\subset U$ 上为 $0$ 时，存在 $\\Sigma$ 的更小开邻域 $U'\\subset U$ 使 $s|_{U'}=0$），也无法直接得到 $\\eta_{S_1\\times_S S_2}$ 单射或将 S2 套用于 $H=F$。\n  * **正确的修补路径**：先证明半局部单射性（由此得 $\\eta_S: F(S)\\to F_{\\mathrm{Zar}}(S)$ 对一切有限点半局部化 $S$ 单射），再证明 $K := \\ker(F \\to F_{\\mathrm{Zar}})$ 保持转移（因有限对应在任意点上的纤维为有限集 $\\Sigma$，而 $s\\in K(Z)$ 在 $\\Sigma$ 的某个单个开邻域上即消失），从而商预层 $F' := F/K = \\operatorname{im}(F\\to F_{\\mathrm{Zar}})$ 是一个**分离的**同伦不变带转移预层，且对一切半局部化有 $F'(S)=F(S)$、层化仍为 $F_{\\mathrm{Zar}}$；此后才能将 S2 合法应用于 $H=F'$！答卷直接对 $H=F$ 应用 S2，在逻辑上不成立。\n\n#### 2. 核心几何证明大段空缺与「黑箱」援引\n\n* **未说明定理适用条件且黑箱援引 Voevodsky 层化定理（[L181-L185](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L181-L185)）**：\n  原题明确要求 [original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L3)「援引前项或标准定理时说明实际适用条件」且 [L50](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L50)「给出完整论证」。答卷直接援引 Voevodsky 层化定理（且给出自相矛盾的文献编号：`Theorem 4.18/5.7` 在 [L182](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L182) 用于层化定理，而 [L226](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L226) 又将 `5.7` 写作 `MVW Lemma 4.22 / 5.7` 的收缩引理），既未说明适用域条件（经典文献中层化定理的完全版本通常在**完美域**上陈述），且在数学依赖上 $\\eta_S: F(S)\\xrightarrow{\\sim} F_{\\mathrm{Zar}}(S)$ 本身正是建立 $F_{\\mathrm{Zar}}$ 具有转移结构、保持同伦不变与等于 $F_{\\mathrm{Nis}}$ 的核心步骤之一。\n* **半局部单射性的几何构造实为几句口号（[L196-L200](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L196-L200)）**：\n  1. 「在 $Y$ 的局部存在标准三元组 $(p: C\\to B, Z\\subset C\\subset \\bar{C})$」本身只得到局部开邻域 $C\\subset Y$（并得不到全空间 $Y$ 上的等式），且曲线移动构造有理函数使对应避开 $Z$ 需要将底局部化为**半局部概形**（使无穷远截面与 $Z$ 之并在 $\\bar{C}_S$ 上的限制成为半局部概形从而线丛平凡），并非对一般仿射底 $B$ 成立。\n  2. 原题仅设「$k$ 为域」（[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L27)），未排除**有限域**与**非完美域**。在有限域上，不能直接用线性投影得到标准三元组，需说明高次 Bertini/插值构造或用两个互素次数有限扩域上的迹/转移消去核与余核；在非完美域上，射影闭包 $\\bar{X}$ 即使正规化在 $\\bar{X}\\setminus X$ 处也未必对 $k$ 光滑，需要避免依赖无穷远处光滑性的构造（如只需 $\\bar{C}\\to B$ 平坦射影、沿 $C$ 光滑）。答卷对此完全未提。\n* **两开覆盖的收缩引理完全未证（[L226-L229](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L226-L229)）**：\n  只以「利用曲线纤维化中有限对应对切触截面的移动技术」一句话代过，没有任何实质证明或同伦闭链的构造。\n\n#### 3. 其它步骤缺口（[L223-L250](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L223-L250)）\n\n1. **$\\Sigma \\subset |X|$ 含可比较点（非闭点）的情形未化归**：与 S1 不同，S5 [original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L39) 仅设 $\\Sigma \\subset |X|$ 为有限非空点集，未假定其互不特化，故 $\\Sigma$ 中的点未必全是 $S$ 的闭点（若 $x_1$ 特化到 $x_2$，即 $\\mathfrak{p}_1 \\subsetneq \\mathfrak{p}_2$，则无法用二开覆盖分开 $x_1, x_2$）。需先将 $\\Sigma$ 替换为其中关于特化关系极小（对应 $\\mathfrak{p}_x$ 极小包含相反、即极大素理想）的闭点子集，说明 $M, S$ 及邻域余极限均不变。答卷 [L223-L250](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L223-L250) 默认 $\\Sigma$ 全部是 $S$ 的闭点。\n2. **$n=2$ 与 $n\\ge 3$ 归纳步的图正合性与余极限过渡缺失**：\n   * [L235](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L235) 直接宣称由收缩引理得到 $0\\to F(S)\\to F(S_1)\\oplus F(S_2)\\to F(S_1\\times_S S_2)$ 正合，跳过由覆盖 $(U,V)$ 过到滤过余极限的验证。\n   * [L237-L250](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L237-L250) 的归纳步将 $S$ 分为 $S'$ 与 $S_n$，构造了比较梯形图，但：(i) 未定义 $F(S'\\times_S S_n)$ 与 $F_{\\mathrm{Zar}}(S'\\times_S S_n)$ 及说明其与二开交 $U\\cap V$ 余极限的等同；(ii) 底行 $0\\to F_{\\mathrm{Zar}}(S)\\to F_{\\mathrm{Zar}}(S')\\oplus F_{\\mathrm{Zar}}(S_n)\\to F_{\\mathrm{Zar}}(S'\\times_S S_n)$ 并不能仅凭口头「由层的拼接 S1 给出」而略去证明（S1 给的是 $n$ 份局部化 $S_1,\\dots,S_n$ 的等化子，需再从 S1 导出或按二元覆盖 $U\\supset \\Sigma', V\\ni x_n$ 同法取余极限）；(iii) 顶行正合性同样缺少对 $\\Sigma'\\sqcup\\{x_n\\}$ 的收缩引理与余极限验证；(iv) 右竖直箭头 $\\eta_{S'\\times_S S_n}$ 再次依赖前述错误的整体分离性。\n3. **小细节**：[L176](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L176) 未显式核验光滑拟射影 $k$-概形 $X$ 及其开子概形均分离、有限型从而属于 $\\mathrm{Sm}/k$；[L179](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L179) 未写出从 $p^*$ 为同构推出 $i_0^*=(p^*)^{-1}=i_1^*$ 的一步。\n\n---\n\n### S6：极限正合与阶段正合\n\n* **对应文本**：[original-task.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-task.md#L52-L54)，[original-answer.md](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L255-L332)。\n* **审阅意见**：**完全正确且严密。**\n  1. **第一问（[L257-L291](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L257-L291)）**：构造 $(\\mathbb{N}, \\le)$ 上的二项复形系统 $C_1^{(i)}=\\mathbb{Z}\\xrightarrow{\\times 2}\\mathbb{Z}=C_0^{(i)}$，过渡链映射两端皆为 $\\times 2$。每阶段 $H_0=\\mathbb{Z}/2\\mathbb{Z}\\neq 0$ 均不正合，而余极限为 $\\mathbb{Z}[1/2]\\xrightarrow{\\times 2}\\mathbb{Z}[1/2]$（群同构），严格正合。链映射交换性与余极限算子皆核验无误。\n  2. **第二问（[L295-L332](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/MG-AR004/physical-1/session/work/original-answer.md#L295-L332)）**：方法一利用 $\\mathrm{Ab}$ 中滤过余极限正合从而与同调函子交换，直接由每阶段同调类最终消亡推出 $\\varinjlim H_n(C_\\bullet^{(i)})=0$；方法二直接进行元素追逐验证 $\\ker(d_n^\\infty)=\\operatorname{im}(d_{n+1}^\\infty)$。将其限制于集中于两相邻次数的二项复形亦完全成立，两法均严密完整。\n```\n"
+    }
+  ],
+  "source_request_sha256": "7b1de051ffa9ed74bcc14fc9903d8570c08c1d3e4dd757b9e4d92391ec6417e2",
+  "source_parent_answer_sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+  "metadata_projection_only": true,
+  "self_source_projection": {
+    "schema": "math-gauge.public-neutral-self-source-projection/v1",
+    "post_observation": true,
+    "existing_public_sources_only": true,
+    "new_mathematical_delivery": false,
+    "raw_final_sha256": "86ec3b1c21ecc281ef7b41b3bb9f3b5866f0bf5d344e63aa367ae31c7fbcffac",
+    "original_public_parent": {
+      "path": "results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/imports/native-2700/slots/MG-AR004/A1/attempts/1/response.md",
+      "bytes": 27209,
+      "sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a"
+    },
+    "sources": [
+      {
+        "target_id": "source-01",
+        "kind": "public_provided_material",
+        "existing_public_source": {
+          "path": "cases/answer-review/MG-AR004/candidate/original-task.md",
+          "bytes": 3416,
+          "sha256": "fa81237b179de3caaa4b3c957a0701165162fde8f7a7a46309ccb66c72760ee6"
+        },
+        "frozen_candidate_source_sha256": "fa81237b179de3caaa4b3c957a0701165162fde8f7a7a46309ccb66c72760ee6",
+        "retained": {
+          "path": "results/edition-reassessments/v1.2.0/gemini-4-hydrogen-xhigh/20261113/public-continuations/MG-AR004/self-sources/materials/original-task.md",
+          "bytes": 3416,
+          "sha256": "fa81237b179de3caaa4b3c957a0701165162fde8f7a7a46309ccb66c72760ee6"
+        }
+      },
+      {
+        "target_id": "source-02",
+        "kind": "public_provided_material",
+        "existing_public_source": {
+          "path": "cases/answer-review/MG-AR004/candidate/original-answer.md",
+          "bytes": 25754,
+          "sha256": "2f472006c56cb0988b9a8153c98f17436290ccca4e91caf3f1b00f781859c4af"
+        },
+        "frozen_candidate_source_sha256": "2f472006c56cb0988b9a8153c98f17436290ccca4e91caf3f1b00f781859c4af",
+        "retained": {
+          "path": "results/edition-reassessments/v1.2.0/gemini-4-hydrogen-xhigh/20261113/public-continuations/MG-AR004/self-sources/materials/original-answer.md",
+          "bytes": 25754,
+          "sha256": "2f472006c56cb0988b9a8153c98f17436290ccca4e91caf3f1b00f781859c4af"
+        }
+      },
+      {
+        "target_id": "source-03",
+        "kind": "public_provided_material",
+        "existing_public_source": {
+          "path": "cases/answer-review/MG-AR004/candidate/materials.md",
+          "bytes": 153,
+          "sha256": "25b76865744ef567f25ffdfbe6e260de02a49152aa81039e7c40890b6c2bbdb7"
+        },
+        "frozen_candidate_source_sha256": "25b76865744ef567f25ffdfbe6e260de02a49152aa81039e7c40890b6c2bbdb7",
+        "retained": {
+          "path": "results/edition-reassessments/v1.2.0/gemini-4-hydrogen-xhigh/20261113/public-continuations/MG-AR004/self-sources/materials/materials.md",
+          "bytes": 153,
+          "sha256": "25b76865744ef567f25ffdfbe6e260de02a49152aa81039e7c40890b6c2bbdb7"
+        }
+      }
+    ],
+    "raw_final_URI_bindings": [
+      {
+        "start_byte": 57,
+        "end_byte": 216,
+        "uri_sha256": "c5f12f2b21310f81393357475e5ab6e34edf6726b103b91c85cabb1aa6d72c4e",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 255,
+        "end_byte": 416,
+        "uri_sha256": "cda0491a18f84518a79babada61bf7d7dd24419864abd5aec6d2cd91c83d6046",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 451,
+        "end_byte": 606,
+        "uri_sha256": "e193f7662dc3490694c626bd47be57886cb5d3b048a39c1b13a1ea745a1d5f62",
+        "target_id": "source-03"
+      },
+      {
+        "start_byte": 2864,
+        "end_byte": 3029,
+        "uri_sha256": "1f6b44e7730c11f50b52be99fe309ce939f0bba9f3c21820e62cecde85cca9c5",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 3054,
+        "end_byte": 3222,
+        "uri_sha256": "d0959ab8d2e1d7239e7cbeebc6ebf5b3767fe15f2b99a36024ebdb6de47c37fa",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 3419,
+        "end_byte": 3584,
+        "uri_sha256": "c2fea569b0ee6a90ad531f5e0cfbe4d7a837646fb15db5dd4fdda6fd4732b17b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 3600,
+        "end_byte": 3769,
+        "uri_sha256": "a0e61dc6d32c606c70a83d075a45cc6214a0c645d53579fb1b843f96b8fa0bd9",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 3907,
+        "end_byte": 4069,
+        "uri_sha256": "0a62618e93ba1d617972af843dc17eac888140b25c5e78d2f19a3b5975d678d4",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 5254,
+        "end_byte": 5419,
+        "uri_sha256": "6125058c20bd955a585bfc05cc1c543622b925cd34c605cb300e14b767bd005b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 5651,
+        "end_byte": 5816,
+        "uri_sha256": "30437d6646fbbacf145dfbdfa8fc0c272ebf2f02f76a69c0a827afa1a1d110c5",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 6034,
+        "end_byte": 6198,
+        "uri_sha256": "1ac42825903a28dc4d7483c84d7d32fa005947590026eaf387ea629023395025",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 6363,
+        "end_byte": 6528,
+        "uri_sha256": "fb3b7223ba782dff9d4838dde5f7654f60ab4198b9506f90369963e094e1c0ff",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 6540,
+        "end_byte": 6705,
+        "uri_sha256": "c2fc984cbe5cf7519b80e79ee50d5950b3e094e0d41a978b8c805da1daa1edbe",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 7127,
+        "end_byte": 7292,
+        "uri_sha256": "d6e2655d5cc6195fa67224bba06d2d2dc3b83c8313d9a83a37057a1289f78432",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 9193,
+        "end_byte": 9358,
+        "uri_sha256": "947e26792578d9807efb19f613e85943e598aedd776e19c1d6d27ddbe2692be4",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 11856,
+        "end_byte": 12023,
+        "uri_sha256": "ddd5daa9793752785eab9bc48d4eee272d85edbbfacb6196d0688ab131a35e09",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 12048,
+        "end_byte": 12217,
+        "uri_sha256": "27b562fd5b92fd4a62c5c2e26d9e70bc80a39b106979e8a650b3e35fa7f25bec",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 12276,
+        "end_byte": 12445,
+        "uri_sha256": "a31c06146d1e323ce4035b333225e6cffad7ed376f88bb3ff6521ffa61f36595",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 12758,
+        "end_byte": 12927,
+        "uri_sha256": "9755bb06ca8d10af4c78de31b24d4a34744d4cacbf8baaa512a12042640694ce",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 12983,
+        "end_byte": 13148,
+        "uri_sha256": "f639bea644bd48efb3b01d0b7a39c835ad188d7d41bbdaa5f95a6ce50dad77cc",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 13295,
+        "end_byte": 13464,
+        "uri_sha256": "055f9e91486455744ebfb4ae1c5ccc95f49fc0532152d856cc85fa8afcbe24ab",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 14075,
+        "end_byte": 14240,
+        "uri_sha256": "3b6f0ac7a39703b2832674bb66e69edfc571fe082b114221339fab9186121d6f",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 14461,
+        "end_byte": 14630,
+        "uri_sha256": "7a80915aab3ebdbfab63329dfbb262206751daebfbd51bc827527481dd736906",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 14928,
+        "end_byte": 15093,
+        "uri_sha256": "fa06c46c3a572037aa3a3d55b187424d5baf78f7beaa3dde8216a688b7cfc059",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 15152,
+        "end_byte": 15317,
+        "uri_sha256": "fa06c46c3a572037aa3a3d55b187424d5baf78f7beaa3dde8216a688b7cfc059",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 15940,
+        "end_byte": 16109,
+        "uri_sha256": "ac577cb58519274ee48cac8a426a19be134e210844e93c19eddfbafac6a13e68",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 17123,
+        "end_byte": 17290,
+        "uri_sha256": "af99f152d88fdf49413da598d86c64f09adfe5434d45f83875f865eb7e060a06",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 17315,
+        "end_byte": 17485,
+        "uri_sha256": "145e37ce799e4d08b894e883da911472ebe86b229126ab3c6fde5b6a9eb48c6f",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 17554,
+        "end_byte": 17725,
+        "uri_sha256": "9050e29dd653910f30e7d4dcf42a5dd2215b8bf1a574f845d89cd4da23989586",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 17819,
+        "end_byte": 17990,
+        "uri_sha256": "24f7b98e6acd6cdd35d0c6be7ac7da3625d787ccd460d66a855c09b6d32b037d",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 18233,
+        "end_byte": 18400,
+        "uri_sha256": "72205166d4849d3383ca91a7d47f3f20e8a7ae8e6192f00de00a5423a13d40ad",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 18425,
+        "end_byte": 18596,
+        "uri_sha256": "85a4041f202c530f3ca7ee4daf66d82f232a82185b141947089e596855b92fab",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 19074,
+        "end_byte": 19241,
+        "uri_sha256": "574a98f9dffa247f3b00302638a6f6e228cd146668a810db2a64a91f66fd7296",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 19266,
+        "end_byte": 19437,
+        "uri_sha256": "8961e7248bcb82e8a2017c16afd2d7b653c9f47210e68ff298781cb3d441906d",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 19742,
+        "end_byte": 19913,
+        "uri_sha256": "f94a68ed4a217a406df1189a7b98585aacbab7dac726a86638d6d77b6aae6604",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 19952,
+        "end_byte": 20123,
+        "uri_sha256": "5541fef8ff2eedb7e6b372b38e69efa9b031c94600c4ad3489de728dfd702df5",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 20311,
+        "end_byte": 20477,
+        "uri_sha256": "bdd95d89bde4e83b652348166c77e4831b7186dfa9917246847ed4b7a638e46b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 20926,
+        "end_byte": 21092,
+        "uri_sha256": "3b6726af07b35c845db709e62cd01fd00c6dad7ad91d3260296891a17b4bc353",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24030,
+        "end_byte": 24201,
+        "uri_sha256": "36ce5251cf51dd2617dc20809b6b7aeab2a19a892e320f23ef34379043138e89",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24264,
+        "end_byte": 24430,
+        "uri_sha256": "f3bb9c16b9eacab75e9ea2740a1f154313bf837900503426695f4a3f067c8b7d",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24469,
+        "end_byte": 24635,
+        "uri_sha256": "b0cda48b495399ef143dc4a796d77de671ab2534119b4a5ee3433f6fe72352a4",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24671,
+        "end_byte": 24837,
+        "uri_sha256": "3b6726af07b35c845db709e62cd01fd00c6dad7ad91d3260296891a17b4bc353",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24883,
+        "end_byte": 25049,
+        "uri_sha256": "3b6726af07b35c845db709e62cd01fd00c6dad7ad91d3260296891a17b4bc353",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 25553,
+        "end_byte": 25724,
+        "uri_sha256": "5541fef8ff2eedb7e6b372b38e69efa9b031c94600c4ad3489de728dfd702df5",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 27151,
+        "end_byte": 27322,
+        "uri_sha256": "2e0014d241827bab4013ec4f3fc70687a7e6455c733023d163e9a706246594a7",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 27372,
+        "end_byte": 27534,
+        "uri_sha256": "0fc58f7a5d36f2bb1e09b716054c9ff03437c306b3f7d25fb346f417f9b912db",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 27605,
+        "end_byte": 27768,
+        "uri_sha256": "330a46b8fcf1372ffff34b07f826af934d39607d92d7baa4385d98f66a4993ab",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 27909,
+        "end_byte": 28075,
+        "uri_sha256": "c39e0198095aada7833bf9e914eb6b9c290b9d32b8150b635cd10087642d123c",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 28109,
+        "end_byte": 28275,
+        "uri_sha256": "ebfca43c8c598a184e59aa4e273572de540572dce28a7d555c19f166af82cc27",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 28726,
+        "end_byte": 28897,
+        "uri_sha256": "dc03150afe7963038b63e6f5e4ad1140269db73f3f32c50b7d5c39ccec9f45a0",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 29385,
+        "end_byte": 29548,
+        "uri_sha256": "f971e41888def485f7432c756a0481183825db3664f6750353ef5134e8bb8a77",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 30096,
+        "end_byte": 30267,
+        "uri_sha256": "5008afe5356435b041aea5e8733d7fba211342751f3abd7f9cdc2288b32d01bc",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 30496,
+        "end_byte": 30667,
+        "uri_sha256": "d8cc5a37d2256d46985ecf3c9c3c181a19cc611b8fcc5cbe7d8f5d6d7cb47e12",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 30790,
+        "end_byte": 30953,
+        "uri_sha256": "2685e76a9662f84d4583c07833846e845754fa3a845c7b710e1c65cddf55791f",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 31635,
+        "end_byte": 31806,
+        "uri_sha256": "d8cc5a37d2256d46985ecf3c9c3c181a19cc611b8fcc5cbe7d8f5d6d7cb47e12",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 31941,
+        "end_byte": 32107,
+        "uri_sha256": "3a2ab57f589a2e32cf56690fad4623d97c89f0f77e3da7bbbf37587dfab9bab7",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 32317,
+        "end_byte": 32488,
+        "uri_sha256": "6a787be7a447c166679f056e250919f24835b9118b9f943f039cb124cb6431f9",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 33308,
+        "end_byte": 33474,
+        "uri_sha256": "6fbfc297fbb5359b3dd40d36b0793861791b1e548351a0c415d40666e0a437de",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 33599,
+        "end_byte": 33765,
+        "uri_sha256": "2668855885d4aa7cf71fe22d6bcb43ee31e2135dc5763de45d4c60c1a29ce9f2",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 33969,
+        "end_byte": 34136,
+        "uri_sha256": "c20824aae7bb1c632004988693d3e5d052abdfb32e19689b165d1178e00fb512",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 34161,
+        "end_byte": 34332,
+        "uri_sha256": "0c66c2b7b223f6036ae0ffd762b45885c62450c2797c26c1c9041821041f7eef",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 34418,
+        "end_byte": 34589,
+        "uri_sha256": "8e0023737961848ba4c54e4ffa3417b4b17f1a82562347f89c1b3a67a9fd1b2b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 35014,
+        "end_byte": 35185,
+        "uri_sha256": "57525305656ef7397e76bb979d20967e8ee2a2c9fc070f68e737de48413c81d9",
+        "target_id": "source-02"
+      }
+    ],
+    "original_parent_URI_bindings": [
+      {
+        "start_byte": 60,
+        "end_byte": 173,
+        "uri_sha256": "e5a93867f50ab50928bacb63f41cad10bd97427c20eb88ffd102961658c04223",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 212,
+        "end_byte": 327,
+        "uri_sha256": "d7603106ce4d688f13306a83696a47aec606f4be106a65b3e185e512c4f03a6b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 362,
+        "end_byte": 471,
+        "uri_sha256": "bdabb3fabed57eef744d68703590a85da23bc60cc2d204cc127ff8495ec975b2",
+        "target_id": "source-03"
+      },
+      {
+        "start_byte": 2594,
+        "end_byte": 2713,
+        "uri_sha256": "5d7e6c8ce884f521b2f3dedce7ab84cd35ae20bdfdcb669a0e91d8d1aec77256",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 2738,
+        "end_byte": 2860,
+        "uri_sha256": "d7423ecac0899af0546abad3e5c6d073ec76bc48739dc6c1a4e8420c8f2002ad",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 2977,
+        "end_byte": 3096,
+        "uri_sha256": "3d39c6be5239e4344c4bf1823794c1556ac487504433c96b9c93d8177524fb3c",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 3112,
+        "end_byte": 3235,
+        "uri_sha256": "3e1147488076defe27d7e8607147fe96ffed50906174a927289c96d8f641f005",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 3373,
+        "end_byte": 3489,
+        "uri_sha256": "058be942bc78939b8d198b22efd4ecb6f86a658d59c833ed97c9604770985624",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 4138,
+        "end_byte": 4257,
+        "uri_sha256": "454fb1b8c4e6ba8c7151d575a70252ea0155633492ec40f0c897c97509151890",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 4413,
+        "end_byte": 4532,
+        "uri_sha256": "b99197678c3773d6307e42e8ae1bc091e2a73fe2b271292b79aecea138505566",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 4695,
+        "end_byte": 4813,
+        "uri_sha256": "7fe5de63d208d689733914625aca9fbbe1c827d4b9254d135a5b23e42f1fdfe9",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 5118,
+        "end_byte": 5237,
+        "uri_sha256": "b568c508e215c595a52b122960539a3a8cdc689f8907d6814d27fdb4b701dde4",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 6413,
+        "end_byte": 6532,
+        "uri_sha256": "352565b706d8865c02457067236aa2709b63a72d4d64d746818c7ed80528d999",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 8317,
+        "end_byte": 8438,
+        "uri_sha256": "3c9eaed8fc21dbed2c9643072c8b87ca2391d92809b2a1ebc26a0e3acc501861",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 8463,
+        "end_byte": 8586,
+        "uri_sha256": "ebf87cb09e21e8ec546464f5feb4ed8358ebba2441de620dd3f72a7f66fbd753",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 8645,
+        "end_byte": 8768,
+        "uri_sha256": "02326e2268b954cc4a6bd654f2c00c792969b04af976377e964c4a9aa99c6aba",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 8960,
+        "end_byte": 9083,
+        "uri_sha256": "0e0c0068dc96fe5b025e54bd970b308a084724fb5f45c33b9b4cba7b0d9d20f3",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 9162,
+        "end_byte": 9285,
+        "uri_sha256": "6b335124fbce8c06abd785ab1fe208c8fa31ab126c576ce43f227f080f5edf99",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 9902,
+        "end_byte": 10021,
+        "uri_sha256": "afb5d84ba6e63d687134cbd6315091572332ed8a56d307a68c08fe251f7f767d",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 10233,
+        "end_byte": 10356,
+        "uri_sha256": "79740927acb18d9162e19cd9fd278a836ef40300b9a0ad6931ac1a892b874f84",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 10759,
+        "end_byte": 10882,
+        "uri_sha256": "af9147f66498a31ff3ee1c5a961e0008ceadaad28dd4d1dfd9f594341058edac",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 11731,
+        "end_byte": 11852,
+        "uri_sha256": "f997556bfc930677f18eabe86b66ef525369461b72609612fb01aa0a78dbee26",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 11877,
+        "end_byte": 12001,
+        "uri_sha256": "bb6bbbfdb0373165e9597336e2788fbdf7997c8e7e22fbe4c084544f0c294242",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 12070,
+        "end_byte": 12195,
+        "uri_sha256": "1e210c62199644fa84f945faf1d8cd4878b4ee14ddcb5e72cb0bd7c460ca25e9",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 12289,
+        "end_byte": 12414,
+        "uri_sha256": "ba06f274f023970d049131dd411e73941a45b0bd883a95c21443fd8e87204442",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 12657,
+        "end_byte": 12778,
+        "uri_sha256": "cc73c5f55141c167c45e9c703c89db0bb16fdfce1b95fb7f5ff52f9c0fab8f6d",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 12803,
+        "end_byte": 12928,
+        "uri_sha256": "026fc4f8147a8c8607aab01574b607fd8183eacb411502a0bdb046478e610d04",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 13406,
+        "end_byte": 13527,
+        "uri_sha256": "574b1585ab1bbfd430b3a7d9ff51832e8a2bd6f0b6701edc5a0338e1c164e26c",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 13552,
+        "end_byte": 13677,
+        "uri_sha256": "f7be30b30027b470205f2fb6b3879ddd98a7500ba2bc5cb1e52087dd17489fe5",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 13982,
+        "end_byte": 14107,
+        "uri_sha256": "b229ef969718a4ec07e97b0107cc4d3f46b1af61f0d17e5a6d9f16661a9add3b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 14146,
+        "end_byte": 14271,
+        "uri_sha256": "f7609f0f853339051bd04eddf66ed50346e71747c1d4fc4226e3d8540c04eeff",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 14459,
+        "end_byte": 14579,
+        "uri_sha256": "ebda220f6f20160cade845109aaacaf195f23ea8fa728d8c183cb593002cd758",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 15034,
+        "end_byte": 15154,
+        "uri_sha256": "351b4b4b1a02f789c409b35309ebe2c1f0309dd7446a7ebdef2a7beb49f909ee",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 17664,
+        "end_byte": 17789,
+        "uri_sha256": "c43b0d92fd594d5c877ad927bbbf10d9f58efed7fa0fdcc2e7ea17afb0bf9581",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 17852,
+        "end_byte": 17972,
+        "uri_sha256": "24b8adafa575ee583fdb07db4db74fe37d8506b9d9f236eba13ab2880ca5877b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 18011,
+        "end_byte": 18131,
+        "uri_sha256": "3fa056adae93d59f1a7cc9a2e8f7f764b0c0fee417803ec954e9ba78a384ebcc",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 18167,
+        "end_byte": 18287,
+        "uri_sha256": "351b4b4b1a02f789c409b35309ebe2c1f0309dd7446a7ebdef2a7beb49f909ee",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 18333,
+        "end_byte": 18453,
+        "uri_sha256": "351b4b4b1a02f789c409b35309ebe2c1f0309dd7446a7ebdef2a7beb49f909ee",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 18873,
+        "end_byte": 18998,
+        "uri_sha256": "f7609f0f853339051bd04eddf66ed50346e71747c1d4fc4226e3d8540c04eeff",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 20069,
+        "end_byte": 20194,
+        "uri_sha256": "1b09208242620d46759dcf548780515ea49d3d244c42fdf897152c0fc899d78b",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 20244,
+        "end_byte": 20360,
+        "uri_sha256": "93120288a237e76f5bba7bf7763daed4f08adaa8f6f2c6e3bf157dcddaef0889",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 20431,
+        "end_byte": 20548,
+        "uri_sha256": "d80e93a5286095bf049ad55ad0164ca2bb315c13f898cd93db5e045afcaeb842",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 20689,
+        "end_byte": 20809,
+        "uri_sha256": "7b7fb1ec2a017713716f4ec944fcfe109be12afecd887d5db4cfb6379f90522f",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 20843,
+        "end_byte": 20963,
+        "uri_sha256": "147124afaff1ed79e59101478673ad3800670210019af44a9eb844a370b4449e",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 21414,
+        "end_byte": 21539,
+        "uri_sha256": "d038455d3521610ae2c110e25cf7b33c0a32efe9296e6e60af0ad75529dbce55",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 22027,
+        "end_byte": 22144,
+        "uri_sha256": "f32784fd5ae604a134964756a85954b079e341773c2340bbf090365cd6feaa45",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 22683,
+        "end_byte": 22808,
+        "uri_sha256": "28baf5f4d617dd135935cf0c580ef1506d581e07cc479042899c45eee59e2a21",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 23010,
+        "end_byte": 23135,
+        "uri_sha256": "e47598a134f42a8d042b6a2e9118fa725939d6c87a0f5bb21f59ef2984a81d54",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 23258,
+        "end_byte": 23375,
+        "uri_sha256": "22549df51412a0f408f2a5eea4e021c1f9886d1391df19f019a2a7e5a430d820",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 23839,
+        "end_byte": 23964,
+        "uri_sha256": "e47598a134f42a8d042b6a2e9118fa725939d6c87a0f5bb21f59ef2984a81d54",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24099,
+        "end_byte": 24219,
+        "uri_sha256": "88ce0e714a056bc9a67ff8c3a62b46d7b67467bf508c0e2ebba0e90690fce2f1",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 24396,
+        "end_byte": 24521,
+        "uri_sha256": "76a5e309686d4d64a1943e361d1adb312b059d9a27e45ce9ee2c526e975519a1",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 25291,
+        "end_byte": 25411,
+        "uri_sha256": "3d621814c466c1402637ce163653bd20a776ded7278d51c4c3bdd5a02fccc81e",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 25536,
+        "end_byte": 25656,
+        "uri_sha256": "0084bcd2518478fcbd17be9a0aa48af508d0d7017f21890e891426bbc33007d7",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 25815,
+        "end_byte": 25936,
+        "uri_sha256": "29bafcb32c6c3f39ee5d227b2ed7e497d3cc0486f5b5fdc19611009fb1719482",
+        "target_id": "source-01"
+      },
+      {
+        "start_byte": 25961,
+        "end_byte": 26086,
+        "uri_sha256": "b3122752fd54bbaeb8d53698075c86218824e0c03402ab185480875716baad9e",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 26172,
+        "end_byte": 26297,
+        "uri_sha256": "b7eb78bed2d54ee2083b0b87de1e96eb805e4c2e6dc9f87c22ec93f6c8723d89",
+        "target_id": "source-02"
+      },
+      {
+        "start_byte": 26715,
+        "end_byte": 26840,
+        "uri_sha256": "50af660f4a6a56909c1809e2b34a7b949519f85d8898a4abfd42662ac8b94320",
+        "target_id": "source-02"
+      }
+    ]
+  }
+}

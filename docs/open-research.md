@@ -49,7 +49,7 @@ The table follows the current1.2.0 cohort and compares two research traits witho
 | Gemini 4 Neon (xHigh) | 90.00 | 90.00 | 29.05 |
 | Gemini 4 Carbon (high) | 90.00 | — | 15.00 |
 | Gemini 4 Carbon (medium) | 90.00 | — | 17.86 |
-| Gemini 4 Hydrogen (xhigh) | 90.00 | — | 16.43 |
+| Gemini 4 Hydrogen (xhigh) | 90.00 | 90.00 | 16.43 |
 | Kimi 3.1 Pro (max) | 80.00 | 84.00 | 7.86 |
 | Astra 6.2 (max) | 90.00 | 92.00 | 12.14 |
 | Astra 6.2 (xHigh) | 90.00 | 92.00 | 8.57 |
