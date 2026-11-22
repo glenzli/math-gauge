@@ -142,6 +142,29 @@ class CategoryRankingsTests(unittest.TestCase):
             root=Path(directory)/'20261101';root.mkdir()
             self.assertIsNone(recorded_test_order(root,{'record_id':'20261101'})['date'])
 
+    def test_opaque_native_public_source_uses_only_bound_public_initial_clocks(self):
+        from scripts.render_results_site import recorded_test_order
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); record={'first_assessment_source': {}}
+            proof=root/'proof.json'; proof.write_text(json.dumps({
+                'schema':'math-gauge.native-first-assessment-source-public/v1',
+                'private_source_proof_sha256':'0'*64}))
+            raw=proof.read_bytes(); record['first_assessment_source']=dict(
+                path='proof.json',bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+            retained=root/'record.json';retained.write_text(json.dumps(record))
+            timings={'record':{'sha256':hashlib.sha256(retained.read_bytes()).hexdigest()},'rows':[
+                {'phase':'R1','availability':'known','started_at':'2026-10-01T00:00:00+00:00'},
+                {'phase':'A1','availability':'known','started_at':'2026-11-19T23:30:00+00:00'}]}
+            target=root/'answer-timings.json';target.write_text(json.dumps(timings))
+            observed=recorded_test_order(root,record)
+            self.assertEqual(observed['date'],'2026-11-20')
+            self.assertEqual(observed['basis'],'earliest_recorded_public_initial_start')
+            timings['record']['sha256']='0'*64;target.write_text(json.dumps(timings))
+            with self.assertRaisesRegex(ValueError,'different record'):
+                recorded_test_order(root,record)
+            target.unlink()
+            self.assertIsNone(recorded_test_order(root,record)['date'])
+
     def test_model_directory_groups_vendors_versions_and_efforts(self):
         models = [
             dict(id='sol-low', label='Sol 6.2 (xHigh)', logo={'label': 'OpenAI'}),

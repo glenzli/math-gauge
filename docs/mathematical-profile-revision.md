@@ -1,6 +1,6 @@
 # 数学画像的两个阶段
 
-评分版1.2.0提供“首答／含续答”切换。首答以原0.4.0画像和另列的证据一致性更正为基线；含续答使用已经采用的中性续答及逐题独立复评。当前页面另加入独立评审的[开放研究能力](open-research.md)，形成八轴；原有七轴和主榜权重不因此变化。现有五轴续答评审覆盖15个配置的171份既有续答，其他配置的续答画像保持待测，没有重新答题。
+评分版1.2.0提供“首答／含续答”切换。首答以原0.4.0画像和另列的证据一致性更正为基线；含续答使用已经采用的中性续答及逐题独立复评。当前页面另加入独立评审的[开放研究能力](open-research.md)，形成八轴；原有七轴和主榜权重不因此变化。现有五轴续答评审覆盖16个配置的189份既有续答，其他配置的续答画像保持待测，没有重新答题。
 
 | 维度 | 首答 | 含续答 |
 |---|---|---|
@@ -27,19 +27,19 @@
 
 公开只提供各轴合并值、覆盖、阶段及不透明散列；私有题号、原答、逐题理由与引文保持私有。复评采用Sol 6.1 Max分组审核及协调者独立评审、统一复核，逐题保留实际评审归属；AI审核、实际形式验证与人工批准分别记录，人工数学审核仍待完成。新增候选调用为0。
 
-原9个配置的340项判断保留，Claude／Kimi四个配置的340项判断继续采用；Astra 6.2 xHigh另有45项，DeepSeek另有130项独立五轴判断，合计855项。另经独立复核，三份旧首答画像的论证、忠实度和审辨等级与其自身引用的原评审证据不一致，分别由4档更正为2档；其余维度不变。这九项更正采用独立的来源绑定记录，在当前1.2.0的首答与含续答两种视图中使用同一基线。它们不计作续答退步，不更改MC／RMC／SMC；原0.4.0文件与历史1.1.0视图保留。更正仍为AI审核、人工待审。
+原9个配置的340项判断保留，Claude／Kimi四个配置的340项判断继续采用；Astra 6.2 xHigh另有45项，DeepSeek另有130项独立五轴判断，Neon另有90项，合计945项。另经独立复核，三份旧首答画像的论证、忠实度和审辨等级与其自身引用的原评审证据不一致，分别由4档更正为2档；其余维度不变。这九项更正采用独立的来源绑定记录，在当前1.2.0的首答与含续答两种视图中使用同一基线。它们不计作续答退步，不更改MC／RMC／SMC；原0.4.0文件与历史1.1.0视图保留。更正仍为AI审核、人工待审。
 
 Astra 6.2 xHigh在两套阶段均可单独选中比较；严格完成度直接使用首答SMC81.00与含续答SMC83.90。研究主动性始终沿用同一首答判断；首答两率和4组主动额外成果另列，不作为画像等级的换算输入。
 
-新开放研究轴已独立审核22个配置的110份首答及32份已采用手稿续答，逐份记录建模、机制、条件边界和证明闭合的依据，共568项判断。核心缺口不能用其他成果抵补，附带错误只有通过明确的删除依赖检查后才可与已成立核心分开；原错误及SMC判决仍保留。完整标准、全部模型对照和来源索引见[开放研究说明](open-research.md)。
+新开放研究轴对五个共同手稿家族的首答和已采用续答独立审核，逐份记录建模、机制、条件边界和证明闭合的依据；当前展示按1.2.0入选配置过滤，GLM 5.3与Gemini 3.8 Flash只保留历史资料。核心缺口不能用其他成果抵补，附带错误只有通过明确的删除依赖检查后才可与已成立核心分开；原错误及SMC判决仍保留。完整标准、全部模型对照和来源索引见[开放研究说明](open-research.md)。
 
 [完整方法](../protocol/mathematical-profile-revision.md) · [首答画像说明](mathematical-profile-recheck.md) · [续答规则](neutral-revision.md)
 
 ## English
 
-Assessment 1.2.0 offers first-answer and revision-inclusive views. The current eight-axis profile separately adds [open research capability](open-research.md) while preserving the seven source axes and all main scores. Five original capability axes retain the 35-family weights and blend selected task grades as 80% first answer plus 20% adopted revision. Research initiative remains first-answer-only and is shown last as a behavioral trait. Strict completion reads official SMC for the chosen stage, without another blend. The new axis uses five common explicitly open manuscript families, with separate coverage and independent judgments of 110 first answers and 32 adopted manuscript continuations across 22 configurations.
+Assessment 1.2.0 offers first-answer and revision-inclusive views. The current eight-axis profile separately adds [open research capability](open-research.md) while preserving the seven source axes and all main scores. Five original capability axes retain the 35-family weights and blend selected task grades as 80% first answer plus 20% adopted revision. Research initiative remains first-answer-only and is shown last as a behavioral trait. Strict completion reads official SMC for the chosen stage, without another blend. The new axis uses five common explicitly open manuscript families, with separate coverage and independent judgments of original answers and adopted continuations. Its current cohort excludes GLM 5.3 and Gemini 3.8 Flash while retaining their historical evidence.
 
-The current review covers 171 existing revisions across 15 configurations and 855 independent axis judgments, with no new candidate calls. Exempt tasks and all Lean evidence stay unchanged. Regressions count; missing revision judgments stay unknown. A full main score cannot substitute for a profile judgment. Revision task counts, full-score rates and score deltas are supplementary observations over each model's own loss set, not a common second examination or a new score. Source answers and original judgments are retained; private mathematical evidence remains private. Reviews are AI assessments with human mathematical review pending.
+The current review covers 189 existing revisions across 16 configurations and 945 independent axis judgments, with no new candidate calls. Exempt tasks and all Lean evidence stay unchanged. Regressions count; missing revision judgments stay unknown. A full main score cannot substitute for a profile judgment. Revision task counts, full-score rates and score deltas are supplementary observations over each model's own loss set, not a common second examination or a new score. Source answers and original judgments are retained; private mathematical evidence remains private. Reviews are AI assessments with human mathematical review pending.
 
 A separate source-bound correction resolves three old first-answer profiles whose proof, fidelity and discernment grades contradicted their own cited evidence: those nine grades change from4 to2, with all other axes retained. Both current1.2.0 views use the same corrected baseline. This is not a revision regression and does not change MC, RMC or SMC. Original0.4.0 files and archived1.1.0 views remain unchanged. The axes cover applicable work across the full35-family suite, rather than only the theorem-extension tasks.
 

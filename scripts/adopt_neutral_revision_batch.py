@@ -21,7 +21,8 @@ from math_gauge.catalog import relative_name
 from math_gauge.benchmarks import identity
 from math_gauge.neutral_revision import (MODES, CONDITION, DIRECTORY, TARGET, SOURCE, VERSION,
     POLICY_PATH, TRANSITION_PATH, descriptor, document, read, require, load_policy,
-    load_transition, load_model_selection, load_inputs, project_score, project_public_tasks, verify_pair)
+    load_transition, load_model_selection, load_inputs, project_score, project_public_tasks, verify_pair,
+    current_model_ids)
 from math_gauge.records import public_assessment_case_ids
 from math_gauge.scoring import score_neutral_revision_overlay
 from scripts.results_revision_resources import (DATA_PATH, INDEX_PATH, build_batch_public,
@@ -301,7 +302,11 @@ def prepare(public_root, private_root, run_root, destination, *, reviews=None, m
     runtime = json.loads((run_root / 'runtime-freeze.json').read_bytes())
     cells = runtime['cells']
     known_models = sorted({row['model_id'] for row in cells})
-    models = known_models if models is None else list(models)
+    transition = load_transition(public_root)
+    require(transition is not None, 'Batch adoption extends the existing source-bound 1.2 transition')
+    selected_ids = current_model_ids(transition)
+    models = sorted(set(known_models) & selected_ids) if models is None else list(models)
+    require(set(models) <= selected_ids, 'Model is outside the selected assessment edition')
     require(len(models) == len(set(models)) and set(models) <= set(known_models), 'Model is outside the frozen batch')
     sealed = json.loads((run_root / 'sealed-deliveries.json').read_bytes())
     require(external_bytes(sealed['runtime_freeze']) == (run_root / 'runtime-freeze.json').read_bytes(),
@@ -311,9 +316,8 @@ def prepare(public_root, private_root, run_root, destination, *, reviews=None, m
     require(locked is None or json.loads(lock_raw) == locked, 'Final review selection changed while reading')
     lock_ref = None if locked is None else dict(path=str(Path(reviews).resolve()), bytes=len(lock_raw), sha256=sha(lock_raw))
     selected = {} if locked is None else locked['rows']
-    transition = load_transition(public_root)
-    require(transition is not None, 'Batch adoption extends the existing source-bound 1.2 transition')
     proposal = Proposal(public_root, private_root)
+    proposal.bind('public', transition['source_edition'])
     report = dict(schema='math-gauge.neutral-revision-batch-proposal/v1', candidate_calls=0,
         prepared_only=True, run_root=str(run_root), runtime_sha256=sha((run_root / 'runtime-freeze.json').read_bytes()),
         benchmark_before_sha256=sha((public_root / 'benchmark.json').read_bytes()),
@@ -447,6 +451,11 @@ def adopt(public_root, private_root, proposal_root):
                 'An existing adoption or original resource companion changed')
     # Reuse the owning consumers at the write boundary before advancing state.
     proposed_transition = json.loads((proposal_root / 'public' / TRANSITION_PATH).read_bytes())
+    current_transition = load_transition(public_root)
+    require(set(report['new_models']) <= current_model_ids(current_transition)
+            and proposed_transition.get('withdrawn_models', []) == current_transition.get('withdrawn_models', []),
+            'Adoption must preserve the explicitly selected assessment model set')
+    load_transition(proposal_root / 'public')
     assessment = json.loads((public_root / 'protocol/scoring-policy.json').read_bytes())
     load_review_selection(report['review_selection']['path'], Path(report['run_root']) / 'runtime-freeze.json')
     for mid in report['new_models']:

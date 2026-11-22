@@ -210,6 +210,26 @@ class InitialAdmissionTests(unittest.TestCase):
 
 
 class HistoricalCompanionTests(unittest.TestCase):
+    def test_new_admission_without_optional_history_cannot_replace_existing_history(self):
+        source = {'benchmark_version':'1.0.0', 'models':[{'id':'legacy',
+            'model_id':'legacy','source_record':'old/record.json'}]}
+        for key, load in [('historical_display_source', admissions.historical_display_source),
+                          ('historical_cost_source', admissions.historical_cost_source)]:
+            with self.subTest(companion=key):
+                documents = {'existing':{key:'retained'}, 'new':{}, 'retained':source,
+                             'other':deepcopy(source)}
+                with patch.object(admissions, 'selections', return_value={'existing':'existing','new':'new'}), \
+                     patch.object(admissions, 'document', side_effect=lambda root, ref:documents[ref]), \
+                     patch('math_gauge.current_results.selected_source_record_paths',
+                           return_value={'legacy':'old/record.json'}):
+                    self.assertEqual(load(None), source)
+                    documents['new'][key] = 'other'
+                    with self.assertRaisesRegex(ValueError, 'unchanged historical'):
+                        load(None)
+                    documents['new'].clear();documents['existing'].clear()
+                    with self.assertRaisesRegex(ValueError, 'unchanged historical'):
+                        load(None)
+
     def test_history_replaces_timing_population_and_inputs_as_well_as_costs(self):
         from scripts.results_editions import edition_supplemental
         old_time={'models':[{'id':'legacy'}], 'score_inputs':[{'path':'legacy.json'}]}

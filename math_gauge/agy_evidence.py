@@ -24,6 +24,9 @@ def _receipt(root, row, evidence):
     identity = row.get("slot_id", row.get("id", row["case_id"] + ":A1"))
     labels = [token for token in identity.split(":")[1:] if token in {"A1", "R1", "R2", "R3"}]
     phase = labels[0] if len(labels) == 1 else None
+    from .agy_native_sources import SCHEMA as VISIBLE_FINAL_SCHEMA, receipt as visible_receipt
+    if data.get("schema") == VISIBLE_FINAL_SCHEMA:
+        return visible_receipt(root, row, data, phase, evidence)
     if (data.get("schema") != SCHEMA or data.get("post_observation") is not True
             or data.get("source_raw_bytes_rewritten") is not False
             or data.get("case_id") != row.get("case_id") or data.get("phase") != phase
@@ -75,6 +78,10 @@ def validate_local_tools(root, row, execution, evidence):
     unsandboxed(*) deny spelling is not treated as proof of that boundary.
     """
     data = _receipt(root, row, evidence)
+    from .agy_native_sources import SCHEMA as VISIBLE_FINAL_SCHEMA
+    if data.get("schema") == VISIBLE_FINAL_SCHEMA:
+        from .agy_control_evidence import validate_local_tools as validate_visible_tools
+        return validate_visible_tools(root, data, execution, evidence)
     original = _load(root, data["native_execution"], evidence)
     if original != execution:
         raise ValueError("AGY tool evidence belongs to a different native execution")
@@ -126,7 +133,10 @@ def validate_local_tools(root, row, execution, evidence):
 
 def validate_delivery(root, row, evidence):
     data = _receipt(root, row, evidence)
-    execution, _, events, _ = _execution(root, data, evidence)
+    execution, _, events, dispatch = _execution(root, data, evidence)
+    from .agy_native_sources import SCHEMA as VISIBLE_FINAL_SCHEMA, validate_delivery as validate_visible_final
+    if data.get("schema") == VISIBLE_FINAL_SCHEMA:
+        return validate_visible_final(root, row, data, execution, events, dispatch, evidence)
     answer = evidence(root, row["response"])
     terminal = _load(root, data["native_terminal_event"], evidence)
     seal = _load(root, data["native_terminal_seal"], evidence)

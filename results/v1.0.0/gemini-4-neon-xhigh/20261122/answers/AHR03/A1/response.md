@@ -1,0 +1,132 @@
+### 总体判断
+
+针对数学正文 `source.md`（见 [01-user-023.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-023.txt#L269-L407)）中的**“节点域加细”定义**（§ `#h-eddd1f2d0a9d3528` 定义 (i) 及冗余子节点删除约定）与该情形下的**“网络加细保持外延等价”**（命题 `#h-012f4ba72aeb3f20` 情形 (i)），所给 Lean 实现（核心位于 `domain_refinement_construction.lean`、[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L30-L533)，以及 `network_refinement.lean`、[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L326-L595) 与 [01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L1-L270)）的总体评价为：
+
+- **核心数学内容准确、无逻辑漏洞**：在任意有限标签的有限算子网络层（`FiniteOperatorNetwork`）上，源码同时给出了**显式构造**（`NodePartitionData.network`）与**关系刻画**（`NodeDomainRefinement` / `NetworkRefinement.node_domain`），无 `sorry` 或隐含错误前提；二者在数学上严格对应正文定义（含分划、局域算子限制、入口细分、四类边域含自环细分、未使用边保留与不可达子节点按引理 `#h-ced8c7236326e104` 删除），且该情形下的外延保持结论（局部等价 $\phi_{\mathcal N'}\equiv_U \phi_{\mathcal N}$ 与构造网的全域外延算子相等 $\phi_{\mathcal N'}=\phi_{\mathcal N}$）均已严格证出。
+- **覆盖尚未完全闭环，存在若干明确接口与证明缺口**：主要包括（1）关系层未直接对接源码中已定义的命名外延等价谓词 `FiniteOperatorNetwork.ExtensionalEquivalent` 与全域外延算子相等；（2）未将节点域加细及其外延保持结论编码/提升到网络对象空间 `NetworkObject X bot`（$\mathcal X_{\mathrm{net}}$），导致其无法直接作为 `IrreducibleRepresentative` 所需的 `RefinementRule (NetworkObject X bot)` 使用；（3）只证了“构造满足关系”，未证反向的“关系唯一决定构造结果（至多差节点重命名）”，且关系结构中 `choice_projection` 实际上可由 `edge_domain_eq` 导出；（4）正文若干显式分项公式与证明中间结论（尤其是**剪枝前后终止域公式的区别**、四类边域/两类入口片显式特化、求值深度等式 $\ell(\mathcal N')=\ell(\mathcal N)$ 与逐位置中间状态保持）未显式给出定理。
+
+下文逐项给出对应核查、具体数学影响、可复核论证/反例及修复方向，并在末尾区分“已证明内容”与“需补充内容”。
+
+---
+
+### 一、定义、前提与结论的逐项对应核查
+
+#### 1. 底层对象与冗余删除基础（解释层核查）
+- **有限算子网络**：正文 `source.md`（[01-user-021.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-021.txt#L385-L413)）中的“算子网络”即允许有向闭路与自环的有限算子网络，对应 `FiniteOperatorNetwork X bot V`（`operator_network.lean`、[01-user-016.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-016.txt#L110-L133)），而非仅限于无环的 `OperatorNetwork`。`transition_graph_import.lean`（[01-user-020.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-020.txt#L344-L364) 与 [01-user-021.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-021.txt#L1-L43)）已证原始 `OperatorTransitionGraph` 加条件 (i)–(iv) 与 `FiniteOperatorNetwork` 无损互转（`to_finite_network_transition_graph`、`to_finite_network_entry_domain`、`to_finite_network_edge_domain`）。
+- **空入口片 / 空边域省略**：在 `FiniteOperatorNetwork` 中，边由 `OperatorTransitionGraph.Edge β γ := (T.edge_domain β γ).Nonempty` 定义（[01-user-016.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-016.txt#L4-L5)），入口片由 `entry_domain β := {x | ∃ hx, entry ⟨x, hx⟩ = β}` 定义，因此空边域自动无边、空入口片自动不在入口集像中，与正文约定一致。
+- **冗余节点删除（引理 `#h-ced8c7236326e104`）**：`FiniteNetworkPresentation`（`network_presentation.lean`、[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L24-L38)）编码满足 (i)–(iii) 但未满足无冗余条件 (iv) 的网络；`FiniteNetworkPresentation.prune`（[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L122-L188)）仅保留被某输入轨迹经过的节点，并借 `prune_choice_next_iff` 保留所有保留节点之间的完整边域（含未实际经过的边），同时证明 `prune_path_labels`、`prune_eval`、`prune_extensional_operator_eq`。`OperatorTransitionGraph.prune_redundant_nodes`（[01-user-020.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-020.txt#L406-L515)）直接复用了同一 `prune` 算子。
+
+#### 2. “节点域加细”定义的逐项对应
+| 正文要素（`source.md` § `#h-eddd1f2d0a9d3528` (i)） | 构造实现（`domain_refinement_construction.lean`） | 关系刻画（`network_refinement.lean`） | 核查结论 |
+| :--- | :--- | :--- | :--- |
+| 选定目标节点 $\beta \in V$（空网络无可加细节点） | `target : V`（隐含由 `N.node_reachable target` 推出 `N.U.Nonempty`） | `target : V`（同左） | **准确对应** |
+| 有限非空分划 $U_\beta = \bigsqcup_{a=1}^q U_{\beta,a}$ | `count`, `count_pos : 0 < count`, `piece : Fin count → Set X`, `nonempty`, `disjoint`, `cover` | `part_count`, `part_count_pos`, `piece`, `piece_nonempty`, `piece_disjoint`, `piece_cover` | **准确对应**（$q \ge 1$ 含 $q=1$ 平凡分划，与正文一致，见下文边界说明） |
+| 局域算子 $\mathrm{dom}(f_{\beta,a})=U_{\beta,a}$、$f_{\beta,a}\equiv_{U_{\beta,a}} f_\beta$，且 $f_{\beta,a}=f_\beta\big|_{U_{\beta,a}}$ | `local_op`, `local_domain`, `local_eq`；定理 `local_op_eq_restrict` 显式证明 $f_{\beta,a}=f_\beta\big|_{U_{\beta,a}}$ | `local_factor`, `local_domain`, `local_equiv` | **准确对应**（关系层未单列 `local_factor_eq_restrict`，但立得） |
+| 以 $\beta_a$ 替换 $\beta$，保留 $\gamma\neq\beta$；不可达子节点按 `#h-ced8c7236326e104` 删除 | `Label := {v // v ≠ target} ⊕ Fin P.count`，经 `P.presentation.prune` 得 `P.network`；`old_label_reached` 证所有旧节点必保留，`piece_label_reached_iff` 证 $\beta_a$ 保留当且仅当 `NodePieceReached` | `source : V' → ({β // β ≠ target} ⊕ Fin part_count)` 单射、`old_node_present`、`piece_node_present_iff_reached`、`old_node_op_compat`、`piece_node_op_compat` | **准确对应** |
+| 入口片：$U'^{\mathrm{in}}_{\beta_a}=U_\beta^{\mathrm{in}}\cap U_{\beta,a}$，其余不变，空片省略 | `presentation.entry x := P.lift_label (N.entry x) x.val`，满足 `same_input_domain` 与 `entry_projection` | `same_input_domain`、`entry_projection`；定理 `NodeDomainRefinement.entry_domain_eq` 证出 `N'.entry_domain v = N.entry_domain (h.projection v) ∩ N'.node_dom v` | **数学等价**（对旧节点 $\gamma\neq\beta$ 因 $U_\gamma^{\mathrm{in}}\subseteq U_\gamma$ 化简为 $U_\gamma^{\mathrm{in}}$；对子节点 $\beta_a$ 为 $U_\beta^{\mathrm{in}}\cap U_{\beta,a}$） |
+| 四类边域：旧边不变、入边交 $U_{\beta,a}$、出边交 $f_{\beta,a}(U_{\beta,a})$、自环双交 $f_{\beta,a}(U_{\beta,a})\cap U_{\beta,b}$，空边省略 | `self_loop_choice_iff`（剪枝前自环路由）与 `network_edge_domain_eq`（剪枝后统一双交公式） | `NodeDomainRefinement.edge_domain_eq`（统一双交公式），并由 `retained_edge_mem` 显式刻画未使用边的保留 | **数学等价**（见下方四类逐项核验；但未单列四类化简引理） |
+| 终止域由出边域补集确定；剪枝前 $T'_{\beta_a}=f_{\beta,a}(U_{\beta,a})\cap T_\beta$、$T'_\gamma=T_\gamma$ | `P.network.terminal_domain` 沿用补集定义；未对 `P.presentation` 定义终止域或证剪枝前后公式 | 沿用 `N'.terminal_domain` 补集定义；未证任何终止域定理 | **定义层一致，但缺少剪枝前后终止域公式与对比定理**（见缺口 4） |
+
+关于**统一双交公式** `edge_domain_eq`（[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L449-L452)）：
+$$N'.\mathrm{edge\_domain}\ v\ w = \bigl(N.\mathrm{edge\_domain}\ (\pi v)\ (\pi w) \cap N'.\mathrm{node\_image}\ v\bigr) \cap N'.\mathrm{node\_dom}\ w,$$
+在 $N$ 中已有 $D_{\pi v\to\pi w}\subseteq f_{\pi v}(U_{\pi v})\cap U_{\pi w}$。对保留节点 $(v,w)$ 分四种情形核验：
+1. $v=\gamma\neq\beta,\ w=\delta\neq\beta$：$N'.\mathrm{node\_image}\ v=f_\gamma(U_\gamma)$、$N'.\mathrm{node\_dom}\ w=U_\delta$，右侧化简为 $D_{\gamma\to\delta}$；
+2. $v=\gamma\neq\beta,\ w=\beta_a$：$N'.\mathrm{node\_image}\ v=f_\gamma(U_\gamma)$、$N'.\mathrm{node\_dom}\ w=U_{\beta,a}$，右侧化简为 $D_{\gamma\to\beta}\cap U_{\beta,a}$；
+3. $v=\beta_a,\ w=\gamma\neq\beta$：$N'.\mathrm{node\_image}\ v=f_{\beta,a}(U_{\beta,a})$、$N'.\mathrm{node\_dom}\ w=U_\gamma$，右侧化简为 $D_{\beta\to\gamma}\cap f_{\beta,a}(U_{\beta,a})$；
+4. $v=\beta_a,\ w=\beta_b$（含 $a=b$）：右侧即为 $D_{\beta\to\beta}\cap f_{\beta,a}(U_{\beta,a})\cap U_{\beta,b}$。
+
+同时需指出，`OperationalNodeDomainRefinement`（[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L395-L433)）仅是内部辅助结构，**严格弱于**正文节点域加细定义（因为 `choice_projection` 只约束实际到达的输出，不约束未使用的边）。最小反例如下：
+- 取 $X=\mathrm{Fin}\,3$（$\bot=0$），$U=\{1\}$，单节点网络 $N$ 的 $V=\{\beta\}$，$f_\beta=\mathrm{id}_{\mathrm{Fin}\,3}$（$U_\beta=\{1,2\}$），$U_\beta^{\mathrm{in}}=\{1\}$，设未使用自环 $D_{\beta\to\beta}=\{2\}$（即 `choice β 2 = .next β`、`choice β 1 = .stop`）。对 $q=1$ 平凡分划 $U_{\beta,0}=\{1,2\}$，删去自环后得到的网络 $N'_2$（`choice' β 2 = .stop`，故 $D'_{\beta\to\beta}=\emptyset$）在实际输出集 $\{1\}$ 上满足 `choice_projection`，从而满足 `OperationalNodeDomainRefinement N N'_2`，但违反正文边域公式 $D'_{\beta_0\to\beta_0}=\{2\}$。
+- 源码正确地没有把 `OperationalNodeDomainRefinement` 放入 `NetworkRefinement`，而是通过 `NodeDomainRefinement` 追加 `edge_domain_eq` 排除了上述反例。
+
+#### 3. “网络加细保持外延等价”（节点域加细情形）的对应
+- **构造侧**：`NodePartitionData.network_extensional_eq`（[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L289-L300)）直接证明了 `P.network.extensional_operator = N.extensional_operator`（全域外延算子相等，在 $U$ 内外均成立），同时 `network_path_labels` 与 `network_path_projection` 给出路径标签重着色及投影还原。
+- **关系侧**：对任意 `h : NodeDomainRefinement N N'`，源码经 `NodeDomainRefinement.node_eval_eq`、`terminal_projection`、`path_projection`、`eval_projected` 得到 `NetworkRefinement.path_eval_eq`（[01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L161-L179)），再证出：
+  - `refinement_preserves_local_equivalence`（[01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L186-L206)）：`LocalEquivalent N'.extensional_operator N.extensional_operator N.U`，字面对应正文命题公式 $\phi_{\mathcal N'}\equiv_U \phi_{\mathcal N}$；
+  - `refinement_preserves_representation`（[01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L213-L228)）：保持网络表示 `N.represents φ → N'.represents φ`。
+
+---
+
+### 二、具体不足、数学影响、可复核论证/反例及修复方向
+
+#### 缺口 1：关系层未直接对接命名的“外延等价”谓词与全域算子等式
+- **现状**：正文在命题 `#h-012f4ba72aeb3f20` 前已定义 $\mathcal N_1 \sim_{\mathrm{op}} \mathcal N_2 \iff \phi_{\mathcal N_1} \equiv_U \phi_{\mathcal N_2}$（并说明因 $U$ 外均取 $\bot$，它等价于 $\phi_{\mathcal N_1}=\phi_{\mathcal N_2}$，见 [01-user-023.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-023.txt#L50-L65)）。Lean 在 `effective_equivalence.lean`（[01-user-012.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-012.txt#L523-L526)）中定义了 `FiniteOperatorNetwork.ExtensionalEquivalent N M := N.U = M.U ∧ LocalEquivalent N.extensional_operator M.extensional_operator N.U`，且 `network_refinement.lean` 已经导入了该文件；但 `network_refinement.lean` 只证出了 `LocalEquivalent N'.extensional_operator N.extensional_operator N.U`，**既未证出 `ExtensionalEquivalent N' N`（或 `ExtensionalEquivalent N N'`），也未证出一般关系情形的 `N'.extensional_operator = N.extensional_operator`**，且未显式导出由 `h.target : V` 蕴含的 `N.U.Nonempty`（正文约定使用 $\equiv_U$ 时 $U\neq\emptyset$，见 [01-user-022.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-022.txt#L73)）。
+- **数学影响**：命题标题“网络加细保持外延等价”在形式化接口上与源码中正式命名的外延等价谓词脱节。仅凭 `LocalEquivalent` 无法在形式化中直接重写全域算子等式，也不能直接喂给以 `ExtensionalEquivalent` 为前提的后续命题。
+- **可复核论证**：
+  1. 由 `N.node_reachable h.target` 直接得 `∃ x : N.U, ...`，故 `N.U.Nonempty` 恒成立。
+  2. 结合 `h.same_input_domain : N'.U = N.U` 与 `refinement_preserves_local_equivalence h`，在 $x\in N.U=N'.U$ 上两外延算子取值相同，在 $x\notin N.U=N'.U$ 上两者由定义均取 `bot`，故 `N'.extensional_operator = N.extensional_operator`；同理 `ExtensionalEquivalent N' N` 与 `ExtensionalEquivalent N N'` 立得。且对任意两有限网络，借助 `dom_extensional_operator_eq` 恒有 `ExtensionalEquivalent N M ↔ N.extensional_operator = M.extensional_operator`。
+- **修复方向**：在 `effective_equivalence.lean` 补充 `extensional_equivalent_iff_extensional_operator_eq`；在 `network_refinement.lean` 补充 `NodeDomainRefinement.source_nonempty`、`refinement_preserves_extensional_equivalent` 及 `refinement_extensional_operator_eq`。
+
+#### 缺口 2：缺少向网络对象空间 `NetworkObject X bot`（$\mathcal X_{\mathrm{net}}$）与 `RefinementRule (NetworkObject X bot)` 的桥接
+- **现状**：正文在对象空间定义处明确规定（[01-user-022.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-022.txt#L57)）：“域加细……若先用有限乘积、不交并或发生位置作标签，则在作为对象空间元素使用时再作编号编码”；且 `network_refinement.lean` 自身定义的 `IrreducibleRepresentative`（[01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L232-L252)）明确以 `R : RefinementRule (NetworkObject X bot)`（即 `NetworkObject X bot → NetworkObject X bot → Prop`）为参数。然而：
+  - `NodePartitionData.network` 的节点类型是 `{v : P.Label // P.presentation.Reached v}`，未提供编码为 `NetworkObject X bot` 的构造；
+  - `NodeDomainRefinement` / `NetworkRefinement` 是异构标签类型 `V, V'` 上的 `Type` 值结构，未提升为 `NetworkObject X bot` 上的 `Prop` 值二元关系，也未连接 `NetworkObject.ExtensionalEquivalent` 与 `NetworkObject.extensional_dist`（[01-user-013.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-013.txt#L238-L280)）。
+- **数学影响**：正文 § `#h-eddd1f2d0a9d3528` 中“允许加细规则 $R$ 指定允许的节点域加细”与“网络对象空间上的外延商/外延伪度量”在 Lean 中被割裂：无法将 `NodeDomainRefinement` 直接实例化为 `IrreducibleRepresentative` 的规则 $R$，也无法直接在 `NetworkObject` 层面使用“节点域加细保持外延等价（从而外延伪度量距离为 $0$）”。
+- **可复核论证**：`NodeDomainRefinement N N'` 的全部约束（`node_op`、`U`、`entry_domain`、`edge_domain`、以及由 `network_identity.lean` 中 `presentation_data_eq_path_of`、`presentation_data_eq_choice`、`presentation_data_eq_entry` 唯一决定的 `NodePieceReached`、`entry_projection`、`choice_projection`）完全仅依赖 `PresentationData`，因而在 `NonemptyOperatorNetwork.data_setoid` 的商空间 `NetworkObject X bot` 上良定义；且由 `encode_extensional_operator` 与 `P.network_extensional_eq` 可直接导出编码后的 `NetworkObject.ExtensionalEquivalent`。同时，空网络对象 `NetworkObject.empty` 因无节点而不发出任何节点域加细边。
+- **修复方向**：
+  1. 在 `domain_refinement_construction.lean` 增加 `P.network_object : NetworkObject X bot := NetworkObject.nonempty (NonemptyOperatorNetwork.encode P.network P.source_nonempty)` 及对象层外延等价定理；
+  2. 补充 `NodeDomainRefinement` 在 `PresentationData` 相等下的不变性引理，定义 `NetworkObject` 上的 `Prop` 关系 `NodeDomainRefinementRule : RefinementRule (NetworkObject X bot)`，并证明该规则保持 `NetworkObject.ExtensionalEquivalent`（且对 `NetworkObject.empty` 恒为假）。
+
+#### 缺口 3：缺少“关系刻画 $\Rightarrow$ 构造结果”的反向唯一性证明，且 `choice_projection` 在 `NodeDomainRefinement` 中冗余
+- **现状**：源码仅证明了单向包含 `P.network_refinement : NodeDomainRefinement N P.network`（构造满足关系），**未证明反向唯一性**：即任意满足 `h : NodeDomainRefinement N N'` 的网络 `N'`，是否在节点重命名意义下必然与对应分划数据 `P` 构造出的 `P.network` 拥有完全相同的网络数据（`PresentationData`）。此外，`NodeDomainRefinement` 通过继承 `OperationalNodeDomainRefinement` 将 `choice_projection` 作为字段保留，但该字段在已有 `edge_domain_eq` 时实际上是冗余前提。
+- **数学影响**：
+  1. 若无反向唯一性定理，形式化层面尚未证明 `NodeDomainRefinement` 没有“误收”非正文所定义的网络（尽管数学上它确实没有误收）。
+  2. 将 `choice_projection` 作为 `NodeDomainRefinement` 的必需字段，会使外部构造 `NodeDomainRefinement` 见证时额外背负涉及 `node_actual_input_domain` 的证明义务。
+- **可复核论证**：
+  - **（A）`choice_projection` 可由 `NodeDomainRefinement` 的其余字段推出（无循环证明）**：
+    设 $\pi := \mathrm{node\_domain\_projection}\ \mathrm{target}\ \mathrm{source}$。注意 `node_eval_eq` 与 `N'.node_dom v ⊆ N.node_dom (π v)` 不依赖 `choice_projection`。
+    对任意 $x\in N'.U$ 与 $x_0:=\mathrm{transport}(x)\in N.U$，对路径位置 $k < |N'.\mathrm{path\_of}\ x|$ 作归纳，证明 $k < |N.\mathrm{path\_of}\ x_0|$、$(N.\mathrm{path\_of}\ x_0)[k]=\pi((N'.\mathrm{path\_of}\ x)[k])$，且两网在第 $k$ 步前的当前输入点 $y_k$ 相同：
+    - 基例 $k=0$：由 `N.path_nonempty`、`entry_projection` 及空前缀求值立得。
+    - 归纳步 $k\to k+1$：设 $u=(N'.\mathrm{path\_of}\ x)[k]$、$w=(N'.\mathrm{path\_of}\ x)[k+1]$、$z_k=(N'.\mathrm{node\_op}\ u)(y_k)$。由 `terminal_path_choice_at_adjacent_prefix` 得 $z_k\in N'.\mathrm{edge\_domain}\ u\ w$；由 `edge_domain_eq` 得 $z_k\in N.\mathrm{edge\_domain}\ (\pi u)\ (\pi w)$，故 $N.\mathrm{choice}\ (\pi u)\ z_k = .\mathrm{next}\ (\pi w)$。结合归纳假设与 `node_eval_eq`，由 `terminal_path_suffix_of_next_at_prefix` 得 $N.\mathrm{path\_of}\ x_0$ 在第 $k+1$ 位必存在且为 $\pi w$，且当前输入点仍为 $z_k$。
+
+    现在任取 $v\in V'$ 与 $z=(N'.\mathrm{node\_op}\ v)(y)$（其中 $y\in N'.\mathrm{node\_actual\_input\_domain}\ v$ 由某 $x\in N'.U$ 在路径第 $k$ 位到达），由上述归纳知 $N.\mathrm{path\_of}\ x_0$ 在第 $k$ 位处于 $\pi v$、输入为 $y$、输出为 $z\in N'.\mathrm{node\_image}\ v$：
+    - 若 $N'.\mathrm{choice}\ v\ z = .\mathrm{next}\ w$，则 $z\in N'.\mathrm{edge\_domain}\ v\ w$，由 `edge_domain_eq` 得 $N.\mathrm{choice}\ (\pi v)\ z = .\mathrm{next}\ (\pi w)$；
+    - 若 $N'.\mathrm{choice}\ v\ z = .\mathrm{stop}$，反设 $N.\mathrm{choice}\ (\pi v)\ z = .\mathrm{next}\ u$，则 $z\in N.\mathrm{edge\_domain}\ (\pi v)\ u\subseteq N.\mathrm{node\_dom}\ u$：
+      - 若 $u\neq\mathrm{target}$，由 `old_node_present` 取 `source w = .inl u`，则 $z\in N'.\mathrm{node\_dom}\ w$，由 `edge_domain_eq` 得 $z\in N'.\mathrm{edge\_domain}\ v\ w$，矛盾；
+      - 若 $u=\mathrm{target}$，由分划覆盖取 $a$ 使 $z\in \mathrm{piece}\ a$；因 $N.\mathrm{path\_of}\ x_0$ 在第 $k$ 步后沿 `next target` 进入 $\mathrm{target}$ 且输入为 $z\in \mathrm{piece}\ a$，故 `NodePieceReached N target piece a` 成立；由 `piece_node_present_iff_reached` 取 `source w = .inr a`，同样有 $z\in \mathrm{piece}\ a = N'.\mathrm{node\_dom}\ w$，由 `edge_domain_eq` 得 $z\in N'.\mathrm{edge\_domain}\ v\ w$，矛盾。
+    因此必有 $N.\mathrm{choice}\ (\pi v)\ z = .\mathrm{stop}$，`choice_projection` 证毕。
+  - **（B）关系刻画至多差重命名唯一决定 `P.network`**：
+    从 `h : NodeDomainRefinement N N'` 提取分划数据 `P : NodePartitionData N h.target`。由 `source_injective`、`old_node_present`、`piece_node_present_iff_reached` 与构造侧的 `P.old_label_reached`、`P.piece_label_reached_iff`，`h.source` 诱导双射 `e : V' ≃ {l : P.Label // P.presentation.Reached l}`。逐项核对 `PresentationData` 的四个字段：`U`（`same_input_domain`）、`node_op`（`old_node_op_compat` 与 `piece_node_op_compat`）、`entry_domain`（`h.entry_domain_eq` 与 `P.network_refinement.entry_domain_eq`）、`edge_domain`（`h.edge_domain_eq` 与 `P.network_edge_domain_eq`），立得 `(N'.relabel e).presentation_data = P.network.presentation_data`。
+- **修复方向**：在 `network_refinement.lean` 补充无 `choice_projection` 前提的构造器（或将其移出字段改为导出定理），并在 `domain_refinement_construction.lean` 补充 `NodeDomainRefinement` 与 `P.network` 经 `relabel` 具有相同 `PresentationData` 的唯一性定理。
+
+#### 缺口 4：正文显式分项公式与证明中间结论的细节缺口（特别是剪枝前后的终止域差异）
+1. **终止域公式（剪枝前等式 vs 剪枝后真包含）**：
+   - **现状**：正文在证明命题 `#h-012f4ba72aeb3f20`（剪枝前，[01-user-023.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-023.txt#L355-L361)）显式导出 $T'_{\beta_a}=f_{\beta,a}(U_{\beta,a})\cap T_\beta$ 且未被替换节点满足 $T'_\gamma=T_\gamma$；剪枝后按引理 `#h-ced8c7236326e104`（[01-user-021.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-021.txt#L472-L476)）仅保证 $T^{\mathrm{post}}\supseteq T^{\mathrm{pre}}$。Lean 源码在 `domain_refinement_construction.lean` 与 `network_refinement.lean` 中**完全未出现任何关于 `terminal_domain` 的定理**（因 `FiniteNetworkPresentation` 未暴露 `terminal_domain`，源码绕过终止域等式，直接靠 `choice` 证明 `coloured_terminal`）。
+   - **数学影响与可复核反例**：虽然不影响外延等价的逻辑正确性，但剪枝后上述终止域等式一般**严格失效**（只能保持包含 $\supseteq$），且这正是 `choice_projection` 不能推广到整个 `node_image` 的根本原因：
+     - **子节点反例**：取 $X=\mathrm{Fin}\,4$（$\bot=0$），$U=\{1\}$，单节点 $V=\{\beta\}$，$U_\beta=\{1,2,3\}$，$f_\beta(1)=1,\ f_\beta(2)=f_\beta(3)=3$（故 $f_\beta(U_\beta)=\{1,3\}$），$U_\beta^{\mathrm{in}}=\{1\}$，设未使用自环 $D_{\beta\to\beta}=\{3\}$，则 $T_\beta=\{1,3\}\setminus\{3\}=\{1\}$。输入 $1$ 的轨迹为 $[(\beta,1)]$，合法。将 $U_\beta$ 分为 $U_{\beta,0}=\{1,2\}$（可达）与 $U_{\beta,1}=\{3\}$（不可达）。
+       - **剪枝前**：$D'^{\mathrm{pre}}_{\beta_0\to\beta_0}=\emptyset$、$D'^{\mathrm{pre}}_{\beta_0\to\beta_1}=\{3\}$，故 $T'^{\mathrm{pre}}_{\beta_0}=\{1,3\}\setminus\{3\}=\{1\}=f_{\beta,0}(U_{\beta,0})\cap T_\beta$。
+       - **剪枝后**（删去不可达的 $\beta_1$）：仅剩 $\beta_0$ 且无出边，故 $T'^{\mathrm{post}}_{\beta_0}=\{1,3\}\supsetneq \{1\}=f_{\beta,0}(U_{\beta,0})\cap T_\beta$（同时点 $3\in f_{\beta,0}(U_{\beta,0})$ 处的路由由 `next` 变为 `stop`）。
+     - **非目标节点反例**：取 $V=\{\gamma,\beta\}$，$U=\{1\}$，$U_\gamma=\{1,2\}$，$f_\gamma(1)=1,\ f_\gamma(2)=3$，$U_\beta=\{1,3\}$，$f_\beta=\mathrm{id}|_{\{1,3\}}$，$U_\gamma^{\mathrm{in}}=\{1\}$，$D_{\gamma\to\beta}=\{1,3\}$（故 $T_\gamma=\emptyset,\ T_\beta=\{1,3\}$）。输入 $1$ 的轨迹为 $[(\gamma,1),(\beta,1)]$，经过全部节点。分划 $U_\beta=\{1\}\sqcup\{3\}$ 后 $\beta_1$（$\{3\}$）不可达被删，剪枝后 $D'^{\mathrm{post}}_{\gamma\to\beta_0}=\{1\}$，故 $T'^{\mathrm{post}}_\gamma=\{1,3\}\setminus\{1\}=\{3\}\supsetneq \emptyset=T_\gamma$。
+   - **修复方向**：为 `FiniteNetworkPresentation` 或 `P.presentation` 补充剪枝前转移图/终止域视图并证 $T'^{\mathrm{pre}}_{\beta_a}=f_{\beta,a}(U_{\beta,a})\cap T_\beta$ 与 $T'^{\mathrm{pre}}_\gamma=T_\gamma$；对剪枝后的 `NodeDomainRefinement N N'` 显式补充 `N'.node_image v ∩ N.terminal_domain (h.projection v) ⊆ N'.terminal_domain v` 及精确刻画公式（并说明无不可达分块被删除时取等号）。
+
+2. **四类边域与两类入口片的显式特化、求值深度等式与中间状态保持**：
+   - **现状**：源码用统一公式 `edge_domain_eq`、`entry_domain_eq` 浓缩了正文全部情形，未单列四类边域（不变边、入边、出边、自环）与两类入口片（不变入口、分裂入口）的化简推论；`P.presentation` 沿用了存储的 `depth_bound := N.depth_bound`，未显式导出正文证明中出现的 $\ell(\mathcal N')=\ell(\mathcal N)$（即 `N'.evaluation_depth = N.evaluation_depth`）及每个中间位置状态值 $y_s$ 不变（即 `N'.chain_eval_nodes ((N'.path_of x).take k) x.val = N.chain_eval_nodes ((N.path_of x₀).take k) x₀.val` 或 `state_trace` 投影）。
+   - **数学影响**：较小，均为现有引理（`edge_domain_eq`、`entry_domain_eq`、`path_projection`、`node_eval_eq`）的短推论，但补全后可使正文定义与证明步骤在 Lean 中逐条可引用。
+   - **修复方向**：按 `source v`、`source w` 的 `.inl`/`.inr` 分类补充 4 条边域与 2 条入口片化简引理；仿照 `network_relabeling.lean` 中的 `relabel_evaluation_depth` 与 `relabel_intermediate_point` 补充 `NodeDomainRefinement.evaluation_depth_eq` 与 `intermediate_point_eq`。
+
+#### 附注（边界语义提醒，非实现与正文的矛盾）
+- **平凡单块分划 $q=1$**：正文“有限非空分划 $U_\beta=\bigsqcup_{a=1}^q U_{\beta,a}$”与源码 `0 < part_count` 均允许 $q=1$。此时取单块分划即得 `NodeDomainRefinement N N`（任何非空网络都是自身的节点域加细）。这与正文将“实质性加细/终止约束”留给规则族 $R$ 的设计一致（[01-user-023.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-023.txt#L312-L320) 与 [L407](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-023.txt#L407)），但在后续构造具体规则 $R$ 与不可约代表 `Irreducible R` 时必须显式施加非平凡条件（如 $q\ge 2$ 或严格指标改进），否则所有非空网络均可约。
+
+---
+
+### 三、源码已证明结论 vs 需要补充内容的对照清单
+
+#### 已在源码中严格证明的结论
+1. **局域限制算子唯一性**：`NodePartitionData.local_op_eq_restrict`（$f_{\beta,a}=f_\beta\big|_{U_{\beta,a}}$，[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L62-L71)）。
+2. **剪枝前构造合法性与自环路由**：`NodePartitionData.self_loop_choice_iff`、`choice_next_mem`、`coloured_terminal`、`coloured_eval`、`colour_path_length`、`colour_path_projection` 与 `presentation : FiniteNetworkPresentation`（[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L150-L260)）。
+3. **冗余节点剪枝与保留刻画**：`FiniteNetworkPresentation.prune` 及其保路径/保求值/保外延定理（[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L122-L188)）；`NodePartitionData.old_label_reached`（非目标节点全保留）与 `piece_label_reached_iff`（子节点保留当且仅当 `NodePieceReached`，[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L327-L373)）。
+4. **剪枝后边域与入口片统一公式**：`NodePartitionData.network_edge_domain_eq`（[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L377-L415)）、`NodeDomainRefinement.entry_domain_eq` 与 `retained_edge_mem`（[01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L16-L38)）。
+5. **构造实现关系**：`NodePartitionData.network_refinement : NodeDomainRefinement N P.network` 与 `allowed_network_refinement : NetworkRefinement N P.network`（[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L480-L528)）。
+6. **路径投影与外延保持（节点域加细情形）**：
+   - 构造侧：`NodePartitionData.network_path_labels`、`network_path_projection`、`network_extensional_eq`（`P.network.extensional_operator = N.extensional_operator`，[01-user-011.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-011.txt#L272-L300)）；
+   - 关系侧：`NodeDomainRefinement.node_eval_eq`、`terminal_projection`、`path_projection`、`eval_projected`（[01-user-014.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-014.txt#L525-L574)），`NetworkRefinement.path_eval_eq`、`refinement_preserves_local_equivalence`（$\phi_{\mathcal N'}\equiv_U \phi_{\mathcal N}$）与 `refinement_preserves_representation`（[01-user-015.txt](file:///private/tmp/math-gauge-neon-xhigh-gcp-20261120-v2/attempts/AHR03/physical-1/session/work/.visible-input/AHR03/01-user-015.txt#L161-L228)）。
+
+#### 需要补充的内容
+1. **外延等价结论的完整封装**：`ExtensionalEquivalent N M ↔ N.extensional_operator = M.extensional_operator`；对一般 `NodeDomainRefinement` / `NetworkRefinement` 补充 `source_nonempty : N.U.Nonempty`、`refinement_preserves_extensional_equivalent` 与 `refinement_extensional_operator_eq`。
+2. **对象空间 $\mathcal X_{\mathrm{net}}$ 桥接**：将 `P.network` 编码为 `NetworkObject X bot`，证明 `NodeDomainRefinement` 在 `PresentationData` 相等下的商不变性，定义 `RefinementRule (NetworkObject X bot)` 层面的节点域加细关系，并证明其保持 `NetworkObject.ExtensionalEquivalent`（及零外延伪度量距离）。
+3. **关系刻画与构造的双向闭环及字段精简**：证明任意 `h : NodeDomainRefinement N N'` 存在节点重命名 `e` 使 `(N'.relabel e).presentation_data = P.network.presentation_data`；证明 `choice_projection` 可由 `edge_domain_eq` 与其余字段导出并提供精简构造器。
+4. **正文分项公式与中间性质补齐**：剪枝前终止域等式（$T'^{\mathrm{pre}}_{\beta_a}=f_{\beta,a}(U_{\beta,a})\cap T_\beta$、$T'^{\mathrm{pre}}_\gamma=T_\gamma$）与剪枝后终止域包含/精确公式；四类边域与两类入口片的显式特化推论；求值深度保持 `N'.evaluation_depth = N.evaluation_depth` 及逐位置中间点保持定理。
+
+---
+
+*来源署名说明：本审阅基于附件所提供之 Zhe Li（Glen Li / glenzli，ORCID `https://orcid.org/0009-0006-6536-3453`）著作《The Operator Evolution Theory》（`https://glenzli.com/books/oet/`，CC BY 4.0）相关章节正文与 Lean 形式化源码。*

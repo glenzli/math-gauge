@@ -1,0 +1,89 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "case_id": "MG-PS001",
+  "phase": "A1",
+  "original_response_sha256": "37b00a51d7e5bd573eb6a7c113f581437062285def1530c30754a9fd35017c1a",
+  "original_review_sha256": "5a0f746627c28cf0c675ba9ac4838961485d9e19e7b6bdae5da0f85dd1f927a4",
+  "source_wrapper_review_sha256": "5a0f746627c28cf0c675ba9ac4838961485d9e19e7b6bdae5da0f85dd1f927a4",
+  "metadata_projection_only": true,
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "judgment": {
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "units": [
+      {
+        "criterion_id": "K1",
+        "title": "伪度量与商",
+        "points": 5,
+        "score": 5,
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "notes": "以有限 Cesàro limsup 半范数建立伪度量、零距商和商范数；原答正确直接使用三角/齐次及商构造，符合量规允许的基础公理简述。未引入商完备性。"
+      },
+      {
+        "criterion_id": "K2",
+        "title": "能够下降的完整分类",
+        "points": 20,
+        "score": 20,
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "notes": "完整分类为 C_f=limsup f(n)/n<∞。充分性用前 f(n) 项平均给出有限 Lipschitz 界；必要性对任意 C_f=∞ 的严格递增 f 递归选稀疏 n_k，实际构造 x=1_S，使全部前缀平均趋零、而取样平均沿 2n_k 至少为 1/2。证明量词覆盖每个不允许 f，不只展示特例。"
+      },
+      {
+        "criterion_id": "K3",
+        "title": "最小 Lipschitz 常数",
+        "points": 20,
+        "score": 20,
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "notes": "上界已由 (1) 证明。下界沿达到 limsup C_f 的稀疏子列取长度约 δn_k 的取样指标块，输入半范数≤δ/C_f，输出≥δ/(1+δ)，且先借上界证输入半范数严格正，因而取比值合法。任意 δ→0 得普遍尖锐性；没有默认 f(n)/n 存在极限，此法包括 C_f=1。"
+      },
+      {
+        "criterion_id": "K4",
+        "title": "单射、满射、连续性",
+        "points": 15,
+        "score": 15,
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "notes": "沿 f 的像把任意有界 y 放回、余处补零，给出满射。单射必要性以像集补集指示列为核元素，再取 N=f(n) 推出 f(n)/n→1；充分性先证像集密度为 1，继而把任意差列的平均分为像内与补集，证明取样零距蕴含原零距。连续性由有限 Lipschitz 界即得。额外声称 C_f=1 时等距也为真：已给的同一平均分解不等式不依赖差列取样平均为零，取 limsup 即得 p(z)≤p(P_fz)，与 (1) 的反向不等式结合。"
+      },
+      {
+        "criterion_id": "K5",
+        "title": "迭代常数与根极限",
+        "points": 15,
+        "score": 15,
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "notes": "原答逐指标验证 P_f^k=P_{f^k} 并说明商上映射相同，故最优常数 L_k=limsup f^k(n)/n。由 Lipschitz 复合给次可乘性，取对数并完整证明带余除法次可加极限，得到根极限及 inf 公式。L_k≥1 和复合上界给 1≤R_f≤L_1<∞；未套用任何 Banach 完备性/谱论。"
+      },
+      {
+        "criterion_id": "K6",
+        "title": "全部有序对的可达性",
+        "points": 25,
+        "score": 25,
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "notes": "所有对恰为 1≤R≤L<∞。对任意实参数对，以 a_m=m! 定义 f(n)=floor(Rn+(L−R)a_m)。逐段及边界的未取整增量均≥1，故严格递增且为正整数；n≤f(n)≤Ln 保证允许。固定 k 后在 a_m 起点的 k 个输入始终留在本段，递推取整误差≤S_k，给 L_k≥A_k=R^k+(L−R)S_k。全局上界先将轨道限制在至多两段；情形 A 包括只有最后一步输出跨界，情形 B 用首次输入跨界 r 及 (3) 给统一尾误差，分母 m+1−(L−R)S_k>0，且误差随 n→∞ 消失，得到 L_k≤A_k。精确式给 L_1=L，根夹逼给 R_f=R；L=R、R=1 与 L=R=1 均包含。floor 位于整个线性式外与参考形式不同，但原答已自行控制其迭代误差。"
+      }
+    ]
+  },
+  "raw_original_review_retained_private": true,
+  "source_record": null,
+  "prepared_unadopted": true
+}

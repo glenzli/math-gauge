@@ -73,7 +73,8 @@ class RevisionPresentationTests(unittest.TestCase):
 
     def test_pending_model_does_not_inherit_first_answer_score(self):
         base = {'benchmark_version':'1.1.0', 'model':{'id':'pending'}, 'cases':[]}
-        result = _neutral_payload('models/pending/index.html', base, {'models':[]}, {})
+        result = _neutral_payload('models/pending/index.html', base,
+            {'models':[], 'pending_models':[{'id':'pending'}], 'partial_models':[]}, {})
         self.assertTrue(result['edition_unavailable'])
         self.assertEqual(result['edition_fallback'], '1.1.0')
         self.assertNotIn('model', result)

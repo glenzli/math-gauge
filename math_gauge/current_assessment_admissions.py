@@ -130,7 +130,13 @@ def load(root, model_id, *, record=None, scores=None):
     policy = load_policy(root, data['policy'])
     first = document(root, _root_ref(folder, original['first_assessment_source']))
     from .portable_assessment_sources import PUBLIC_SCHEMA as PORTABLE_PUBLIC, validate as validate_portable
-    if first.get('schema') == PORTABLE_PUBLIC:
+    from .native_assessment_sources import PUBLIC_SCHEMA as NATIVE_PUBLIC, validate as validate_native
+    if first.get('schema') == NATIVE_PUBLIC:
+        assessment = document(root, _root_ref(folder, original['assessment_policy']))
+        validate_native(root / folder, original, assessment)
+        require(first['calibration_policy']['sha256'] == data['policy']['sha256'],
+                'Native first assessment selected another current TX standard')
+    elif first.get('schema') == PORTABLE_PUBLIC:
         # External1.0 portable runs receive their first1.1 review after return.
         # Original input/runtime evidence is verified separately; the six TX
         # bindings below establish the current review, never a fabricated freeze.
@@ -222,11 +228,23 @@ def validate_private(public_root, private_root, model_id, manifest_ref):
     public_folder = Path(public_root) / Path(admission['record']['path']).parent
     public_first = document(public_folder, public_record['first_assessment_source'])
     from .portable_assessment_sources import SCHEMA as PORTABLE_PRIVATE, PUBLIC_SCHEMA as PORTABLE_PUBLIC
+    from .native_assessment_sources import SCHEMA as NATIVE_PRIVATE, PUBLIC_SCHEMA as NATIVE_PUBLIC
+    if public_first.get('schema') == NATIVE_PUBLIC:
+        require(record['first_assessment_source']['sha256'] == public_first['private_source_proof_sha256']
+                and document(Path(private_root) / folder, record['first_assessment_source']).get('schema')
+                    == NATIVE_PRIVATE,
+                'Native public projection must bind its complete private original source proof')
     if public_first.get('schema') == PORTABLE_PUBLIC:
         require(record['first_assessment_source']['sha256'] == public_first['private_source_proof_sha256']
                 and document(Path(private_root) / folder, record['first_assessment_source']).get('schema')
                     == PORTABLE_PRIVATE,
                 'Portable public projection must bind the complete private native source proof')
+    if public_record.get('native_current_written_sources') is not None or record.get('native_current_written_sources') is not None:
+        from .native_written_sources import validate_public_pair
+        validate_public_pair(public_folder, Path(private_root) / folder, public_record, record)
+    if public_record.get('native_engineering_sources') is not None or record.get('native_engineering_sources') is not None:
+        from .native_engineering_sources import validate_public_pair as validate_native_engineering_pair
+        validate_native_engineering_pair(public_folder, Path(private_root) / folder, public_record, record)
     validate_record(Path(private_root) / folder, formalization_root=public_folder)
     original_inputs = load_theorem_extension_inputs(Path(private_root) / folder, record)
     source_rows = {row['case_id']:row for row in original_inputs['slots']}
@@ -265,7 +283,9 @@ def validate_private(public_root, private_root, model_id, manifest_ref):
 
 def historical_cost_source(root):
     """Retain the pre-admission companion bytes, not a filtered new aggregate hash."""
-    refs = [document(root, ref).get('historical_cost_source') for ref in selections(root).values()]
+    manifests = [document(root, ref) for ref in selections(root).values()]
+    refs = [manifest['historical_cost_source'] for manifest in manifests
+            if 'historical_cost_source' in manifest]
     require(refs and all(ref is not None and ref == refs[0] for ref in refs),
             'Initial admissions need one unchanged historical cost source')
     data = document(root, refs[0])
@@ -279,7 +299,9 @@ def historical_cost_source(root):
 
 def historical_display_source(root):
     """Return only the single bound pre-admission display, never current metadata."""
-    refs = [document(root, ref).get('historical_display_source') for ref in selections(root).values()]
+    manifests = [document(root, ref) for ref in selections(root).values()]
+    refs = [manifest['historical_display_source'] for manifest in manifests
+            if 'historical_display_source' in manifest]
     require(refs and all(ref is not None and ref == refs[0] for ref in refs),
             'Initial admissions need one unchanged historical display source')
     data = document(root, refs[0])

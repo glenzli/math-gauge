@@ -17,24 +17,21 @@
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 68.63 | 81.38 | 83.11 | 9 | 88.9%（8／9） |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | 64.75 | 80.03 | 81.25 | 9 | 55.6%（5／9） |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 62.48 | 92.97 | 95.11 | 15 | 53.3%（8／15） |
+| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | 61.17 | 86.54 | 93.08 | 18 | 11.1%（2／18） |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | 58.98 | 89.49 | 93.03 | 17 | 52.9%（9／17） |
 | [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | 57.22 | 89.96 | 92.30 | 17 | 35.3%（6／17） |
 | [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | 46.38 | 72.29 | 76.93 | 19 | 42.1%（8／19） |
 | [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | 26.25 | 64.09 | 76.93 | 26 | 3.8%（1／26） |
 
-共采用15个配置的171份续答，100份达到续答自身的三项满分。满分率的分母是各配置选中的全部续答题，失败交付也在分母内，首答三项全满的免测题不计入；该比例不按题目权重折算，不应当作同题排名。表中总分由共享评分器逐题80／20折算，仍保留首答失分和续答退步。
+共采用16个配置的189份续答，102份达到续答自身的三项满分。满分率的分母是各配置选中的全部续答题，失败交付也在分母内，首答三项全满的免测题不计入；各配置的失分集合不同，该比例不是同题排名。总分由共享评分器逐题80／20折算，仍保留首答失分和续答退步。全部采用续答已完成AI数学审核，人工数学审核仍待完成。
 
-首批3个配置采用22份：19次新调用和3份旧中性试答，采用发生在观察后，21份三项满分。随后6个GPT配置完成46题，39份三项满分；新增答卷由Sol 6.1 Max并行审核，关键数学判断另行复核。原研究的非计分身份、全部原答和各次初审保留，采用层另行绑定最终评审。全部续答为AI审核，人工数学审核仍待审。
+Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。GLM 5.3与Gemini 3.8 Flash已从1.2.0下架，不再进入本版待测、画像名单或默认导出；1.1.0及更早成绩、原答与冻结包保留。其他入选配置继续等待回交，完整历史分发和采用经过见[续答说明](neutral-revision.md)。
 
-Astra 6 Max的一次请求在容量错误后到达截止。用户观察后授权使用相同父答、提示、型号与effort恢复，恢复答卷正常交付并获满分。本轮保留46道续答的47次物理请求。按用户另行确认的归因，容量故障只进入系统重试记录，恢复请求计入有效尝试、成本与耗时。
+成本计入189份有效续答的完整费用，复用调用各计一次；确认的纯系统失败仅留重试历史。耗时比较16个已结算配置共有计时的同一12道公开非Lean题，另列整章形式化。累计作答时长与并行批次跨度分别保留，缺失时间或用量保持未知。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
 
-原外部11个配置的200题中，本次4个配置的68份正常答卷已审核采用，31份续答自身三项满分；DeepSeek另回交26题，其中24份正常final，2题截止并已结算，1份续答自身三项全满；余下6个配置的106题待回交，GLM跳过。新增答卷的实际输入与父答、原生最终事件、明确交付文件和用量均绑定原件；两次本地封卷恢复没有新增作答。加上Astra 6.2 xHigh的新9份续答，172次来源执行请求中，171次有效尝试进入续答资源统计，含3份各计一次的旧中性试答；另1次确认的容量故障仅入系统重试。成本全额计入有效续答费用，耗时仍比较15个配置共有计时的同一12道公开题，另列整章形式化，累计执行时间与并行批次跨度分开。原内容两率和额外成果观察仍为首答诊断，数学画像另设首答／含续答切换。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
+[数学画像](mathematical-profile-revision.md)对采用续答独立审核论证、忠实度、审辨、深度和闭合，再逐题80／20折算，覆盖原35个数学家族。研究主动性始终只看首答，严格完成度直接取所选阶段的正式SMC。三份首答画像的来源绑定更正仍用于两个当前视图，原件、历史1.1.0和三项主分不变。[开放研究能力](open-research.md)另看五个共同开放家族的实际研究交付，不由分数或主动性换算。
 
-[数学画像](mathematical-profile-revision.md)已对这171份既有续答完成855项独立五轴判断：论证、忠实度、审辨、深度和闭合逐题80／20折算，覆盖原35个数学家族。研究主动性始终只看首答，放在最后；严格完成度直接取所选阶段的正式SMC，不重复折算。另以独立记录更正三份首答画像中与自身证据矛盾的九个等级，在当前两视图中使用同一更正基线；原件、历史1.1.0和三项主分不变。人工数学审核仍待完成。
-
-当前八轴另有[开放研究能力](open-research.md)：独立审核22个配置的110份首答和32份已采用手稿续答，使用五个共同开放家族。它看明确要求研究时交出的机制、条件和闭合成果；研究主动性则观察未经邀请的推进，两者不互相换算。新轴不改变主分及原有七轴判断，1.1.0保持原七轴，1.0.0不增加画像。
-
-[续答满分率来源](../results/continuation-completion/v0.1.0/current.json) · [续答资源来源索引](../results/continuation-resources/v0.1.0/index.json)。公有文件只含允许公开的证据及匿名汇总，完整私有题包和评审仍在私库。这批更新尚未发布。
+[续答满分率来源](../results/continuation-completion/v0.1.0/current.json) · [续答资源索引](../results/continuation-resources/v0.1.0/index.json)。公有文件只含允许公开的证据及匿名合并总分，完整私有题包和评审留在私库。最新已发布题包仍为1.0.0。
 
 ## 1.1.0：首答与原三轮自查
 
@@ -56,6 +53,7 @@ Astra 6 Max的一次请求在容量错误后到达截止。用户观察后授权
 | [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | Claude Code | 91.36 | 88.80 | 54.92 | 39／0／39 |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.68 | 88.51 | 68.00 | 39／0／39 |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
+| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | AGY CLI | 91.91 | 85.42 | 60.42 | 39／0／39 |
 | [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 92.89 | 80.85 | 64.50 | 38／1／39 |
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | Codex CLI | 82.07 | 80.30 | 65.67 | 39／0／39 |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
@@ -77,6 +75,20 @@ Astra 6 Max的一次请求在容量错误后到达截止。用户观察后授权
 [GLM 5.3 (max)](../site/models/glm-5.3-max/index.html)退出主榜及分项排行，保留详情和已有证据。39道初答中21份正常交卷、5份强收有内容，三轮Lean自查未执行。按1.1.0的已确认贡献为MC42.04、RMC27.90、SMC14.08／100，完整区间见模型页；这些数值不表示所有规定测项已完成。退出排行依据是测试流程尚未完成，不设数学低分剔除门槛，原有失败与未测状态不重判。
 
 ⁴ AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。
+
+## Gemini 4 Neon xHigh · 2026-11-22
+
+39道初答、三轮固定Lean自查与18份中性续答均正常交卷。1.1.0首答基线为 **MC91.9094／RMC85.4178／SMC60.4167**；1.2.0为 **MC93.0801／RMC86.5376／SMC61.1667**。18份续答中2份自身三项全满，其余保留有效贡献及具体错误；满分率不是同题排名。Sol6.1Max分组审核，主聊天复核并定稿，原始评审与最终判断分别留存；人工数学审核仍待完成。
+
+整章形式化初答及三轮自查均核实92／92，诊断准确、无回退，完整三轮轨迹通过。初答内容可靠率 **91.17%**、完整目标达成率 **84.92%**，按共同697个承诺单元和149个完整目标独立审核。数学画像另有首答与含续答阶段，两率仍只描述首答。
+
+运行使用AGY CLI，允许本地工具及预置公共依赖，禁止外部检索和工具联网；实际分批版本随来源保留。60份有效交付之外，13次有证据的纯系统中断留在重试历史，不进入有效尝试、成本、耗时或模型异常次数。所留有效运行记录中未确认模型或原生harness异常。
+
+API Standard参考成本合计 **$137.8559499**，基础42份为$88.9622955，18份续答为$48.8936544；不是订阅实际账单。续答资源全额计入。整章形式化初答约 **41.94分钟**，三轮自查另计；比较图仍采用12道共有计时的公开非Lean题。另有一道初答的墙钟与单调时钟证据不一致，保持耗时未知，不影响这12题和整章计时。
+
+[模型详情](../site/models/gemini-4-neon-xhigh/index.html) · [首答与三轮记录](../results/v1.0.0/gemini-4-neon-xhigh/20261122/record.json) · [续答采用层](../results/edition-reassessments/v1.2.0/gemini-4-neon-xhigh/20261122/public.json) · [资源汇总](../results/continuation-resources/v0.1.0/gemini-4-neon-xhigh-20261122.json)。私有题文、原答、判准与完整执行来源留在私库。
+
+Gemini 4 Neon (xHigh) delivered all 39 initial answers, three fixed Lean self-checks and 18 neutral revisions normally. Its first-answer baseline is MC91.9094 / RMC85.4178 / SMC60.4167; edition1.2.0 gives **MC93.0801 / RMC86.5376 / SMC61.1667**. Two of18 revisions are full in all modes. All four chapter deliveries verified92/92 with accurate diagnosis and no regression. First-answer content reliability is91.17% and complete-goal attainment84.92%. Effective deliveries total **$137.8559499** at the retained Standard API reference tariff, including revisions in full. Thirteen confirmed system interruptions remain in retry history only. The shared12-task timing sample and separate41.94-minute chapter measurement are known; one other first-answer duration remains unknown because its clocks disagree. Sol6.1Max group reviews and the root's final judgments retain their attribution; human mathematical review remains pending.
 
 ## DeepSeek 中性续答 · 2026-11-20
 
@@ -176,6 +188,7 @@ C003初答及三轮均核实92/92，原FULL／KEEP与源码分别保留。R1把�
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 97.93% | 72.51% |
 | [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | 93.59% | 83.60% |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | 99.80% | 69.67% |
+| [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | 91.17% | 84.92% |
 | [Gemini 4 Hydrogen (xhigh)](../site/models/gemini-4-hydrogen-xhigh/index.html) | 90.53% | 78.42% |
 | [Gemini 4 Carbon (high)](../site/models/gemini-4-carbon-high/index.html) | 88.92% | 84.24% |
 | [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | 91.14% | 68.03% |

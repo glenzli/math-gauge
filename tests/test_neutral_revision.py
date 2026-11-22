@@ -233,7 +233,8 @@ class NeutralRetainedSourcesTests(unittest.TestCase):
         source = transition['_source_edition']
         expected = set(source['selected_result_models']) | set(source.get('current_assessment_admissions', {})) | {'dot-underlying-model-20261108'}
         self.assertFalse(set(transition['adoptions']) & set(transition['pending_models']))
-        self.assertEqual(set(transition['adoptions']) | set(transition['pending_models']), expected)
+        self.assertEqual(set(transition['adoptions']) | set(transition['pending_models'])
+                         | set(transition['withdrawn_models']), expected)
         for mid, ref in transition['adoptions'].items():
             current = load_public(ROOT,ref)
             self.assertEqual(current['revision_counts']['pending'],0)

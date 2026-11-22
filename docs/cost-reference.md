@@ -14,6 +14,10 @@ Sol 6.2 Max的42份采用答卷均有原生用量，按已核实的[官方Sol 6.
 
 Astra 6.2 Max的42份采用交付均有原生用量，以2026-11-19核实的[官方Standard短上下文价格](https://developers.openai.com/api/docs/models/gpt-6.2-astra)折算为 **$77.46**：每百万token输入$8、缓存读取$0.40、30分钟缓存写入$10、输出$40；本批缓存写入为0。3次纯系统中断及非数学环境探测不计入。官方对单次输入超过272K的请求另收2倍输入／缓存价、1.5倍输出价；现有终态累计计数不足以还原每次内部请求的上下文档位，因此此值明确采用短上下文统一参考价，不是实际订阅账单或逐请求完整计价。
 
+Gemini 4 Neon (xHigh) 的60份有效交付均有完整原生用量：42份基础答卷参考费用 **$88.9622955**，18份续答 **$48.8936544**，合计 **$137.8559499**。使用留存的Standard API参考价：每百万token非缓存输入$3、缓存输入$0.15、输出$15；thinking已在输出内，不重复计入。13次确认的纯系统中断仅留重试历史，不进入该总额。它不是订阅账单，后端SKU仍未独立认证。[本轮资源](../results/continuation-resources/v0.1.0/gemini-4-neon-xhigh-20261122.json)
+
+Gemini4 Neon (xHigh) has complete native usage for all60 effective deliveries:42 base answers cost **$88.9622955** and18 adopted revisions **$48.8936544**, totaling **$137.8559499** at the retained Standard API reference tariff ($3 uncached input / $0.15 cached input / $15 output per million tokens). Thinking is already included in output. Thirteen confirmed system interruptions remain in retry history only. This is not a subscription invoice or independent backend-SKU verification.
+
 ## 采用哪些作答
 
 每道题只计当前留档采用的一次作答。有正常交卷时，使用对应答卷的实际调用；全部未交卷时，使用按评测规则最终采用的强制交卷、超时或失败尝试。经确认的云端／API故障后被废弃的尝试、其余重试、被替换的运行、兼容性探测、协调和评审调用均不计入。C003 的三个固定自查轮次各计一次。

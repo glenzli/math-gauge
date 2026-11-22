@@ -1,0 +1,1933 @@
+{
+  "case_id": "MG-C003",
+  "version": "0.1.1",
+  "items": [
+    {
+      "id": "CH03-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_const"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_id"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_act"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_const_global"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_id_global"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_act_global"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.disjoint_I_const_I_id"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.disjoint_I_const_I_act"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.disjoint_I_id_I_act"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_const_union_I_id_union_I_act"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.mem_I_const_of_both_const_and_id"
+        }
+      ],
+      "representation": "对算子 ϕ : Operator X bot、规范族 d : I → X → X → ENNReal 与受限子集 U : Set X，依次定义常值分量 I_const、常值优先的恒等分量 I_id 与有效分量 I_act 及其全域特化（U = dom ϕ），并证明三者两两不交、并为全集 Set.univ 且满足常值优先原则。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.compFiber"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.compFiberSingle"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.compFiberGlobal"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.compFiberFamily"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.compFiber_singleton_eq_single"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.subfamily_pseudometric_eq_zero_iff"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.subfamily_pseudometric_eq_finset_sup'"
+        }
+      ],
+      "representation": "用冻结背景模块的 subfamily_pseudometric d J 定义计算纤维 compFiber d ϕ J U y = {x ∈ U | d_J(ϕ(x), y) = 0}，同时给出单分量纤维 compFiberSingle、全域纤维 compFiberGlobal（U = dom ϕ）及像目标去重纤维族 compFiberFamily，并证明单元素子族与单分量纤维一致、d_J 零距等价于逐分量零距，以及有限非空子族下 subfamily_pseudometric 与有限最大值 Finset.sup' 严格相等。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.pointEqRel"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.zeroDistRel"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.mem_zeroDistRel_iff_mem_compFiber"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.imageZeroSetoid"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.ImageQuot"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.imageQuotMk"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.imageQuotMk_eq_iff"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.FiberPreorder"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.IsSeparatingOn"
+        }
+      ],
+      "representation": "定义点值相等点对集 pointEqRel（R_=(ϕ|U)）、全分量零距点对集 zeroDistRel（R_~(ϕ|U)）并证明其与全族计算纤维的等价对应；借助冻结引理 gauge_zero_related_equivalence 构造像集 ϕ(U) 上的等价关系 imageZeroSetoid、像商类型 ImageQuot = ϕ(U)/~_G 与典型商映射 imageQuotMk；定义纤维预序 FiberPreorder（R_~(ϕ_A|U) ⊆ R_~(ϕ_B|U)）及子集上的分离性 IsSeparatingOn。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-D04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.IsLegalNullRadius"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.isLegalNullRadius_iff_ball"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.isLegalNullRadius_subfamily_iff_fiber"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadius"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadiusSubfamily"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadiusComp"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadiusGlobal"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadiusSubfamily_singleton"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadius_eq_zero_of_no_legal"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.pointwiseNullRadius_eq_top_of_all_finite_pos"
+        }
+      ],
+      "representation": "对任意输入、输出扩展伪度量 d_in, d_out、算子 ϕ、评估域 U 与基点 y，定义合法有限正半径谓词 IsLegalNullRadius（0 < r < ⊤ 且 B_{d_in}(y,r) ∩ U ⊆ {x ∈ U | d_out(ϕ(x), ϕ(y)) = 0}）及其 ENNReal 上确界 pointwiseNullRadius（空集上确界为 0，任意有限正半径合法时取 ⊤），并给出子族/单分量/全域简写及与 ball、compFiber 的等价对应。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-D05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.uniformNullRadius"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.uniformNullRadiusOn"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.uniformNullRadiusSubfamilyOn"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.uniformNullRadiusCompOn"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.uniformNullRadiusGlobal"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.nullificationMatrix"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.nullificationMatrixGlobal"
+        }
+      ],
+      "representation": "对基点集 A 与评估域 U 定义统一零化半径 uniformNullRadius = ⨅ y ∈ A, r^N(y|U)，特化 A = U 得 uniformNullRadiusOn 及子族/单分量/全域版本；按原文行列约定（输出 j 为行、输入 i 为列）定义零化矩阵 nullificationMatrix d ϕ U j i = \\underline{r}^N_{ϕ,i,j}|_U 及全域零化矩阵 nullificationMatrixGlobal。",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-D06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.InputScaleFamily"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.diamScaleFun"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.diamScale"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.thresholdType"
+        }
+      ],
+      "representation": "用结构 InputScaleFamily 封装非空子集上关于包含单调的输入尺度族 σ_i : Set X → ENNReal；定义默认直径尺度 diamScaleFun d i A = ⨆ x ∈ A, ⨆ y ∈ A, d_i(x,y) 并验证其构成 InputScaleFamily（diamScale）；定义阈值分类 thresholdType : Fin 2 × Fin 2，第一项指示 σ_i(A) < τ_σ、第二项指示 \\underline{r}^N_{f,i,j}|_A ≥ τ_N。",
+      "dependencies": [
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_attained"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_empty"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.one_le_covering_number_of_nonempty"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy_nonneg"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy_empty"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy_singleton"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.subfamily_covering_number"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.subfamily_covering_number_singleton"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.subfamily_metric_entropy_eq_log2_subfamily_covering"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.IsTotallyBounded"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.internalEpsilonNet_iff_ball"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.covering_number_eq_zero_iff"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.log2_ereal_mono"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.metric_entropy_mono_of_covering_number_le"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.metric_entropy_eq_coe_of_nonempty_of_lt_top"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.metric_entropy_eq_top_iff"
+        }
+      ],
+      "representation": "直接复用冻结模块 formal_oet 中的 InternalEpsilonNet、covering_number、metric_entropy 与 subfamily_metric_entropy（及最小值可达性、无有限覆盖取 ⊤、空集取 0 / ⊥、非空 ≥ 1 / ≥ 0、单元素子族化简等对应定理），补充子族覆盖数 subfamily_covering_number 及其与子族度量熵/单元素子族的对应、全有界谓词 IsTotallyBounded（∀ r ∈ (0, ⊤), N(r, U) < ⊤），并证明与开球并覆盖表述、零覆盖数等价空集、对数与度量熵单调性及有限实数/无穷取值刻画的对应。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.MappingEntropyDiffWellDefined"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.mappingEntropyDiff"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.mappingEntropyDiffSame"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.mappingEntropyDiffComp"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.mappingEntropyDiffCompSame"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.mappingEntropyDiff_cases"
+        }
+      ],
+      "representation": "定义良定前提 MappingEntropyDiffWellDefined（输入覆盖数 < ⊤ 或像集覆盖数 < ⊤，从定义层排除 ∞ - ∞ 不定形）与依赖该前提的映射熵差 mappingEntropyDiff = E_{ε,J_in}(U) - E_{ε,J_out}(ϕ(U)) : EReal，给出同子族与单分量简写，并在 mappingEntropyDiff_cases 中验证两有限、+∞ 减有限（得 ⊤）、有限减 +∞（得 ⊥）三种良定分支。",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P01-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_1_i"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_1_i_lip_zero_row"
+        }
+      ],
+      "representation": "命题 3.1(i)：对任意 i ∈ I_const(ϕ|U) 与 x, y ∈ U，证明 d_i(ϕ(x), ϕ(y)) ≤ ∑_{k ∈ I} 0 · d_k(x, y) = 0；并证明将任意合法 Lip 矩阵的第 i 输出行置零仍为合法 Lip 矩阵。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_1_ii"
+        }
+      ],
+      "representation": "命题 3.1(ii)：若 i ∈ I_const(ϕ|U)、K 为 U 上合法 co-Lip 矩阵且存在 x, y ∈ U 使 d_k(x, y) > 0，则 K_{k→i} = 0（按 formal_oet 索引记作 K k i = 0）。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_1_iii"
+        }
+      ],
+      "representation": "命题 3.1(iii)：对扩展伪度量 d_i 与 i ∈ I_id(ϕ|U)，用两次三角不等式与对称性证明 ∀ x, y ∈ U, d_i(ϕ(x), ϕ(y)) = d_i(x, y)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P02-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_2_i"
+        }
+      ],
+      "representation": "命题 3.2(i)：在 U ⊆ dom(ϕ₂ ∘ ϕ₁) 与扩展伪度量族下，按四种非有效情形逆否证明 I_act(ϕ₂ ∘ ϕ₁ | U) ⊆ I_act(ϕ₁ | U) ∪ I_act(ϕ₂ | ϕ₁(U))，其中第二步采用实际中间像域 ϕ₁(U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P02-03"
+      ]
+    },
+    {
+      "id": "CH03-P02-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.chainOp"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.chainDomain"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.chainDomain_eq_image_chainOp"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.I_act_identity_eq_empty"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_2_ii"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.chainOpFin"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.chainDomainFin"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_2_ii_fin"
+        }
+      ],
+      "representation": "命题 3.2(ii)：定义任意长度 n ∈ ℕ（含 n = 0 时 c₀ = id）的递归复合 chainOp 与递归实际像域 chainDomain（U_{m+1} = ϕ_m(U_m)），证明空复合有效分量为空集并通过对 n 归纳证明 I_act(c_n | U₁) ⊆ ⋃_{m < n} I_act(ϕ_m | U_m)，同时提供 Fin n 有限元组版本。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P02-01"
+      ]
+    },
+    {
+      "id": "CH03-P02-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_2_iii"
+        }
+      ],
+      "representation": "命题 3.2(iii)：证明 I_id(ϕ₁ | U) ∩ I_id(ϕ₂ | ϕ₁(U)) ⊆ I_id(ϕ₂ ∘ ϕ₁ | U)，既由三角不等式得逐点零距，又利用命题 3.1(iii) 排除复合落入常值优先分支。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P03-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.SwapSpace"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.swapDist"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.swapDist_extendedPseudoMetric"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.swapOp"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.swapU"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.remark_prop_3_2_converse_fails"
+        }
+      ],
+      "representation": "命题 3.2 后注：构造合法三点扩展规范空间 SwapSpace = {⊥, a, b}、离散伪度量 swapDist 与两点换位算子 swapOp（U = {a, b}），完整计算两步均有效且非恒等、复合后恒等且非有效，并同时否定命题 3.2(i) 与 (iii) 的反向包含。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_3_i"
+        }
+      ],
+      "representation": "命题 3.3(i)：在 U ⊆ dom(ψ ∘ ϕ) 下，若 i ∈ I_const(ψ | ϕ(U))，则 i ∈ I_const(ψ ∘ ϕ | U)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.SevenSpace"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.TwoIdx"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.sevenDist"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.sevenDist_extendedPseudoMetric"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.sevenPhi"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.sevenPsi"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.sevenU"
+        },
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.prop_3_3_ii_counterexample"
+        }
+      ],
+      "representation": "命题 3.3(ii)：构造合法七点空间 SevenSpace = {⊥, a, b, p, q, r, s} 与双分量规范族 TwoIdx = {i, m}（d_i 合并 {p, q}，d_m 离散），验证全部扩展伪度量公理、U = {a, b} ⊆ dom(ψ ∘ ϕ)、i ∈ I_const(ϕ | U) 且 i ∉ I_const(ψ ∘ ϕ | U)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P05-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ComponentPartition.lean",
+          "name": "Ch03.cor_3_4"
+        }
+      ],
+      "representation": "推论 3.4：若 U ⊆ dom(ψ ∘ ϕ)、j ∈ I_const(ϕ | U) 且存在 L ∈ L(ψ)|_{ϕ(U)} 使 k ≠ j 时 L_{k→j} = 0（允许 L_{j→j} = ⊤），由冻结引理 lip_bound_of_single_input_row 与 ⊤ · 0 = 0 推出 j ∈ I_const(ψ ∘ ϕ | U)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P06-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_i"
+        }
+      ],
+      "representation": "命题 3.5(i)：对任意 y, y' ∈ X，若 d_J(y, y') = 0，则 Fib_{ϕ,J}(y | U) = Fib_{ϕ,J}(y' | U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_ii_a"
+        }
+      ],
+      "representation": "命题 3.5(ii-a)：对任意 y ∈ ϕ(U)，Fib_{ϕ,J}(y | U) 非空，且这些纤维之并（及 ⋃₀ compFiberFamily）等于 U。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_ii_b"
+        }
+      ],
+      "representation": "命题 3.5(ii-b)：任意两像目标 y₁, y₂ ∈ ϕ(U) 的纤维要么相等要么不交；去重后的集合族 compFiberFamily 满足两两不交、每元非空且含于 U、并等于 U，构成 U 的分划。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P06-01",
+        "CH03-P06-02"
+      ]
+    },
+    {
+      "id": "CH03-P06-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_iii"
+        }
+      ],
+      "representation": "命题 3.5(iii)：对任意非空子族 J ⊆ I，证明 Fib_{ϕ,J}(y | U) = ⋂_{j ∈ J} Fib_{ϕ,j}(y | U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_iv"
+        }
+      ],
+      "representation": "命题 3.5(iv)：若非空子族 J ⊆ K，则 Fib_{ϕ,K}(y | U) ⊆ Fib_{ϕ,J}(y | U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_v"
+        }
+      ],
+      "representation": "命题 3.5(v)：证明单元素子族 Fib_{ϕ,{i}}(y | U) = Fib_{ϕ,i}(y | U)，且全子族纤维 Fib_{ϕ,I}(y | U) 含于每个单分量纤维 Fib_{ϕ,i}(y | U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_vi_a"
+        }
+      ],
+      "representation": "命题 3.5(vi-a)：当 j ∈ I_id(ϕ | U) 时，对任意目标 y ∈ X，单分量纤维 Fib_{ϕ,j}(y | U) 等于输入零距类 {x ∈ U | d_j(x, y) = 0}。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_5_vi_b"
+        }
+      ],
+      "representation": "命题 3.5(vi-b)：当 j ∈ I_const(ϕ | U) 时，对任意像目标 y₀ ∈ ϕ(U) 有 Fib_{ϕ,j}(y₀ | U) = U，且对任意满足 d_j(y, y₀) > 0 的目标 y 有 Fib_{ϕ,j}(y | U) = ∅。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P07-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_6_i_nec"
+        }
+      ],
+      "representation": "命题 3.6(i-必要)：若存在映射 T : ϕ_A(U) → X 使 U 上 T ∘ ϕ_A = ϕ_B，则 R_=(ϕ_A | U) ⊆ R_=(ϕ_B | U)。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_6_i_suff"
+        }
+      ],
+      "representation": "命题 3.6(i-充分)：由 R_=(ϕ_A | U) ⊆ R_=(ϕ_B | U) 显式构造良定义映射 T : {z // z ∈ ϕ_A(U)} → X 并验证 ∀ x ∈ U, T(ϕ_A(x)) = ϕ_B(x)，无需非空假设（涵括 U = ∅）。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_6_ii"
+        }
+      ],
+      "representation": "命题 3.6(ii)：双向点值像映射都存在当且仅当 R_=(ϕ_A | U) = R_=(ϕ_B | U)。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-01",
+        "CH03-P07-02"
+      ]
+    },
+    {
+      "id": "CH03-P07-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_6_iii"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_6_iii_subsingleton"
+        }
+      ],
+      "representation": "命题 3.6(iii)：在单分量情形下，若 T 存在且 ϕ_A 在 U 上 K_A-co-Lip（0 < K_A < ⊤）、ϕ_B 在 U 上 L_B-Lip（L_B < ⊤），则 T 在实际像域 ϕ_A(U) 上满足 (L_B / K_A)-Lip 标量界；另附 [Subsingleton I] 矩阵界特化版本。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P08-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_7_one_way"
+        }
+      ],
+      "representation": "命题 3.7（单向）：存在满足 Tbar([ϕ_A(x)]) = [ϕ_B(x)]（∀ x ∈ U）的商映射 Tbar : ϕ_A(U)/~_G → ϕ_B(U)/~_G 当且仅当 R_~(ϕ_A | U) ⊆ R_~(ϕ_B | U)，充分性以 Quotient.lift 构造代表元无关商映射。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P08-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_7_two_way"
+        }
+      ],
+      "representation": "命题 3.7（双向）：按规定公式诱导的双向商映射都存在当且仅当 R_~(ϕ_A | U) = R_~(ϕ_B | U)。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P08-01"
+      ]
+    },
+    {
+      "id": "CH03-P08-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.pointEqRel_eq_zeroDistRel_of_separatingOn"
+        },
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.prop_3_7_image_separating"
+        }
+      ],
+      "representation": "命题 3.7（像集分离特化）：仅在两个实际像集 ϕ_A(U) 与 ϕ_B(U) 各自满足 IsSeparatingOn 的前提下，证明 R_= = R_~ 在两侧均成立，并推出单向与双向点值因子化判据分别等价于相应商值因子化判据。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-01",
+        "CH03-P07-02",
+        "CH03-P07-03",
+        "CH03-P08-01",
+        "CH03-P08-02"
+      ]
+    },
+    {
+      "id": "CH03-P09-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.remark_fiber_preorder_refl_trans"
+        }
+      ],
+      "representation": "纤维包含传递注（预序性质）：证明固定公共域 U 上的 FiberPreorder d U 具有自反性与传递性。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P09-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.remark_fiber_chain_trans"
+        }
+      ],
+      "representation": "纤维包含传递注（有限链传递）：对公共评估域 U 上的任意有限链 ϕ₀, …, ϕₘ，若每步 ϕ_{r-1} ⪰_{fiber,U} ϕ_r，则对任意 0 ≤ a ≤ b ≤ m 均有 ϕ_a ⪰_{fiber,U} ϕ_b。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P09-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/FiberFactorization.lean",
+          "name": "Ch03.remark_fiber_chain_strict"
+        }
+      ],
+      "representation": "纤维包含传递注（严格包含传递）：若链中存在某一步为真包含 R_~(ϕ_{r-1}|U) ⊂ R_~(ϕ_r|U)，则推出端点真包含 R_~(ϕ₀|U) ⊂ R_~(ϕₘ|U) 并显式给出差集见证 p ∈ R_~(ϕₘ|U) \\ R_~(ϕ₀|U)。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P09-02"
+      ]
+    },
+    {
+      "id": "CH03-P10-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.RealWithBot"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.realWithBotDist"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.realWithBotDist_extendedPseudoMetric"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.stepOp"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.stepU"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.counterexample_3_1_valid"
+        }
+      ],
+      "representation": "反例 3.1（结构合法性）：构造带吸收元的通常实线 RealWithBot = Option ℝ 与扩展伪度量 realWithBotDist、阶跃算子 stepOp 及穿孔评估域 stepU = [-1,0) ∪ (0,1]，验证 ExtendedPseudoMetric、非空性与 stepU ⊆ dom stepOp。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P10-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.counterexample_3_1_pointwise"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.counterexample_3_1_pointwise_all"
+        }
+      ],
+      "representation": "反例 3.1（点态半径）：对任意 some t ∈ stepU，证明合法有限正半径集恰为 (0, |t|]，进而点态零化半径等于 ENNReal.ofReal |t| > 0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P10-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.counterexample_3_1_uniform_zero"
+        }
+      ],
+      "representation": "反例 3.1（统一半径为零）：在同一个固定评估域 stepU 上取任意趋零正基点 t = min 1 (ε/2)，证明统一零化半径 uniformNullRadiusOn 等于 0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P10-01",
+        "CH03-P10-02"
+      ]
+    },
+    {
+      "id": "CH03-P11-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_i_a"
+        }
+      ],
+      "representation": "命题 3.8(i-a)：若非空输出子族 J ⊆ I_const(ϕ | U)，则对任意 y ∈ U，像目标纤维 Fib_{ϕ,J}(ϕ(y) | U) = U。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P11-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_i_b"
+        }
+      ],
+      "representation": "命题 3.8(i-b)：若非空输出子族 J ⊆ I_const(ϕ | U)，则对任意输入指标 i ∈ I，每个基点 y ∈ U 的点态半径与统一零化半径均为 ⊤。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P11-01"
+      ]
+    },
+    {
+      "id": "CH03-P11-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.infInputDist"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.infInputDist_extendedPseudoMetric"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_ii_counterexample"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_ii_eq"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_ii_ne"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_ii_eq_concrete"
+        },
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_8_ii_ne_concrete"
+        }
+      ],
+      "representation": "命题 3.8(ii)：在 SwapSpace = {⊥, a, b}、U = {a, b}、ϕ = id 上构造任意指标集 I 的扩展伪度量族 infInputDist i（d_i(a,b) = ⊤，其余分量取 1），同时覆盖 i = j 与 i ≠ j 两种情形并给出有限非空指标集 Unit 与 TwoIdx 上的具体非空见证，证明 [N(id)|_U]_{ji} = ⊤ 但 j ∉ I_const(id | U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P03-01",
+        "CH03-P04-02"
+      ]
+    },
+    {
+      "id": "CH03-P12-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_9_i"
+        }
+      ],
+      "representation": "命题 3.9(i)：若 i ∈ I_id(ϕ | U) 且 y ∈ U，由命题 3.1(iii) 证明 Fib_{ϕ,i}(ϕ(y) | U) = {x ∈ U | d_i(x, y) = 0}。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P12-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_9_ii"
+        }
+      ],
+      "representation": "命题 3.9(ii)：若 i ∈ I_id(ϕ | U)、y ∈ U 且有限正半径 r₀ 满足 B_i(y, r₀) ∩ U ⊆ {x ∈ U | d_i(x, y) = 0}，则 r^N_{ϕ,i,i}(y | U) ≥ r₀ > 0。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-P12-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_10_pointwise"
+        }
+      ],
+      "representation": "命题 3.10（点态最小值公式）：对有限非空输出子族 J ⊆ I，证明点态零化半径 r^N_{ϕ,i,J}(y | U) 等于单分量半径之最小值（同时给出 ⨅ j ∈ J 与 Finset.inf' 形式）。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-P13-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_10_uniform"
+        }
+      ],
+      "representation": "命题 3.10（统一半径公式）：交换基点下确界与有限非空最小值，证明 \\underline{r}^N_{ϕ,i,J}|_U = min_{j ∈ J} [N(ϕ)|_U]_{ji}（同时给出 ⨅ j ∈ J 与 Finset.inf' 形式）。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P13-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_10_antitone"
+        }
+      ],
+      "representation": "命题 3.10（输出子族反单调性）：若非空子族 J ⊆ K，则 \\underline{r}^N_{ϕ,i,K}|_U ≤ \\underline{r}^N_{ϕ,i,J}|_U。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P13-02"
+      ]
+    },
+    {
+      "id": "CH03-P14-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_11_fiber"
+        }
+      ],
+      "representation": "命题 3.11（纤维条件）：若 y' ∈ Fib_{ϕ₂,j}(ϕ₂(y) | U₂)，由纤维定义与伪度量对称性得 d_j(ϕ₂(y), ϕ₂(y')) = 0。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P14-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_11_radius"
+        }
+      ],
+      "representation": "命题 3.11（零化半径条件）：若 d_i(y, y') < r^N_{ϕ₂,i,j}(y | U₂)，由上确界定义提取满足 d_i(y', y) < ρ 的合法有限正半径 ρ，归结至纤维条件推出 d_j(ϕ₂(y), ϕ₂(y')) = 0。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D04",
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P14-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_11_compose"
+        }
+      ],
+      "representation": "命题 3.11（复合特化）：在 x, x' ∈ dom ϕ₁、两像点 ϕ₁(x), ϕ₁(x') 均属于指定下游域 U₂ ⊆ dom ϕ₂ 且 ϕ₁(x') ∈ Fib_{ϕ₂,j}(ϕ₂(ϕ₁(x)) | U₂) 条件下，推出 d_j((ϕ₂ ∘ ϕ₁)(x), (ϕ₂ ∘ ϕ₁)(x')) = 0。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P15-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_12_i"
+        }
+      ],
+      "representation": "命题 3.12(i)：若下游 ϕ₂ 在实际像域 ϕ₁(U) 上保持 d_l-零距到 d_j-零距，则复合零化矩阵满足 [N(ϕ₂ ∘ ϕ₁)|_U]_{ji} ≥ [N(ϕ₁)|_U]_{li}。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P15-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/NullificationRadius.lean",
+          "name": "Ch03.prop_3_12_ii"
+        }
+      ],
+      "representation": "命题 3.12(ii)：若存在有限正数 L 使 ϕ₁ 在 U 上满足单通道 Lip 上界 d_l(ϕ₁(x), ϕ₁(x')) ≤ L · d_i(x, x')，则 [N(ϕ₂ ∘ ϕ₁)|_U]_{ji} ≥ [N(ϕ₂)|_{ϕ₁(U)}]_{jl} / L，统一覆盖右端为 0、有限正数与 ⊤ 三种情况。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P16-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.lemma_3_13_partition"
+        }
+      ],
+      "representation": "引理 3.13（四分划）：证明 thresholdType 对每个通道 (i, j) 恰取 (1,1), (1,0), (0,1), (0,0) 之一（互斥且穷尽），并给出各组合与两个互补阈值不等式的精确充要刻画。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.lemma_3_13_i"
+        }
+      ],
+      "representation": "引理 3.13(i)：固定其他数据，当 τ_σ ≤ τ_σ' 时，第一项取 1 的通道集合按包含单调不减。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.lemma_3_13_ii"
+        }
+      ],
+      "representation": "引理 3.13(ii)：固定其他数据，当 τ_N ≤ τ_N' 时，第二项取 1 的通道集合按包含单调不增。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_14_i"
+        }
+      ],
+      "representation": "命题 3.14(i)：对任意单调输入尺度族 σ，若 ∅ ≠ B ⊆ A ⊆ dom f，则 σ_i(B) ≤ σ_i(A)，特别地 σ_i(A) < τ_σ 推出 σ_i(B) < τ_σ。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_14_ii_a"
+        }
+      ],
+      "representation": "命题 3.14(ii-a)：对固定基点 x ∈ B ⊆ A，缩小评估域使点态零化半径单调不减 r^N_{f,i,j}(x | A) ≤ r^N_{f,i,j}(x | B)。",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-P17-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_14_ii_b"
+        }
+      ],
+      "representation": "命题 3.14(ii-b)：先缩小取下确界基点集（A → B）再缩小评估域（应用命题 3.14(ii-a)），证明 \\underline{r}^N_{f,i,j}|_A ≤ \\underline{r}^N_{f,i,j}|_B。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P17-02"
+      ]
+    },
+    {
+      "id": "CH03-P17-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_14_iii_counterexample"
+        }
+      ],
+      "representation": "命题 3.14(iii)：在带吸收元实直线 RealWithBot 上取 f = id、A = {0, 1}、B = {0}、直径尺度与 τ_σ = 1/2，证明 diam(B) = 0 < 1/2 而 diam(A) = 1 ≥ 1/2，否定反向尺度判断。",
+      "dependencies": [
+        "CH03-D06",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_15_i"
+        }
+      ],
+      "representation": "命题 3.15(i)：对 x, y ∈ A，若 d_i(x, y) < \\underline{r}^N_{f,i,j}|_A，由下确界定义与命题 3.11 推出 d_j(f(x), f(y)) = 0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P18-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_15_ii"
+        }
+      ],
+      "representation": "命题 3.15(ii)：作为 (i) 的逆否命题，对 x, y ∈ A，若 d_j(f(x), f(y)) > 0，则 d_i(x, y) ≥ \\underline{r}^N_{f,i,j}|_A。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_15_iii"
+        }
+      ],
+      "representation": "命题 3.15(iii)：当 \\underline{r}^N_{f,i,j}|_A < α < τ_N < ⊤ 时，构造点对 x, y ∈ A 与有限正数 ε（当输出距离为 ⊤ 时取 ε = 1，有限时取输出距离本身），使 d_i(x, y) < α 且 ε ≤ d_j(f(x), f(y))。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-P19-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_16_i"
+        }
+      ],
+      "representation": "命题 3.16(i)：当 \\underline{r}^N_{f,i,j}|_A ≥ τ_N（有限正阈值）时，对任意 x ∈ A，B_i(x, τ_N) ∩ A ⊆ Fib_{f,j}(f(x) | A)。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_16_ii_a"
+        }
+      ],
+      "representation": "命题 3.16(ii-a)：对任意 B ⊆ A（含 B = ∅ 及无有限覆盖情形）与任意有限正 ε，将 B 的有限 τ_N-内覆盖中心集 S 映为 f(S) 构成 f(B) 的内部 ε-覆盖且基数不增，从而 N_j(ε, f(B)) ≤ N_i(τ_N, B)。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D05",
+        "CH03-D07",
+        "CH03-P19-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.prop_3_16_ii_b"
+        }
+      ],
+      "representation": "命题 3.16(ii-b)：当 B ⊆ A 非空时，由覆盖数不等式及 log2_ereal 的单调性推出 E_{ε,j}(f(B)) ≤ E_{τ_N,i}(B)。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P20-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.post_prop_3_16_counterexample_for_a"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.post_prop_3_16_counterexample"
+        },
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.post_prop_3_16_pointwise_pos_insufficient"
+        }
+      ],
+      "representation": "命题 3.16 后正文反例：在反例 3.1 的同一阶跃算子 stepOp 与评估域 stepU 上，既对任意有限正 τ 与任意满足 0 < a ≤ 1、2a < τ 的 a，也显式构造 a = min 1 (τ/4)，令 B = {-a, a} ⊆ stepU，证明 N_1(τ, B) = 1 < 2 = N_1(1/2, f(B))；并由 post_prop_3_16_pointwise_pos_insufficient 显式结合处处正点态半径，否定存在统一有限正尺度 τ 使覆盖数上界对全部 B ⊆ stepU 成立。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D07",
+        "CH03-P10-01",
+        "CH03-P10-02"
+      ]
+    },
+    {
+      "id": "CH03-P21-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.cor_3_17_iff"
+        }
+      ],
+      "representation": "推论 3.17（整体零化等价判据）：在 diam_{d_i}(A) < τ_σ ≤ τ_N（有限正阈值）精确条件下，证明 \\underline{r}^N_{f,i,j}|_A ≥ τ_N 当且仅当 ∀ x, y ∈ A, d_j(f(x), f(y)) = 0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P21-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/ScaleAndCovering.lean",
+          "name": "Ch03.cor_3_17_covering_one"
+        }
+      ],
+      "representation": "推论 3.17（覆盖数为 1）：当上述等价条件成立且 A 非空时，对任意有限正 ε，任取 f(x₀) ∈ f(A) 作单中心内部覆盖并结合非空下界，证明 N_j(ε, f(A)) = 1。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-D07",
+        "CH03-P21-01"
+      ]
+    },
+    {
+      "id": "CH03-P22-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.covering_number_le_card_of_finite"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.remark_finite_mapping_entropy_diff_well_defined"
+        }
+      ],
+      "representation": "有限集上映射熵差良定注：对任意非空有限子集 U ⊆ dom ϕ、任意非空子族 J_in, J_out 与有限正 ε，证明输入与像集覆盖数均满足 1 ≤ N < ⊤、两端熵均为有限实数，且 MappingEntropyDiffWellDefined 成立。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_18_i"
+        }
+      ],
+      "representation": "命题 3.18(i)：若 j ∈ I_const(ϕ | U)（U 非空），证明 N_j(ε, ϕ(U)) = 1、E_{ε,j}(ϕ(U)) = 0、熵差良定（允许输入熵为 +∞）且 ΔE_{ε,j}(ϕ | U) = E_{ε,j}(U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_18_ii_a"
+        }
+      ],
+      "representation": "命题 3.18(ii-a)：若 j ∈ I_id(ϕ | U)，借助命题 3.1(iii) 保距性将输入中心前推且将像集中心反向取原像代表元，证明 N_j(ε, ϕ(U)) = N_j(ε, U) 与 E_{ε,j}(ϕ(U)) = E_{ε,j}(U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P23-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_18_ii_b"
+        }
+      ],
+      "representation": "命题 3.18(ii-b)：若 j ∈ I_id(ϕ | U) 且显式假定 MappingEntropyDiffWellDefined（从而两覆盖数同为有限正数，绝不定义 ∞ - ∞），证明 ΔE_{ε,j}(ϕ | U) = 0。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P23-02"
+      ]
+    },
+    {
+      "id": "CH03-P24-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_19_net_pushforward"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_19_covering_le"
+        }
+      ],
+      "representation": "命题 3.19（覆盖数上界）：有限正单通道 Lip 常数 L 将 U 的内部 (ε/L)-覆盖中心集 S 前推为 ϕ(U) 的内部 ε-覆盖中心集 S.image ϕ 且基数不增，从而 N_j(ε, ϕ(U)) ≤ N_i(ε/L, U)。",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P24-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_19_entropy_diff_ge"
+        }
+      ],
+      "representation": "命题 3.19（熵差下界）：在 U 关于 d_i 全有界前提下，证明输入与像集覆盖数均有限、熵差良定，且 ΔE_{ε,i,j}(ϕ | U) ≥ E_{ε,i}(U) - E_{ε/L,i}(U)。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P24-01"
+      ]
+    },
+    {
+      "id": "CH03-P25-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_20_net_pullback"
+        },
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_20_covering_ge"
+        }
+      ],
+      "representation": "命题 3.20（覆盖数下界）：在 IsCoLipMatrix d ϕ U K 且 0 < K_{i→j} < ⊤ 下，将 ϕ(U) 的内部 ε-覆盖中心集 T 逐点选原像拉回为 U 的内部 (ε/K_{i→j})-覆盖中心集 S 且 |S| ≤ |T|，从而 N_i(ε/K_{i→j}, U) ≤ N_j(ε, ϕ(U))。",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P25-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/MappingEntropyDiff.lean",
+          "name": "Ch03.prop_3_20_entropy_diff_le"
+        }
+      ],
+      "representation": "命题 3.20（熵差上界）：在 U 关于 d_i 全有界前提下（允许输出覆盖数与输出熵为 +∞），证明熵差良定并满足 ΔE_{ε,i,j}(ϕ | U) ≤ E_{ε,i}(U) - E_{ε/K_{i→j},i}(U)。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P25-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.absDiffDist"
+        },
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.absDiffDist_extendedPseudoMetric"
+        },
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.ex31Op"
+        },
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.ex31U"
+        },
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_1_i_a"
+        }
+      ],
+      "representation": "习题 3.1(i-a)：验证 ℝ ⊔ {⊥} 上绝对值差伪度量 d_i(x,y) = ||x|-|y|| 的合法性、仿射算子 ϕ(x) = 2x - 1 在 U = {0, 1} 上的定义域合法性，算出 Fib_{ϕ,i}(ϕ(0) | U) = U 及 i ∈ I_const(ϕ | U)（且不属于 I_id 与 I_act）。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_1_i_b"
+        }
+      ],
+      "representation": "习题 3.1(i-b)：在同一子集 U = {0, 1} 上验证 U ⊆ dom(ϕ²)，算出 Fib_{ϕ²,i}(ϕ²(0) | U) = {0} 及 i ∈ I_act(ϕ² | U)（且不属于 I_const 与 I_id）。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P10-01",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_1_ii"
+        }
+      ],
+      "representation": "习题 3.1(ii)：对任意在 U = {0, 1} 上同取实值 c 的算子 ψ，证明 ψ²(0) = ψ²(1) 恒成立；分两种情形说明：若 some c ∈ dom ψ 则 U ⊆ dom(ψ²)、0 与 1 落入同一纤维 U、纤维分划退化为单块 {U}（常值分量）；若 some c ∉ dom ψ 则 U ⊈ dom(ψ²) 且 U ∩ dom(ψ²) = ∅（再次像为吸收元时不再满足受限域条件）。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P10-01",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P27-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_2_i"
+        }
+      ],
+      "representation": "习题 3.2(i)：在 IsCoLipMatrix d ϕ U K、K_{i→j} > 0（不要求有限）与 r^N_{ϕ,i,j}(y | U) > 0 下，联立命题 3.11 与冻结引理 positive_colip_entry_reflects_zero，证明 ∀ x ∈ U, d_i(x, y) ∉ (0, r^N_{ϕ,i,j}(y | U))。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P27-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_2_ii"
+        }
+      ],
+      "representation": "习题 3.2(ii)：若 \\underline{r}^N_{ϕ,i,j}|_U > 0，证明 {0} 与 [\\underline{r}^N_{ϕ,i,j}|_U, +∞] 不交且 ∀ x, y ∈ U, d_i(x, y) ∈ {0} ∪ [\\underline{r}^N_{ϕ,i,j}|_U, +∞]。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P27-01"
+      ]
+    },
+    {
+      "id": "CH03-P28-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.ex33Op"
+        },
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.ex33U"
+        },
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_3_i"
+        }
+      ],
+      "representation": "习题 3.3(i)：验证绝对值差规范空间与平移算子 ϕ(x) = x + 1 在 U = {-3, -2, 0, 2} 上的合法性，并精确计算恒等算子纤维分划 {{-3}, {-2, 2}, {0}} 与平移算子纤维分划 {{-3}, {-2, 0}, {2}}。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P10-01",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P28-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises1to3.lean",
+          "name": "Ch03.exercise_3_3_ii"
+        }
+      ],
+      "representation": "习题 3.3(ii)：在精确半径 ε = 3/2 下通过显式内部覆盖与下界反证证明 N_i(3/2, U) = 2、N_i(3/2, ϕ(U)) = 1、熵差良定且 ΔE_{3/2,i}(ϕ | U) = 1。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P10-01",
+        "CH03-P26-01",
+        "CH03-P28-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.realWithBotDistFamily"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.realWithBotDistFamily_extendedPseudoMetric"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.realIcc"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.diamScaleFun_realIcc"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.floorOp"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex34D1"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_4_i_a"
+        }
+      ],
+      "representation": "习题 3.4(i-a)：对取整算子 floorOp 与 D₁ = [0, 1/2]（τ_σ = τ_N = 1），验证非空与域合法性，算得 diam = 1/2、统一零化半径 = ⊤、阈值组合为 (1, 1)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P16-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex34D2"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.floorOp_pointwise_zero_at_one"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_4_i_b"
+        }
+      ],
+      "representation": "习题 3.4(i-b)：对 D₂ = [9/10, 11/10]，验证 diam = 1/5、在跳跃点 1 处点态零化半径为 0 从而统一零化半径 = 0、阈值组合为 (1, 0)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P16-01",
+        "CH03-P29-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex34D3"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_4_i_c"
+        }
+      ],
+      "representation": "习题 3.4(i-c)：对 D₃ = {0, 2}，证明 diam = 2、两点点态半径均为 2 从而统一零化半径 = 2、阈值组合为 (0, 1)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P16-01",
+        "CH03-P29-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex34D4"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_4_i_d"
+        }
+      ],
+      "representation": "习题 3.4(i-d)：对 D₄ = [0, 2]，证明 diam = 2、统一零化半径 = 0（由跳跃点 1 处点态半径为 0 得到）、阈值组合为 (0, 0)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P16-01",
+        "CH03-P29-01",
+        "CH03-P29-02"
+      ]
+    },
+    {
+      "id": "CH03-P29-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.dom_floorOp_eq_range_some"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_4_ii"
+        }
+      ],
+      "representation": "习题 3.4(ii)：证明 dom floorOp = Set.range Option.some（即精确对应实数部分 ℝ ⊂ ℝ ⊔ {⊥}），以 (i-c) 的 D₃ = {0, 2} 为反例否定对任意非空 D ⊆ ℝ 无直径条件时 \\underline{r}^N ≥ 1 蕴含整体输出零距（因 d(f(0), f(2)) = 2 ≠ 0），并证明 D₃ 内不同点间距至少为 2 是其正统一零化半径的来源。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P29-01",
+        "CH03-P29-03"
+      ]
+    },
+    {
+      "id": "CH03-P30-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex35U"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_5_i"
+        }
+      ],
+      "representation": "习题 3.5(i)：对 U = {0, 1, 2, 3} 证明全部有限正 ε 的完整分段覆盖数（0 < ε ≤ 1 时为 4，1 < ε ≤ 2 时为 2，2 < ε < ⊤ 时为 1，含端点 ε = 1, 2），并在 ε = 7/4 处证明 U ⊆ B(3/2, 7/4) 但 3/2 ∉ U，故 {3/2} 不是合法内部覆盖且 N(7/4, U) = 2。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P30-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex35f"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.ex35g"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_5_ii"
+        }
+      ],
+      "representation": "习题 3.5(ii)：验证 dom f = dom g = U、f(U) = g(U) = U，并对所有有限正 ε 证明两像集覆盖数彼此相等且等于 N(ε, U)，两个映射熵差均良定且等于 0。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P10-01",
+        "CH03-P22-01",
+        "CH03-P29-01",
+        "CH03-P30-01"
+      ]
+    },
+    {
+      "id": "CH03-P30-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_5_iii_a"
+        },
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_5_iii_a_hasScalarLipBound"
+        }
+      ],
+      "representation": "习题 3.5(iii-a)：分别证明 f 在 U 上最小标量 Lip 常数为 1（充分性与点对 (0, 1) 给出的必要下界 1 ≤ L）及 g 在 U 上最小标量 Lip 常数为 3（充分性与点对 (0, 1) 给出的必要下界 3 ≤ L），并给出与冻结定义 HasScalarLipBound 的等价封装。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P10-01",
+        "CH03-P29-01",
+        "CH03-P30-01",
+        "CH03-P30-02"
+      ]
+    },
+    {
+      "id": "CH03-P30-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Exercises4to5.lean",
+          "name": "Ch03.exercise_3_5_iii_b"
+        }
+      ],
+      "representation": "习题 3.5(iii-b)：在 ε = 7/4 下调用命题 3.19 的覆盖数上界 prop_3_19_covering_le 分别代入最优常数 L_f = 1 与 L_g = 3，算出 f 的上界 N(7/4, U) = 2 与真实覆盖数 2 相等，g 的上界 N(7/12, U) = 4 严格大于真实覆盖数 2。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P10-01",
+        "CH03-P24-01",
+        "CH03-P29-01",
+        "CH03-P30-01",
+        "CH03-P30-02",
+        "CH03-P30-03"
+      ]
+    }
+  ]
+}

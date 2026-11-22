@@ -350,6 +350,9 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
         _require(material['selected_state'] == expected_state,
                  'Profile task state is not the actual condition-selected delivery')
         response_sha = expected_state.get('response_sha256')
+        if contract['kind'] == 'selfcheck' and response_sha is None and initial:
+            response_sha = _native_selfcheck_response(
+                private_root, private_manifest['record'], mid, slot, expected_state)
         if contract['subcategory'] == 'theorem-extension':
             tx_source = tx_inputs[contract['case_id']]
             if tx_source.get('response'):
@@ -436,6 +439,53 @@ def validate_review(review, policy, contracts, materials, *, roots, policy_sha25
             evidence(goal.get('evidence'), row['id'])
             _validate_assessment_status(goal, goal['passed'], originals[row['id']], goal=True)
     return review
+
+
+
+def _native_selfcheck_response(private_root, record_ref, model_id, slot, selected_state):
+    """Use a native first-assessment round's own final, never its workspace SHA.
+
+    Called only after validate_private authenticated this exact initial record.
+    Older CLI/calibration paths keep their existing response_sha256 behavior.
+    """
+    record = json.loads(source_bytes(private_root, record_ref))
+    folder = Path(record_ref['path']).parent
+    first_ref = record.get('first_assessment_source')
+    if not isinstance(first_ref, dict):
+        return None
+    first = json.loads(source_bytes(Path(private_root) / folder, first_ref))
+    if first.get('schema') != 'math-gauge.native-first-assessment-source/v1':
+        return None
+    _require(record.get('model_id') == model_id
+             and record.get('initial_assessment_edition') == EDITION
+             and first.get('model_id') == model_id,
+             'Native selfcheck belongs to a different initial model')
+    _require(slot in {'MG-C003:R1', 'MG-C003:R2', 'MG-C003:R3'},
+             'Native selfcheck must name one exact prescribed round')
+    number = int(slot.rsplit(':R', 1)[1])
+    _require(selected_state.get('round') == number,
+             'Native selfcheck selected report is another round')
+    rows = [row for row in record['records'] if row.get('id') == slot]
+    expected_parent = 'MG-C003:A1' if number == 1 else 'MG-C003:R' + str(number - 1)
+    _require(len(rows) == 1 and rows[0].get('kind') == 'selfcheck'
+             and rows[0].get('case_id') == 'MG-C003'
+             and rows[0].get('parent_id') == expected_parent,
+             'Native selfcheck record has a duplicate, wrong round or wrong parent')
+    engineering = json.loads(source_bytes(Path(private_root) / folder,
+                                          record['native_engineering_sources']))
+    alignment = json.loads(source_bytes(Path(private_root) / folder,
+        engineering['selected_alignment_reviews'][CONDITION]))
+    snapshots = [row['snapshot'] for row in alignment['rounds'] if row['round'] == number]
+    _require(len(snapshots) == 1, 'Native selfcheck alignment round is missing or duplicated')
+    snapshot, response = snapshots[0], rows[0]['response']
+    _require(snapshot.get('delivery_verified') is True
+             and snapshot.get('source_sha256') == selected_state.get('source_sha256')
+             and snapshot.get('source_response_sha256') == response['sha256']
+             and snapshot.get('normal_final') == response
+             and rows[0].get('source', {}).get('response_sha256') == response['sha256'],
+             'Native selfcheck final or selected engineering source hash differs')
+    source_bytes(Path(private_root) / folder, response)
+    return response['sha256']
 
 
 def _validate_proof_core(judgment):

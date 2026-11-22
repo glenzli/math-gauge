@@ -48,30 +48,20 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 ## 当前结果
 
-榜单默认按 SMC 排序，指标依次为 SMC／RMC／MC。结果页面默认显示 **1.2.0**，本地已纳入完成续答的15个配置（GPT、Claude、Kimi和DeepSeek）；其他配置待回交，可查看 **1.1.0／1.0.0** 原成绩。模型页、逐题评审和下载跟随选版，详见[版本切换](docs/edition-views.md)。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
+榜单默认显示 **1.2.0**，按 SMC 排序，可切换 SMC／RMC／MC、分项成绩与模型详情。目前有 **16 个已结算配置、189 份中性续答**，其中 102 份达到续答自身的三项满分。各模型续答的是自己的失分题，满分率不表示同题排名。[完整结果](docs/results.md)保留成绩表与逐批说明，[版本切换](docs/edition-views.md)说明旧版入口。
 
-15个配置共采用171份续答，其中100份达到续答自身的三项满分。原9个GPT配置的68份续答保留原记录，Claude三个配置与Kimi的68份回交答卷已经采用；另加入Astra 6.2 xHigh的9份续答，8份达到续答自身三项满分。全部171份续答均已完成AI数学审核。余下6个外部配置的106题等待回交，GLM跳过。成本计入有效续答的完整开销，耗时仍采用12道共有计时的题目，并单列整章形式化；数学画像可切换首答与含续答。原答、历史成绩和已发布1.0.0题包保留。这些更新目前在本地，下列各批次分别注明首答与续答评分口径。[新版说明](docs/neutral-revision.md)
+[Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=zh) 已完成 39 道初答、三轮 Lean 自查和 18 道中性续答。1.2.0 成绩为 **SMC 61.17／RMC 86.54／MC 93.08**；18 份续答中 2 份自身三项全满。分项、原答、运行条件与参考资源见[本轮结果](docs/results.md#gemini-4-neon-xhigh--2026-11-22)。
 
-DeepSeek v4.1 Flash（1017，max）的26道中性续答已结算：24份正常交卷、1份截止原稿仅计MC、1题截止无正文。1.2.0成绩为 **MC76.93／RMC64.09／SMC26.25**，续答自身三项满分1／26。新增参考成本$8.45，连同首答及三轮自查合计$14.86。原final、补回的原始交付附件、判分与130项独立五轴判断均已绑定来源；未新增作答。[详细审核](results/edition-reassessments/v1.2.0/deepseek-v4.1-flash-1017/20261110/REPORT.md)
+成本计入有效首答、自查和采用续答的完整开销；耗时比较 12 道共有计时的公开非 Lean 题，整章形式化单列。数学画像可切换首答与含续答，并独立区分[开放研究能力和研究主动性](docs/open-research.md)。内容可靠率、完整目标达成率与主动额外成果仍是首答诊断。
 
-2026-11-20 的 [Astra 6.2 (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/astra-6.2-xhigh/?lang=zh) 已完成39道初答、三轮自查和9道中性续答。1.2.0成绩为SMC **83.90**、RMC **91.66**、MC **92.66**；原答和原评保持不变，运行来源为Codex CLI0.169.1／OpenAI API，人工数学审核仍待完成。分项、配套指标和运行条件见[完整结果](docs/results.md#astra-62-xhigh--2026-11-20)。
-
-2026-11-19 的 [Claude Opus 5.5 (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/claude-opus-5.5-xhigh/?lang=zh) 经 Sol 6.1 Max 并行全审，MC **91.36**、RMC **88.80**、SMC **54.92**。39道初答及三轮自查全部正常交付；逐项依据与运行条件见[完整结果](docs/results.md#claude-opus-55-xhigh--2026-11-19)。
-
-2026-11-19 的 [Astra 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/astra-6.2-max/?lang=zh) 已完成39道初答和三轮自查。与 Astra 6 原答对照复核后，按1.1.0标准计为 MC **92.25**、RMC **92.25**、SMC **87.17**。分项、两率、数学画像和运行条件见[完整结果](docs/results.md#astra-62-max--2026-11-19)；Sol 6.2 Max／xHigh 的结果及前代对比也保留在其中。
-
-数学画像另将[开放研究能力与研究主动性](docs/open-research.md)分开：前者看明确要求研究时交出了什么，后者看未被要求时是否自行推进，放在八轴最后。两者独立评审，不把克制直接解释为能力不足。
-
-下图为1.1.0留档示意；当前1.2.0成绩与待补测状态以交互页为准。
+GLM 5.3 与 Gemini 3.8 Flash 不再纳入 1.2.0；1.1.0 及更早的成绩、原答与评审保留。其他入选配置待回交时可查看旧版成绩。当前结果采用 **AI 审核，另有部分人工抽审**，各批次保留实际评审归属，Neon 的人工数学审核仍待完成。见[审核方式](docs/review-process.md)与[续答说明](docs/neutral-revision.md)。
 
 [![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
-
-当前结果汇集不同批次的留档答卷，部分含旧答复用和后续补测；采用 **AI 审核，另有部分人工抽审**。实际运行条件、故障与重试经过随来源保留，阅读模型差异时可一并查看[审核方式](docs/review-process.md)和[运行记录](docs/results.md#记录与复算)。
 
 <details>
 <summary>成本与耗时截图</summary>
 
-以下两图以 RMC 为例。基础成本计每题采用的一次作答及三轮固定自查；1.2.0另加实际采用续答的完整成本。截图为续答前留档，当前数值以交互页为准。成本使用留档的 API 参考价或测试日费用；耗时包含工具使用与等待，受运行环境影响。两者的来源和限制分别见[成本口径](docs/cost-reference.md)与[计时口径](docs/answer-timings.md)。
+以下两图为当前 1.2.0 的 RMC 视图。成本使用留档 API 参考价或测试日费用，完整计入已采用续答；耗时包含工具使用与等待，受运行环境影响。来源与限制见[成本口径](docs/cost-reference.md)和[计时口径](docs/answer-timings.md)。
 
 [![Math Gauge 中文成本与 RMC 前沿](docs/screenshots/cost-frontier-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&cost-axis=cost&cost-score=partial#cost-frontier)
 

@@ -162,7 +162,7 @@ def _neutral_baseline(root, model, adoption):
 
 def neutral_revision_data(root, base_data, *, transition=None):
     """Use the source owner's adopted reports, without recalculating task weights."""
-    from math_gauge.neutral_revision import load_transition, load_public
+    from math_gauge.neutral_revision import current_model_ids, load_transition, load_public
     from scripts.render_results_site import evaluation_progress, gap_diagnostics, selected_result
     from scripts.results_rankings import category_rankings, model_display_key, set_published_scores
     from scripts.results_revision_resources import load_public as load_resources, DATA_PATH, INDEX_PATH
@@ -172,6 +172,7 @@ def neutral_revision_data(root, base_data, *, transition=None):
     if transition is None:
         return copy.deepcopy(base_data)
     data = copy.deepcopy(base_data)
+    selected_ids = current_model_ids(transition)
     original = {model['id']: model for model in base_data['models']}
     resources = load_resources(root)
     resource_models = {model['id']: model for model in resources['models']}
@@ -210,18 +211,21 @@ def neutral_revision_data(root, base_data, *, transition=None):
                                ('id', 'label', 'display_order', 'presentation_eligibility', 'ranking_values', 'answer_delivery')
                                if key in model}
                               for model in sorted(base_data['models'], key=model_display_key)
-                              if not eligibility(model['id'])['ranked']]
+                              if model['id'] in selected_ids and not eligibility(model['id'])['ranked']]
     for model in data['partial_models']:
         model['score_values'] = {mode: selected_result(original[model['id']], mode)['metrics']['earned']['confirmed']
                                  for mode in data['score_modes']}
     data['diagnostic_source_edition'] = '1.1.0'
+    if data.get('manuscript_observations') is not None:
+        data['manuscript_observations']['models'] = [
+            row for row in data['manuscript_observations']['models'] if row['id'] in selected_ids]
     # First-answer traits keep their authenticated 0.4.0 source. The revision
     # layer is separately reviewed and never substitutes main-score grades.
     if data.get('mathematical_profile') is not None:
         keys = ('id', 'label', 'short_label', 'theme', 'logo',
                 'presentation_eligibility', 'display_order', 'ranking_values', 'ranking_complete')
         data['profile_models'] = [{key: copy.deepcopy(model[key]) for key in keys if key in model}
-                                  for model in base_data['models']]
+                                  for model in base_data['models'] if model['id'] in selected_ids]
         from math_gauge.mathematical_profile_corrections import apply_public
         corrected = apply_public(root, data['mathematical_profile'])
         if corrected is not None:
@@ -235,6 +239,12 @@ def neutral_revision_data(root, base_data, *, transition=None):
         if research is not None:
             data['open_research'] = research
             data['sources'].append(research['source'])
+        # Authenticate full archived companions above, then project the current
+        # edition's explicit cohort without modifying any source report.
+        for key in ('mathematical_profile', 'mathematical_profile_baseline',
+                    'mathematical_profile_revision', 'open_research'):
+            if data.get(key) is not None:
+                data[key]['models'] = [row for row in data[key]['models'] if row['id'] in selected_ids]
     data['gap_diagnostics'] = gap_diagnostics(data['models'])
     data['category_leaderboards'] = category_rankings(data['models'], data['policy']['groups'], result_selector=selected_result)
     resource_source = INDEX_PATH if (Path(root)/INDEX_PATH).is_file() else DATA_PATH
@@ -392,9 +402,10 @@ def _neutral_payload(page, base, data, projections):
         return result
     models = {model['id']: model for model in data['models']}
     if mid not in models:
+        awaiting = {row['id'] for key in ('pending_models', 'partial_models') for row in data[key]}
+        reason = ('continuation_pending' if eligibility(mid)['ranked'] else 'partial_test') if mid in awaiting else 'not_selected_for_edition'
         return {'benchmark_version': '1.2.0', 'model_id': mid, 'edition_unavailable': True,
-                'edition_fallback': '1.1.0', 'edition_unavailable_reason':
-                    'continuation_pending' if eligibility(mid)['ranked'] else 'partial_test'}
+                'edition_fallback': '1.1.0', 'edition_unavailable_reason': reason}
     model, projection = copy.deepcopy(models[mid]), projections[mid]
     def task_views(cid, target):
         for mode in data['score_modes']:
@@ -507,7 +518,10 @@ def prepare_neutral_publication(files, root, current_data, *, base_data, base_ti
             prepared[script] = 'window.MGEditionData('+encoded(key)+','+body+');\n'
             config['versions'][version] = {'key':key,'payload':relative(page,script),
                 'label':{'zh':version,'en':version},'status':{'zh':'','en':''}}
-        config['latest'] = '1.2.0'
+        # Retain historical routes. A bare direct link for a model withdrawn
+        # from this edition opens its available source, rather than a pending UI.
+        config['latest'] = ('1.1.0' if payload.get('edition_unavailable_reason') ==
+                            'not_selected_for_edition' else '1.2.0')
         config['scripts'].append(relative(page, notes_script))
         value = config_pattern.sub(lambda m:m[1]+encoded(config)+m[3], value)
         if page in evidence_sections:

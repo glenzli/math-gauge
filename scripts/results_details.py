@@ -42,6 +42,31 @@ def background_source_review(folder, review_path, expected_sha256):
     return path, raw
 
 
+def formalization_display_breakdown(folder, record, score):
+    """Read native obligation observations when a score omits legacy display data."""
+    if score.get('lean_formalization_breakdown') is not None:
+        return score['lean_formalization_breakdown']
+    source = json.loads(evidence_bytes(folder, record['native_engineering_sources']))
+    if (source.get('schema') != 'math-gauge.native-engineering-assessment-sources-public/v1'
+            or source.get('engineering_review') != record.get('formalization_review')):
+        raise ValueError('Missing formalization display needs its bound native public source')
+    review = json.loads(evidence_bytes(folder, source['engineering_review']))
+    cases = []
+    for case in review['cases']:
+        contract = json.loads(evidence_bytes(folder, case['case_contract']))
+        stages = [stage['id'] for stage in contract['stages']]
+        obligations = case['obligations']
+        if (contract['id'] != case['case_id'] or not stages
+                or len(stages) != len(set(stages))
+                or [row['id'] for row in obligations] != stages
+                or any(type(row.get('complete')) is not bool for row in obligations)):
+            raise ValueError('Native obligation observations differ from their frozen contract')
+        cases.append(dict(case_id=case['case_id'],
+                          complete_count=sum(row['complete'] for row in obligations),
+                          total=len(stages)))
+    return {'cases': cases}
+
+
 def source_link(source, page, label, *, root=None):
     root = Path(root or HERE.parent).resolve()
     source = Path(source)
@@ -348,7 +373,8 @@ def readable(value):
 
 def render_case(page, data, model, entry, projection, evidence, markdown, root):
     cid = entry['case_id']
-    details = compact_data(data, {'id':model['id'], 'label':model['label']})
+    details = compact_data(data, {'id':model['id'], 'label':model['label'],
+                                  'harness':model.get('harness', {})})
     details['case'] = {'id': cid, 'title': entry['title'], 'category': entry['category'],
         'views': {mode: {c: next(r for r in projection['views'][mode][c]['tasks'] if r['case_id']==cid)
                          for c in CONDITIONS} for mode in projection['views']}}
@@ -463,11 +489,12 @@ def selfcheck_answer_markdown(folder, row, response, index, page, downloads):
             or manifest.get('cross_round_union') is not False):
         raise ValueError('Engineering download must bind the exact original answer and round')
 
-    def reference(match):
-        name = match[2]
-        item = manifest['files'].get(name)
-        if item is None:
-            return match[0]
+    linked = set()
+
+    def archive(name):
+        if (Path(name).is_absolute() or '..' in Path(name).parts or '\\' in name):
+            raise ValueError('Engineering download has an unsafe relative name')
+        item = manifest['files'][name]
         if Path(item['path']) != Path(source['path']).parent / name:
             raise ValueError('Engineering download belongs to another round')
         raw = evidence_bytes(folder, item)
@@ -476,10 +503,23 @@ def selfcheck_answer_markdown(folder, row, response, index, page, downloads):
         if target in downloads and downloads[target] != value:
             raise ValueError('Engineering download collision')
         downloads[target] = value
-        href = quote(os.path.relpath(target, Path(page).parent), safe='/')
-        return match[1] + href + match[3]
+        return quote(os.path.relpath(target, Path(page).parent), safe='/')
 
-    return re.sub(r'(\[[^\]\n]*\]\()(?:\./)?([\w.-]+)(\))', reference, text)
+    def reference(match):
+        name = match[2]
+        if name not in manifest['files']:
+            return match[0]
+        linked.add(name)
+        return match[1] + archive(name) + match[3]
+
+    rendered = re.sub(r'(\[[^\]\n]*\]\()(?:\./)?([\w.-]+)(\))', reference, text)
+    # Native replies can contain absolute file URIs. Do not infer their source
+    # roots or rewrite the original; index only this round's explicit archive.
+    missing = [name for name in manifest['files'] if name not in linked]
+    if missing:
+        rendered += '\n\n---\n\n**交付源码存档 / Archived delivery files**\n\n'
+        rendered += '\n'.join('- [' + name + '](' + archive(name) + ')' for name in missing)
+    return rendered
 
 
 def render_model(page, data, model, cases, record, folder, markdown, *, downloads=None, anomaly_reference=None, attempt_reference=None):

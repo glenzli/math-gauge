@@ -536,7 +536,12 @@ def validate_first_assessment_source(folder, record, current):
     item = record.get('first_assessment_source')
     if item is not None:
         from .portable_assessment_sources import SCHEMA, PUBLIC_SCHEMA, validate as validate_portable
-        if json.loads(_read(folder, item)).get('schema') in {SCHEMA, PUBLIC_SCHEMA}:
+        from .native_assessment_sources import (SCHEMA as NATIVE_PRIVATE,
+            PUBLIC_SCHEMA as NATIVE_PUBLIC, validate as validate_native)
+        schema = json.loads(_read(folder, item)).get('schema')
+        if schema in {NATIVE_PRIVATE, NATIVE_PUBLIC}:
+            return validate_native(folder, record, current)
+        if schema in {SCHEMA, PUBLIC_SCHEMA}:
             return validate_portable(folder, record, current)
     require(item is not None and record.get('score_history') is None
             and record.get('benchmark_version') == '1.0.0'

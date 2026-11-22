@@ -1,0 +1,1 @@
+window.MGEditionData("bd2e0d930142bb2d3ec64359b07d6a24b0aa8ffd71082fe7d3c0714fd9d26bc2",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/gemini-4-neon-xhigh/cases/AHR03.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"gemini-4-neon-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

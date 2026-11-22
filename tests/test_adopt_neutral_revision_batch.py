@@ -133,7 +133,8 @@ class BatchAdoptionTests(unittest.TestCase):
         lock = dict(schema=batch.LOCK_SCHEMA, runtime_freeze=runtime_ref,
             rows={delivery['id']:dict(review=review, attachments=[attachment], review_sources=prior_reviews)})
         lock_ref = self.external('selected-final-reviews.json', lock)
-        transition = dict(adoptions={}, pending_models=[self.mid], source_edition={}, policy={})
+        source_edition = self.put(self.public, 'results/fixture/source-edition.json', {'version':'1.1.0'})
+        transition = dict(adoptions={}, pending_models=[self.mid], source_edition=source_edition, policy={})
         return source, delivery, lock, Path(lock_ref['path']), transition
 
     def cost_fixture(self, source):

@@ -1,0 +1,890 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><p>已完成 <code>LCH01</code> 清单全部 8 项义务（<code>CH02-D01</code>、<code>CH02-D02</code>、<code>CH02-D03</code>、<code>CH02-D07</code>、<code>CH02-P19</code>、<code>CH02-P20</code>、<code>CH02-P21</code>、<code>CH02-P25</code>）在 Lean 4.29.1 与固定 Mathlib 环境下的形式化与核验：</p>
+<ul>
+<li>直接导入冻结前置模块 <code>formal_oet.vol_01.ch_01_foundations.gauge_space</code> 与 <code>formal_oet.vol_01.ch_01_foundations.operator_space</code>，未改写或覆盖 <code>formal_oet/</code> 与 <code>.visible-input/</code>。</li>
+<li>[MatrixBounds.lean](file:///private/tmp/math-gauge-neon-xhigh-20261119-v2/attempts/LCH01/physical-1/session/work/MatrixBounds.lean)、[ComponentChannels.lean](file:///private/tmp/math-gauge-neon-xhigh-20261119-v2/attempts/LCH01/physical-1/session/work/ComponentChannels.lean) 与 [Main.lean](file:///private/tmp/math-gauge-neon-xhigh-20261119-v2/attempts/LCH01/physical-1/session/work/Main.lean) 均在 <code>lean -DwarningAsError=true</code> 下零报错、零警告通过编译；全部声明无 <code>sorry</code>/<code>admit</code>/新增公理，公理依赖仅限于标准逻辑公理 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</li>
+<li>[alignment.json](file:///private/tmp/math-gauge-neon-xhigh-20261119-v2/attempts/LCH01/physical-1/session/work/alignment.json) 已核对 8 项义务完整覆盖、全部声明存在且归属模块与实际依赖图一致。</li>
+<li>数学理论出处归属：Zhe Li (Glen Li / glenzli)，ORCID <code>https://orcid.org/0009-0006-6536-3453</code>，<em>The Operator Evolution Theory</em>, Volume I (<code>https://glenzli.com/books/oet/</code>)，CC BY 4.0。</li>
+</ul>
+<p>以下为全部交付文件的完整内容：</p>
+<pre><code class="language-lean">import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Matrix.Mul
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+/-!
+# Matrix Bounds and Indexing Conventions (LCH01)
+
+This module formalizes the foundational matrix indexing conventions, matrix multiplication,
+global/restricted Lipschitz matrix predicates and certificate families, and restricted
+co-Lipschitz matrix predicates and certificate families with nonemptiness condition.
+
+Attribution: Mathematical framework and definitions are based on Zhe Li (Glen Li / glenzli),
+ORCID https://orcid.org/0009-0006-6536-3453, *The Operator Evolution Theory*, Volume I
+(https://glenzli.com/books/oet/), Chapter 2 (§ 2.1), licensed under CC BY 4.0.
+-/
+
+namespace LCH01
+
+open formal_oet.vol_01.ch_01_foundations
+
+/-!
+## CH02-D03: Input/Output Matrix Indexing Convention and Multiplication
+
+Following OET § 2.1 (`oet-af85899693cc8750`):
+- Entries take values in `ENNReal` (`[0, +∞]`), where `0 * ⊤ = 0` holds by `ENNReal` arithmetic.
+- Output component `j : I` is the row index and input component `i : I` is the column index,
+  so the channel entry `M_{i → j}` sits at row `j`, column `i`, i.e., `(M)_{j, i} = M_{i → j}`.
+- Under this convention, standard matrix multiplication satisfies
+  `(M₂ · M₁)_{i → j} = ∑ k, (M₂)_{k → j} * (M₁)_{i → k}`.
+-/
+
+/-- Extended nonnegative matrix indexed by gauge index type `I`, with output component as row
+    index and input component as column index (`M j i = M_{i → j}`). -/
+abbrev BoundMatrix (I : Type) : Type := Matrix I I ENNReal
+
+/-- Read the channel entry `M_{i → j}` (input component `i` to output component `j`),
+    located at row `j` and column `i` of `M`. -/
+def channelEntry {I : Type} (M : BoundMatrix I) (i j : I) : ENNReal :=
+  M j i
+
+/-- Construct a `BoundMatrix I` from an input-to-output entry function `f i j = M_{i → j}`
+    using the output-as-row, input-as-column convention. -/
+def ofChannelEntries {I : Type} (f : I → I → ENNReal) : BoundMatrix I :=
+  fun j i =&gt; f i j
+
+@[simp] theorem channelEntry_def {I : Type} (M : BoundMatrix I) (i j : I) :
+    channelEntry M i j = M j i := rfl
+
+@[simp] theorem channelEntry_ofChannelEntries {I : Type} (f : I → I → ENNReal) (i j : I) :
+    channelEntry (ofChannelEntries f) i j = f i j := rfl
+
+@[simp] theorem ofChannelEntries_channelEntry {I : Type} (M : BoundMatrix I) :
+    ofChannelEntries (channelEntry M) = M := rfl
+
+/-- Two bound matrices are equal iff all their input-to-output channel entries agree. -/
+theorem boundMatrix_ext_channelEntry {I : Type} {M N : BoundMatrix I}
+    (h : ∀ i j : I, channelEntry M i j = channelEntry N i j) : M = N := by
+  ext j i
+  exact h i j
+
+/-- Matrix multiplication of extended nonnegative bound matrices, matching
+    `(M₂ · M₁)_{i → j} = ∑ k, (M₂)_{k → j} * (M₁)_{i → k}`. -/
+noncomputable def boundMatrixMul {I : Type} [Fintype I] (M₂ M₁ : BoundMatrix I) : BoundMatrix I :=
+  M₂ * M₁
+
+/-- Channel-entry expansion of `boundMatrixMul`:
+    `(M₂ · M₁)_{i → j} = ∑ k : I, (M₂)_{k → j} * (M₁)_{i → k}`. -/
+@[simp] theorem channelEntry_boundMatrixMul {I : Type} [Fintype I]
+    (M₂ M₁ : BoundMatrix I) (i j : I) :
+    channelEntry (boundMatrixMul M₂ M₁) i j =
+      ∑ k : I, channelEntry M₂ k j * channelEntry M₁ i k := by
+  simp [boundMatrixMul, channelEntry, Matrix.mul_apply]
+
+/-- Associativity of bound matrix multiplication. -/
+theorem boundMatrixMul_assoc {I : Type} [Fintype I]
+    (M₃ M₂ M₁ : BoundMatrix I) :
+    boundMatrixMul (boundMatrixMul M₃ M₂) M₁ =
+      boundMatrixMul M₃ (boundMatrixMul M₂ M₁) := by
+  exact Matrix.mul_assoc M₃ M₂ M₁
+
+/-- Identity bound matrix `I`. -/
+noncomputable def boundMatrixOne {I : Type} [DecidableEq I] : BoundMatrix I :=
+  (1 : Matrix I I ENNReal)
+
+/-- Channel-entry formula for the identity bound matrix. -/
+@[simp] theorem channelEntry_boundMatrixOne {I : Type} [DecidableEq I] (i j : I) :
+    channelEntry (boundMatrixOne (I := I)) i j = if i = j then 1 else 0 := by
+  simp [boundMatrixOne, channelEntry, Matrix.one_apply, eq_comm]
+
+/-- Left identity law for bound matrix multiplication. -/
+@[simp] theorem boundMatrixOne_mul {I : Type} [Fintype I] [DecidableEq I] (M : BoundMatrix I) :
+    boundMatrixMul boundMatrixOne M = M := by
+  exact Matrix.one_mul M
+
+/-- Right identity law for bound matrix multiplication. -/
+@[simp] theorem boundMatrixMul_one {I : Type} [Fintype I] [DecidableEq I] (M : BoundMatrix I) :
+    boundMatrixMul M boundMatrixOne = M := by
+  exact Matrix.mul_one M
+
+/-- Compatibility of the output-as-row, input-as-column convention with matrix-vector product:
+    `(M *ᵥ v) j = ∑ i, M_{i → j} * v i`. -/
+theorem boundMatrix_mulVec_apply {I : Type} [Fintype I]
+    (M : BoundMatrix I) (v : I → ENNReal) (j : I) :
+    M.mulVec v j = ∑ i : I, channelEntry M i j * v i := by
+  simp [Matrix.mulVec, dotProduct, channelEntry]
+
+/-!
+## CH02-D01: Global and Restricted Lipschitz Matrix Predicates and Certificate Families
+
+Following OET § 2.1 (`oet-af85899693cc8750`):
+- A global Lipschitz matrix `L ∈ 𝓛(ϕ)` satisfies
+  `d_j(ϕ(x), ϕ(y)) ≤ ∑ i, L_{i → j} * d_i(x, y)` for all `x, y ∈ dom(ϕ)` and `j ∈ I`.
+- A subset-restricted Lipschitz matrix `L ∈ 𝓛(ϕ)|_U` requires `U ⊆ dom(ϕ)` and the same
+  inequality for all `x, y ∈ U` and `j ∈ I`.
+-/
+
+/-- Predicate asserting that `L` is a valid global Lipschitz matrix for `ϕ` on `dom ϕ`. -/
+def IsLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : BoundMatrix I) : Prop :=
+  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, channelEntry L i j * d i x y
+
+/-- The global Lipschitz matrix certificate family `𝓛(ϕ)`. -/
+def lipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (BoundMatrix I) :=
+  { L | IsLipMatrix d ϕ L }
+
+/-- Predicate asserting that `L` is a valid Lipschitz matrix for `ϕ` restricted to `U ⊆ dom ϕ`. -/
+def IsRestrictedLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : BoundMatrix I) : Prop :=
+  U ⊆ dom ϕ ∧
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, channelEntry L i j * d i x y
+
+/-- The subset-restricted Lipschitz matrix certificate family `𝓛(ϕ)|_U`. -/
+def restrictedLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (BoundMatrix I) :=
+  { L | IsRestrictedLipMatrix d ϕ U L }
+
+@[simp] theorem mem_lipMatrices_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : BoundMatrix I) :
+    L ∈ lipMatrices d ϕ ↔ IsLipMatrix d ϕ L := Iff.rfl
+
+@[simp] theorem mem_restrictedLipMatrices_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : BoundMatrix I) :
+    L ∈ restrictedLipMatrices d ϕ U ↔ IsRestrictedLipMatrix d ϕ U L := Iff.rfl
+
+theorem IsRestrictedLipMatrix.subset_dom {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {L : BoundMatrix I}
+    (hL : IsRestrictedLipMatrix d ϕ U L) : U ⊆ dom ϕ :=
+  hL.1
+
+theorem IsRestrictedLipMatrix.bound {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {L : BoundMatrix I}
+    (hL : IsRestrictedLipMatrix d ϕ U L) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, channelEntry L i j * d i x y :=
+  hL.2 x hx y hy j
+
+/-- Global Lipschitz matrices coincide with Lipschitz matrices restricted to `dom ϕ`. -/
+theorem isLipMatrix_iff_isRestrictedLipMatrix_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : BoundMatrix I) :
+    IsLipMatrix d ϕ L ↔ IsRestrictedLipMatrix d ϕ (dom ϕ) L := by
+  exact ⟨fun h =&gt; ⟨Set.Subset.rfl, h⟩, fun h =&gt; h.2⟩
+
+/-- Equality of certificate families `𝓛(ϕ) = 𝓛(ϕ)|_{dom(ϕ)}`. -/
+theorem lipMatrices_eq_restrictedLipMatrices_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    lipMatrices d ϕ = restrictedLipMatrices d ϕ (dom ϕ) := by
+  ext L
+  exact isLipMatrix_iff_isRestrictedLipMatrix_dom d ϕ L
+
+/-!
+## CH02-D02: Restricted co-Lipschitz Matrix Predicate and Certificate Family (with Nonemptiness)
+
+Following OET § 2.1 (`oet-af85899693cc8750`):
+- A restricted co-Lipschitz matrix `K ∈ 𝓚(ϕ)|_U` requires `U.Nonempty` (`U ≠ ∅`),
+  `U ⊆ dom(ϕ)`, and `∑ i, K_{i → j} * d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))` for all `x, y ∈ U` and `j ∈ I`.
+- Whenever `𝓚(ϕ)|_U` appears, the nonemptiness condition `U ≠ ∅` is included.
+-/
+
+/-- Predicate asserting that `K` is a valid restricted co-Lipschitz matrix for `ϕ` on `U`,
+    explicitly carrying the nonemptiness condition `U.Nonempty` and `U ⊆ dom ϕ`. -/
+def IsRestrictedCoLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : BoundMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, channelEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/-- The subset-restricted co-Lipschitz matrix certificate family `𝓚(ϕ)|_U`. -/
+def restrictedCoLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (BoundMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d ϕ U K }
+
+@[simp] theorem mem_restrictedCoLipMatrices_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : BoundMatrix I) :
+    K ∈ restrictedCoLipMatrices d ϕ U ↔ IsRestrictedCoLipMatrix d ϕ U K := Iff.rfl
+
+/-- Equivalent formulation of `IsRestrictedCoLipMatrix` using `U ≠ ∅`. -/
+theorem isRestrictedCoLipMatrix_iff_ne_empty {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : BoundMatrix I) :
+    IsRestrictedCoLipMatrix d ϕ U K ↔
+      U ≠ ∅ ∧ U ⊆ dom ϕ ∧
+      ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+        ∑ i : I, channelEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+  simp [IsRestrictedCoLipMatrix, Set.nonempty_iff_ne_empty]
+
+theorem IsRestrictedCoLipMatrix.nonempty {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : BoundMatrix I}
+    (hK : IsRestrictedCoLipMatrix d ϕ U K) : U.Nonempty :=
+  hK.1
+
+theorem IsRestrictedCoLipMatrix.ne_empty {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : BoundMatrix I}
+    (hK : IsRestrictedCoLipMatrix d ϕ U K) : U ≠ ∅ :=
+  hK.1.ne_empty
+
+theorem IsRestrictedCoLipMatrix.subset_dom {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : BoundMatrix I}
+    (hK : IsRestrictedCoLipMatrix d ϕ U K) : U ⊆ dom ϕ :=
+  hK.2.1
+
+theorem IsRestrictedCoLipMatrix.bound {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : BoundMatrix I}
+    (hK : IsRestrictedCoLipMatrix d ϕ U K) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    ∑ i : I, channelEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+  hK.2.2 x hx y hy j
+
+/-- On the empty set, the restricted co-Lipschitz certificate family is empty due to the
+    nonemptiness requirement. -/
+@[simp] theorem restrictedCoLipMatrices_empty {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    restrictedCoLipMatrices d ϕ ∅ = ∅ := by
+  ext K
+  simp [restrictedCoLipMatrices, IsRestrictedCoLipMatrix]
+
+/-- Single-channel lower bound extracted from a restricted co-Lipschitz certificate:
+    for any `K ∈ 𝓚(ϕ)|_U`, `i, j : I`, and `x, y ∈ U`,
+    `K_{i → j} * d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))`. -/
+theorem colip_single_channel_le {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : BoundMatrix I) (i j : I)
+    (hK : K ∈ restrictedCoLipMatrices d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      channelEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+  intro x hx y hy
+  have hsum : ∑ k : I, channelEntry K k j * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK.bound hx hy j
+  have hsingle :
+      channelEntry K i j * d i x y ≤ ∑ k : I, channelEntry K k j * d k x y :=
+    Finset.single_le_sum (f := fun k : I =&gt; channelEntry K k j * d k x y)
+      (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+  exact le_trans hsingle hsum
+
+end LCH01
+</code></pre>
+<pre><code class="language-lean">import MatrixBounds
+
+/-!
+# Component Channels, Single-Input Simplification, and Scalar Two-Sided Bounds (LCH01)
+
+This module formalizes OET Chapter 2, § 2.2 (Component Channels, single-input row sparsity,
+diagonal special case, Proposition 2.8) and § 2.3 Exercise 2.2 (scalar two-sided bound on a
+diagonal input row).
+
+Attribution: Mathematical framework, definitions, and propositions are based on Zhe Li
+(Glen Li / glenzli), ORCID https://orcid.org/0009-0006-6536-3453, *The Operator Evolution
+Theory*, Volume I (https://glenzli.com/books/oet/), Chapter 2 (§ 2.2–§ 2.3), licensed under
+CC BY 4.0.
+-/
+
+namespace LCH01
+
+open formal_oet.vol_01.ch_01_foundations
+
+/-!
+## CH02-D07: Component Channels, Single-Input Row Sparsity, and Diagonal Matrices
+
+Following OET § 2.2 (`oet-7fa97eb6e24d5527`):
+- A component channel `(i, j)` is an ordered pair from input component `d_i` to output
+  component `d_j`.
+- Single-input row sparsity on channel `(i, j)` means row `j` vanishes outside column `i`,
+  i.e., `∀ k ≠ i, M_{k → j} = 0`.
+- A bound matrix `M` is diagonal iff every off-diagonal channel entry vanishes, equivalently
+  every row `j` satisfies single-input row sparsity on the same-component channel `(j, j)`.
+-/
+
+/-- A component channel `(i, j)` from input gauge component `d_i` to output gauge component `d_j`. -/
+abbrev ComponentChannel (I : Type) : Type := I × I
+
+/-- Input component index of a component channel. -/
+def ComponentChannel.input {I : Type} (c : ComponentChannel I) : I := c.1
+
+/-- Output component index of a component channel. -/
+def ComponentChannel.output {I : Type} (c : ComponentChannel I) : I := c.2
+
+/-- The same-component (diagonal) channel `(i, i)`. -/
+def ComponentChannel.diag {I : Type} (i : I) : ComponentChannel I := (i, i)
+
+/-- Matrix coefficient `M_{c.input → c.output}` associated with component channel `c`. -/
+def channelCoeff {I : Type} (M : BoundMatrix I) (c : ComponentChannel I) : ENNReal :=
+  channelEntry M c.input c.output
+
+@[simp] theorem ComponentChannel.input_mk {I : Type} (i j : I) :
+    ComponentChannel.input (i, j) = i := rfl
+
+@[simp] theorem ComponentChannel.output_mk {I : Type} (i j : I) :
+    ComponentChannel.output (i, j) = j := rfl
+
+@[simp] theorem ComponentChannel.input_diag {I : Type} (i : I) :
+    (ComponentChannel.diag i).input = i := rfl
+
+@[simp] theorem ComponentChannel.output_diag {I : Type} (i : I) :
+    (ComponentChannel.diag i).output = i := rfl
+
+@[simp] theorem channelCoeff_mk {I : Type} (M : BoundMatrix I) (i j : I) :
+    channelCoeff M (i, j) = channelEntry M i j := rfl
+
+/-- Single-input row sparsity: row `j` (output component `j`) of `M` vanishes on every
+    input component `k ≠ i`, leaving only `M_{i → j}`. -/
+def IsSingleInputRow {I : Type} (M : BoundMatrix I) (i j : I) : Prop :=
+  ∀ k : I, k ≠ i → channelEntry M k j = 0
+
+/-- Channel-pair form of single-input row sparsity for `c = (i, j)`. -/
+def IsSingleInputChannel {I : Type} (M : BoundMatrix I) (c : ComponentChannel I) : Prop :=
+  IsSingleInputRow M c.input c.output
+
+/-- Diagonal bound matrix: all off-diagonal channel entries `M_{k → j}` (`k ≠ j`) vanish. -/
+def IsDiagonalBoundMatrix {I : Type} (M : BoundMatrix I) : Prop :=
+  ∀ k j : I, k ≠ j → channelEntry M k j = 0
+
+/-- A bound matrix is diagonal iff every row `j` is single-input on the diagonal channel `(j, j)`. -/
+theorem isDiagonalBoundMatrix_iff_forall_singleInputRow {I : Type} (M : BoundMatrix I) :
+    IsDiagonalBoundMatrix M ↔ ∀ j : I, IsSingleInputRow M j j := by
+  constructor
+  · intro h j k hk
+    exact h k j hk
+  · intro h k j hk
+    exact h j k hk
+
+/-- Every same-component channel `(i, i)` of a diagonal bound matrix satisfies single-input
+    row sparsity. -/
+theorem IsDiagonalBoundMatrix.singleInputRow {I : Type} {M : BoundMatrix I}
+    (hdiag : IsDiagonalBoundMatrix M) (i : I) :
+    IsSingleInputRow M i i :=
+  (isDiagonalBoundMatrix_iff_forall_singleInputRow M).mp hdiag i
+
+/-- Channel-pair form of `IsDiagonalBoundMatrix.singleInputRow`. -/
+theorem IsDiagonalBoundMatrix.singleInputChannel_diag {I : Type} {M : BoundMatrix I}
+    (hdiag : IsDiagonalBoundMatrix M) (i : I) :
+    IsSingleInputChannel M (ComponentChannel.diag i) :=
+  hdiag.singleInputRow i
+
+/-!
+## CH02-P19: Single-Input Row Simplification (Including the Diagonal Special Case)
+
+Following OET § 2.2 (`oet-7fa97eb6e24d5527`):
+- A zero channel entry `L_{i → j} = 0` drops out of the upper-bound sum.
+- If row `j` of `L ∈ 𝓛(ϕ)|_U` vanishes outside `L_{i → j}`, then for all `x, y ∈ U`,
+  `d_j(ϕ(x), ϕ(y)) ≤ ∑ k, L_{k → j} * d_k(x, y) = L_{i → j} * d_i(x, y)`.
+- If `L` is diagonal, this simplification holds for every same-component channel `(i, i)`.
+-/
+
+/-- Exact row-sum reduction under single-input row sparsity:
+    `∑ k, L_{k → j} * v k = L_{i → j} * v i`. -/
+theorem sum_singleInputRow {I : Type} [Fintype I]
+    (L : BoundMatrix I) (i j : I) (v : I → ENNReal)
+    (hrow : IsSingleInputRow L i j) :
+    ∑ k : I, channelEntry L k j * v k = channelEntry L i j * v i := by
+  refine Finset.sum_eq_single i ?_ ?_
+  · intro k _ hki
+    rw [hrow k hki, zero_mul]
+  · intro hi
+    exact False.elim (hi (Finset.mem_univ i))
+
+/-- A zero channel entry `L_{i → j} = 0` does not contribute to the Lipschitz upper bound
+    for output component `j` (even when `d_i(x, y) = ⊤`, since `0 * ⊤ = 0`). -/
+theorem lip_zero_channel_omit {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : BoundMatrix I) (i j : I)
+    (hL : L ∈ restrictedLipMatrices d ϕ U)
+    (hzero : channelEntry L i j = 0) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d j (ϕ.func x) (ϕ.func y) ≤
+        ∑ k ∈ Finset.univ.erase i, channelEntry L k j * d k x y := by
+  intro x hx y hy
+  have hbound := hL.bound hx hy j
+  have hsplit := Finset.add_sum_erase Finset.univ
+    (fun k : I =&gt; channelEntry L k j * d k x y) (Finset.mem_univ i)
+  dsimp only at hsplit
+  rw [hzero, zero_mul, zero_add] at hsplit
+  rw [hsplit]
+  exact hbound
+
+/-- Single-input row Lipschitz simplification:
+    if `L ∈ 𝓛(ϕ)|_U` and row `j` vanishes outside `L_{i → j}`, then for all `x, y ∈ U`,
+    `d_j(ϕ(x), ϕ(y)) ≤ L_{i → j} * d_i(x, y)`. -/
+theorem lip_singleInputRow_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : BoundMatrix I) (i j : I)
+    (hL : L ∈ restrictedLipMatrices d ϕ U)
+    (hrow : IsSingleInputRow L i j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d j (ϕ.func x) (ϕ.func y) ≤ channelEntry L i j * d i x y := by
+  intro x hx y hy
+  calc
+    d j (ϕ.func x) (ϕ.func y)
+      ≤ ∑ k : I, channelEntry L k j * d k x y := hL.bound hx hy j
+    _ = channelEntry L i j * d i x y := sum_singleInputRow L i j (fun k =&gt; d k x y) hrow
+
+/-- Channel-pair form of `lip_singleInputRow_bound`. -/
+theorem lip_singleInputChannel_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : BoundMatrix I) (c : ComponentChannel I)
+    (hL : L ∈ restrictedLipMatrices d ϕ U)
+    (hch : IsSingleInputChannel L c) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d c.output (ϕ.func x) (ϕ.func y) ≤ channelCoeff L c * d c.input x y :=
+  lip_singleInputRow_bound d ϕ U L c.input c.output hL hch
+
+/-- Exact row-sum reduction for every row of a diagonal bound matrix:
+    `∑ k, L_{k → i} * v k = L_{i → i} * v i`. -/
+theorem sum_diagonalRow {I : Type} [Fintype I]
+    (L : BoundMatrix I) (v : I → ENNReal)
+    (hdiag : IsDiagonalBoundMatrix L) (i : I) :
+    ∑ k : I, channelEntry L k i * v k = channelEntry L i i * v i :=
+  sum_singleInputRow L i i v (hdiag.singleInputRow i)
+
+/-- Diagonal special case of single-input row simplification:
+    if `L ∈ 𝓛(ϕ)|_U` is diagonal, then for every same-component channel `(i, i)` and all
+    `x, y ∈ U`, `d_i(ϕ(x), ϕ(y)) ≤ L_{i → i} * d_i(x, y)`. -/
+theorem lip_diagonal_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : BoundMatrix I)
+    (hL : L ∈ restrictedLipMatrices d ϕ U)
+    (hdiag : IsDiagonalBoundMatrix L) :
+    ∀ i : I, ∀ x ∈ U, ∀ y ∈ U,
+      d i (ϕ.func x) (ϕ.func y) ≤ channelEntry L i i * d i x y := by
+  intro i
+  exact lip_singleInputRow_bound d ϕ U L i i hL (hdiag.singleInputRow i)
+
+/-!
+## CH02-P20: Proposition 2.8(i) — Positive co-Lip Channel Preserves Positive Distance
+
+Following OET Proposition 2.8(i) (`oet-f82672ec0dd48f28`):
+If `K ∈ 𝓚(ϕ)|_U` and `K_{i → j} &gt; 0`, then for all `x, y ∈ U`,
+`d_i(x, y) &gt; 0 → d_j(ϕ(x), ϕ(y)) &gt; 0`.
+-/
+
+/-- Proposition 2.8(i): a strictly positive co-Lip channel `K_{i → j} &gt; 0` preserves
+    strictly positive distance from component `i` to component `j` on `U`. -/
+theorem colip_pos_channel_preserves_pos_dist {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : BoundMatrix I) (i j : I)
+    (hK : K ∈ restrictedCoLipMatrices d ϕ U)
+    (hK_pos : 0 &lt; channelEntry K i j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      0 &lt; d i x y → 0 &lt; d j (ϕ.func x) (ϕ.func y) := by
+  intro x hx y hy hd_pos
+  have hmul_pos : 0 &lt; channelEntry K i j * d i x y :=
+    ENNReal.mul_pos (ne_of_gt hK_pos) (ne_of_gt hd_pos)
+  exact lt_of_lt_of_le hmul_pos (colip_single_channel_le d ϕ U K i j hK x hx y hy)
+
+/-- Channel-pair form of Proposition 2.8(i). -/
+theorem colip_pos_componentChannel_preserves_pos_dist {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : BoundMatrix I) (c : ComponentChannel I)
+    (hK : K ∈ restrictedCoLipMatrices d ϕ U)
+    (hK_pos : 0 &lt; channelCoeff K c) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      0 &lt; d c.input x y → 0 &lt; d c.output (ϕ.func x) (ϕ.func y) :=
+  colip_pos_channel_preserves_pos_dist d ϕ U K c.input c.output hK hK_pos
+
+/-!
+## CH02-P21: Proposition 2.8(ii) — All-Diagonal Positive co-Lip Reflects Gauge Zero-Relation
+
+Following OET Proposition 2.8(ii) (`oet-f82672ec0dd48f28`):
+If `K ∈ 𝓚(ϕ)|_U` and `K_{j → j} &gt; 0` for all `j ∈ I`, then for all `x, y ∈ U`,
+`ϕ(x) ∼_G ϕ(y) → x ∼_G y`.
+Per the textbook convention, gauge separation is not assumed, so the conclusion is
+`GaugeZeroRelated d x y` rather than `x = y`.
+-/
+
+/-- Proposition 2.8(ii): if `K ∈ 𝓚(ϕ)|_U` has strictly positive diagonal entries
+    `K_{j → j} &gt; 0` for every `j : I`, then `ϕ` reflects the family zero-distance relation
+    `GaugeZeroRelated d` on `U` (without strengthening to point equality). -/
+theorem colip_pos_diag_reflects_gauge_zero_related {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : BoundMatrix I)
+    (hK : K ∈ restrictedCoLipMatrices d ϕ U)
+    (hK_diag : ∀ j : I, 0 &lt; channelEntry K j j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y := by
+  intro x hx y hy hrel j
+  by_contra hne
+  have hpos : 0 &lt; d j x y := pos_iff_ne_zero.mpr hne
+  have hphi_pos : 0 &lt; d j (ϕ.func x) (ϕ.func y) :=
+    colip_pos_channel_preserves_pos_dist d ϕ U K j j hK (hK_diag j) x hx y hy hpos
+  exact (ne_of_gt hphi_pos) (hrel j)
+
+/-- Counterexample showing that Proposition 2.8(ii) cannot be strengthened to point equality
+    `x = y` in a general (non-separating) extended gauge space. -/
+theorem colip_pos_diag_not_implies_eq_without_separation :
+    ∃ (X I : Type) (bot : X) (_ : Fintype I) (_ : Nonempty I)
+      (d : I → X → X → ENNReal)
+      (_ : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+      (ϕ : Operator X bot) (U : Set X) (K : BoundMatrix I) (x y : X),
+      IsNonSeparating d ∧
+      K ∈ restrictedCoLipMatrices d ϕ U ∧
+      (∀ j : I, 0 &lt; channelEntry K j j) ∧
+      x ∈ U ∧ y ∈ U ∧
+      GaugeZeroRelated d (ϕ.func x) (ϕ.func y) ∧
+      GaugeZeroRelated d x y ∧
+      x ≠ y := by
+  let d0 : Option Bool → Option Bool → ENNReal := fun a b =&gt;
+    match a, b with
+    | none, none =&gt; 0
+    | some _, some _ =&gt; 0
+    | some _, none =&gt; ⊤
+    | none, some _ =&gt; ⊤
+  let d : Unit → Option Bool → Option Bool → ENNReal := fun _ =&gt; d0
+  have hd : ∀ i : Unit, ExtendedPseudoMetric (Option Bool) none (d i) := by
+    intro _
+    refine
+      { nonabsorbing := ⟨some false, by simp⟩
+        dist_self := by
+          intro a
+          cases a &lt;;&gt; rfl
+        symm := by
+          intro a b
+          cases a &lt;;&gt; cases b &lt;;&gt; rfl
+        triangle := by
+          intro a b c
+          cases a &lt;;&gt; cases b &lt;;&gt; cases c &lt;;&gt; simp [d, d0]
+        isolate_bot := by
+          intro a ha
+          cases a with
+          | none =&gt; exact False.elim (ha rfl)
+          | some _ =&gt; rfl }
+  let ϕ : Operator (Option Bool) none := operator_identity
+  let U : Set (Option Bool) := {some false, some true}
+  let K : BoundMatrix Unit := fun _ _ =&gt; 1
+  refine ⟨Option Bool, Unit, none, inferInstance, inferInstance, d, hd, ϕ, U, K,
+    some false, some true, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro hsep
+    have heq : (some false : Option Bool) = some true := hsep (some false) (some true) (fun _ =&gt; rfl)
+    cases heq
+  · refine ⟨⟨some false, by simp [U]⟩, ?_, ?_⟩
+    · intro z hz
+      rcases hz with rfl | rfl &lt;;&gt; simp [dom, ϕ, operator_identity]
+    · intro a ha b hb j
+      rcases ha with rfl | rfl &lt;;&gt; rcases hb with rfl | rfl &lt;;&gt;
+        simp [d, d0, ϕ, operator_identity, K, channelEntry]
+  · intro j
+    simp [K, channelEntry]
+  · simp [U]
+  · simp [U]
+  · intro _
+    rfl
+  · intro _
+    rfl
+  · simp
+
+/-!
+## CH02-P25: Exercise 2.2 — Scalar Two-Sided Bound on a Diagonal Input Row
+
+Following OET Exercise 2.2 (`oet-6a98a58b5bc95360`):
+Let `ϕ ∈ X_op`, `U ⊆ dom(ϕ)`, `j ∈ I`, `L ∈ 𝓛(ϕ)|_U`, and `K ∈ 𝓚(ϕ)|_U`.
+If row `j` of `L` retains only the diagonal input term (`L_{k → j} = 0` for all `k ≠ j`),
+then for all `x, y ∈ U`,
+`K_{j → j} * d_j(x, y) ≤ d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} * d_j(x, y)`.
+-/
+
+/-- Exercise 2.2: scalar two-sided inequality on output component `j` when `L ∈ 𝓛(ϕ)|_U`
+    has only the diagonal input term in row `j` (`IsSingleInputRow L j j`) and
+    `K ∈ 𝓚(ϕ)|_U`. Note that `L ∈ 𝓛(ϕ)|_U` already carries `U ⊆ dom ϕ` and
+    `K ∈ 𝓚(ϕ)|_U` carries `U.Nonempty ∧ U ⊆ dom ϕ`. -/
+theorem scalar_two_sided_diag_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (j : I) (L K : BoundMatrix I)
+    (hL : L ∈ restrictedLipMatrices d ϕ U)
+    (hK : K ∈ restrictedCoLipMatrices d ϕ U)
+    (hrow : IsSingleInputRow L j j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      channelEntry K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ channelEntry L j j * d j x y := by
+  intro x hx y hy
+  refine ⟨?_, ?_⟩
+  · exact colip_single_channel_le d ϕ U K j j hK x hx y hy
+  · exact lip_singleInputRow_bound d ϕ U L j j hL hrow x hx y hy
+
+end LCH01
+</code></pre>
+<pre><code class="language-lean">import MatrixBounds
+import ComponentChannels
+
+/-!
+# Entry Module for LCH01 (Channel Interface Section Group)
+
+Imports all target modules formalizing the 8 obligations in `obligations.json` for `LCH01`.
+
+Attribution: Mathematical source is Zhe Li (Glen Li / glenzli),
+ORCID https://orcid.org/0009-0006-6536-3453, *The Operator Evolution Theory*, Volume I
+(https://glenzli.com/books/oet/), Chapter 2, licensed under CC BY 4.0.
+-/
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH01&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsLipMatrix&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.lipMatrices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsRestrictedLipMatrix&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.restrictedLipMatrices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.isLipMatrix_iff_isRestrictedLipMatrix_dom&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.lipMatrices_eq_restrictedLipMatrices_dom&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：给定类型 X、I（[Fintype I]）、吸收元 bot : X、分量伪度量族 d : I → X → X → ENNReal、算子 ϕ : Operator X bot（导入自冻结模块 formal_oet.vol_01.ch_01_foundations.operator_space）、子集 U : Set X 及扩展非负矩阵 L : BoundMatrix I（条目取值于 ENNReal，满足 0 * ⊤ = 0）。量词与定义域：全域 Lip 谓词 LCH01.IsLipMatrix 要求 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, channelEntry L i j * d i x y，证书族 LCH01.lipMatrices 对应 𝓛(ϕ)；受限 Lip 谓词 LCH01.IsRestrictedLipMatrix 要求 U ⊆ dom ϕ 且 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I 满足同形不等式，证书族 LCH01.restrictedLipMatrices 对应 𝓛(ϕ)|_U，不预设极小矩阵存在性。引理 LCH01.isLipMatrix_iff_isRestrictedLipMatrix_dom 与 LCH01.lipMatrices_eq_restrictedLipMatrices_dom 确认 𝓛(ϕ) = 𝓛(ϕ)|_{dom(ϕ)}。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsRestrictedCoLipMatrix&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.restrictedCoLipMatrices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.isRestrictedCoLipMatrix_iff_ne_empty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.restrictedCoLipMatrices_empty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.colip_single_channel_le&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：沿用 X、I（[Fintype I]）、bot、d、ϕ : Operator X bot、U : Set X 与 K : BoundMatrix I。量词与定义域：LCH01.IsRestrictedCoLipMatrix 将非空条件 U.Nonempty、定义域包含条件 U ⊆ dom ϕ 与下界不等式 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, channelEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) 联合编码；LCH01.restrictedCoLipMatrices 对应受限 co-Lip 证书族 𝓚(ϕ)|_U，不预设极大矩阵存在性。LCH01.isRestrictedCoLipMatrix_iff_ne_empty 给出与 U ≠ ∅ 的等价刻画，LCH01.restrictedCoLipMatrices_empty 确认 𝓚(ϕ)|_∅ = ∅，LCH01.colip_single_channel_le 提取单通道下界 K_{i→j} * d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.BoundMatrix&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.channelEntry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.ofChannelEntries&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrix_ext_channelEntry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrixMul&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.channelEntry_boundMatrixMul&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrixMul_assoc&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrixOne&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.channelEntry_boundMatrixOne&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrixOne_mul&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrixMul_one&quot;
+        },
+        {
+          &quot;file&quot;: &quot;MatrixBounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.boundMatrix_mulVec_apply&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对象与指标约定：LCH01.BoundMatrix I 定义为 Matrix I I ENNReal，遵循原文 § 2.1“输出分量为行指标、输入分量为列指标”约定；LCH01.channelEntry M i j := M j i 精确对应条目 M_{i→j} = (M)_{j,i}，LCH01.ofChannelEntries 由 (i, j) ↦ f i j 反向构造矩阵，LCH01.boundMatrix_ext_channelEntry 给出按通道条目的外延性。乘法与单位元：LCH01.boundMatrixMul M₂ M₁ := M₂ * M₁ 在 ENNReal（含 0 * ⊤ = 0）下定义矩阵乘法，LCH01.channelEntry_boundMatrixMul 证明 (M₂ · M₁)_{i→j} = ∑ k : I, (M₂)_{k→j} * (M₁)_{i→k}；LCH01.boundMatrixMul_assoc、LCH01.boundMatrixOne、LCH01.channelEntry_boundMatrixOne、LCH01.boundMatrixOne_mul、LCH01.boundMatrixMul_one 给出结合律与单位矩阵性质，LCH01.boundMatrix_mulVec_apply 确认其与矩阵-向量乘法 (M *ᵥ v)_j = ∑ i, M_{i→j} v_i 一致。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.ComponentChannel&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.ComponentChannel.input&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.ComponentChannel.output&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.ComponentChannel.diag&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.channelCoeff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsSingleInputRow&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsSingleInputChannel&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsDiagonalBoundMatrix&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.isDiagonalBoundMatrix_iff_forall_singleInputRow&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsDiagonalBoundMatrix.singleInputRow&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.IsDiagonalBoundMatrix.singleInputChannel_diag&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：LCH01.ComponentChannel I := I × I 表示从输入分量 c.input 到输出分量 c.output 的分量通道有序对 (i, j)，LCH01.ComponentChannel.diag i = (i, i) 表示同分量通道，LCH01.channelCoeff M c 读取通道条目 M_{c.input → c.output}。单行稀疏与对角特例：LCH01.IsSingleInputRow M i j 定义为 ∀ k : I, k ≠ i → channelEntry M k j = 0（即第 j 行除 M_{i→j} 外其余条目全为零），LCH01.IsSingleInputChannel 为其通道对形式；LCH01.IsDiagonalBoundMatrix M 定义为 ∀ k j : I, k ≠ j → channelEntry M k j = 0，并通过 LCH01.isDiagonalBoundMatrix_iff_forall_singleInputRow、LCH01.IsDiagonalBoundMatrix.singleInputRow 与 LCH01.IsDiagonalBoundMatrix.singleInputChannel_diag 刻画其等价于每个同分量通道 (j, j) 均满足单行稀疏。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.sum_singleInputRow&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.sum_diagonalRow&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.lip_zero_channel_omit&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.lip_singleInputRow_bound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.lip_singleInputChannel_bound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.lip_diagonal_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;前提、量词与结论：在有限指标 [Fintype I]、受限 Lip 证书 hL : L ∈ restrictedLipMatrices d ϕ U（蕴含 U ⊆ dom ϕ）下，LCH01.lip_zero_channel_omit 说明零条目 L_{i→j} = 0 不参与第 j 行上界求和；LCH01.sum_singleInputRow 与 LCH01.lip_singleInputRow_bound（以及通道对形式 LCH01.lip_singleInputChannel_bound）在单行稀疏前提 IsSingleInputRow L i j 下证明对所有 x, y ∈ U 有 ∑ k, L_{k→j} d_k(x, y) = L_{i→j} d_i(x, y) 及 d_j(ϕ(x), ϕ(y)) ≤ L_{i→j} d_i(x, y)；LCH01.sum_diagonalRow 与 LCH01.lip_diagonal_bound 覆盖对角矩阵特例，对所有同分量通道 (i, i) 与 x, y ∈ U 给出 d_i(ϕ(x), ϕ(y)) ≤ L_{i→i} d_i(x, y)。结论不依赖额外的伪度量公理或分离性假设，在任意扩展规范空间上自动适用。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D07&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.colip_pos_channel_preserves_pos_dist&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.colip_pos_componentChannel_preserves_pos_dist&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对应原文命题 2.8(i)：设 [Fintype I]、hK : K ∈ restrictedCoLipMatrices d ϕ U（含非空条件 U.Nonempty 与 U ⊆ dom ϕ）且通道条目严格正 0 &lt; channelEntry K i j，结论为 ∀ x ∈ U, ∀ y ∈ U, 0 &lt; d i x y → 0 &lt; d j (ϕ.func x) (ϕ.func y)（含条目或距离取 ⊤ 时的 ENNReal 正性）。LCH01.colip_pos_componentChannel_preserves_pos_dist 给出同强度的 ComponentChannel 形式。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D07&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.colip_pos_diag_reflects_gauge_zero_related&quot;
+        },
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.colip_pos_diag_not_implies_eq_without_separation&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对应原文命题 2.8(ii)：设 [Fintype I]、hK : K ∈ restrictedCoLipMatrices d ϕ U（含 U.Nonempty 与 U ⊆ dom ϕ）且全对角条目严格正 ∀ j : I, 0 &lt; channelEntry K j j，结论对所有 x, y ∈ U 为 GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y（复用冻结模块 formal_oet.vol_01.ch_01_foundations.GaugeZeroRelated），严格保持为族零距关系而不加强为点相等 x = y。另由 LCH01.colip_pos_diag_not_implies_eq_without_separation 在显式非分离扩展规范空间（满足 ExtendedPseudoMetric 与 IsNonSeparating）中构造反例，见证在无额外分离性前提下不能加强为 x = y。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-P20&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;ComponentChannels.lean&quot;,
+          &quot;name&quot;: &quot;LCH01.scalar_two_sided_diag_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对应原文习题 2.2：给定有限指标 [Fintype I]、算子 ϕ : Operator X bot、子集 U : Set X、输出分量 j : I、受限证书 hL : L ∈ restrictedLipMatrices d ϕ U（蕴含 U ⊆ dom ϕ）与 hK : K ∈ restrictedCoLipMatrices d ϕ U（蕴含 U.Nonempty ∧ U ⊆ dom ϕ），以及仅对 L 施加的第 j 行对角单输入稀疏条件 hrow : IsSingleInputRow L j j（即 ∀ k ≠ j, L_{k→j} = 0，不对 K 施加稀疏前提）。结论为 ∀ x ∈ U, ∀ y ∈ U, channelEntry K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧ d j (ϕ.func x) (ϕ.func y) ≤ channelEntry L j j * d j x y。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D07&quot;,
+        &quot;CH02-P19&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div>

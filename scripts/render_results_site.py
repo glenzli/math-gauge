@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records, selected_paper_records, evidence_bytes
 from math_gauge.native_observations import load_public_record
 from math_gauge.paper_observations import load_public_record as load_paper_record
-from scripts.results_details import build_detail_pages, review_status
+from scripts.results_details import build_detail_pages, review_status, formalization_display_breakdown
 from scripts.results_rankings import (
     category_rankings, model_display_key, overall_key, overall_places, set_model_display_order,
     set_published_scores,
@@ -62,6 +62,7 @@ MODEL_THEMES = {
     "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-hydrogen-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+    "gemini-4-neon-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon-medium": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
@@ -86,6 +87,7 @@ MODEL_PROVIDERS = {
     "gemini-3.8-flash-high": ("Google", "google.svg"),
     "gemini-4-argon": ("Google", "google.svg"),
     "gemini-4-hydrogen-xhigh": ("Google", "google.svg"),
+    "gemini-4-neon-xhigh": ("Google", "google.svg"),
     "gemini-4-carbon": ("Google", "google.svg"),
     "gemini-4-carbon-high": ("Google", "google.svg"),
     "gemini-4-carbon-medium": ("Google", "google.svg"),
@@ -111,6 +113,7 @@ MODEL_LABELS = {
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
     "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
+    "gemini-4-neon-xhigh": "Gemini 4 Neon (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)",
     "gemini-4-carbon-high": "Gemini 4 Carbon (high)",
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
@@ -136,6 +139,7 @@ MODEL_SHORT_LABELS = {
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
     "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
+    "gemini-4-neon-xhigh": "Gemini 4 Neon (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)",
     "gemini-4-carbon-high": "Gemini 4 Carbon (high)",
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
@@ -159,7 +163,9 @@ def recorded_test_order(folder, record):
         if first is not None:
             stamps = [json.loads(evidence_bytes(folder, first))['utc']]
             digest, basis = first['sha256'], 'first_recorded_dispatch'
-        elif proof.get('schema') != 'math-gauge.portable-first-assessment-source-public/v1':
+        elif proof.get('schema') not in {
+                'math-gauge.portable-first-assessment-source-public/v1',
+                'math-gauge.native-first-assessment-source-public/v1'}:
             raise ValueError('Native source proof lost its original first dispatch')
     if not stamps:
         path = folder / 'answer-timings.json'
@@ -220,16 +226,19 @@ def build_data(source_root=ROOT, *, assessment_version=None):
             "theme": dict(MODEL_THEMES[model]), 'harness': harness,
             "logo": {"label": provider, "data_url": "data:image/svg+xml;base64," + base64.b64encode(icon_bytes).decode("ascii"),
                      "sha256": hashlib.sha256(icon_bytes).hexdigest()},
-            "combined": combined, "strict": strict, "capability": capability, "trajectory": record["trajectory"],
+            "combined": combined, "strict": strict, "capability": capability, "trajectory": record.get("trajectory"),
             "content_rates": original_rates,
             "evaluation_progress": {condition: evaluation_progress(result)
                                     for condition, result in partial.items()},
-            "lean_formalization_breakdown": partial["nonlogical_retry_3"]["lean_formalization_breakdown"],
+            "lean_formalization_breakdown": formalization_display_breakdown(
+                folder, record, partial["nonlogical_retry_3"]),
             "alignment_selfcheck": partial["nonlogical_retry_3"]["alignment_selfcheck"],
             "source_record": str((folder / "record.json").relative_to(root)),
             "retry": {"combined": partial["nonlogical_retry_3"],
                       "note": (f"本批次已收{record['execution_summary'].get('delivered_initial_tasks', record['execution_summary'].get('initial_answers'))}/39道初答及{record['execution_summary'].get('delivered_selfcheck_rounds', record['execution_summary'].get('fixed_selfcheck_rounds'))}/3轮对齐自查；采用规则选定的首次有效交付。全部物理请求和纯系统故障另行留档。"
                                if record.get("execution_summary") else
+                               "本批39道初答与固定三轮自查均采用原生正常交卷；物理请求与纯系统重试另行留档。"
+                               if record.get("native_current_written_sources") else
                                "GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
                                if record.get("retry_admission") else
                                "正式研究工具组尚未完成；未测题保持未知，不回填其他条件的答卷。"

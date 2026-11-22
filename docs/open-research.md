@@ -36,9 +36,9 @@ Adopted manuscript continuations receive independent judgments and blend 80% fir
 
 ## 本轮结果 / Results
 
-22个模型配置的110份首答及32份已采用手稿续答均已独立审核，共568项四方面判断。下表只对比两种研究特征，不据此另排综合名次。含续答栏为逐题80／20合成值；“—”表示该配置尚未采用续答，不是0。GLM仅为局部测试参考，不进入榜单。
+下表按当前1.2.0入选配置展示两种研究特征，不据此另排综合名次。五个共同手稿家族的首答及采用续答均独立审核；含续答栏为逐题80／20合成值，“—”表示尚未采用续答，不是0。Neon的开放研究能力为90.00，研究主动性为29.05。GLM 5.3与Gemini 3.8 Flash退出本版，历史资料保留。
 
-All 110 first-answer manuscripts from 22 configurations and 32 adopted manuscript continuations were independently reviewed, yielding 568 facet judgments. This table compares the two research traits rather than creating another overall ranking. The revision-inclusive column uses the per-family 80/20 blend. A dash means the configuration has no adopted revision stage, not zero. GLM remains partial-test evidence outside rankings.
+The table follows the current1.2.0 cohort and compares two research traits without creating another overall ranking. Original answers and adopted continuations on the five common manuscript families are independently reviewed. The revised column uses the per-family80/20 blend; a dash means no adopted revision stage, not zero. Neon scores90.00 on open research capability and29.05 on initiative. GLM5.3 and Gemini3.8 Flash are withdrawn from this edition, with historical evidence retained.
 
 | 模型 / Model | 开放能力·首答 / Capability: first | 开放能力·含续答 / Capability: revised | 研究主动性 / Initiative |
 |---|---:|---:|---:|
@@ -46,11 +46,11 @@ All 110 first-answer manuscripts from 22 configurations and 32 adopted manuscrip
 | Claude Opus 5.5 (xHigh) | 90.00 | 90.00 | 26.43 |
 | Claude Sonnet 5.5 (max) | 90.00 | 92.00 | 24.29 |
 | DeepSeek v4.1 Flash (max) | 80.00 | 83.00 | 6.43 |
+| Gemini 4 Neon (xHigh) | 90.00 | 90.00 | 29.05 |
 | Gemini 4 Argon (high) | 80.00 | — | 11.43 |
 | Gemini 4 Carbon (high) | 90.00 | — | 15.00 |
 | Gemini 4 Carbon (medium) | 90.00 | — | 17.86 |
 | Gemini 4 Hydrogen (xhigh) | 90.00 | — | 16.43 |
-| Gemini 3.8 Flash (high) | 50.00 | — | 10.71 |
 | Kimi 3.1 Pro (max) | 80.00 | 84.00 | 7.86 |
 | Astra 6.2 (max) | 90.00 | 92.00 | 12.14 |
 | Astra 6.2 (xHigh) | 90.00 | 92.00 | 8.57 |
@@ -63,7 +63,6 @@ All 110 first-answer manuscripts from 22 configurations and 32 adopted manuscrip
 | Sol 6.1 (xhigh) | 100.00 | 100.00 | 12.14 |
 | Terra 6.1 (max) | 90.00 | 92.00 | 17.86 |
 | Terra 6.1 (xhigh) | 90.00 | 90.00 | 12.14 |
-| GLM 5.3 (max) | 60.00 | — | 3.57–5.00 |
 
 例如，Sol 6.1 Max的开放研究能力为100，研究主动性为18.57。两者可以同时成立：前者表示它在这五个明确要求研究的任务上达到了本量规的最高档，后者记录全卷首答中未经邀请的推进程度。它们不支持“GPT研究能力更弱”或“品牌主动性设定导致差异”这样的因果结论。
 

@@ -1,0 +1,121 @@
+<!doctype html><meta charset="utf-8"><div class="prose"><h3>HC02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> IsLipMatrix 对 dom ϕ 的全部点对及每个输出分量给完整和上界；IsRestrictedLipMatrix 另含 U⊆dom ϕ，LipSet/RestrictedLipSet 是真实 Set，且证明 dom 上两族相等。没有预选极值矩阵或增加非空/有限性；对任意距离族定义可正确特化原扩展规范空间。</p>
+<h3>HC02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> IsCoLipMatrix 显式包含 U.Nonempty、U⊆dom ϕ 及全部域内点对/输出分量的非负和下界；CoLipSet 为对应真实集合。全域情形取 U=dom ϕ；空 U 无合法成员，0与∞系数未被排除。</p>
+<h3>HC02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> GaugeMatrix=I→I→ENNReal 按输入i/输出j存储，toDisplayMatrix 与 ofDisplayMatrix 通过真实 Equiv 互逆；toDisplayMatrix_matMul 证明原 Σk M2(k,j)M1(i,k) 与输出行/输入列的通常乘法一致。无方向或乘积次序差异，额外结合律正确。</p>
+<h3>HC02-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> matProd 按施行序列表得到末步在左的 M_k…M_1，finMatProd 与 List.ofFn 定义性对应；单位两侧律、空/单步/两步及显示反转列表乘积桥实际证明。没有用任意存在矩阵替代原指定矩阵序列。</p>
+<h3>HC02-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> applyChain/finChainOp 对应 ϕ_k∘…∘ϕ_1，给与冻结表头在最外层 OperatorChain 的反转等式。chainDomain 从 U1 逐次取真实像，证明最终像等于全复合像及 U1⊆dom c_k 推出每步域合法。LipChainData/CoLipChainData 只存原单步条件；unpacked 定理直接以原数据构造实例，不含最终界字段。</p>
+<h3>HC02-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> MidIndexSeq=Fin(n−1)→I 直接编码原任意中间序列；pathNode 的起点/终点/中间节点等式与 edgeWeight 对接原各层条目。路径没有正性筛选，正/含零只是其上谓词；n=1 的唯一空序列和单边权重明确证明，并给实际完整路径和展开。</p>
+<h3>HC02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Channel=I×I；RowSparse L i j 仅对 k≠i 令 L_kj=0，ColSparse L i j 仅对 k≠j 令 L_ik=0，均保留任意 i≠j 的交叉位置。矩阵级与存在合法 L 的算子级行/列解耦、对角及完全解耦均给出；未把证书支撑当算子的精确依赖刻画。</p>
+<h3>HC02-D08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> SingleChannelLipFeasible 用全部点对的单一输入分量界定义真实 Set，singleChannelLipConst 是它的 sInf，空族取∞。定义对任意 U 作自然扩展，在原合法 U 上与原公式定义性一致；并未移除后续所需域条件。额外交付合法模型，见证矩阵条目0而单通道常数∞，支持不同对象的说明。</p>
+<h3>HC02-P01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 对 I={i} 化简完整有限和，并证明合法矩阵与原单分量标量不等式等价；card=1 包装覆盖原指标条件。所有域内点对和∞保留，没有增设系数/距离有限条件。</p>
+<h3>HC02-P02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> LipSet 的所有域内不等式直接限制到 U，域包含明确传递；允许 U=∅，方向为全域族包含于受限族。</p>
+<h3>HC02-P03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 从 V 上证书的域条件推出 U 合法，再限制全部点对不等式；较强的一般 U⊆V 形式没有强化原输入条件或要求非空。</p>
+<h3>HC02-P04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> entrywiseLipInf 对实际合法矩阵族的条目取值 Set 作 sInf；P03 给取值集包含，sInf_le_sInf 给 U 上 inf≤V 上 inf。没有宣称全部条目 inf 组成合法矩阵，空集合由 ENNReal 完全格自动处理。</p>
+<h3>HC02-P05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 在实际上游像点对应用下游 L2，再代入上游 L1 并乘非负系数、分配有限和、交换次序，结论恰是 matMul L2 L1；原复合域条件和实际像域桥均交付。没有仅证明存在某复合矩阵，0/∞与空 U 均保留。</p>
+<h3>HC02-P06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 取 Kij·di≤总和≤输出距=0，零积与 di&gt;0 推出 Kij=0，包含系数或输入距∞的情形。全域声明以 U=dom ϕ 特化，受限版本保留全部见证点/合法域条件，不用除法。</p>
+<h3>HC02-P07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 将 matMul K2 K1 的加权和展开，先代入 K1 再使用实际像域上的 K2 下界；非空来自 K1 的合法性，复合域来自原 hU1。乘积次序、下界方向及0/∞完整，无额外 K 稀疏/有限前提。</p>
+<h3>HC02-P08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 对同一 U 的 x,y 用两次三角及对称性，首尾各≤δj；给 2δj 与 δj+δj 的实际等价形式。没有不同限制域混用三角、有限扰动或∞相减。</p>
+<h3>HC02-P09</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 交换算子时由对称性证明 hδ 的反向形式，commonDom2 的交集交换保留域条件；再使用 P08 得反向式。未从单向式作非法减法。</p>
+<h3>HC02-P10</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 将原 ϕ1 的合法受限 Lip 和代入正向像距界，得到同一加性上界；交换版本相应使用反向界和 L2。没有错误声称扰动后保有相同纯 Lip 矩阵。</p>
+<h3>HC02-P11</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 原 K1 加权和≤ϕ1 像距，再由反向扰动控制为ϕ2像距+2δ；交换版本同样合法。保留下界方向及非空/共同域，无∞减法。</p>
+<h3>HC02-P12</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> finChain_lip_bound 对长度完整归纳：单步为原证书，归纳步以真实前缀像识别末步输入域，应用两步合成并取得 finMatProd 原 stepMatrices。unpacked 形式直接接受原算子、U、矩阵与逐步界并构造链，排除最终界字段循环。</p>
+<h3>HC02-P13</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 独立 co-Lip 归纳用同一实际像域与原矩阵序列，基例/归纳步都保留成员非空与下界；unpacked 形式从原数据直接构造。没有以 Lip 分支或预设最终下界替代。</p>
+<h3>HC02-P14</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 先证明单位加权和=原分量距离，给任意合法 U 的更一般单位 Lip 界，再在 zeroStep_lip_bound 中显式桥接 Fin0 算子与矩阵序列。原非空范围被包含，非仅注释或零步名称。</p>
+<h3>HC02-P15</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 保留 U.Nonempty 与域包含，用同一单位求和等式给下界；zeroStep_coLip_bound 将 c0 和空积对接，交集声明同时实例化两侧。</p>
+<h3>HC02-P16</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 先对任意 ENNReal 矩阵序列证明实际路径和展开和零值充要判据，再在同一 LipChainData 上特化。中间序列未筛正边，每权重为0 iff某边0；n=1 的唯一空中间序列显式退化到原单条目。</p>
+<h3>HC02-P17</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 对非负全序把零值判据取否定，利用每路径零因子/正积等价得到存在全正序列；特化同一 CoLipChainData，且给单步条目正的退化。更强纯代数路线不需要额外算子假设，未更改目标。</p>
+<h3>HC02-P18</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 任意 λ（含∞）乘输入0仍0，与正输出矛盾；证明真实 Set 等于空集，再按 sInf∅=∞。不把空 U 当作有反例点对。</p>
+<h3>HC02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> B=0 用∞可行迫使输出为0；B=∞用a&gt;0得aB=∞；0&lt;B&lt;∞只在合法非零有限侧条件下用 ENNReal 除法和存在中间 λ，反驳 A&gt;aB。每点对均成立，未把 a=0 误延入取到结论。</p>
+<h3>HC02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 逐点使用 ENNReal 乘法单调性将 lam0 上界增大到 lam1；对象/域与原可行集保持不变，无额外有限性。</p>
+<h3>HC02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 一般证明由 inf&lt;λ 得某可行 lam0&lt;λ，再向上闭；若可行族空则 inf∞而前提不成立。原正有限包装只是正确特化，λ=∞合法，无须取到 a 或紧性假设。</p>
+<h3>HC02-P22</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 把 a=0、λ&gt;0 代入实际一般 a&lt;λ 引理即可；保留题定有限正常数分支，且没有从下确界0推出零系数可行。</p>
+<h3>HC02-P23</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Option Bool、bot=none、I=Bool 的两分量逐一证明全部 ExtendedPseudoMetric 公理；输入分量异正常点距∞，输出分量距1，idOp 保底点，U为两正常点且非空/在dom内。所有正 λ 可行证明 inf0，(some false,some true) 对在λ0违反1≤0；最终存在定理显式装配全部结构和边界。不是裸 ENNReal 数值例或未实例化公理。</p>
+<h3>HC02-P24</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 正向把 a=0 以有限常数1实现，正有限 a 由 P19 取a；反向 sInf≤任意可行有限λ。未假定 inf总取到，空族∞正确排除。</p>
+<h3>HC02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> zero_mul 给该项为0，再用实际有限和子集等式删除它；在原合法 Lip 界中代换得删项后上界。一般有限集只需覆盖其余输入，含 Finset.erase 特化，没有推出整个输出距0。</p>
+<h3>HC02-P26</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 对任意 i,j 用 RowSparse 的 k≠i 消去有限和，其余原 Lij·di 给全部域内点对上界；未限 i=j。rowSparse_entry_mem_singleChannel 因而给该系数真实可行及 inf≤它，算子级行解耦推论实际保留同一合法证书和索引。</p>
+<h3>HC02-P27</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 固定输入 i、唯一输出 j，k≠j 时 ColSparse 给 L_ik=0，故该项为0，应用 P25 得其它输出的删项上界。j不必等于i，未把所选证书描述提升成实际算子依赖性的充要刻画。</p>
+<h3>HC02-P28</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 对每个j，从全非对角条目0取得 RowSparse L j j，再用任意单行 P26；完整点对/输出量词及∞保留。</p>
+<h3>HC02-P29</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 上界用 RowSparse L j j；下界取 Kjj·dj≤非负和≤输出距。没有多余 K稀疏、全矩阵对角、正K、系数或距离有限假设，符合冻结历史版本删除 K稀疏后的范围。</p>
+<h3>HC02-P30</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 第一声明对每个j应用P29。有限分支只在原Ljj,Kjj&lt;∞下取toNNReal，并证明嵌入后等于原系数，得同一双侧式；没有强加所有输入/输出距离有限、系数正或 K对角。实际有限系数对象也被构造。</p>
+<h3>HC02-P31</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 输出距≥和≥Kij·di，ENNReal 两非零正因子乘积正即给结论。保留所有i,j、域内点对，无有限除法。</p>
+<h3>HC02-P32</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> 反设某输入分量非零，则P31在同分量通道给正输出距，和 GaugeZeroRelated 的对应输出0矛盾。没有假设族分离或加强到点值相等/单射。</p>
+</div>

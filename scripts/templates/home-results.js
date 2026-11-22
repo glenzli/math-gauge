@@ -146,7 +146,10 @@
   syncSorts();renderView('ranking',ranking);renderView('taxonomy',taxonomy);categoryRanking();auxiliaryCharts();
   orderChart('chart-groups',visibleModels().sort(compareScores));
   const visibleIds=new Set(visibleModels().map(m=>m.id)),initiativeIds=new Set(visibleModels('initiative').map(m=>m.id));
-  document.querySelectorAll('[data-model-note]').forEach(n=>n.hidden=!(n.closest('[data-board="initiative"]')?initiativeIds:visibleIds).has(n.dataset.modelNote));
+  const historyIds=new Set([...d.models,...(d.pending_models||[]),...(d.partial_models||[])].map(m=>m.id));
+  document.querySelectorAll('[data-model-note]').forEach(n=>{
+   n.hidden=n.closest('.run-history-snapshot')?d.benchmark_version==='1.2.0'&&!historyIds.has(n.dataset.modelNote):!(n.closest('[data-board="initiative"]')?initiativeIds:visibleIds).has(n.dataset.modelNote);
+  });
   const selected=modes[state.score];el('leaderboard-desc').textContent='公开＋私有 · 按'+selected.abbreviation+'排序 · 满分100';el('score-explanation').textContent={capability:'累计有效数学成果。',partial:'按有效成果计分，扣除错误、回退和误报。',strict:'整题及规定自查轨迹全部达标才计分。'}[state.score];
   el('contributions-title').textContent=selected.abbreviation+' · 分类贡献';el('contribution-mode').textContent=selected.abbreviation;el('active-condition').textContent=MG.conditionLabel();
   el('downloads').replaceChildren(...visibleModels().sort(compareModelOrder).map(m=>{const a=node('a',short(m)+' · JSON ↓','download-link');a.href=download(m);return a}));

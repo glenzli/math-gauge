@@ -1,0 +1,1 @@
+window.MGEditionData("c7fc87030ceab890fc58ddb5412e8e945ee56d71ec5708961aed21814032e054",{"schema":"math-gauge.edition-page-data/v1","edition":"1.0.0","page":"models/gemini-4-neon-xhigh/cases/MG-GR021.html","data":{"benchmark_version":"1.0.0","edition_unavailable":true,"model_id":"gemini-4-neon-xhigh","edition_paths":{"download_prefix":"versions/1.0.0/"}},"supplemental":{}});

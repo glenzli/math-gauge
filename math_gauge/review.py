@@ -277,8 +277,13 @@ def _validate_review_axes(entry, record):
 
 
 def _validate_group_review(root, case, record, entry, *, response_text=None, lean_evidence=None,
-                           additional_obligations=False):
-    contract = _group_contract(root, case)
+                           additional_obligations=False, retained_contract=None):
+    # Native source readers already bind the complete retained contract bytes.
+    # This optional pure-input route does not create an imported CLI run.
+    contract = (_group_contract(root, case) if retained_contract is None
+                else validate_group_contract(retained_contract))
+    if retained_contract is not None and contract.get("id") != case.get("id"):
+        raise ValueError("Retained mathematical contract belongs to another case")
     if contract is None:
         if entry.get("stages"):
             raise ValueError("Stage judgments require a frozen group contract")

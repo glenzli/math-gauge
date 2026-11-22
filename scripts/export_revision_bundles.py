@@ -11,11 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from math_gauge.editions import NATIVE_MODEL, load_assessment_transition
-from math_gauge.neutral_revision import load_model_selection, source_assessment_edition
+from math_gauge.neutral_revision import (current_model_ids, load_model_selection, load_transition,
+    source_assessment_edition)
 from math_gauge.revision_harness import export_revision_bundle, _descriptor, _json_bytes
 
 
 def selected_models(public_root):
+    transition = load_transition(public_root)
+    if transition is not None:
+        return sorted(current_model_ids(transition))
     source = source_assessment_edition(public_root)
     old = load_assessment_transition(public_root, source)
     return sorted(set(old['calibrations']) | set(source.get('current_assessment_admissions', {})))
@@ -29,9 +33,12 @@ def export_all(public_root, private_root, destination, *, models=None):
         raise ValueError('Output must be a new local directory')
     if destination.is_relative_to(public_root):
         raise ValueError('Combined public/private packages cannot enter the public repository')
-    chosen = selected_models(public_root) if models is None else list(models)
+    available = selected_models(public_root)
+    chosen = available if models is None else list(models)
     if len(chosen) != len(set(chosen)):
         raise ValueError('Repeated model selection')
+    if not set(chosen) <= set(available):
+        raise ValueError('Model is outside the selected assessment edition')
     destination.mkdir(parents=True)
     evaluator = destination / 'evaluator'
     evaluator.mkdir()

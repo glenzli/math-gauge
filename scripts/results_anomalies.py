@@ -261,7 +261,7 @@ def _render_attempt_table(models, attempt_reference, resources, root):
         else:
             effective = revision['effective_attempts']
             system = revision.get('system_exclusions', 0) if requests == effective else revision.get('system_exclusions')
-            counts = (requests, effective, effective - revision['selected_tasks'], system)
+            counts = (requests, effective, effective - revision['planned_calls'], system)
             failures = revision.get('system_failure_reasons', {})
             note = ('、'.join(reasons[key][0] for key in failures),
                     ', '.join(reasons[key][1] for key in failures)) if failures else ('外层物理请求', 'Outer physical requests')
@@ -319,7 +319,8 @@ def _render_historical_anomalies(document, models, source_edition):
             label += '<sup aria-describedby="anomaly-history-note">*</sup>'
         harness = _harness(row)
         cells = ''.join('<td class="numeric">' + _count(row["categories"][key]) + '</td>' for key in categories)
-        rows.append('<tr><th scope="row" class="anomaly-model">' + label + '</th>'
+        rows.append('<tr data-model-note="' + html.escape(row['model_id'], quote=True)
+                    + '"><th scope="row" class="anomaly-model">' + label + '</th>'
                     '<td class="anomaly-harness">' + harness + '</td>'
                     '<td class="numeric">' + (str(row["reviewed_runs"]) if row["reviewed_runs"] else '—') + '</td>'
                     '<td class="numeric">' + _count(row["anomalous_runs"], total=True, show_known=bool(row["reviewed_runs"]))

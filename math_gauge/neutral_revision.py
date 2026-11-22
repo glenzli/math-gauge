@@ -67,8 +67,9 @@ def load_transition(root, edition=None):
         source_scoring_edition=SOURCE, target_scoring_edition=TARGET, task_suite_version='1.0.0',
         attempt_condition=CONDITION, post_observation=True, adoption_new_candidate_calls=0,
         original_bytes_rewritten=False, human_review='pending', formal_comparison_eligible=False)
-    require(isinstance(transition, dict) and set(transition) == set(fixed) |
-        {'source_edition', 'policy', 'adoptions', 'pending_models'} and all(
+    fields = set(fixed) | {'source_edition', 'policy', 'adoptions', 'pending_models'}
+    require(isinstance(transition, dict) and set(transition) in
+        (fields, fields | {'withdrawn_models'}) and all(
         type(transition.get(k)) is type(v) and transition[k] == v for k,v in fixed.items()),
         'Invalid neutral revision edition transition')
     require(edition['neutral_revision_transition']['path'] == TRANSITION_PATH,
@@ -82,15 +83,30 @@ def load_transition(root, edition=None):
             == {k:v for k,v in source.items() if k not in excluded},
             'Neutral revision changed the retained source selection or contracts')
     load_policy(root, transition['policy'])
-    adoptions, pending = transition['adoptions'], transition['pending_models']
-    require(isinstance(adoptions, dict) and isinstance(pending, list)
-            and len(pending) == len(set(pending)) and not set(adoptions).intersection(pending),
-            'Neutral revision needs disjoint adopted and pending model identities')
+    adoptions, pending, withdrawn = (transition['adoptions'], transition['pending_models'],
+                                      transition.get('withdrawn_models', []))
+    require(isinstance(adoptions, dict) and all(isinstance(mid, str) for mid in adoptions)
+            and all(isinstance(group, list) and all(isinstance(mid, str) for mid in group)
+                    and len(group) == len(set(group)) for group in (pending, withdrawn)),
+            'Neutral revision needs explicit unique model identities')
+    adopted_ids, pending_ids, withdrawn_ids = set(adoptions), set(pending), set(withdrawn)
+    from .editions import NATIVE_MODEL
+    retained_ids = (set(source['selected_result_models'])
+                    | set(source.get('current_assessment_admissions', {})) | {NATIVE_MODEL})
+    require(not (adopted_ids & pending_ids or adopted_ids & withdrawn_ids or pending_ids & withdrawn_ids)
+            and adopted_ids | pending_ids | withdrawn_ids == retained_ids,
+            'Neutral revision adopted, pending and withdrawn models must partition the retained source cohort')
     for mid, ref in adoptions.items():
         _descriptor(ref)
         require(ref['path'].startswith(DIRECTORY + '/' + mid + '/')
                 and ref['path'].endswith('/public.json'), 'Unsafe neutral revision adoption path')
     return dict(transition, _source_edition=source)
+
+
+def current_model_ids(transition):
+    '''Return the explicitly selected target-edition cohort, independent of scores.'''
+    require(transition is not None, 'Current revision models require a selected neutral transition')
+    return frozenset(transition['adoptions']) | frozenset(transition['pending_models'])
 
 
 def source_assessment_edition(root, edition=None):
@@ -317,7 +333,12 @@ def load_inputs(root, ref, *, public_root, base_reports):
         and all(type(data.get(k)) is type(v) and data[k] == v for k,v in fixed.items()),
         'Invalid neutral revision adoption input contract')
     load_policy(public_root, data['policy'])
-    read(root, data['source_record'])
+    source_record = document(root, data['source_record'])
+    from .native_assessment_sources import (SCHEMA as NATIVE_INITIAL, NEUTRAL_BRIDGE_SCHEMA,
+        validate_neutral_parent_bridge, record_relative_reference)
+    first_source = source_record.get('first_assessment_source')
+    native_initial = (first_source is not None and document(root,
+        record_relative_reference(data['source_record'], first_source)).get('schema') == NATIVE_INITIAL)
     require(set(base_reports) == set(MODES) and set(data['base_reports']) == set(MODES),
             'Neutral adoption requires all three source reports')
     for mode in MODES:
@@ -344,6 +365,15 @@ def load_inputs(root, ref, *, public_root, base_reports):
         if row.get('original_answer') is not None:
             require(row['original_answer']['sha256'] == first['response_sha256'],
                     'Neutral continuation original answer has different bytes')
+        if native_initial:
+            component = row.get('source_component')
+            require(component is not None and component.get('scope') == 'private',
+                    'Native initial neutral adoption needs its explicit frozen-parent source bridge')
+            bridge = document(root, {k:component[k] for k in ('path','bytes','sha256')})
+            require(bridge.get('schema') == NEUTRAL_BRIDGE_SCHEMA,
+                    'Native initial neutral adoption cannot merely read an unvalidated parent note')
+            validate_neutral_parent_bridge(bridge, read=lambda item:read(root,item),
+                record_ref=data['source_record'], record=source_record, first=first, adoption_row=row)
         continuation = row['continuation']
         require(continuation.get('status') in {'reviewed','delivery_failed','not_run'},
                 'Unknown continuation status must not masquerade as delivery failure')

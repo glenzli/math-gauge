@@ -153,10 +153,12 @@ class CurrentSiteTests(unittest.TestCase):
         transition = load_transition(ROOT)
         source_ids = {model['id'] for model in self.source_data['models']}
         self.assertEqual({model['id'] for model in self.data['models']}, set(transition['adoptions']))
-        self.assertEqual(set(transition['adoptions']) | set(transition['pending_models']), source_ids)
+        self.assertEqual(set(transition['adoptions']) | set(transition['pending_models'])
+                         | set(transition['withdrawn_models']), source_ids)
         partial_ids = {model['id'] for model in self.data['partial_models']}
         from scripts.results_eligibility import eligibility
-        self.assertEqual(partial_ids, {mid for mid in source_ids if not eligibility(mid)['ranked']})
+        self.assertEqual(partial_ids, {mid for mid in source_ids - set(transition['withdrawn_models'])
+                                       if not eligibility(mid)['ranked']})
         self.assertTrue(all(model['presentation_eligibility']['ranked'] is False
                             for model in self.data['partial_models']))
         self.assertEqual({model['id'] for model in self.data['pending_models']},
@@ -164,14 +166,18 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertFalse(partial_ids.intersection(model['id'] for model in self.data['models']))
         for model in [*self.source_data['models'], *self.data['models']]:
             path = ROOT / Path(model["source_record"]).parent
-            original = json.loads((path / "combined-aggregate.json").read_bytes())
+            from math_gauge.records import evidence_bytes
+            from scripts.results_details import formalization_display_breakdown
+            record = json.loads((ROOT / model['source_record']).read_bytes())
+            original = json.loads(evidence_bytes(path, record['assessment_results']['single_attempt']))
             self.assertEqual(model["combined"], self.selected_layer_score(
                 model, 'partial', 'single_attempt', original))
             self.assertNotIn("public", model)
             self.assertNotIn("public", model["retry"])
             self.assertFalse(model["combined"]["formal_comparison_eligible"])
             admitted = model["retry"]["combined"]
-            self.assertEqual(model["lean_formalization_breakdown"], admitted["lean_formalization_breakdown"])
+            self.assertEqual(model["lean_formalization_breakdown"],
+                             formalization_display_breakdown(path, record, admitted))
             self.assertEqual(model["alignment_selfcheck"], admitted["alignment_selfcheck"])
 
     def test_public_display_has_no_private_task_identifiers_or_raw_inputs(self):
@@ -669,6 +675,38 @@ class CurrentSiteTests(unittest.TestCase):
                 criterion = review.get('criteria', review.get('dimensions'))[0]
                 key = next(criterion[k] for k in ('id', 'criterion_id', 'dimension_id') if k in criterion)
                 self.assertIn(key, review_markdown(evidence['review']))
+
+
+class NativeObligationDisplayTests(unittest.TestCase):
+    def test_existing_score_observations_keep_their_unknowns(self):
+        from scripts.results_details import formalization_display_breakdown
+        retained = {'cases': [{'case_id': 'fixture', 'complete_count': None, 'total': 2}]}
+        self.assertEqual(formalization_display_breakdown(None, {},
+            {'lean_formalization_breakdown': retained}), retained)
+
+    def test_native_counts_require_every_original_contract_obligation(self):
+        from scripts.results_details import formalization_display_breakdown
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            def save(name, data):
+                raw = json.dumps(data).encode()
+                (folder / name).write_bytes(raw)
+                return dict(path=name, bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+            contract = save('contract.json', dict(id='fixture', stages=[{'id':'a'}, {'id':'b'}]))
+            for obligations, expected in (([dict(id='a', complete=True), dict(id='b', complete=False)], 1),
+                                          ([dict(id='a', complete=True)], None),
+                                          ([dict(id='a', complete=True), dict(id='b', complete=None)], None)):
+                review = save('review.json', dict(cases=[dict(case_id='fixture',
+                    case_contract=contract, obligations=obligations)]))
+                source = save('native.json', dict(schema='math-gauge.native-engineering-assessment-sources-public/v1',
+                                                  engineering_review=review))
+                record = dict(native_engineering_sources=source, formalization_review=review)
+                if expected is None:
+                    with self.assertRaisesRegex(ValueError, 'frozen contract'):
+                        formalization_display_breakdown(folder, record, {})
+                else:
+                    self.assertEqual(formalization_display_breakdown(folder, record, {}),
+                        {'cases':[dict(case_id='fixture', complete_count=expected, total=2)]})
 
 
 if __name__ == "__main__":

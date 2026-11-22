@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.neutral_revision import (MODES, CONDITION, DIRECTORY, TARGET, SOURCE,
     VERSION, POLICY_PATH, TRANSITION_PATH, SOURCE_EDITION_PATH, descriptor, load_policy,
     load_model_selection, load_inputs, load_public, load_transition, project_score,
-    project_public_tasks, verify_pair, read, document, require)
+    project_public_tasks, verify_pair, read, document, require, current_model_ids)
 from math_gauge.records import public_assessment_case_ids
 from math_gauge.scoring import score_neutral_revision_overlay
 
@@ -45,6 +45,10 @@ def scoped_absolute(item, public_root, private_root):
 
 def prepare(public_root, private_root, *, models=MODELS):
     public_root, private_root = Path(public_root).resolve(),Path(private_root).resolve()
+    current = json.loads((public_root/'benchmark.json').read_bytes())
+    old_transition = load_transition(public_root, current) if current['version'] == TARGET else None
+    require(old_transition is None or set(models) <= current_model_ids(old_transition),
+            'Model is outside the selected assessment edition')
     study = private_root / STUDY
     archive_ref = descriptor(private_root, study/'final-archive-manifest.json')
     archive = document(private_root, archive_ref)
@@ -227,14 +231,13 @@ def prepare(public_root, private_root, *, models=MODELS):
         output.append(dict(model_id=mid,selected=len(rows),scores={mode:full_scores[mode]['metrics']['earned']['confirmed']
             for mode in MODES},deltas={mode:full_scores[mode]['metrics']['earned']['confirmed']-
             source['reports'][mode]['metrics']['earned']['confirmed'] for mode in MODES}))
-    current = json.loads((public_root/'benchmark.json').read_bytes())
-    if current['version'] == TARGET:
-        old_transition = load_transition(public_root,current)
+    if old_transition is not None:
         old = old_transition['_source_edition']
         adoptions = dict(old_transition['adoptions'],**adoptions)
+        withdrawn = list(old_transition.get('withdrawn_models', []))
     else:
         require(current['version'] == SOURCE, 'Neutral adoption starts with current 1.1 assessment')
-        old = current
+        old, withdrawn = current, []
     source_ref = write(public_root,SOURCE_EDITION_PATH,old)
     all_models = set(old['selected_result_models']) | set(old.get('current_assessment_admissions',{})) | {
         'dot-underlying-model-20261108'}
@@ -242,7 +245,8 @@ def prepare(public_root, private_root, *, models=MODELS):
         source_scoring_edition=SOURCE,target_scoring_edition=TARGET,task_suite_version='1.0.0',
         attempt_condition=CONDITION,post_observation=True,adoption_new_candidate_calls=0,
         original_bytes_rewritten=False,human_review='pending',formal_comparison_eligible=False,
-        source_edition=source_ref,policy=policy_ref,adoptions=adoptions,pending_models=sorted(all_models-set(adoptions)))
+        source_edition=source_ref,policy=policy_ref,adoptions=adoptions,
+        pending_models=sorted(all_models-set(adoptions)-set(withdrawn)),withdrawn_models=withdrawn)
     transition_ref = write(public_root,TRANSITION_PATH,transition)
     edition = dict(deepcopy(old),version=TARGET,status='local-assessment-candidate',
         source_state='Local1.2.0 source-bound neutral continuation adoption; original1.1 assessments and1.0 tasks retained.',

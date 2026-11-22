@@ -715,7 +715,24 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
             raise ValueError("Unsupported manuscript native client")
         request_raw = evidence_bytes(root, row["native_request"])
         task_hash = hashlib.sha256(task).hexdigest()
-        if plan.get("client") == "claude-code":
+        visible_native = None
+        if plan.get("client") == "agy" and row.get("agy_native_evidence") is not None:
+            from .agy_native_sources import SCHEMA as VISIBLE_FINAL_SCHEMA
+            receipt = json.loads(evidence_bytes(root, row["agy_native_evidence"]))
+            if receipt.get("schema") == VISIBLE_FINAL_SCHEMA:
+                from .agy_evidence import validate_delivery
+                visible_native = validate_delivery(root, row, evidence_bytes)
+                if (evidence_bytes(root, receipt['input_projection']['original_task']) != task
+                        or row['native_request'] != receipt['native_request']
+                        or row['native_events'] != receipt['native_events']
+                        or row['candidate_input'] != receipt['candidate_input']
+                        or row['execution_plan'] != receipt['native_plan']
+                        or row['execution_result'] != receipt['execution_result']
+                        or row['native_capability_control'] != receipt['local_tools']['native_control']):
+                    raise ValueError("Manuscript visible-final projection changed its original source")
+        if visible_native is not None:
+            pass  # Its full native request/input bridge was verified by the common owner.
+        elif plan.get("client") == "claude-code":
             from .claude_code_evidence import validate_delivery
             validate_delivery(root, row, evidence_bytes)
         elif (not isinstance(plan.get("stdin_file"), str) or not plan["stdin_file"]
@@ -733,7 +750,9 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
         terminal = next((e for e in events if e.get("type", e.get("event")) in {"result", "turn.completed", "turn.failed"}), None)
         if terminal is None:
             raise ValueError("Manuscript needs an original native terminal")
-        if plan.get("client") == "claude-code":
+        if visible_native is not None:
+            text, delivered = visible_native['text'], visible_native['delivered']
+        elif plan.get("client") == "claude-code":
             from .claude_code_evidence import validate_delivery
             native = validate_delivery(root, row, evidence_bytes)
             text, delivered = native["text"], native["delivered"]
@@ -759,7 +778,10 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                 raise ValueError("Manuscript catalog events were not fully checked")
         seal = result.get("native_terminal_seal") or {}
         artifact_checks_passed = result.get("local_artifact_checks_passed") is True
-        if result.get("schema") == "math-gauge.independent-idea-native-result/v1":
+        if visible_native is not None:
+            seal = visible_native['native_terminal_seal']
+            artifact_checks_passed = result.get('artifact_checks_passed') is True
+        elif result.get("schema") == "math-gauge.independent-idea-native-result/v1":
             seal = result.get("first_terminal") or {}
             artifact_checks_passed = (result.get("artifact_checks_passed") is True
                 and result.get("normal_complete_delivery") is True
@@ -775,9 +797,10 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                 and result.get('normal_complete_delivery') is True
                 and result.get('native_terminal') == seal)
         if (not delivered or not isinstance(text, str) or not text or text.encode("utf-8") != answer
-                or candidate != task or execution.get("kind") != "math" or execution.get("request_count") != 1
+                or (visible_native is None and candidate != task)
+                or execution.get("kind") != "math" or execution.get("request_count") != 1
                 or execution.get("tool_mismatch") is not None or result.get("tool_mismatch") is not None
-                or seal.get("answer_sha256") != row["response"]["sha256"]
+                or (visible_native is None and seal.get("answer_sha256") != row["response"]["sha256"])
                 or not artifact_checks_passed
                 or plan.get("local_tool_policy") != "math-gauge.local-tools-no-search/v1"
                 or plan.get("tool_network_access") is not False
@@ -835,7 +858,9 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                 if answer[quote["start"]:quote["end"]] != quote["quote"].encode("utf-8"):
                     raise ValueError("Fidelity review quotes different original answer bytes")
         control = json.loads(evidence_bytes(root, row["native_capability_control"]))
-        if plan.get("client") == "claude-code":
+        if visible_native is not None:
+            pass  # The common AGY control owner already verified these exact bytes.
+        elif plan.get("client") == "claude-code":
             if (control.get("schema") != "math-gauge.claude-code-configuration-audit/v1"
                     or control.get("effective_sandbox_verified") is not False
                     or control.get("source_evidence") != row.get("external_harness_evidence")):
@@ -1348,6 +1373,9 @@ def validate_current_written_reviews(root, record, *, policy, external=False):
     from .stage_credit_reviews import REVIEW_SCHEMA as STAGE_CREDIT_SCHEMA, validate_entry as validate_stage_credit
 
     root = Path(root).resolve()
+    if record.get("native_current_written_sources") is not None:
+        from .native_written_sources import validate
+        return validate(root, record, policy=policy, external=external)
     items = [item for item in record.get("evidence", []) if item.get("path") == "scoring-inputs.json"]
     if len(items) != 1:
         raise ValueError("Direct current written reviews need retained scoring-input bytes")
@@ -2105,7 +2133,10 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
     load_public_task_scores(root, record)
     if validate_scores:
         load_content_rates(root, record)
-    if record.get("formalization_review") is not None:
+    if record.get("native_engineering_sources") is not None:
+        from .native_engineering_sources import validate as validate_native_engineering
+        validate_native_engineering(root, record, engineering_root=formalization_root)
+    elif record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:
             raise ValueError("Unknown formalization evidence location")
