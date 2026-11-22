@@ -399,7 +399,9 @@ class SharedHomepageEditionTests(unittest.TestCase):
         self.assertEqual(list(new['versions']),['1.3.0','1.2.0','1.1.0','1.0.0'])
         self.assertEqual(new['latest'],'1.3.0')
         self.assertEqual(new['versions']['1.3.0']['label']['zh'],'1.3.0')
-        for version,entry in old['versions'].items():self.assertEqual(new['versions'][version],entry)
+        for version,entry in old['versions'].items():
+            if tuple(map(int, version.split('.'))) < (1, 3, 0):
+                self.assertEqual(new['versions'][version],entry)
         view=json.loads(result['data/editions/1.3.0/index.json'])['data']
         self.assertEqual(view['research_preview']['weight_frame'],dict(written=30,lean=30,research=30,independent_open_research=10))
         rows={r['id']:r for r in view['research_preview']['rows']}

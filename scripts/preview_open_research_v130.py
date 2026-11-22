@@ -47,13 +47,26 @@ def fixture_data():
         default_order='retained-base-SMC', weights_ratified=False, rows=rows)
 
 
-def baseline_data(source_data=None, *, policy_path=POLICY_FILE):
+def baseline_data(source_data=None, *, policy_path=POLICY_FILE, source_bytes=None, adopted=None):
     import hashlib
     source = ROOT / 'site/data.json'
-    raw = source.read_bytes() if source_data is None else json.dumps(source_data, ensure_ascii=False, separators=(',', ':')).encode()
+    raw = (source_bytes if source_bytes is not None else source.read_bytes() if source_data is None
+           else json.dumps(source_data, ensure_ascii=False, separators=(',', ':')).encode())
     data = json.loads(raw)
+    if source_data is not None and data != source_data:
+        raise ValueError('Baseline bytes differ from the supplied data')
     if data['benchmark_version'] != '1.2.0':
         raise ValueError('Explicit 1.2 baseline projection required')
+    selected = {}
+    kind = 'existing-model-unmeasured'
+    if adopted is not None:
+        from math_gauge.independent_research_adoption import validate_public
+        validate_public(adopted)
+        if (adopted['source_binding']['sha256'] != hashlib.sha256(raw).hexdigest()
+                or adopted['policy_sha256'] != hashlib.sha256(Path(policy_path).read_bytes()).hexdigest()
+                or not set(adopted['cohort']) <= {m['id'] for m in data['models']}):
+            raise ValueError('Adopted grades bind a different baseline, policy or selected model')
+        selected, kind = adopted['models'], 'settled-selected-cohort'
     def order(model):
         ranks = model['ranking_values']
         return tuple((ranks.get(k) is None, -(ranks.get(k) or 0))
@@ -70,12 +83,20 @@ def baseline_data(source_data=None, *, policy_path=POLICY_FILE):
                 key: value[key] for key in ('lower', 'upper', 'exact')}
         for mode, report in reports.items():
             groups[mode] = {g: (report['metrics'][g]['exact'] if report['metrics'][g]['exact'] is not None else {k: report['metrics'][g][k] for k in ('lower','upper','exact')}) for g in ('written','lean','research')}
-        result = preview(base, {}, status='not-run', base_groups=groups, policy_path=policy_path)
-        rows.append(public_row(model['id'], model['label'], result, kind='existing-model-unmeasured'))
-    return dict(schema='math-gauge.research-board-preview/v1', edition='1.3.0',
-        kind='existing-model-unmeasured', category=fixture_data()['category'], rank_eligible=False,
+        review = selected.get(model['id'])
+        result = preview(base, {}, status=review['status'] if review else 'not-run',
+            review=review['axes'] if review and review['status'] == 'reviewed' else None,
+            base_groups=groups, policy_path=policy_path)
+        rows.append(public_row(model['id'], model['label'], result, kind=kind))
+    board = dict(schema='math-gauge.research-board-preview/v1', edition='1.3.0',
+        kind=kind, category=fixture_data()['category'], rank_eligible=False,
         default_order='retained-base-SMC', weights_ratified=False,
         source_binding=dict(edition='1.2.0', sha256=hashlib.sha256(raw).hexdigest()), rows=rows)
+    if adopted is not None:
+        from math_gauge.independent_research_adoption import encoded
+        board['adoption'] = dict(batch_sha256=adopted['batch_sha256'],
+            index_sha256=hashlib.sha256(encoded(adopted)).hexdigest(), cohort=adopted['cohort'], human_review='pending')
+    return board
 
 
 def main():

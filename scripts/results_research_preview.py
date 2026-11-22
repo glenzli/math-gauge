@@ -29,7 +29,11 @@ def prepare_research_preview(files, root):
     envelope = copy.deepcopy(original)
     envelope['edition'] = EDITION
     envelope['data']['benchmark_version'] = EDITION
-    board = baseline_data(json.loads(files['data.json']), policy_path=policy)
+    from math_gauge.independent_research_adoption import PUBLIC_PATH
+    adopted_path = root / PUBLIC_PATH
+    adopted = json.loads(adopted_path.read_bytes()) if adopted_path.is_file() else None
+    board = baseline_data(json.loads(files['data.json']), policy_path=policy,
+                          source_bytes=files['data.json'].encode(), adopted=adopted)
     source_models={m['id']:m for m in json.loads(files['data.json'])['models']}
     for row in board['rows']:
         model=source_models[row['id']]
@@ -43,6 +47,8 @@ def prepare_research_preview(files, root):
             if flag is True or record.get('submission_classification')=='active_final':normal+=1
             elif flag is False or record.get('delivery_verified') is False:pass
             else:unknown+=1
+        if adopted and row['id'] in adopted['models']:
+            normal += adopted['models'][row['id']]['normal_rounds']
         row['delivery']=dict(planned=45,normal=normal,unknown=unknown)
     envelope['data']['research_preview'] = board
     # Project new composite metrics from shared scoring, retaining all old payloads.
@@ -60,9 +66,13 @@ def prepare_research_preview(files, root):
             value = row['strict_overall'] if mode == 'strict' else row['composites'][key]
             known = row['strict_confirmed'] if mode == 'strict' else row['confirmed'][key]
             source = copy.deepcopy(report['metrics']['earned'])
+            source_model = source_models[model['id']]
+            source_report = source_model['retry']['combined'] if mode == 'partial' else source_model[mode]['nonlogical_retry_3']
+            known_categories = sum(source_report['metrics'][g]['exact'] is not None for g in ('written', 'lean', 'research'))
+            known_categories += int((row['task_strict'] if mode == 'strict' else row['item']['exact']) is not None)
             report['contributions']=research_preview_contributions(report.get('contributions',{}),source_policy,policy_data)
             report['metrics']['earned'] = dict(source, **value, confirmed=known, complete=value['exact'] is not None,
-                coverage=dict(unit='fixed_weighted_category',planned=4,adjudicated=3+int(value['exact'] is not None),unknown=int(value['exact'] is None)))
+                coverage=dict(unit='fixed_weighted_category',planned=4,adjudicated=known_categories,unknown=4-known_categories))
             report['metrics']['overall'] = dict(value, complete=value['exact'] is not None,
                 coverage=copy.deepcopy(report['metrics']['earned']['coverage']))
             report['score_construct'] = 'independent-research-composite-v1.3.0-not-legacy-mode'
@@ -74,8 +84,15 @@ def prepare_research_preview(files, root):
                 group_weights=dict(written=30,lean=30,research=30,independent_open_research=10),
                 independent_research=copy.deepcopy(row),source_binding=copy.deepcopy(board['source_binding']),
                 candidate_calls=0,rank_eligible=False)
+            if adopted:
+                download['adoption_binding'] = copy.deepcopy(board['adoption'])
             result['versions/1.3.0/downloads/'+model['id']+'-combined'+suffix+'-retry.json']=json.dumps(download,ensure_ascii=False,indent=2)+'\n'
         set_published_scores(model)
+        if adopted:
+            comparable = all(v['exact'] is not None for v in row['composites'].values()) and row['strict_overall']['exact'] is not None
+            model['ranking_complete'] = comparable
+            if not comparable:
+                model['ranking_values'] = dict.fromkeys(('strict', 'partial', 'capability'))
     scene_source = json.loads(files['data.json'])
     scene_source['models'] = envelope['data']['models']
     envelope['data']['chart_scenes']['chart-groups'] = chart_scenes(scene_source)['chart-groups']

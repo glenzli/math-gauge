@@ -78,6 +78,25 @@ test('old editions receive no DOM mutation from the new controller', () => {
   delete globalThis.MG;
 });
 
+test('a whole settled projection accepts grades and keeps every unselected model unmeasured', () => {
+  // Pure synthetic grades on an in-memory clone; never install a public result.
+  const data = structuredClone(globalThis.MGResearchBaselineData);
+  data.kind = 'settled-selected-cohort';
+  data.adoption = {batch_sha256:'a'.repeat(64),index_sha256:'b'.repeat(64),cohort:data.rows.slice(0,2).map(r=>r.id),human_review:'pending'};
+  data.rows = data.rows.map((row,index)=>index<2?{...structuredClone(fixture.rows[index]),id:row.id,label:row.label,kind:data.kind}:{...row,kind:data.kind});
+  assert.doesNotThrow(()=>ui.validate(data));
+  assert.match(ui.render(data),/>0.0</);
+  const unselected=structuredClone(data);
+  unselected.rows[2].components.autonomy={state:'reviewed',value:0,strict:false};
+  assert.throws(()=>ui.validate(unselected));
+  const pending=structuredClone(data);
+  pending.rows[0].components.taste={state:'unreviewed',value:null,strict:null};
+  assert.throws(()=>ui.validate(pending));
+  const privateData=structuredClone(data);
+  privateData.adoption.evidence='forbidden';
+  assert.throws(()=>ui.validate(privateData));
+});
+
 test('the existing index table is enhanced using the original lexical MG controller', async () => {
   const { readFileSync } = await import('node:fs');
   const vm = await import('node:vm');

@@ -11,32 +11,38 @@
   }
   function validate(data) {
     const baseline = data.kind === 'existing-model-unmeasured';
+    const settled = data.kind === 'settled-selected-cohort';
     const fields = ['schema', 'edition', 'kind', 'category', 'rank_eligible', 'default_order', 'weights_ratified', 'rows'];
-    if (baseline) fields.push('source_binding');
+    if (baseline || settled) fields.push('source_binding');
+    if (settled) fields.push('adoption');
     if (!keys(data, fields) ||
-        data.schema !== 'math-gauge.research-board-preview/v1' || data.edition !== '1.3.0' || (!baseline && data.kind !== 'synthetic-fixture') ||
+        data.schema !== 'math-gauge.research-board-preview/v1' || data.edition !== '1.3.0' || (!baseline && !settled && data.kind !== 'synthetic-fixture') ||
         data.rank_eligible !== false || data.weights_ratified !== false || data.default_order !== 'retained-base-SMC' ||
         !keys(data.category, ['id', 'zh', 'en']) || data.category.id !== 'open-research' || !Array.isArray(data.rows)) {
       throw new Error('Unrecognized local display projection');
     }
-    if (baseline && (!keys(data.source_binding, ['edition', 'sha256']) || data.source_binding.edition !== '1.2.0' || !/^[a-f0-9]{64}$/.test(data.source_binding.sha256))) throw new Error('Unbound baseline');
+    if ((baseline || settled) && (!keys(data.source_binding, ['edition', 'sha256']) || data.source_binding.edition !== '1.2.0' || !/^[a-f0-9]{64}$/.test(data.source_binding.sha256))) throw new Error('Unbound baseline');
+    if (settled && (!keys(data.adoption, ['batch_sha256', 'index_sha256', 'cohort', 'human_review']) || !/^[a-f0-9]{64}$/.test(data.adoption.batch_sha256) || !/^[a-f0-9]{64}$/.test(data.adoption.index_sha256) || data.adoption.human_review !== 'pending' || !Array.isArray(data.adoption.cohort) || !data.adoption.cohort.length || new Set(data.adoption.cohort).size !== data.adoption.cohort.length)) throw new Error('Unbound whole-cohort adoption');
     const seen = new Set();
     for (const row of data.rows) {
       if (!keys(row, ['id', 'label', 'kind', 'base_smc', 'components', 'task_strict', 'item', 'coverage', 'strict_overall', 'composite', 'composites', 'confirmed', 'strict_confirmed', 'delivery']) ||
-          !(baseline ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== data.kind || typeof row.label !== 'string' ||
+          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== data.kind || typeof row.label !== 'string' ||
           !(score(row.base_smc) || bounds(row.base_smc)) || !keys(row.components, axes.map(a => a[0])) || !bounds(row.strict_overall) || !bounds(row.composite) || !keys(row.composites, ['MC','RMC','SMC']) || !Object.values(row.composites).every(bounds) || !keys(row.confirmed,['MC','RMC','SMC']) || !Object.values(row.confirmed).every(score) || !score(row.strict_confirmed) || !keys(row.delivery,['planned','normal','unknown']) || row.delivery.planned!==45 || !Number.isInteger(row.delivery.normal) || !Number.isInteger(row.delivery.unknown) || row.delivery.normal<0 || row.delivery.unknown<0 || row.delivery.normal+row.delivery.unknown>45 || !bounds(row.item) ||
           ![0, 100, null].includes(row.task_strict) || !keys(row.coverage, ['planned', 'reviewed', 'components_planned', 'components_reviewed']) ||
           row.coverage.planned !== 1 || row.coverage.components_planned !== 3 || ![0, 1].includes(row.coverage.reviewed) ||
           ![0, 1, 2, 3].includes(row.coverage.components_reviewed)) throw new Error('Unexpected row or private payload');
-      if (baseline && (row.task_strict !== null || row.coverage.reviewed !== 0 || row.coverage.components_reviewed !== 0 || row.strict_overall.exact !== null || row.composite.exact !== null)) throw new Error('Unmeasured model acquired a research result');
+      const unmeasured = baseline || (settled && !data.adoption.cohort.includes(row.id));
+      if (unmeasured && (row.task_strict !== null || row.coverage.reviewed !== 0 || row.coverage.components_reviewed !== 0 || row.strict_overall.exact !== null || row.composite.exact !== null)) throw new Error('Unmeasured model acquired a research result');
       seen.add(row.id);
       for (const [key] of axes) {
         const component = row.components[key];
-        if (baseline && (component.state !== 'not-tested' || component.value !== null || component.strict !== null)) throw new Error('Unmeasured component acquired a grade');
+        if (unmeasured && (component.state !== 'not-tested' || component.value !== null || component.strict !== null)) throw new Error('Unmeasured component acquired a grade');
+        if (settled && !unmeasured && !['reviewed', 'insufficient-evidence', 'delivery-failed'].includes(component.state)) throw new Error('Adopted component is still pending');
         if (!keys(component, ['state', 'value', 'strict']) || ![true,false,null].includes(component.strict) || !(component.state === 'reviewed' ? score(component.value) :
             Object.hasOwn(states, component.state) && component.value === null)) throw new Error('Unknown and zero must remain distinct');
       }
     }
+    if (settled && !data.adoption.cohort.every(id => seen.has(id))) throw new Error('Partial adopted cohort');
     return data;
   }
   function componentCell(value) {
@@ -79,7 +85,7 @@
     const title = en ? 'Independent Open Research' : '独立开放研究';
     let note = doc.getElementById('independent-research-preview-note');
     if (!note) { note = doc.createElement('p'); note.id = 'independent-research-preview-note'; note.className = 'panel-desc independent-research-note'; doc.getElementById('leaderboard').prepend(note); }
-    note.textContent = en ? '1.3.0: Written 30 / Lean 30 / Supporting research 30 / Independent open research 10. New tasks are unmeasured. Bars show confirmed contributions reweighted from 1.2.0, with the unmeasured ten points retained as unknown.' :
+    note.textContent = board.adoption ? (en ? '1.3.0: Written 30 / Lean 30 / Supporting research 30 / Independent open research 10. The selected cohort was adopted together after independent Sol 6.1 Max reviews. Other new-task scores remain blank; incomplete totals have no comparison rank.' : '1.3.0：书面30／Lean30／辅助研究30／独立开放研究10。选定批次经独立Sol 6.1 Max评审后统一采用；其他模型新题留空，完整成绩证据不足时不列可比较名次。') : en ? '1.3.0: Written 30 / Lean 30 / Supporting research 30 / Independent open research 10. New tasks are unmeasured. Bars show confirmed contributions reweighted from 1.2.0, with the unmeasured ten points retained as unknown.' :
       '1.3.0：书面30／Lean30／辅助研究30／独立开放研究10。新题三项尚未实测。柱状图按新权重显示原1.2证据的已确认贡献；新增10分保留未知区间，未把已测部分归一化。';
     const rows = new Map(board.rows.map(r=>[r.id,r]));
     for (const row of doc.querySelectorAll('#ranking-body tr')) {
@@ -102,7 +108,7 @@
     }
     for(const cell of doc.querySelectorAll('#ranking thead .delivery-cell'))cell.textContent=en?'Delivery rate / 45':'整体交付率 / 45';
     const profile=doc.getElementById('mathematical-profile');if(profile)profile.hidden=true;
-    const desc=doc.getElementById('leaderboard-desc'); if(desc)desc.textContent=en?'1.3 confirmed contribution · ten research points unmeasured':'1.3已确认贡献排序 · 新增10分未测，完整分仍未知';
+    const desc=doc.getElementById('leaderboard-desc'); if(desc)desc.textContent=board.adoption?(en?'1.3 settled full-scope comparisons · other confirmed contributions retained':'1.3完整范围的已结算比较 · 其他配置保留已确认贡献'):(en?'1.3 confirmed contribution · ten research points unmeasured':'1.3已确认贡献排序 · 新增10分未测，完整分仍未知');
     const anchor=doc.getElementById('category-leaderboards');
     if(anchor) {
       let panel=doc.getElementById('independent-research-leaderboards');
@@ -117,8 +123,10 @@
       const body=ordered.map(({r},index)=>{
         const v=known(r),component=field?r.components[field]:null,verdict=field?component.strict:(r.task_strict===null?null:r.task_strict===100);
         if(v!==null&&v!==previous)rank=index+1;previous=v;
-        const display=field?componentCell(component):(v===null?'':v.toFixed(2));
-        return '<tr><td>'+(v===null?'':rank)+'</td><td>'+esc(r.label)+'</td><td class="numeric">'+display+'</td><td class="numeric">'+(verdict===null?'':verdict?'通过':'未通过')+'</td><td class="numeric">'+(v===null?'':'1/1')+'</td></tr>';
+        const unmeasured=Object.values(r.components).every(c=>c.state==='not-tested');
+        const display=field?componentCell(component):(v===null?(unmeasured?'':'证据不足'):v.toFixed(2));
+        const coverage=unmeasured?'':field?(v===null?'未知/':(field==='taste'?'3/':'1/'))+(field==='taste'?'3稿':'1题'):r.coverage.components_reviewed+'/3分项';
+        return '<tr><td>'+(v===null?'':rank)+'</td><td>'+esc(r.label)+'</td><td class="numeric">'+display+'</td><td class="numeric">'+(verdict===null?'':verdict?'通过':'未通过')+'</td><td class="numeric">'+coverage+'</td></tr>';
       }).join('');
       const models=new Map(mg.d.models.map(m=>[m.id,m]));
       const chart=ordered.map(({r})=>{
