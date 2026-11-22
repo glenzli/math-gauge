@@ -268,26 +268,29 @@
   const t=key=>(axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
   const viewText=pair=>pair[lang==='en'?1:0];
   const views=data.benchmark_version==='1.3.0'?buildViews():null;
+  const compactCoverage=data.benchmark_version==='1.3.0';
   const coverageNames={lean_subcategory:'formalization',open_research_family:'openResearch',benchmark_subcategory:'smc',
    fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste'};
   const coverage=metric=>{const {unit,reviewed,planned}=metric.coverage,count=reviewed+'/'+planned,key=coverageNames[unit];
-   const base=key?t(key)+' · '+count:count+' '+t('settled');
+   const base=compactCoverage&&reviewed===planned?'':key?t(key)+' · '+count:count+' '+t('settled');
    const taste=metric.taste_coverage;
    if(taste){
     const checkpoints=taste.unit==='taste_checkpoint';
     const status=checkpoints?strictTasteStates[metric.independent_metric?.state]:null;
-    let text=t(checkpoints?'tasteCheckpoints':'tasteManuscripts')+' · '+taste.reviewed+'/'+taste.planned;
-    if(status)text+=' · '+viewText(status);
-    return text+' · '+base+(metric.legacy_review_available===false?' · '+t('strictSourceUnavailable'):'');
+    let text=compactCoverage&&taste.reviewed===taste.planned?'':t(checkpoints?'tasteCheckpoints':'tasteManuscripts')+' · '+taste.reviewed+'/'+taste.planned;
+    if(status)text=[text,viewText(status)].filter(Boolean).join(' · ');
+    return [text,base,metric.legacy_review_available===false?t('strictSourceUnavailable'):''].filter(Boolean).join(' · ');
    }
    const task=metric.task_coverage;
    if(!task)return base;
-   const observed=t('newTask')+' '+task.reviewed+'/'+task.planned;
-   const components=task.components_planned>1?' ('+t('components')+' '+task.components_reviewed+'/'+task.components_planned+')':'';
-   return (metric.base_coverage?base:t('baseUnknown'))+' · '+observed+components;};
+   const componentsMissing=task.components_reviewed!==task.components_planned;
+   const observed=compactCoverage&&task.reviewed===task.planned&&!componentsMissing?'':t('newTask')+' '+task.reviewed+'/'+task.planned;
+   const components=task.components_planned>1&&(!compactCoverage||componentsMissing)?' ('+t('components')+' '+task.components_reviewed+'/'+task.components_planned+')':'';
+   return [metric.base_coverage?base:t('baseUnknown'),observed+components].filter(Boolean).join(' · ');};
   const separateCoverage=['formalization','open_research',tasteAxis.id];
   const settledCoverage=model=>{const counts=axes.filter(axis=>axis.id!=='completion'&&!separateCoverage.includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
-   return (low===high?low:low+'–'+high)+'/35 '+t('settled')+separateCoverage.filter(id=>model.profile_metrics[id]).map(id=>' · '+coverage(model.profile_metrics[id])).join('')};
+   const families=compactCoverage&&low===35?'':(low===high?low:low+'–'+high)+'/35 '+t('settled');
+   return [families,...separateCoverage.filter(id=>model.profile_metrics[id]).map(id=>coverage(model.profile_metrics[id]))].filter(Boolean).join(' · ')};
   const appendLogo=(target,model)=>{if(model.logo?.data_url){const image=node('img');image.src=model.logo.data_url;image.alt='';target.append(image)}};
   function buildViews(){
    const radar=el('chart').closest('.mp-layout'),table=el('values').closest('details');
@@ -339,7 +342,8 @@
     for(const {model,metric} of unknown){
      const row=node('li',undefined,'mp-unranked-row');row.dataset.profileBarModel=model.id;
      const interval=metric.lower===0&&metric.upper===100?viewText(profileViewCopy.unknown):format(metric.lower)+'–'+format(metric.upper);
-     row.append(label(model),node('span',interval,'mp-rank-score'),node('small',coverage(metric),'mp-cell-coverage'));
+     row.append(label(model),node('span',interval,'mp-rank-score'));
+     const detail=coverage(metric);if(detail)row.append(node('small',detail,'mp-cell-coverage'));
      list.append(row);
     }
     content.push(node('p',viewText(profileViewCopy.unranked),'mp-unranked-title'),list);
@@ -383,7 +387,7 @@
      const a=-Math.PI/2+interval.index*2*Math.PI/axes.length,dx=Math.cos(a+Math.PI/2)*4,dy=Math.sin(a+Math.PI/2)*4;
      for(const p of [interval.from,interval.to])group.append(svg('line',{class:'mp-interval',x1:p.x-dx,y1:p.y-dy,x2:p.x+dx,y2:p.y+dy,stroke:style.color}));
     }
-    shape.vertices.forEach((p,index)=>{if(!p)return;const mark=marker(group,style.marker,p.x,p.y,style.color);mark.setAttribute('data-profile-point',axes[index].id);mark.setAttribute('data-value',p.value);const tip=svg('title');tip.textContent=model.label+' · '+axes[index].label[lang]+' '+format(p.value)+' / 100 · '+coverage(model.profile_metrics[axes[index].id]);mark.append(tip)});
+    shape.vertices.forEach((p,index)=>{if(!p)return;const mark=marker(group,style.marker,p.x,p.y,style.color);mark.setAttribute('data-profile-point',axes[index].id);mark.setAttribute('data-value',p.value);const tip=svg('title');tip.textContent=[model.label,axes[index].label[lang]+' '+format(p.value)+' / 100',coverage(model.profile_metrics[axes[index].id])].filter(Boolean).join(' · ');mark.append(tip)});
     focusEvents(group,id);series.set(id,group);chart.append(group);
    }el('chart').replaceChildren(chart);
   }
@@ -391,7 +395,7 @@
    for(const id of selected){const model=byId.get(id),style=styleFor(model),button=node('button',undefined,'mp-legend-button');button.type='button';button.title=model.label;button.setAttribute('aria-pressed',String(pinned===id));
     const sample=svg('svg',{viewBox:'0 0 40 18','aria-hidden':'true'});sample.append(svg('line',{x1:1,y1:9,x2:39,y2:9,stroke:style.color,'stroke-width':2,'stroke-dasharray':style.dash}));marker(sample,style.marker,20,9,style.color);button.append(sample);appendLogo(button,model);
     const identity=node('span'),name=node('span',model.label,'mp-legend-name'),known=axes.filter(axis=>model.profile_metrics[axis.id].exact!==null).length;
-    identity.append(name,node('span',settledCoverage(model),'mp-legend-coverage'));
+    identity.append(name);const detail=settledCoverage(model);if(detail)identity.append(node('span',detail,'mp-legend-coverage'));
     if(stage==='revision'&&model.neutral_revision_completion){const detail=model.neutral_revision_completion,rate=detail.full_rate?.exact,delta=model.neutral_revision_delta?.strict;
      identity.append(node('span',detail.selected+' '+t('continued')+' · '+t('full')+' '+(rate==null?'—':format(rate*100)+'%')+' · ΔSMC '+(delta==null?'—':(delta>0?'+':'')+format(delta)),'mp-revision-summary'))}
 button.append(identity);focusEvents(button,id);button.addEventListener('click',()=>{pinned=pinned===id?null:id;focus()});legendButtons.set(id,button);items.push(button);
@@ -405,7 +409,7 @@ button.append(identity);focusEvents(button,id);button.addEventListener('click',(
       if(axis.id===tasteAxis.id&&metric.lower===0&&metric.upper===100)cell.append(node('span',t('tasteUnknown'),'mp-axis-value'));
       else cell.append(node('span',format(metric.lower)+'–'+format(metric.upper),'mp-axis-value'),node('small',t('confirmed')+' '+format(metric.confirmed),'mp-cell-confirmed'));
      }else cell.append(node('span',format(metric.exact),'mp-axis-value'));
-     cell.append(node('small',coverage(metric),'mp-cell-coverage'));tr.append(cell)});body.append(tr);
+     const detail=coverage(metric);if(detail)cell.append(node('small',detail,'mp-cell-coverage'));tr.append(cell)});body.append(tr);
    }table.replaceChildren(caption,head,body);
   }
   function renderMeanings(){el('meanings').hidden=false;

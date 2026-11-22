@@ -470,7 +470,7 @@ test('strict taste shares stage and model selections across the three ten-axis p
  const measuredSeries=f.series().find(group=>group.getAttribute('data-profile-model')===measured);
  assert.ok(nodesBelow(measuredSeries).some(node=>node.getAttribute('data-profile-interval')==='mathematical_taste'));
  assert.match(f.el('legend').children[2].children.at(-1).children[1].textContent,/0\/3 · 新题未测 · 旧题有确值家族 · 0\/6 · 旧题严格复核汇总未提供/);
- assert.match(f.el('legend').children[0].children.at(-1).children[1].textContent,/开放研究 · 5\/5 · 本题 1\/1 \(分项 2\/2\)/);
+ assert.equal(f.el('legend').children[0].children.at(-1).children[1].textContent,'旧题有确值家族 · 3/6');
  assert.match(f.el('meanings-scope').textContent,/已审查 7\/7 份.*原文缺失 1 份/);
  const profileNodes=()=>nodesBelow(f.el(''));
  const activePanes=()=>profileNodes().filter(node=>node.dataset.profilePane&&!node.hidden).map(node=>node.dataset.profilePane);
@@ -481,6 +481,9 @@ test('strict taste shares stage and model selections across the three ten-axis p
  assert.deepEqual(activePanes(),['radar']);
  switchView('table');assert.deepEqual(activePanes(),['table']);
  assert.deepEqual(tableTaste(),['83.0–93.0','0.0','未知']);
+ const tasteCells=()=>f.el('values').children[2].children.map(row=>row.children.at(-1));
+ assert.equal(tasteCells()[0].children.at(-1).textContent,'旧题有确值家族 · 3/6');
+ assert.equal(tasteCells()[1].children.length,1,'a fully reviewed true zero needs no coverage row');
  switchView('bars');assert.deepEqual(activePanes(),['bars']);
  const axis=profileNodes().find(node=>node.tagName==='select');
  axis.value='mathematical_taste';axis.fire('change');
@@ -494,6 +497,12 @@ test('strict taste shares stage and model selections across the three ten-axis p
  assert.ok(nodesBelow(restored.el('')).some(node=>node.dataset.profilePane==='bars'&&!node.hidden));
  assert.equal(nodesBelow(restored.el('')).find(node=>node.tagName==='select').value,'mathematical_taste');
  switchView('radar');assert.equal(tastePoint(measured),'90');
+ assert.ok(!nodesBelow(f.el('legend').children[0]).some(node=>node.className==='mp-legend-coverage'),
+  'fully settled families, Lean, open research and taste do not consume a legend line');
+ switchView('table');
+ assert.ok(f.el('values').children[2].children[0].children.slice(1).every(cell=>
+  !nodesBelow(cell).some(node=>node.className==='mp-cell-coverage')),
+  'fully settled axis cells show their values without repeated denominators');
  f.controller.setSelection([zero]);switchView('bars');assert.deepEqual(rankRows(),[[zero,'1','0.0']]);
  assert.equal(f.win.location.searchParams.get('profile-models'),zero);
  assert.equal(new URL(f.win.location.href).searchParams.get('score'),'strict');
