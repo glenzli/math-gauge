@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
 from scripts.results_publication import atomic_write, data_literal
+from math_gauge import independent_research_item_weights as item_weights
 from math_gauge import independent_research_score_modes as modes
 from math_gauge import independent_research_strict_credit as credit
 from math_gauge import independent_research_value as value_revision
@@ -74,10 +75,13 @@ def prepare_research_preview(files, root):
     legacy_taste_path = root / legacy_taste_strict.PUBLIC_PATH
     value_policy_path, value_path = root / value_revision.POLICY_PATH, root / value_revision.PUBLIC_PATH
     strict_policy_path, strict_path = root / credit.PATH, root / credit.PUBLIC_PATH
+    item_weight_policy_path = root / item_weights.POLICY_PATH
     revised = value_policy_path.is_file()
     construct = 'independent-research-value-v0.2.0' if revised else 'independent-research-score-modes-v1.3.0'
     if strict_policy_path.is_file():
         construct = 'independent-research-strict-credit-v0.1.0'
+    if item_weight_policy_path.is_file():
+        construct = f'independent-research-item-weights-v{item_weights.VERSION}'
     adopted_bytes = adopted_path.read_bytes() if adopted_path.is_file() else None
     overlay_bytes = overlay_path.read_bytes() if overlay_path.is_file() else None
     adopted = json.loads(adopted_bytes) if adopted_bytes is not None else None
@@ -90,7 +94,8 @@ def prepare_research_preview(files, root):
         value_policy_path=value_policy_path if revised else None,
         value_bytes=value_path.read_bytes() if value_path.is_file() else None,
         strict_credit_policy_path=strict_policy_path if strict_policy_path.is_file() else None,
-        strict_credit_bytes=strict_path.read_bytes() if strict_path.is_file() else None)
+        strict_credit_bytes=strict_path.read_bytes() if strict_path.is_file() else None,
+        item_weight_policy_path=item_weight_policy_path if item_weight_policy_path.is_file() else None)
     source_models={m['id']:m for m in json.loads(files['data.json'])['models']}
     for row in board['rows']:
         model=source_models[row['id']]
@@ -169,6 +174,8 @@ def prepare_research_preview(files, root):
                 download['item_weights'] = copy.deepcopy(board['item_weights'])
             if 'strict_credit_binding' in board:
                 download['strict_credit_binding'] = copy.deepcopy(board['strict_credit_binding'])
+            if 'item_weight_binding' in board:
+                download['item_weight_binding'] = copy.deepcopy(board['item_weight_binding'])
             result['versions/1.3.0/downloads/'+model['id']+'-combined'+suffix+'-retry.json']=json.dumps(download,ensure_ascii=False,indent=2)+'\n'
         set_published_scores(model)
         if adopted or revised:

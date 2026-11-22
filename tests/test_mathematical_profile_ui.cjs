@@ -23,16 +23,17 @@ function fixture(data=dataFixture(),query='?edition=1.1.0&lang=zh&score=capabili
  const documentNodes=new Map(),events=new Map(),comparisons=[],changes=[];
  class Element{
   constructor(tag){this.tagName=tag;this.children=[];this.attrs=new Map();this.style={setProperty(){}};this.dataset={};this.listeners=new Map();this.hidden=false;this.checked=false;this.textContent='';}
-  append(...children){for(const child of children){this.children.push(child);child.parentElement=this}}
-  replaceChildren(...children){this.children=[];this.append(...children)}
+  append(...children){for(const child of children){child.remove();this.children.push(child);child.parentElement=this}}
+  replaceChildren(...children){for(const child of this.children)child.parentElement=null;this.children=[];this.append(...children)}
   closest(selector){
    for(let node=this;node;node=node.parentElement){
     if(selector.startsWith('.')?node.className===selector.slice(1):node.tagName===selector)return node;
    }
    return null;
   }
-  before(node){const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this),0,node);node.parentElement=this.parentElement}
-  after(node){const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this)+1,0,node);node.parentElement=this.parentElement}
+  remove(){if(this.parentElement){const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this),1);this.parentElement=null}}
+  before(node){node.remove();const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this),0,node);node.parentElement=this.parentElement}
+  after(node){node.remove();const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this)+1,0,node);node.parentElement=this.parentElement}
   setAttribute(key,value){this.attrs.set(key,String(value))}
   getAttribute(key){return this.attrs.get(key)??null}
   removeAttribute(key){this.attrs.delete(key)}
@@ -47,8 +48,12 @@ function fixture(data=dataFixture(),query='?edition=1.1.0&lang=zh&score=capabili
  }
  const section=documentNodes.get('mathematical-profile');section.setAttribute('data-assessment-only','1.1.0');
  const find=name=>documentNodes.get('mathematical-profile-'+name),radar=new Element('div'),values=new Element('details');
+ const toolbar=new Element('div');toolbar.className='mp-toolbar';
+ find('continuation-control').append(find('continuation'),find('continuation-label'));
+ find('picker').append(find('picker-title'),find('count'));
+ toolbar.append(find('continuation-control'),find('controls'),find('picker'));
  radar.className='mp-layout';radar.append(find('chart'),find('legend'));values.append(find('values-title'),find('coverage-note'),find('values'));
- section.append(radar,values);
+ section.append(toolbar,find('choices'),radar,find('empty'),values);
  const profileNav=new Element('a');profileNav.setAttribute('data-assessment-only','1.2.0');
  profileNav.hidden=data.benchmark_version!=='1.2.0';
  documentNodes.get('mathematical-profile-choices').hidden=true;
@@ -419,10 +424,12 @@ test('unknown formalization is a ninth-axis gap and never becomes a measured zer
  data.benchmark_version='1.1.0';assert.equal(ui.prepare(data,compare).axes.length,7);
 });
 
-test('strict taste shares stage and model selections across the three ten-axis profile views',()=>{
+test('current profile uses adopted evidence and shows the whole eligible cohort outside the radar view',()=>{
  const original=formalizationFixture(),data=structuredClone(original);
  data.benchmark_version='1.3.0';
  const [measured,zero,unmeasured]=ids;
+ data.models.at(-1).presentation_eligibility={ranked:false};
+ const eligible=data.models.filter(model=>model.presentation_eligibility?.ranked!==false);
  const point=exact=>({exact,lower:exact,upper:exact,confirmed:exact});
  const mixed=(exact,unit='mathematical_family',planned=35,components=1)=>({...point(exact),
   base_coverage:{unit,planned,reviewed:planned},task_coverage:{unit:'independent_open_research_task',planned:1,
@@ -460,10 +467,14 @@ test('strict taste shares stage and model selections across the three ten-axis p
   }
  }
  const query='&lang=zh&score=strict&profile-models='+[measured,zero,unmeasured].join(',');
- const f=fixture(data,'?edition=1.3.0'+query);
- assert.equal(f.el('').hidden,false);assert.equal(f.el('continuation-control').hidden,false);
+ assert.equal(ui.prepare(data,compare).stage,'revision');
+ const f=fixture(data,'?edition=1.3.0&profile-stage=first'+query+'#mathematical-profile');
+ assert.equal(f.el('').hidden,false);
+ assert.ok(!nodesBelow(f.el('')).includes(f.el('continuation-control')));
  assert.equal(f.profileNav.hidden,false);assert.equal(f.profileNav.getAttribute('data-assessment-only'),'1.3.0');
  assert.equal(f.controller.stage(),'revision');
+ assert.equal(f.win.location.searchParams.has('profile-stage'),false);
+ assert.equal(f.win.location.hash,'#mathematical-profile');
  const tastePoint=id=>nodesBelow(f.series().find(group=>group.getAttribute('data-profile-model')===id)).find(
   node=>node.getAttribute('data-profile-point')==='mathematical_taste')?.getAttribute('data-value');
  assert.equal(tastePoint(measured),undefined);assert.equal(tastePoint(zero),'0');assert.equal(tastePoint(unmeasured),undefined);
@@ -478,34 +489,57 @@ test('strict taste shares stage and model selections across the three ten-axis p
  const tableTaste=()=>f.el('values').children[2].children.map(row=>row.children.at(-1).children[0].textContent);
  const rankRows=()=>profileNodes().filter(node=>node.dataset.profileBarModel).map(node=>
   [node.dataset.profileBarModel,node.dataset.profileBarRank??null,nodesBelow(node).find(child=>child.className==='mp-rank-score').textContent]);
+ const radar=profileNodes().find(node=>node.dataset.profilePane==='radar');
+ f.el('picker').fire('click');
+ for(const key of ['controls','picker','choices','empty'])assert.ok(nodesBelow(radar).includes(f.el(key)));
  assert.deepEqual(activePanes(),['radar']);
  switchView('table');assert.deepEqual(activePanes(),['table']);
- assert.deepEqual(tableTaste(),['83.0–93.0','0.0','未知']);
+ assert.equal(radar.hidden,true);
+ assert.deepEqual(f.el('values').children[2].children.map(row=>row.children[0].textContent),eligible.map(model=>model.label));
+ assert.deepEqual(tableTaste().slice(0,3),['83.0–93.0','0.0','未知']);
  const tasteCells=()=>f.el('values').children[2].children.map(row=>row.children.at(-1));
  assert.equal(tasteCells()[0].children.at(-1).textContent,'旧题有确值家族 · 3/6');
  assert.equal(tasteCells()[1].children.length,1,'a fully reviewed true zero needs no coverage row');
  switchView('bars');assert.deepEqual(activePanes(),['bars']);
  const axis=profileNodes().find(node=>node.tagName==='select');
  axis.value='mathematical_taste';axis.fire('change');
- assert.deepEqual(rankRows(),[[zero,'1','0.0'],[measured,null,'83.0–93.0'],[unmeasured,null,'未知']]);
- f.el('continuation').checked=false;f.el('continuation').fire('change');
- assert.equal(f.controller.stage(),'first');
- assert.deepEqual(rankRows(),[[measured,'1','90.0'],[zero,'2','0.0'],[unmeasured,null,'未知']]);
+ const allRanks=rankRows();
+ assert.equal(allRanks.length,eligible.length);
+ assert.deepEqual(allRanks.slice(0,3),[[zero,'1','0.0'],[measured,null,'83.0–93.0'],[unmeasured,null,'未知']]);
+ f.win.location.searchParams.set('profile-stage','first');f.win.fire('popstate');
+ assert.equal(f.controller.stage(),'revision');
+ assert.equal(f.win.location.searchParams.has('profile-stage'),false);
+ assert.deepEqual(rankRows(),allRanks);
  assert.equal(f.win.location.searchParams.get('profile-view'),'bars');
  assert.equal(f.win.location.searchParams.get('profile-axis'),'mathematical_taste');
  const restored=fixture(data,f.win.location.search);
  assert.ok(nodesBelow(restored.el('')).some(node=>node.dataset.profilePane==='bars'&&!node.hidden));
  assert.equal(nodesBelow(restored.el('')).find(node=>node.tagName==='select').value,'mathematical_taste');
- switchView('radar');assert.equal(tastePoint(measured),'90');
- assert.ok(!nodesBelow(f.el('legend').children[0]).some(node=>node.className==='mp-legend-coverage'),
-  'fully settled families, Lean, open research and taste do not consume a legend line');
- switchView('table');
- assert.ok(f.el('values').children[2].children[0].children.slice(1).every(cell=>
-  !nodesBelow(cell).some(node=>node.className==='mp-cell-coverage')),
-  'fully settled axis cells show their values without repeated denominators');
- f.controller.setSelection([zero]);switchView('bars');assert.deepEqual(rankRows(),[[zero,'1','0.0']]);
- assert.equal(f.win.location.searchParams.get('profile-models'),zero);
+ switchView('radar');assert.equal(tastePoint(measured),undefined);
+ assert.deepEqual(f.controller.selected(),[measured,zero,unmeasured]);
+ assert.equal(f.el('choices').hidden,false);
+ f.el('controls').children.find(node=>node.dataset.profilePreset==='clear').fire('click');
+ assert.deepEqual(f.controller.selected(),[]);
+ switchView('table');assert.equal(tableTaste().length,eligible.length);
+ switchView('bars');assert.deepEqual(rankRows(),allRanks);
+ assert.equal(f.win.location.searchParams.get('profile-models'),'');
+ switchView('radar');assert.equal(f.series().length,0);
  assert.equal(new URL(f.win.location.href).searchParams.get('score'),'strict');
+
+ const weighted=structuredClone(data),binding={version:'0.1.0',policy_sha256:'a'.repeat(64)};
+ weighted.research_preview.item_weight_binding=binding;
+ const companion=weighted.independent_research_abilities;
+ companion.schema='math-gauge.independent-research-abilities/v7';
+ companion.item_weight_binding={...binding};
+ Object.assign(companion.by_model[measured].completion_v130,point(76));
+ for(const stage of ['first','revision']){
+  const row=ui.prepare(weighted,compare,stage).models.find(model=>model.id===measured);
+  assert.equal(row.profile_metrics.completion.exact,76);
+  assert.deepEqual(row.profile_metrics.mathematical_taste,
+   ui.prepare(data,compare,stage).models.find(model=>model.id===measured).profile_metrics.mathematical_taste);
+ }
+ companion.item_weight_binding.policy_sha256='b'.repeat(64);
+ assert.equal(ui.prepare(weighted,compare).models.find(model=>model.id===measured).profile_metrics.completion.exact,null);
 
  const oldWithCompanion={...original,independent_research_abilities:data.independent_research_abilities};
  const oldQuery='?edition=1.2.0'+query,old=fixture(original,oldQuery),same=fixture(oldWithCompanion,oldQuery);

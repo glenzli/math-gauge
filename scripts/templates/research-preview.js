@@ -10,7 +10,9 @@
   const scoreModeSchema = 'math-gauge.research-board-preview/v2';
   const valueSchema = 'math-gauge.research-board-preview/v3';
   const strictCreditSchema = 'math-gauge.research-board-preview/v4';
-  const valueBoard = board => [valueSchema, strictCreditSchema].includes(board.schema);
+  const itemWeightSchema = 'math-gauge.research-board-preview/v5';
+  const strictCreditBoard = board => [strictCreditSchema, itemWeightSchema].includes(board.schema);
+  const valueBoard = board => board.schema === valueSchema || strictCreditBoard(board);
   const scoreModeBoard = board => board.schema === scoreModeSchema || valueBoard(board);
   const boardAxes = board => valueBoard(board) ? axes.slice(1) : axes;
   const states = { 'not-tested': '未测', unreviewed: '待评', 'insufficient-evidence': '证据不足', 'delivery-failed': '未正常交付' };
@@ -68,7 +70,8 @@
   function validate(data) {
     const baseline = data.kind === 'existing-model-unmeasured';
     const settled = data.kind === 'settled-selected-configurations';
-    const scoreModes = scoreModeBoard(data), revised = valueBoard(data), strictCredit = data.schema === strictCreditSchema;
+    const scoreModes = scoreModeBoard(data), revised = valueBoard(data), strictCredit = strictCreditBoard(data);
+    const weighted = data.schema === itemWeightSchema;
     const displayAxes = boardAxes(data), axisIds = displayAxes.map(([id]) => id);
     const fields = ['schema', 'edition', 'kind', 'category', 'rank_eligible', 'default_order', 'weights_ratified', 'rows'];
     if (baseline || settled) fields.push('source_binding');
@@ -76,6 +79,7 @@
     if (scoreModes && Object.hasOwn(data, 'score_modes_binding')) fields.push('score_modes_binding');
     if (revised) fields.push('value_binding', 'item_weights');
     if (strictCredit) fields.push('strict_credit_binding');
+    if (weighted) fields.push('item_weight_binding');
     if (!keys(data, fields) ||
         (!scoreModes && data.schema !== 'math-gauge.research-board-preview/v1') || data.edition !== '1.3.0' || (!baseline && !settled && data.kind !== 'synthetic-fixture') ||
         data.rank_eligible !== false || data.weights_ratified !== false || data.default_order !== 'retained-base-SMC' ||
@@ -100,6 +104,18 @@
       if (!keys(binding, ['policy_sha256', 'value_results_sha256', 'index_sha256']) || !hash(binding.policy_sha256) ||
           !hash(binding.value_results_sha256) || binding.value_results_sha256 !== data.value_binding.index_sha256 ||
           binding.index_sha256 !== null && !hash(binding.index_sha256)) throw new Error('Invalid strict-credit source binding');
+    }
+    if (weighted) {
+      const binding = data.item_weight_binding;
+      const sources = {value_policy_sha256: data.value_binding.policy_sha256,
+        value_results_sha256: data.value_binding.index_sha256,
+        strict_credit_policy_sha256: data.strict_credit_binding.policy_sha256,
+        strict_credit_results_sha256: data.strict_credit_binding.index_sha256};
+      if (!keys(binding, ['version', 'policy_sha256', ...Object.keys(sources)]) ||
+          binding.version !== '0.1.0' || !hash(binding.policy_sha256) ||
+          !Object.entries(sources).every(([key, digest]) => hash(digest) && binding[key] === digest)) {
+        throw new Error('Invalid item weight source binding');
+      }
     }
     if ((baseline || settled) && (!keys(data.source_binding, ['edition', 'sha256']) || data.source_binding.edition !== '1.2.0' || !/^[a-f0-9]{64}$/.test(data.source_binding.sha256))) throw new Error('Unbound baseline');
     const uniqueIds = ids => Array.isArray(ids) && ids.length && new Set(ids).size === ids.length;
@@ -287,47 +303,6 @@
     tabs.append(tab);
     supporting.insertAdjacentElement('afterend', panel);
   }
-  function showCheckpoints(doc, rows, en) {
-    const heading = en ? 'Checks passed' : '检查通过数';
-    const ids = ['taste', 'capacity'];
-    const table = doc.getElementById('category-ranking-'+categoryId);
-    const header = table?.tHead?.rows[0];
-    if (header) {
-      let label = header.querySelector('[data-research-checkpoints]');
-      if (!label) {
-        label = doc.createElement('th');
-        label.scope = 'col';
-        label.className = 'independent-checks';
-        label.dataset.researchCheckpoints = '';
-        header.append(label);
-      }
-      label.textContent = heading;
-      for (const tr of table.tBodies[0].rows) {
-        const link = tr.querySelector('.model-name');
-        const id = link && new URL(link.href, doc.baseURI).pathname.match(/\/models\/([^/]+)\//)?.[1];
-        if (!rows.has(id)) continue;
-        const cell = tr.querySelector('[data-research-checkpoints]') || tr.insertCell();
-        cell.dataset.researchCheckpoints = '';
-        cell.className = 'independent-checks';
-        cell.textContent = checkpointCell(rows.get(id), null, en, ids);
-      }
-    }
-    const chart = doc.getElementById('category-chart-groups-'+categoryId);
-    for (const group of chart?.children || []) {
-      const row = rows.get(group.dataset.model);
-      const label = row && checkpointCell(row, null, en, ids);
-      const title = group.querySelector('.chart-model > div');
-      if (!title || !label) continue;
-      let note = title.querySelector('[data-research-checkpoints]');
-      if (!note) {
-        note = doc.createElement('small');
-        note.dataset.researchCheckpoints = '';
-        note.className = 'independent-chart-checks';
-        title.append(note);
-      }
-      note.textContent = ' · '+heading+' '+label;
-    }
-  }
   function decorate() {
     const mg = typeof MG !== 'undefined' ? MG : root.MG;
     if (!mg || mg.d.benchmark_version !== '1.3.0' || !mg.d.research_preview) return;
@@ -357,8 +332,7 @@
       scope.textContent = text;
     }
     const rows = new Map(board.rows.map(r=>[r.id,r]));
-    const strictCredit = board.schema === strictCreditSchema;
-    if (strictCredit) showCheckpoints(doc, rows, en);
+    const strictCredit = strictCreditBoard(board);
     for (const row of doc.querySelectorAll('#ranking-body tr')) {
       const link=row.querySelector('.model-name');if(!link)continue;
       const id=new URL(link.href,doc.baseURI).pathname.match(/\/models\/([^/]+)\//)?.[1];
@@ -396,7 +370,6 @@
     if (categoryDesc) {
       const weight=board.weight_frame[categoryId];
       categoryDesc.textContent=en?`Category / 100 · overall weight ${weight}%`:`类内满分100 · 总榜权重${weight}%`;
-      if (strictCredit) categoryDesc.textContent+=en?' · Checks passed shown separately':' · 单列检查通过数';
     }
     for (const readout of doc.querySelectorAll('[data-research-category-state]')) {
       const display=categoryStatus(readout.dataset.researchCategoryState, mg.state.lang);

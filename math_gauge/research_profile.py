@@ -15,6 +15,7 @@ VALUE_POLICY_PATH = POLICY_PATH.with_name('profile-policy-v2.json')
 SCHEMA = 'math-gauge.independent-research-abilities/v4'
 VALUE_SCHEMA = 'math-gauge.independent-research-abilities/v5'
 STRICT_CREDIT_SCHEMA = 'math-gauge.independent-research-abilities/v6'
+ITEM_WEIGHT_SCHEMA = 'math-gauge.independent-research-abilities/v7'
 STAGES = dict(first='first-answer', revision='revision-inclusive')
 _FIELDS = ('lower', 'upper', 'exact')
 _TASTE_CHECKS = REQUIRED_CRITERIA['taste']

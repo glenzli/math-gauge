@@ -3,7 +3,7 @@
  'use strict';
  const {d,state,node,result,f}=MG,main=document.querySelector('main');if(!main)return;
  const isIndependent=d.benchmark_version==='1.3.0'&&!!d.research_preview;
- const strictCredit=isIndependent&&d.research_preview.schema==='math-gauge.research-board-preview/v4';
+ const strictCredit=isIndependent&&['math-gauge.research-board-preview/v4','math-gauge.research-board-preview/v5'].includes(d.research_preview.schema);
  const valueRevision=strictCredit||isIndependent&&d.research_preview.schema==='math-gauge.research-board-preview/v3';
  const isRevision=d.benchmark_version==='1.2.0'||isIndependent,english=()=>state.lang==='en';
  const text=(zh,en)=>english()?en:zh;
@@ -95,8 +95,8 @@
     'MC、RMC、SMC 各自汇总同口径分数。书面、Lean、辅助研究各占30%，独立开放研究题占10%。每种口径按25／25／50将 A／T／C 汇成一道题。MC 取独立补审的有效成果分，RMC 取连续可靠性评审分。未测分数留空，主榜柱图显示已确认贡献，完整分保留未知区间。',
     'MC, RMC and SMC each use scores from their own mode. Written proofs, Lean and supporting research contribute 30% each, and independent open research contributes 10%. Each mode combines A, T and C at 25/25/50 into one task. MC uses an independent review of valid results. RMC uses continuous reliability grades. Unmeasured fields remain blank, and the main chart shows confirmed credit with unresolved intervals retained.'));
    overall.append(node('p',strictCredit?text(
-    '独立开放研究 SMC 只保留已通过检查部分的净信用。全部通过时保留该项实际 RMC，部分通过时按原成果与扣分归属保留通过部分的净信用。品味3项与能力5项的通过数单列，未定证据保留固定区间。自主拓展档位只折算研究主动性。',
-    'Independent open research SMC retains the net credit of passed checks. All checks passed preserves that component’s RMC. For mixed outcomes, the retained credit and original deductions are allocated to the respective checks. The three taste and five capacity pass counts are shown separately. Unresolved evidence retains fixed bounds. Autonomous extension contributes only to research initiative.'):valueRevision?text(
+    '独立开放研究 SMC 只保留已通过检查部分的净信用。全部通过时保留该项实际 RMC，部分通过时按原成果与扣分归属保留通过部分的净信用。检查结论保留在评审记录中，未定证据保留固定区间。自主拓展档位只折算研究主动性。',
+    'Independent open research SMC retains the net credit of passed checks. All checks passed preserves that component’s RMC. For mixed outcomes, the retained credit and original deductions are allocated to the respective checks. Checkpoint verdicts remain in the review records. Unresolved evidence retains fixed bounds. Autonomous extension contributes only to research initiative.'):valueRevision?text(
     '独立开放研究 SMC 按检查点给分。数学品味的3项检查和研究能力的5项检查各自在分项内等权。全项通过另列为检查状态，未定检查点保留固定分母。自主拓展档位只折算数学画像的研究主动性。',
     'Independent open research SMC gives equal credit per check within each component, with three taste checks and five capacity checks. The all-checks flag is reported separately. Unresolved checks retain fixed denominators. The autonomous extension level contributes only to research initiative in the profile.'):text(
     '独立开放研究 SMC 按检查点给分。A 的2个门槛、T 的3个方面、C 的5个硬方向各自在项内等权。全项通过另列为检查状态。例如 C 通过4／5时，该项 SMC 为80，状态为「未全项通过」。未定检查点保留固定分母。',

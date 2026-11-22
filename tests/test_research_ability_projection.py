@@ -6,7 +6,9 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from math_gauge.independent_research_adoption import KIND, PUBLIC_PATH, SCHEMA
+from math_gauge import independent_research_item_weights as item_weights
 from math_gauge import independent_research_score_modes as modes
+from math_gauge import independent_research_strict_credit as credit
 from math_gauge import independent_research_value as value
 from math_gauge import legacy_taste as taste, legacy_taste_strict as strict_taste
 from math_gauge.open_research import encoded, reference
@@ -218,12 +220,20 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
         files = {'index.html': page,
                  'editions.json': '{"editions":[{"version":"1.2.0"}]}',
                  'data.json': raw.decode(), 'data/editions/1.2.0/index.json': json.dumps(previous)}
+        historical = {f'versions/{version}/downloads/fixture.json': f'{{"edition":"{version}"}}\n'
+                      for version in ('1.0.0', '1.1.0', '1.2.0')}
+        files.update(historical)
         with TemporaryDirectory() as directory:
             root = Path(directory)
             policy = json.loads(POLICY_FILE.read_bytes())
             policy['new_axis_denominators']['mathematical_taste']['review_locator'] = MARKER
             policy_bytes = json.dumps(policy).encode()
-            adopted_bytes = json.dumps(selection(raw, policy_bytes)).encode()
+            adopted = selection(raw, policy_bytes)
+            failed = adopted['models'][MISSING_STAGE]
+            failed.update(status='delivery-failed', normal_rounds=1, round_dispatches=2,
+                          axes={axis: dict(score=None, strict=None) for axis in failed['axes']})
+            adopted['native_round_dispatches'] = 5
+            adopted_bytes = json.dumps(adopted).encode()
             inputs = {str(POLICY_FILE.relative_to(POLICY_FILE.parents[3])): policy_bytes,
                       PROFILE_POLICY_PATH.as_posix(): PROFILE_POLICY_FILE.read_bytes(),
                       PUBLIC_PATH: adopted_bytes, modes.POLICY_PATH.as_posix(): modes.POLICY_FILE.read_bytes(),
@@ -254,8 +264,36 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
                 candidate_calls_by_adoption=0, cohort=[MEASURED], models={MEASURED: dict(
                     taste=dict(mc=10, rmc=0, strict=False), criteria=dict(planned=3, passed=1, unknown=0),
                     extension_level='E1', source_sha256=value._hash(MARKER.encode()))})
-            (root / value.PUBLIC_PATH).write_bytes(encoded(revised_result))
+            revised_raw = encoded(revised_result)
+            (root / value.PUBLIC_PATH).write_bytes(revised_raw)
             revised = prepare_research_preview(files, root)
+            strict_policy, _ = credit.load_policy()
+            strict_policy.update(value_policy_sha256=value._hash(value_policy_raw),
+                                 value_results_sha256=value._hash(revised_raw),
+                                 score_modes_results_sha256=value_policy['base_results_sha256'])
+            strict_policy_raw = encoded(strict_policy)
+            (root / credit.PATH).write_bytes(strict_policy_raw)
+            strict_raw = encoded(dict(schema=credit.PUBLIC, version=credit.VERSION, edition='1.3.0',
+                policy_sha256=value._hash(strict_policy_raw), value_results_sha256=value._hash(revised_raw),
+                candidate_calls_by_adoption=0, cohort=[MEASURED],
+                models={MEASURED: dict(taste=point(0), capacity=point(70), source_sha256='b' * 64)}))
+            strict_path = root / credit.PUBLIC_PATH
+            strict_path.write_bytes(strict_raw)
+            original_weights = prepare_research_preview(files, root)
+            parameters = dict(schema=item_weights.SCHEMA, version=item_weights.VERSION, edition='1.3.0',
+                status='local-user-selected-item-weights', item_weights=dict(taste=2, capacity=1),
+                value_policy_sha256=value._hash(value_policy_raw), value_results_sha256=value._hash(revised_raw),
+                strict_credit_policy_sha256=value._hash(strict_policy_raw), strict_credit_results_sha256=value._hash(strict_raw))
+            weight_path = root / item_weights.POLICY_PATH
+            weight_path.write_bytes(encoded(parameters))
+            weighted = prepare_research_preview(files, root)
+            weight_path.write_bytes(encoded(dict(parameters, strict_credit_results_sha256='f' * 64)))
+            with self.assertRaisesRegex(ValueError, 'different value or strict-credit'):
+                prepare_research_preview(files, root)
+            weight_path.write_bytes(encoded(parameters))
+            strict_path.unlink()
+            with self.assertRaisesRegex(ValueError, 'require both validated'):
+                prepare_research_preview(files, root)
 
         self.assertEqual(outputs['data.json'], files['data.json'])
         self.assertEqual(outputs['data/editions/1.2.0/index.json'], files['data/editions/1.2.0/index.json'])
@@ -333,3 +371,42 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
         self.assertEqual(revised_download['item_weights'], dict(taste=1, capacity=2))
         self.assertEqual(revised_download[ABILITY_FIELD]['by_model'][MEASURED]['autonomous_extension']['level'], 'E1')
         self.assertEqual(revised['data/editions/1.2.0/index.json'], files['data/editions/1.2.0/index.json'])
+
+        for path in (*historical, 'data.json', 'data/editions/1.2.0/index.json'):
+            self.assertEqual(weighted[path], files[path])
+        self.assertTrue(all(MARKER not in contents for contents in weighted.values()))
+        old_data, new_data = (json.loads(package['versions/1.3.0/data.json']) for package in (original_weights, weighted))
+        old_board, board = (data['research_preview'] for data in (old_data, new_data))
+        old_rows, rows = ({row['id']: row for row in source['rows']} for source in (old_board, board))
+        self.assertEqual(board['weight_frame'], old_board['weight_frame'])
+        self.assertEqual(board['item_weights'], dict(taste=2, capacity=1))
+        old, row = old_rows[MEASURED], rows[MEASURED]
+        for field in ('components', 'task_strict', 'criteria', 'coverage'):
+            self.assertEqual(row[field], old[field])
+        companion = new_data[ABILITY_FIELD]
+        self.assertEqual(companion['item_weight_binding'], board['item_weight_binding'])
+        previous_abilities, abilities = (data[ABILITY_FIELD]['by_model'][MEASURED] for data in (old_data, new_data))
+        for field in ('independent_taste', 'independent_taste_smc', 'autonomous_extension', 'stages'):
+            self.assertEqual(abilities[field], previous_abilities[field])
+        self.assertEqual(abilities['completion_v130']['exact'], row['composites']['SMC']['exact'])
+        for mode, key, suffix, new_item, old_item in (
+                ('MC', 'capability', '-capability', 32, 54), ('RMC', 'partial', '', 70/3, 140/3),
+                ('SMC', 'strict', '-strict', 70/3, 140/3)):
+            with self.subTest(mode=mode):
+                self.assertEqual(row['score_modes'][mode]['components'], old['score_modes'][mode]['components'])
+                self.assertAlmostEqual(old['score_modes'][mode]['item']['exact'], old_item)
+                self.assertAlmostEqual(row['score_modes'][mode]['item']['exact'], new_item)
+                total = row['composites'][mode]['exact']
+                self.assertAlmostEqual(total, 72 + new_item/10)
+                category = new_data['chart_scenes']['category-chart-groups-'+modes.ITEM]['bars'][MEASURED][key]
+                self.assertAlmostEqual(category['value'], new_item)
+                self.assertEqual(new_data['chart_scenes']['chart-groups']['bars'][MEASURED][key]['value'], total)
+                download = json.loads(weighted[f'versions/1.3.0/downloads/{MEASURED}-combined{suffix}-retry.json'])
+                self.assertEqual(download['metric']['exact'], total)
+                self.assertAlmostEqual(download['category_points'][modes.ITEM]['exact'], new_item/10)
+                self.assertEqual(download['item_weight_binding'], board['item_weight_binding'])
+                unknown = rows[UNMEASURED]['score_modes'][mode]['item']
+                self.assertEqual((unknown['state'], unknown['exact']), ('not-tested', None))
+                self.assertEqual(rows[UNMEASURED]['composites'][mode], dict(lower=72, upper=82, exact=None))
+                failure = rows[MISSING_STAGE]['score_modes'][mode]['item']
+                self.assertEqual((failure['state'], failure['exact']), ('delivery-failed', None if mode == 'MC' else 0))

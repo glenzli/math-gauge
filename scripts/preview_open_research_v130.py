@@ -9,13 +9,14 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge import independent_research_adoption as adoption
+from math_gauge import independent_research_item_weights as item_weights
 from math_gauge import independent_research_score_modes as modes
 from math_gauge import independent_research_strict_credit as credit
 from math_gauge import independent_research_value as value_revision
 from math_gauge import legacy_taste_strict
 from math_gauge.taste_v130 import POLICY_FILE
 from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE, SCHEMA as PROFILE_SCHEMA
-from math_gauge.research_profile import (STAGES, STRICT_CREDIT_SCHEMA, VALUE_POLICY_PATH, VALUE_SCHEMA,
+from math_gauge.research_profile import (ITEM_WEIGHT_SCHEMA, STAGES, STRICT_CREDIT_SCHEMA, VALUE_POLICY_PATH, VALUE_SCHEMA,
                                          load_policy as load_profile_policy, project_models)
 
 ABILITY_FIELD = 'independent_research_abilities'
@@ -82,7 +83,7 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
                         adopted_bytes=None, overlay_bytes=None,
                         legacy_taste_strict_policy_path=legacy_taste_strict.POLICY_FILE,
                         legacy_taste_strict_bytes=None, value_policy_path=None, value_bytes=None,
-                        strict_credit_policy_path=None, strict_credit_bytes=None):
+                        strict_credit_policy_path=None, strict_credit_bytes=None, item_weight_policy_path=None):
     """Build versioned public rows, ability aggregates and group points from the same score result."""
     source = ROOT / 'site/data.json'
     raw = (source_bytes if source_bytes is not None else source.read_bytes() if source_data is None
@@ -153,6 +154,13 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
             index_sha256=hashlib.sha256(strict_credit_bytes).hexdigest() if strict_credit_bytes is not None else None)
     elif strict_credit_bytes is not None:
         raise ValueError('Strict-credit results require their versioned policy')
+
+    projection_policy, item_weight_binding = score_policy, None
+    if item_weight_policy_path is not None:
+        selected_weights, item_weight_binding = item_weights.load_policy(
+            item_weight_policy_path, value_binding=value_binding, strict_binding=strict_binding)
+        projection_policy = dict(score_policy, item_weights=selected_weights)
+
     def order(model):
         ranks = model['ranking_values']
         return tuple((ranks.get(k) is None, -(ranks.get(k) or 0))
@@ -163,13 +171,13 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
                        RMC=model['retry']['combined'], SMC=model['strict']['nonlogical_retry_3'])
         identifier = model['id']
         if revised:
-            result = value_revision.project_scores(reports, score_policy, adopted=selected.get(identifier),
+            result = value_revision.project_scores(reports, projection_policy, adopted=selected.get(identifier),
                                                    retained=overlay.get(identifier), review=value_models.get(identifier))
         else:
             result = modes.project_scores(reports, score_policy, adopted=selected.get(identifier),
                                           overlay=overlay.get(identifier))
         if strict_binding is not None:
-            result = credit.project_scores(result, reports['SMC'], score_policy, row=strict_models.get(identifier))
+            result = credit.project_scores(result, reports['SMC'], projection_policy, row=strict_models.get(identifier))
         rows.append(public_row(identifier, model['label'], result, kind=kind))
         profile_reports[identifier] = result
         category_points[identifier] = result['category_points']
@@ -177,6 +185,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
     board_schema = 'math-gauge.research-board-preview/v3' if revised else 'math-gauge.research-board-preview/v2'
     if strict_binding is not None:
         board_schema = 'math-gauge.research-board-preview/v4'
+    if item_weight_binding is not None:
+        board_schema = 'math-gauge.research-board-preview/v5'
     board = dict(schema=board_schema, edition='1.3.0',
         kind=kind, category={k: legacy_policy['category'][k] for k in ('id', 'zh', 'en')}, rank_eligible=False,
         default_order='retained-base-SMC', weights_ratified=False,
@@ -193,6 +203,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
     abilities = project_models(data, profile_reports, profile_policy, legacy_policy['new_axis_denominators'],
                               legacy_taste_strict=legacy_results['models'] if legacy_results is not None else None)
     profile_schema = STRICT_CREDIT_SCHEMA if strict_binding is not None else VALUE_SCHEMA if revised else PROFILE_SCHEMA
+    if item_weight_binding is not None:
+        profile_schema = ITEM_WEIGHT_SCHEMA
     companion = dict(schema=profile_schema, edition='1.3.0', base_edition='1.2.0', source_stages=dict(STAGES),
         source_binding=source_binding, policy_sha256=policy_sha256, profile_policy_sha256=profile_policy_sha256,
         score_modes_policy_sha256=score_modes_policy_sha256,
@@ -208,11 +220,14 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
         board['score_modes_binding'] = score_modes_binding
         companion['score_modes_binding'] = score_modes_binding
     if value_binding is not None:
-        board.update(value_binding=value_binding, item_weights=score_policy['item_weights'])
+        board.update(value_binding=value_binding, item_weights=projection_policy['item_weights'])
         companion['value_binding'] = value_binding
     if strict_binding is not None:
         board['strict_credit_binding'] = strict_binding
         companion['strict_credit_binding'] = strict_binding
+    if item_weight_binding is not None:
+        board['item_weight_binding'] = item_weight_binding
+        companion['item_weight_binding'] = item_weight_binding
     return board, companion, category_points
 
 
