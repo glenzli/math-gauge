@@ -4,7 +4,13 @@
  const {d,state,node,result,f}=MG,main=document.querySelector('main');if(!main)return;
  const isRevision=d.benchmark_version==='1.2.0',english=()=>state.lang==='en';
  const text=(zh,en)=>english()?en:zh;
- const section=(id,title)=>{let panel=document.getElementById(id);if(!panel){panel=node('section',null,'panel edition-notes-panel');panel.id=id;panel.setAttribute('data-original','');const board=document.getElementById('leaderboard');let anchor=board||main.querySelector('.context-panel')||main.querySelector('section');if(id==='revision-score-change'&&board)anchor=board.nextElementSibling;if(id==='partial-tests')anchor=main.querySelector('.footer');main.insertBefore(panel,anchor)}panel.replaceChildren(node('h2',title));return panel};
+ const section=(id,title,collapsible=false)=>{
+  let panel=document.getElementById(id);
+  if(!panel){panel=node(collapsible?'details':'section',null,'panel '+(collapsible?'subboard revision-disclosure':'edition-notes-panel'));panel.id=id;panel.setAttribute('data-original','');const board=document.getElementById('leaderboard');let anchor=board||main.querySelector('.context-panel')||main.querySelector('section');if(id==='revision-score-change'&&board)anchor=board.nextElementSibling;if(id==='partial-tests')anchor=main.querySelector('.footer');main.insertBefore(panel,anchor)}
+  const heading=node(collapsible?'summary':'h2');
+  if(collapsible)heading.append(node('strong',title));else heading.textContent=title;
+  panel.replaceChildren(heading);return panel;
+ };
  function oldLink(label,mid,edition='1.1.0'){
   const page=window.MGEdition?.page||'index.html',depth=page.split('/').length-1;
   const url=new URL('../'.repeat(depth)+(mid?'models/'+encodeURIComponent(mid)+'/index.html':'index.html'),location.href);
@@ -19,6 +25,20 @@
   const label=rate.exact==null?percent(rate.lower)+'–'+percent(rate.upper):percent(rate.exact);
   return label+' ('+(count.exact==null?count.lower+'–'+count.upper:count.exact)+'/'+value.selected+')';
  };
+ const completionFor=model=>model.neutral_revision_completion?.settled?model.neutral_revision_completion:null;
+ const compareKnown=(left,right,direction)=>{
+  const a=Number.isFinite(left),b=Number.isFinite(right);
+  return a&&b?direction*(left-right):a?-1:b?1:0;
+ };
+ function compareContinuation(a,b){
+  const ac=completionFor(a),bc=completionFor(b);
+  return compareKnown(ac?.selected>0?ac.full_rate?.exact:null,bc?.selected>0?bc.full_rate?.exact:null,-1)
+   ||compareKnown(ac?.selected,bc?.selected,1)
+   ||compareKnown(a.neutral_revision_delta?.strict,b.neutral_revision_delta?.strict,-1)
+   ||compareKnown(a.neutral_revision_delta?.partial,b.neutral_revision_delta?.partial,-1)
+   ||compareKnown(a.neutral_revision_delta?.capability,b.neutral_revision_delta?.capability,-1)
+   ||MG.compareModelOrder(a,b);
+ }
  function table(panel,headers,rows){const wrap=node('div',null,'table-wrap'),table=node('table',null,'compact'),head=table.createTHead().insertRow(),body=table.createTBody();headers.forEach(title=>head.append(node('th',title)));rows.forEach(values=>{const row=body.insertRow();values.forEach(value=>{const cell=row.insertCell();typeof value==='string'?cell.textContent=value:cell.append(value)})});wrap.append(table);panel.append(wrap)}
  function revisionDetails(panel){
   const pending=d.pending_models,details=node('details',null,'guide-details');
@@ -78,7 +98,7 @@
   return true;
  }
  function header(){
-  const navigation={ranking:text('排行榜','Rankings'),categories:text('分项成绩','Category scores'),revision:text('续答变化','Continuation gains'),method:text('方法与数据','Method & data'),'method-short':text('方法','Method'),library:text('题库','Task library'),release:text('1.0.0 分发说明','1.0.0 distribution'),guide:text('其他 Harness 运行指南','External harness guide')};
+  const navigation={ranking:text('排行榜','Rankings'),categories:text('分项成绩','Category scores'),revision:text('续答增量','Continuation gains'),method:text('方法与数据','Method & data'),'method-short':text('方法','Method'),library:text('题库','Task library'),release:text('1.0.0 分发说明','1.0.0 distribution'),guide:text('其他 Harness 运行指南','External harness guide')};
   document.querySelectorAll('[data-header-label]').forEach(label=>label.textContent=navigation[label.dataset.headerLabel]);
   const note=document.querySelector('.category-ranking-note');
   if(note){let link=note.querySelector('[data-header-contribution]');if(!link){link=node('a');link.href='#capability-section';link.setAttribute('data-header-contribution','');note.append(' ',link)}link.textContent=text('权重与分数构成 →','Weights and score contributions →');}
@@ -101,13 +121,13 @@
     });
    }
    if(d.models?.some(model=>model.neutral_revision_delta)){
-    const delta=section('revision-score-change',text('续答带来的分数变化','Score changes from continuations'));
-    table(delta,[text('模型','Model'),text('续答题数','Continued tasks'),text('满分率','Full-score rate'),'ΔSMC','ΔRMC','ΔMC'],[...d.models].sort(MG.compareModelOrder).map(model=>{
-     const completion=model.neutral_revision_completion?.settled?model.neutral_revision_completion:null;
-     return [node('span',model.label),completion?String(completion.selected):'—',fullRate(completion),...['strict','partial','capability'].map(mode=>signed(model.neutral_revision_delta?.[mode]))];
+    const delta=section('revision-score-change',text('续答增量','Continuation gains'),true),content=node('div',null,'revision-gains-body');
+    table(content,[text('模型','Model'),text('续答题数','Continued tasks'),text('满分率','Full-score rate'),'ΔSMC','ΔRMC','ΔMC'],[...d.models].sort(compareContinuation).map(model=>{
+     const completion=completionFor(model),full=completion?.selected>0&&completion.full_rate?.exact===1&&completion.full_count?.exact===completion.selected;
+     return [node('span',model.label),completion?String(completion.selected):'—',node('span',fullRate(completion),full?'revision-full-rate':''),...['strict','partial','capability'].map(mode=>signed(model.neutral_revision_delta?.[mode]))];
     }));
-    delta.append(node('p',text('已计入完整100分总分的变化，相比1.1首答成绩；差值可为负。','Changes already included in the full 100-point score, relative to the 1.1 first-answer result; decreases are retained.')));
-    delta.append(node('p',text('满分指续答本身未舍入的MC、RMC、SMC三项全满；分母为全部入选续答题，包含未交卷，首答三项全满的免测题不计入。','Full score requires the continuation itself to be full in all three unrounded modes: MC, RMC and SMC. The denominator includes every selected task, including failed deliveries; exempt first answers already full in all modes are excluded.')));
+    content.append(node('p',text('相对1.1首答、按20%计入总分的增量，可为负。满分率须续答三项未舍入分数全满；分母含未交卷，不含首答免测题。','Gains over 1.1 first answers, weighted at 20%; decreases remain. Full-score rate requires all three unrounded continuation scores to be full, includes failed deliveries, and excludes exempt first answers.')));
+    delta.append(content);
    }
   }
   const partial=d.partial_models||d.models?.filter(model=>model.presentation_eligibility?.ranked===false)||(d.model?.presentation_eligibility?.ranked===false?[d.model]:[]);

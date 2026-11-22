@@ -9,7 +9,7 @@ const source=fs.readFileSync(path.join(__dirname,'../scripts/templates/edition-n
 function mount(models,{lang='zh',partial=[],observations=false}={}){
  const ids=new Map();
  class Element{
-  constructor(tag,text='',className=''){this.tagName=tag.toUpperCase();this.textContent=text??'';this.className=className;this.children=[];this.dataset={};}
+  constructor(tag,text='',className=''){this.tagName=tag.toUpperCase();this.textContent=text??'';this.className=className;this.children=[];this.dataset={};if(this.tagName==='DETAILS')this.open=false;}
   set id(value){this._id=value;ids.set(value,this)}get id(){return this._id}
   setAttribute(name,value){(this.attributes??={})[name]=value}
   append(...children){this.children.push(...children)}
@@ -35,13 +35,15 @@ function mount(models,{lang='zh',partial=[],observations=false}={}){
  const location=new URL('https://example.test/site/index.html');
  const node=(tag,text,cls)=>new Element(tag,text,cls);
  const d={benchmark_version:'1.2.0',models,partial_models:partial};
- const MG={d,state,node,f:value=>value.toFixed(2),result:()=>{throw new Error('Saved table values must be used')}};
+ const MG={d,state,node,f:value=>value.toFixed(2),compareModelOrder:(a,b)=>a.id.localeCompare(b.id),result:()=>{throw new Error('Saved table values must be used')}};
  vm.runInNewContext(source,{MG,document,window:{addEventListener:(_,callback)=>callbacks.push(callback)},location,URL});
- const table=id=>ids.get(id).children.find(child=>child.tagName==='DIV').children[0];
+ const findAll=(element,predicate)=>[...(predicate(element)?[element]:[]),...element.children.flatMap(child=>findAll(child,predicate))];
+ const table=id=>findAll(ids.get(id),element=>element.tagName==='TABLE')[0];
  const content=cell=>cell.textContent||cell.children.map(content).join('');
  const rows=id=>table(id).children[1].children.map(row=>row.children.map(content));
  const headers=id=>table(id).children[0].children[0].children.map(content);
- return {rows,headers,state,observation,meta,link,diagnostics,update:()=>callbacks.forEach(callback=>callback())};
+ const fullRates=id=>findAll(ids.get(id),element=>element.className==='revision-full-rate').map(content);
+ return {rows,headers,state,observation,meta,link,diagnostics,fullRates,element:id=>ids.get(id),update:()=>callbacks.forEach(callback=>callback())};
 }
 const summary=(selected,full)=>({selected,reviewed:selected,delivery_failed:selected-full,pending:0,settled:true,
  full_count:{lower:full,upper:full,exact:full},full_rate:{lower:full/selected,upper:full/selected,exact:full/selected}});
@@ -62,7 +64,36 @@ test('missing or unsettled summaries and an empty denominator do not invent a ra
  const pending=summary(9,8);pending.settled=false;
  const empty={...summary(1,0),selected:0,full_rate:{lower:null,upper:null,exact:null}};
  const f=mount([model('Missing'),model('Pending',pending),model('Empty',empty)]);
- assert.deepEqual(f.rows('revision-score-change').map(row=>row.slice(1,3)),[['—','—'],['—','—'],['0','—']]);
+ assert.deepEqual(f.rows('revision-score-change').map(row=>row.slice(1,3)),[['0','—'],['—','—'],['—','—']]);
+});
+
+test('continuation ranking prioritizes rate, fewer selected tasks, then SMC/RMC/MC gains',()=>{
+ const entry=(id,selected,full,strict,partial,capability)=>({...model(id,summary(selected,full)),neutral_revision_delta:{strict,partial,capability}});
+ const pending=summary(1,1);pending.settled=false;
+ const f=mount([
+  entry('More tasks',7,7,99,99,99),entry('RMC tie-break',6,6,2,2,0),
+  entry('Lower rate',9,8,99,99,99),entry('MC tie-break',6,6,2,2,1),
+  entry('Lower RMC',6,6,2,1,99),entry('Higher SMC',6,6,3,-99,-99),
+  entry('Same rate more tasks',20,18,99,99,99),entry('Same rate fewer tasks',10,9,-99,-99,-99),
+  entry('Known zero',2,0,0,0,0),model('Unsettled',pending)
+ ]);
+ assert.deepEqual(f.rows('revision-score-change').map(row=>row[0]),[
+  'Higher SMC','MC tie-break','RMC tie-break','Lower RMC','More tasks',
+  'Same rate fewer tasks','Same rate more tasks','Lower rate','Known zero','Unsettled'
+ ]);
+});
+
+test('gains start collapsed, highlight only confirmed full rates, and retain expansion across updates',()=>{
+ const pending=summary(7,7);pending.settled=false;
+ const f=mount([model('Full',summary(7,7)),model('Partial',summary(9,8)),model('Pending',pending)]);
+ const disclosure=f.element('revision-score-change');
+ assert.equal(disclosure.tagName,'DETAILS');
+ assert.equal(disclosure.open,false);
+ assert.deepEqual(f.fullRates('revision-score-change'),['100% (7/7)']);
+ disclosure.open=true;f.state.lang='en';f.update();
+ assert.equal(f.element('revision-score-change'),disclosure);
+ assert.equal(disclosure.open,true);
+ assert.deepEqual(f.fullRates('revision-score-change'),['100% (7/7)']);
 });
 
 test('partial evidence keeps its scores and clickable model/archive links in SMC order',()=>{
