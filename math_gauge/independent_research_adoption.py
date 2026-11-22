@@ -1,4 +1,4 @@
-"""Source-bound, whole-cohort adoption of independently reviewed research runs.
+"""Source-bound adoption of settled independent research trajectories.
 
 Execution and mathematical review remain separate owners. This module verifies
 their original evidence and projects aggregate fields; scoring.py owns arithmetic.
@@ -7,14 +7,18 @@ from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
+import re
 
 from . import independent_research_review as trajectory_review
 from . import taste_v130 as flow
 
 
-SCHEMA = 'math-gauge.independent-research-adoption/v2'
-SELECTION = 'math-gauge.independent-research-review-selection/v2'
+SCHEMA = 'math-gauge.independent-research-adoption/v3'
+SELECTION = 'math-gauge.independent-research-review-selection/v3'
+KIND = 'settled-selected-configurations'
 PUBLIC_PATH = 'protocol/mathematical-taste/v1.3.0/settled-results.json'
+REVIEWER = dict(requested_model='gpt-6.1-sol', requested_effort='max', reviewer_kind='ai',
+                human_review='pending', backend_identity_independently_verified=False)
 
 
 def _need(value, message):
@@ -28,6 +32,10 @@ def encoded(value):
 
 def _hash(raw):
     return hashlib.sha256(raw).hexdigest()
+
+
+def _is_hash(value):
+    return isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value) is not None
 
 
 def _external(base, ref):
@@ -59,7 +67,7 @@ def _reviewer(base, ref, review_path, review):
 
 
 def prepare(selection_path, public_root):
-    """Return one public aggregate only after every frozen configuration settles.
+    """Verify all selected trajectories and retain the full plan in the public aggregate.
 
     This does not start candidates, perform mathematical judgments, copy private
     manuscripts, or write the public index. The reviewer observation remains an
@@ -70,8 +78,8 @@ def prepare(selection_path, public_root):
     selection_path = flow._safe_absolute(selection_path)
     selection_raw = selection_path.read_bytes()
     source = json.loads(selection_raw)
-    _need(set(source) == {'schema', 'plan', 'run_root', 'models', 'review_policy'} and source['schema'] == SELECTION,
-          'Expected a complete whole-trajectory research review selection v2')
+    _need(isinstance(source, dict) and set(source) == {'schema', 'plan', 'run_root', 'models', 'review_policy'}
+          and source['schema'] == SELECTION, 'Expected an independent research review selection v3')
     plan_path, plan_raw = _external(selection_path.parent, source['plan'])
     public_root = flow._safe_absolute(public_root)
     plan, registration = load_plan(plan_path, public_root)
@@ -82,12 +90,13 @@ def prepare(selection_path, public_root):
     _need((run_root / 'control/plan.json').read_bytes() == plan_raw, 'Execution and review selected different frozen plans')
     expected = [row['id'] for row in plan['cohort']]
     rows = source['models']
-    _need(isinstance(rows, list) and len(rows) == len(expected)
-          and len({row['id'] for row in rows}) == len(rows)
-          and {row['id'] for row in rows} == set(expected), 'Partial or changed cohorts cannot be adopted')
+    _need(isinstance(rows, list) and rows and all(isinstance(row, dict)
+          and set(row) == {'id', 'execution', 'review', 'reviewer_source'} and isinstance(row['id'], str)
+          for row in rows), 'Expected nonempty independent research selection rows')
+    ids = {row['id'] for row in rows}
+    _need(len(ids) == len(rows) and ids <= set(expected), 'Selected configurations must be unique members of the frozen plan')
     selected, contexts, dispatches = {}, set(), 0
     for row in rows:
-        _need(set(row) == {'id', 'execution', 'review', 'reviewer_source'}, 'Unexpected private adoption selection fields')
         execution = validate_execution(run_root, row['execution'], plan)
         _need(execution['origin'] == NATIVE_ORIGIN and execution['model_id'] == row['id']
               and execution['outcome'] in {'normal-finals', 'delivery-failed'},
@@ -127,12 +136,12 @@ def prepare(selection_path, public_root):
             round_dispatches=len(execution['rounds']), source_sha256=_hash(encoded({
                 'execution': row['execution']['sha256'], 'review': _hash(review_raw), 'reviewer': reviewer_hash})))
         dispatches += len(execution['rounds'])
-    result = dict(schema=SCHEMA, edition=flow.EDITION, kind='settled-selected-cohort',
+    cohort = [key for key in expected if key in selected]
+    result = dict(schema=SCHEMA, edition=flow.EDITION, kind=KIND,
         source_binding=deepcopy(plan['baseline']), policy_sha256=_hash(flow.POLICY_FILE.read_bytes()),
         review_policy_sha256=review_policy_hash,
-        batch_sha256=_hash(plan_raw), cohort=expected, models={key: selected[key] for key in expected},
-        reviewer=dict(requested_model='gpt-6.1-sol', requested_effort='max', reviewer_kind='ai',
-                      human_review='pending', backend_identity_independently_verified=False),
+        batch_sha256=_hash(plan_raw), planned_cohort=expected, cohort=cohort,
+        models={key: selected[key] for key in cohort}, reviewer=REVIEWER.copy(),
         native_round_dispatches=dispatches, candidate_calls_by_adoption=0)
     _need(selection_path.read_bytes() == selection_raw and plan_path.read_bytes() == plan_raw,
           'Selection or plan changed during validation')
@@ -142,37 +151,56 @@ def prepare(selection_path, public_root):
 
 
 def validate_public(value):
-    """Reject private additions, unknown/zero conflation and partial batch writes."""
-    _need(set(value) == {'schema', 'edition', 'kind', 'source_binding', 'policy_sha256', 'review_policy_sha256', 'batch_sha256',
-        'cohort', 'models', 'reviewer', 'native_round_dispatches', 'candidate_calls_by_adoption'}
+    """Validate the allowlisted fields of a settled subset of the frozen plan."""
+    _need(isinstance(value, dict) and set(value) == {'schema', 'edition', 'kind', 'source_binding',
+        'policy_sha256', 'review_policy_sha256', 'batch_sha256', 'planned_cohort', 'cohort', 'models', 'reviewer',
+        'native_round_dispatches', 'candidate_calls_by_adoption'}
         and value['schema'] == SCHEMA and value['edition'] == flow.EDITION
-        and value['kind'] == 'settled-selected-cohort' and value['candidate_calls_by_adoption'] == 0,
-        'Expected the whole-trajectory public adoption projection v2')
+        and value['kind'] == KIND and type(value['candidate_calls_by_adoption']) is int
+        and value['candidate_calls_by_adoption'] == 0, 'Expected the independent research public adoption projection v3')
     baseline = value['source_binding']
-    _need(set(baseline) == {'edition', 'path', 'sha256'} and baseline['edition'] == '1.2.0'
+    _need(isinstance(baseline, dict) and set(baseline) == {'edition', 'path', 'sha256'} and baseline['edition'] == '1.2.0'
           and baseline['path'] == 'site/data.json', 'Adoption needs the fixed common 1.2 baseline')
-    for h in (baseline['sha256'], value['policy_sha256'], value['review_policy_sha256'], value['batch_sha256']):
-        _need(isinstance(h, str) and len(h) == 64 and all(c in '0123456789abcdef' for c in h), 'Opaque SHA256 required')
-    cohort = value['cohort']
-    _need(isinstance(cohort, list) and cohort and len(set(cohort)) == len(cohort)
-          and set(cohort) == set(value['models'])
-          and value['native_round_dispatches'] == sum(row['round_dispatches'] for row in value['models'].values()),
-          'Public adoption must represent the whole selected cohort')
-    _need(value['reviewer'] == dict(requested_model='gpt-6.1-sol', requested_effort='max', reviewer_kind='ai',
-        human_review='pending', backend_identity_independently_verified=False), 'Unexpected reviewer projection')
-    for row in value['models'].values():
-        _need(set(row) == {'status', 'axes', 'normal_rounds', 'round_dispatches', 'source_sha256'}
-              and row['status'] in {'reviewed', 'delivery-failed'} and set(row['axes']) == set(flow.AXES)
+    _need(all(_is_hash(h) for h in (baseline['sha256'], value['policy_sha256'],
+          value['review_policy_sha256'], value['batch_sha256'])), 'Opaque SHA256 required')
+    planned, cohort, models = value['planned_cohort'], value['cohort'], value['models']
+    _need(isinstance(planned, list) and planned and all(isinstance(key, str)
+          and re.fullmatch(r'[a-z0-9][a-z0-9.-]{1,63}', key) for key in planned)
+          and len(set(planned)) == len(planned), 'Expected a unique ordered planned cohort')
+    _need(isinstance(models, dict) and models and set(models) <= set(planned)
+          and cohort == [key for key in planned if key in models],
+          'Public adoption must represent the selected configurations in frozen plan order')
+    reviewer = value['reviewer']
+    _need(reviewer == REVIEWER and reviewer['backend_identity_independently_verified'] is False,
+          'Unexpected reviewer projection')
+    dispatches = 0
+    for row in models.values():
+        _need(isinstance(row, dict) and set(row) == {'status', 'axes', 'normal_rounds', 'round_dispatches', 'source_sha256'}
+              and row['status'] in ('reviewed', 'delivery-failed') and isinstance(row['axes'], dict)
+              and set(row['axes']) == set(flow.AXES)
               and type(row['normal_rounds']) is int and type(row['round_dispatches']) is int
               and ((row['status'] == 'reviewed' and row['normal_rounds'] == row['round_dispatches'] == 3)
                    or (row['status'] == 'delivery-failed' and 0 <= row['normal_rounds'] < 3
                        and row['round_dispatches'] == row['normal_rounds'] + 1)), 'Unexpected public model projection')
-        _need(isinstance(row['source_sha256'], str) and len(row['source_sha256']) == 64
-              and all(c in '0123456789abcdef' for c in row['source_sha256']), 'Opaque review source binding required')
+        _need(_is_hash(row['source_sha256']), 'Opaque review source binding required')
+        dispatches += row['round_dispatches']
         for grade in row['axes'].values():
-            _need(set(grade) == {'score', 'strict'} and (grade['score'] is None or
+            _need(isinstance(grade, dict) and set(grade) == {'score', 'strict'} and (grade['score'] is None or
                 type(grade['score']) in (int, float) and 0 <= grade['score'] <= 100)
                 and (grade['strict'] is None or type(grade['strict']) is bool), 'Unknowns must remain distinct from zero')
             if row['status'] == 'delivery-failed':
                 _need(grade == dict(score=None, strict=None), 'An operational loss is not a mathematical-axis judgment')
+    _need(type(value['native_round_dispatches']) is int and value['native_round_dispatches'] == dispatches,
+          'Dispatch count differs from the selected configurations')
     return value
+
+
+def validate_extension(current, proposed):
+    """Require the same frozen sources and exact retention of every adopted row."""
+    validate_public(current)
+    validate_public(proposed)
+    bindings = ('source_binding', 'policy_sha256', 'review_policy_sha256', 'batch_sha256', 'planned_cohort', 'reviewer')
+    _need(all(current[key] == proposed[key] for key in bindings),
+          'An adoption update must retain the same plan, baseline, policies and reviewer')
+    _need(all(proposed['models'].get(key) == row for key, row in current['models'].items()),
+          'An adoption update cannot remove or change any previously adopted configuration')

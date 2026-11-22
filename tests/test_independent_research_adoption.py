@@ -1,4 +1,4 @@
-"""Whole-cohort adoption contracts with synthetic manuscripts and a mocked wire boundary."""
+"""Incremental adoption contracts with synthetic manuscripts and a mocked wire boundary."""
 from copy import deepcopy
 import hashlib
 import json
@@ -10,11 +10,13 @@ from unittest.mock import patch
 
 from math_gauge import independent_research_adoption as adoption
 from math_gauge import taste_v130 as flow
+from scripts import adopt_independent_research_batch as cli
 import test_independent_research_review as trajectory_fixture
 import test_taste_v130 as fixture_support
 
 descriptor = fixture_support.descriptor
 write_json = fixture_support.write_json
+PLANNED = [f'fixture-{suffix}' for suffix in 'abcdefghij']
 
 
 class AdoptionTests(unittest.TestCase):
@@ -26,7 +28,7 @@ class AdoptionTests(unittest.TestCase):
         (self.run / 'control').mkdir(parents=True)
         self.rows, self.executions, self.reviews = [], {}, {}
         self.registration, self.review_policy = None, None
-        for name in ('fixture-a', 'fixture-b'):
+        for name in PLANNED[:3]:
             fixture = fixture_support.ProtocolFixture('runTest')
             fixture.setUp()
             self.addCleanup(fixture.doCleanups)
@@ -64,7 +66,7 @@ class AdoptionTests(unittest.TestCase):
             self.rows.append(dict(id=name, execution=descriptor(control / 'execution.json', self.run),
                 review=descriptor(review_path, self.root), reviewer_source=descriptor(reviewer_path, self.root)))
             self.reviews[name] = review
-        self.plan = dict(cohort=[dict(id=name) for name in self.executions],
+        self.plan = dict(cohort=[dict(id=name) for name in PLANNED],
             baseline=dict(edition='1.2.0', path='site/data.json', sha256='a' * 64))
         self.plan_path = self.root / 'plan.json'
         write_json(self.plan_path, self.plan)
@@ -95,9 +97,12 @@ class AdoptionTests(unittest.TestCase):
         row['reviewer_source'] = descriptor(reviewer_path, self.root)
 
     def test_all_reviews_project_only_allowlisted_grades_and_opaque_bindings(self):
+        self.source['models'] = self.rows[::-1]
         value = self.prepare()
-        self.assertEqual(value['cohort'], ['fixture-a', 'fixture-b'])
-        self.assertEqual(value['native_round_dispatches'], 6)
+        self.assertEqual(value['planned_cohort'], PLANNED)
+        self.assertEqual(value['cohort'], PLANNED[:3])
+        self.assertEqual(list(value['models']), PLANNED[:3])
+        self.assertEqual(value['native_round_dispatches'], 9)
         self.assertEqual(value['models']['fixture-a']['axes']['capacity']['score'], 80)
         self.assertEqual(value['review_policy_sha256'], self.source['review_policy']['sha256'])
         text = adoption.encoded(value).decode()
@@ -108,15 +113,14 @@ class AdoptionTests(unittest.TestCase):
     def test_legacy_selection_review_and_aggregate_are_explicitly_rejected(self):
         current = self.prepare()
         old_projection = deepcopy(current)
-        old_projection['schema'] = 'math-gauge.independent-research-adoption/v1'
-        old_projection.pop('review_policy_sha256')
-        with self.assertRaisesRegex(ValueError, 'projection v2'):
+        old_projection['schema'] = 'math-gauge.independent-research-adoption/v2'
+        old_projection.pop('planned_cohort')
+        with self.assertRaisesRegex(ValueError, 'projection v3'):
             adoption.validate_public(old_projection)
-        policy = self.source.pop('review_policy')
-        self.source['schema'] = 'math-gauge.independent-research-review-selection/v1'
-        with self.assertRaisesRegex(ValueError, 'selection v2'):
+        self.source['schema'] = 'math-gauge.independent-research-review-selection/v2'
+        with self.assertRaisesRegex(ValueError, 'selection v3'):
             self.prepare()
-        self.source.update(schema=adoption.SELECTION, review_policy=policy)
+        self.source['schema'] = adoption.SELECTION
         self.reviews['fixture-a']['schema'] = flow.REVIEW
         self.reviews['fixture-a'].pop('review_policy_sha256')
         self.update_review('fixture-a')
@@ -128,13 +132,14 @@ class AdoptionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'source bytes changed'):
             self.prepare()
 
-    def test_no_partial_or_duplicate_cohort_is_adopted(self):
-        self.source['models'] = self.rows[:1]
-        with self.assertRaisesRegex(ValueError, 'Partial'):
+    def test_empty_duplicate_and_outside_plan_selections_are_rejected(self):
+        self.source['models'] = []
+        with self.assertRaisesRegex(ValueError, 'nonempty'):
             self.prepare()
-        self.source['models'] = [self.rows[0], self.rows[0]]
-        with self.assertRaisesRegex(ValueError, 'Partial'):
-            self.prepare()
+        for invalid in ([self.rows[0], self.rows[0]], [dict(self.rows[0], id='outside-plan')]):
+            self.source['models'] = invalid
+            with self.assertRaisesRegex(ValueError, 'unique members'):
+                self.prepare()
 
     def test_only_the_requested_independent_reviewer_can_supply_grades(self):
         row = self.rows[0]
@@ -194,7 +199,7 @@ class AdoptionTests(unittest.TestCase):
             conclusion='confirmed-delivery-failed', reason='Synthetic explicit deadline adjudication.', evidence=[native])
         self.update_review(name)
         value = self.prepare()
-        self.assertEqual(value['native_round_dispatches'], 5)
+        self.assertEqual(value['native_round_dispatches'], 8)
         row = value['models'][name]
         self.assertEqual(row['status'], 'delivery-failed')
         self.assertEqual(row['normal_rounds'], 1)
@@ -210,11 +215,111 @@ class AdoptionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 adoption.validate_public(value)
 
+    def index_target(self):
+        target = self.root / adoption.PUBLIC_PATH
+        target.parent.mkdir(parents=True, exist_ok=True)
+        return target
+
+    def test_first_install_and_later_append_retain_the_same_rows(self):
+        target = self.index_target()
+        self.source['models'] = self.rows[1:2]
+        initial = self.prepare()
+        cli.apply_index(self.root, initial, expected=None)
+        before = cli.current_index(target)
+        self.assertEqual(before, adoption.encoded(initial))
+        self.source['models'] = self.rows
+        extended = self.prepare()
+        cli.apply_index(self.root, extended, expected=before)
+        installed = cli.current_index(target)
+        self.assertEqual(installed, adoption.encoded(extended))
+        self.assertEqual(json.loads(installed)['models']['fixture-b'], initial['models']['fixture-b'])
+        with patch.object(cli, 'write_projection') as write:
+            cli.apply_index(self.root, extended, expected=installed)
+            write.assert_not_called()
+
+    def test_append_rejects_changed_bindings_rows_and_withdrawal(self):
+        target = self.index_target()
+        initial = self.prepare()
+        cli.apply_index(self.root, initial, expected=None)
+        before = cli.current_index(target)
+        for field in ('batch_sha256', 'policy_sha256', 'review_policy_sha256'):
+            proposal = dict(initial, **{field: '0' * 64})
+            with self.assertRaisesRegex(ValueError, 'same plan'):
+                cli.apply_index(self.root, proposal, expected=before)
+        for proposal in (dict(initial, source_binding=dict(initial['source_binding'], sha256='0' * 64)),
+                         dict(initial, planned_cohort=[*PLANNED[:-1], 'fixture-other'])):
+            with self.assertRaisesRegex(ValueError, 'same plan'):
+                cli.apply_index(self.root, proposal, expected=before)
+        for field, new in (('score', 0), ('strict', None)):
+            proposal = deepcopy(initial)
+            proposal['models']['fixture-a']['axes']['capacity'][field] = new
+            with self.assertRaisesRegex(ValueError, 'cannot remove or change'):
+                cli.apply_index(self.root, proposal, expected=before)
+        proposal = deepcopy(initial)
+        proposal['models']['fixture-a']['source_sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'cannot remove or change'):
+            cli.apply_index(self.root, proposal, expected=before)
+        self.source['models'] = self.rows[:1]
+        with self.assertRaisesRegex(ValueError, 'cannot remove or change'):
+            cli.apply_index(self.root, self.prepare(), expected=before)
+        self.assertEqual(cli.current_index(target), before)
+
+    def test_failed_replace_and_stale_writer_preserve_installed_bytes(self):
+        target = self.index_target()
+        self.source['models'] = self.rows[:1]
+        cli.apply_index(self.root, self.prepare(), expected=None)
+        before = cli.current_index(target)
+        self.source['models'] = self.rows
+        extended = self.prepare()
+        with patch.object(cli.os, 'replace', side_effect=OSError('synthetic interrupted replace')):
+            with self.assertRaisesRegex(OSError, 'interrupted replace'):
+                cli.apply_index(self.root, extended, expected=before)
+        self.assertEqual(cli.current_index(target), before)
+        self.assertEqual(list(target.parent.iterdir()), [target])
+        cli.apply_index(self.root, extended, expected=before)
+        with self.assertRaisesRegex(ValueError, 'changed during verification'):
+            cli.apply_index(self.root, extended, expected=before)
+        self.assertEqual(cli.current_index(target), adoption.encoded(extended))
+
+    def test_index_rejects_symlinks_and_existing_legacy_projection(self):
+        target = self.index_target()
+        protected = self.root / 'other.json'
+        protected.write_bytes(b'original bytes\n')
+        target.symlink_to(protected)
+        proposal = self.prepare()
+        with self.assertRaisesRegex(ValueError, 'Symlink'):
+            cli.apply_index(self.root, proposal, expected=None)
+        self.assertEqual(protected.read_bytes(), b'original bytes\n')
+        target.unlink()
+        previous = adoption.encoded(dict(proposal, schema='math-gauge.independent-research-adoption/v2'))
+        target.write_bytes(previous)
+        with self.assertRaisesRegex(ValueError, 'projection v3'):
+            cli.apply_index(self.root, proposal, expected=previous)
+        self.assertEqual(target.read_bytes(), previous)
+
+    def test_check_rebuilds_exact_index_and_proposal_never_replaces(self):
+        target = self.index_target()
+        proposal = self.prepare()
+        cli.apply_index(self.root, proposal, expected=None)
+        output = self.root / 'proposal.json'
+        arguments = ['adopt', '--selection', str(self.selection), '--public-root', str(self.root),
+                     '--out', str(output), '--check']
+        with patch.object(cli.sys, 'argv', arguments), patch.object(cli, 'prepare', return_value=proposal):
+            cli.main()
+            self.assertEqual(output.read_bytes(), target.read_bytes())
+            with self.assertRaises(FileExistsError):
+                cli.main()
+            output.unlink()
+            target.write_bytes(target.read_bytes() + b'\n')
+            with self.assertRaisesRegex(ValueError, 'differs from the original reviewed evidence'):
+                cli.main()
+            self.assertFalse(output.exists())
+
     def baseline_fixture(self):
         def point(v):
             return dict(lower=v, upper=v, exact=v)
         models = []
-        for index, name in enumerate(('fixture-a', 'fixture-b', 'fixture-c')):
+        for index, name in enumerate(PLANNED):
             report = dict(metrics={key: point(80) for key in ('overall', 'written', 'lean', 'research')})
             models.append(dict(id=name, label='Synthetic ' + name, display_order=index,
                 ranking_values=dict(strict=8000, partial=8000, capability=8000),
@@ -237,7 +342,7 @@ class AdoptionTests(unittest.TestCase):
         self.assertEqual(rows['fixture-a']['components']['autonomy']['value'], 0)
         self.assertEqual(rows['fixture-a']['components']['taste']['state'], 'insufficient-evidence')
         self.assertIsNone(rows['fixture-a']['item']['exact'])
-        for axis in rows['fixture-c']['components'].values():
+        for axis in rows['fixture-d']['components'].values():
             self.assertEqual(axis, dict(state='not-tested', value=None, strict=None))
 
     def test_display_refuses_a_changed_baseline_policy_or_unknown_selected_model(self):
@@ -251,6 +356,7 @@ class AdoptionTests(unittest.TestCase):
                 selected['policy_sha256'] = '0' * 64
             else:
                 selected['cohort'][0] = 'missing-model'
+                selected['planned_cohort'][0] = 'missing-model'
                 selected['models']['missing-model'] = selected['models'].pop('fixture-a')
             with self.assertRaisesRegex(ValueError, 'different baseline'):
                 baseline_data(data, source_bytes=raw, adopted=selected)

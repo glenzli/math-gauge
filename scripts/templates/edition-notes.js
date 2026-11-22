@@ -74,7 +74,7 @@
   const taxonomy=node('table',null,'guide-table'),row=taxonomy.createTHead().insertRow();
   [text('题型','Category'),text('任务范围','Tasks'),text('分值 · 占比','Points · share'),text('子类组成（分）','Components (points)')].forEach(label=>row.append(node('th',label)));
   const body=taxonomy.createTBody();
-  d.policy.groups.forEach(group=>{const r=body.insertRow(),label=node('th',names[group.id]);label.scope='row';r.append(label);
+  d.policy.groups.filter(group=>!isIndependent||group.id!=='independent_open_research').forEach(group=>{const r=body.insertRow(),label=node('th',names[group.id]);label.scope='row';r.append(label);
    const count=r.insertCell();count.className='guide-category-tasks';count.textContent=tasks[group.id];
    const share=r.insertCell();share.className='guide-category-share';share.textContent=text(group.weight+'分 · '+group.weight+'%',group.weight+' points · '+group.weight+'%');
    const parts=r.insertCell();parts.className='guide-category-parts';parts.textContent=group.children.map(id=>{const part=d.policy.subcategories.find(item=>item.id===id);return names[id]+' '+(isIndependent?Number(part.weight.toFixed(2)):part.weight)}).join(' · ');
@@ -83,7 +83,14 @@
   guide.append(taxonomy);
   const explain=(heading,content,cls='')=>{const block=node('section',null,'guide-section '+cls);block.append(node('h3',heading),node('p',content));guide.append(block);return block};
   explain(text('汇总方法','How scores are combined'),text('逐题审核，相关变体先在同一数学家族内合并，再按固定权重汇总。未测保持未知，不把已测部分重新放大到100分。','Each task is reviewed; related variants are combined within their mathematical family, then aggregated with fixed weights. Unrun work stays unknown; measured coverage is never rescaled to 100.'));
-  if(isIndependent)explain(text('1.3总分','1.3 overall scores'),text('从原分项分别重算：书面、Lean、辅助研究各30%，独立开放研究题分10%。A/T/C先合成一道题；题Strict要求三门都通过。旧三分定义、答卷、审核和1.2源结果保留；新版明确为综合视图，MC基准综合包含新题A/T/C，不能当成旧纯数学MC。未测分数留空，柱图显示已确认贡献，完整分仍保留未知区间，不把90分归一化到100。','Reweight each original group to30%, then add the independent task at10%. A/T/C form one task; Strict requires all three gates. Original modes and evidence are retained. The new MC-based composite is explicitly different from pure mathematical MC. Unmeasured fields stay blank; confirmed credit and unresolved intervals remain separate.'));
+  if(isIndependent){
+   const overall=explain(text('1.3总分','1.3 overall scores'),text(
+    'MC、RMC、SMC 各自汇总同口径分数。书面、Lean、辅助研究各占30%，独立开放研究题占10%。每种口径按25／25／50将 A／T／C 汇成一道题。MC 取独立补审的有效成果分，RMC 取连续可靠性评审分。未测分数留空，主榜柱图显示已确认贡献，完整分保留未知区间。',
+    'MC, RMC and SMC each use scores from their own mode. Written proofs, Lean and supporting research contribute 30% each, and independent open research contributes 10%. Each mode combines A, T and C at 25/25/50 into one task. MC uses an independent review of valid results. RMC uses continuous reliability grades. Unmeasured fields remain blank, and the main chart shows confirmed credit with unresolved intervals retained.'));
+   overall.append(node('p',text(
+    '独立开放研究 SMC 按检查点给分。A 的2个门槛、T 的3个方面、C 的5个硬方向各自在项内等权。全项通过另列为检查状态。例如 C 通过4／5时，该项 SMC 为80，状态为「未全项通过」。未定检查点保留固定分母。',
+    'Independent open research SMC awards credit by checkpoint, equally within each component: 2 autonomy, 3 taste and 5 required capacity checks. All-checks status is shown separately. Passing 4 of 5 capacity checks gives capacity SMC of 80 even though not all checks passed. Unresolved checks keep their fixed denominator.')));
+  }
   const flow=explain(text('作答流程','Answering process'),text('39项首答任务分别交付，按规定的有效尝试规则选卷。','The 39 initial tasks are delivered separately and selected under the prescribed effective-attempt rule.'));
   const branches=node('div',null,'guide-flow-branches');
   branches.append(node('p',text('整章Lean（MG-C003）→ 固定3轮自查','Whole-chapter Lean (MG-C003) → 3 fixed self-checks')));
@@ -94,7 +101,11 @@
   flow.append(branches);
   const metrics=node('section',null,'guide-section');metrics.append(node('h3',text('三种指标','Three score concepts')));
   const definitions=node('dl',null,'guide-metrics');
-  [['MC',text('经核实的有效数学成果，包括有效部分进展。','Verified useful mathematics, including valid partial progress.')],['RMC',text('可靠性分；在有效成果上扣除有据的错误、回退与误报损失。','Reliability-adjusted credit: valid work less supported penalties for errors, regressions and false claims.')],['SMC',text('默认排序指标。每份交付按整题通过／不通过验收；整章自查按完整三轮轨迹验收。','The default sorting measure. Each delivery passes or fails the whole task; chapter self-checks use the entire three-round trajectory.')]].forEach(([name,meaning])=>{const entry=node('div');entry.append(node('dt',name),node('dd',meaning));definitions.append(entry)});
+  const strictDefinition=isIndependent?text(
+   '默认排序指标。既有任务保留整题通过／不通过的验收规则，整章自查按完整三轮轨迹验收。独立开放研究使用分点 SMC。',
+   'The default sorting measure. Existing tasks retain their whole-task pass/fail rules, including the complete three-round chapter self-check. Independent open research uses checkpoint-based SMC.'):
+   text('默认排序指标。每份交付按整题通过／不通过验收；整章自查按完整三轮轨迹验收。','The default sorting measure. Each delivery passes or fails the whole task; chapter self-checks use the entire three-round trajectory.');
+  [['MC',text('经核实的有效数学成果，包括有效部分进展。','Verified useful mathematics, including valid partial progress.')],['RMC',text('可靠性分；在有效成果上扣除有据的错误、回退与误报损失。','Reliability-adjusted credit: valid work less supported penalties for errors, regressions and false claims.')],['SMC',strictDefinition]].forEach(([name,meaning])=>{const entry=node('div');entry.append(node('dt',name),node('dd',meaning));definitions.append(entry)});
   metrics.append(definitions);guide.append(metrics);
   if(isRevision){
    const revision=explain(text('续答如何算分','How continuation credit is blended'),text('MC、RMC、SMC都逐题折算，再沿用原家族权重；续答不是额外增加20分。','MC, RMC and SMC are blended per task, retaining the original family weights; continuations do not add a separate 20 points.'),'guide-revision');

@@ -51,6 +51,33 @@
   scope:['形式化能力采用Lean整体SMC：审计10分、工程15分、三轮对齐自查10分；每题与整条自查须全部要求达标，两个阶段使用同一初答与原有自查轨迹。开放研究能力看明确开放请求下的研究交付；末位研究主动性观察首答自发行为。','Formalization uses full Lean SMC: audits (10), engineering (15) and the three-round self-check trajectory (10). Every required task/trajectory condition must pass. Both stages use the same initial answers and prescribed trajectory. Open research concerns explicitly requested research; initiative, shown last, describes unsolicited first-answer behavior.'],
   formalization:['Lean子类','Lean subcategories']
  };
+ const tasteAxis={id:'mathematical_taste',label:{zh:'数学品味',en:'Mathematical taste'},description:{
+  zh:'独立开放研究三稿的数学品味连续评审分（RMC 展示）。首答与含续答使用同一分数。',
+  en:'Mathematical taste from the continuous review of three independent open research manuscripts (RMC display). Both profile stages use the same score.'}};
+ const tasteMessages={
+  description:['每轴0–100 · 研究主动性含受邀自主 · 数学品味 RMC','0–100 per axis · Initiative includes invited autonomy · Mathematical taste (RMC)'],
+  meanings:['十轴含义与范围','What the ten axes measure'],
+  chart:['十轴数学画像，固定0至100刻度','Ten-axis mathematical profile, fixed scale from 0 to 100'],
+  scope:['切换阶段会改变旧证据基底。受邀自主、研究能力和品味来自同一三轮研究题。严格完成度在两个阶段都取 1.3 主榜 SMC。','Switching stages changes the retained evidence base. Invited autonomy, research capacity and taste use the same three-round research task. Both stages use the current 1.3 leaderboard SMC for strict completion.'],
+  coverage:['画像分别显示基底和本题覆盖。数学品味使用三份研究稿，严格完成度使用 1.3 主榜覆盖。','The profile reports retained and new-task coverage separately. Taste covers three manuscripts and strict completion uses the 1.3 leaderboard coverage.'],
+  tasteManuscripts:['品味稿件','Taste manuscripts'],tasteUnknown:['未知','Unknown'],
+  newTask:['本题','New task'],components:['分项','components'],baseUnknown:['基底覆盖未知','Base coverage unknown']
+ };
+ const blendedTasteMessages={...tasteMessages,
+  scope:['研究自主（A）进入研究主动性和开放研究能力，研究能力（C）进入数学深度和开放研究能力，数学品味（T）进入品味和数学审辨力。品味还合并六个旧题家族的直接评审。切换阶段会改变旧证据基底，严格完成度共用 1.3 主榜 SMC。','Research autonomy (A) contributes to initiative and open research capability. Research capacity (C) contributes to mathematical depth and open research capability. Mathematical taste (T) contributes to taste and discernment. Taste also includes direct reviews of six retained families. Switching stages changes the retained evidence, while strict completion uses the same official 1.3 SMC.'],
+  coverage:['品味分别显示三稿与六家族的覆盖，缺少可评证据时保留区间。','Taste reports coverage separately for three manuscripts and six families. Missing evidence leaves an interval.'],
+  legacyTaste:['旧题家族','Retained families']};
+ const profileViews={radar:['雷达图','Radar'],bars:['按轴排名','Axis ranking'],table:['表格','Table']};
+ const profileViewCopy={mode:['画像展示方式','Profile view'],axis:['排名维度','Ranking axis'],
+  unranked:['证据未齐 · 未排名','Incomplete evidence · Unranked'],unknown:['未知','Unknown'],scale:['分数 · 0–100','Score · 0–100']};
+ const profileMixes={initiative:'initiative_v130',depth:'depth_v130',open_research:'open_research_v130',discernment:'discernment_v130'};
+ const versionedDescriptions={
+  initiative:{zh:'首答的自发拓展观察，加上受邀研究中的自主推进证据。',en:'Unsolicited first-answer initiative combined with independent progress on the invited research task.'},
+  depth:{zh:'原阶段的数学深度，加上本题核验的研究成果。',en:'Mathematical depth from the selected stage combined with verified results on the new research task.'},
+  open_research:{zh:'原阶段的开放研究能力，加上本题的受邀自主与研究能力。',en:'Open research capability from the selected stage combined with invited autonomy and research capacity in the new task.'},
+  discernment:{zh:'原阶段的数学审辨力，加上本题的数学品味。',en:'Mathematical discernment from the selected stage combined with mathematical taste on the new task.'},
+  completion:{zh:'两个画像阶段都采用同一个 1.3 主榜 SMC。',en:'Both profile stages use the same 1.3 leaderboard SMC.'}
+ };
  const axisContext={completion:['沿用主榜SMC的全部严格完成门槛，不另算家族平均完成率。','This retains every official SMC completion gate, without a separate family-average completion rate.'],
   initiative:['自发行为需要与问题忠实度一起看；不从主动程度推断能力上限。','Read this behavior together with problem fidelity; initiative does not determine a capability ceiling.'],
   depth:['衡量实际成立的机制、自然范围与结构解释。','This concerns mechanisms, natural scope and structural insight that have actually been established.'],
@@ -82,6 +109,21 @@
   return [...models].sort(compare).filter(model=>requested.has(model.id)).map(model=>model.id);
  }
  function selectionUrl(address,ids){const url=new URL(address);url.searchParams.set('profile-models',ids.join(','));return url.href}
+ function viewFor(search,axes){
+  const query=new URLSearchParams(search),view=query.get('profile-view'),axis=query.get('profile-axis');
+  return {view:Object.hasOwn(profileViews,view)?view:'radar',axis:axes.some(item=>item.id===axis)?axis:axes[0].id};
+ }
+ function rankAxis(models,axis){
+  const ranked=[],unknown=[];
+  for(const model of models){
+   const metric=model.profile_metrics[axis];
+   if(finite(metric.exact))ranked.push({model,metric,displayed:Math.round(metric.exact*10)});
+   else unknown.push({model,metric});
+  }
+  ranked.sort((a,b)=>b.displayed-a.displayed);
+  ranked.forEach((item,index)=>item.rank=ranked[index-1]?.displayed===item.displayed?ranked[index-1].rank:index+1);
+  return {ranked,unknown};
+ }
  function validMetric(metric){return metric&&finite(metric.confirmed)&&finite(metric.lower)&&finite(metric.upper)&&metric.lower<=metric.upper&&
   (metric.exact===null||finite(metric.exact)&&metric.exact>=metric.lower&&metric.exact<=metric.upper)&&
   metric.coverage&&Number.isInteger(metric.coverage.reviewed)&&Number.isInteger(metric.coverage.planned)&&metric.coverage.reviewed>=0&&metric.coverage.planned>=metric.coverage.reviewed}
@@ -89,18 +131,50 @@
  function geometry(axes,metrics){
   const vertices=axes.map((axis,index)=>metrics[axis.id].exact===null?null:{...point(index,metrics[axis.id].exact,axes.length),axis:axis.id,value:metrics[axis.id].exact});
   const segments=[];for(let i=0;i<axes.length;i++){const next=(i+1)%axes.length;if(vertices[i]&&vertices[next])segments.push([vertices[i],vertices[next]])}
-  const intervals=axes.flatMap((axis,index)=>{const metric=metrics[axis.id];return metric.exact===null&&metric.coverage.reviewed>0?
+  const intervals=axes.flatMap((axis,index)=>{const metric=metrics[axis.id];return metric.exact===null&&(metric.coverage.reviewed>0||metric.coverage.observed>0||metric.task_coverage?.components_reviewed>0||metric.manuscript_coverage?.reviewed>0)?
    [{axis:axis.id,index,lower:metric.lower,upper:metric.upper,from:point(index,metric.lower,axes.length),to:point(index,metric.upper,axes.length)}]:[]});
   return {vertices,segments,intervals,complete:vertices.every(Boolean)};
  }
+ const hasRevisionStage=data=>['1.2.0','1.3.0'].includes(data?.benchmark_version);
  function stageFor(data,search=''){
   const requested=new URLSearchParams(search).get('profile-stage');
-  return data?.benchmark_version==='1.2.0'&&requested!=='first'&&data?.mathematical_profile_revision?'revision':'first';
+  return hasRevisionStage(data)&&requested!=='first'&&data.mathematical_profile_revision?'revision':'first';
+ }
+ function tasteMetric(value){
+  const known=finite(value?.exact)&&value.lower===value.exact&&value.upper===value.exact&&
+   value.observed===3&&value.denominator?.unit==='manuscript'&&value.denominator.planned===3;
+  const exact=known?value.exact:null;
+  return {exact,lower:exact??0,upper:exact??100,confirmed:exact??0,
+   coverage:{unit:'manuscript',planned:3,reviewed:known?3:0}};
+ }
+ function displayMetric(record,coverage){
+  const metric={...record,coverage};
+  return validMetric(metric)?metric:{exact:null,lower:0,upper:100,confirmed:0,coverage};
+ }
+ function blendedTasteMetric(value){
+  const families=value?.legacy_metric?.coverage,manuscripts=value?.independent_coverage;
+  if(families?.unit==='theorem_extension_family'&&families.planned===6&&manuscripts?.unit==='manuscript'&&
+   manuscripts.planned===3&&[0,3].includes(manuscripts.reviewed)&&validMetric({...value,coverage:families})){
+   return {...value,coverage:families,manuscript_coverage:manuscripts};
+  }
+  return {...displayMetric(null,{unit:'theorem_extension_family',planned:6,reviewed:0,observed:0}),
+   manuscript_coverage:{unit:'manuscript',planned:3,reviewed:0}};
+ }
+ function projectResearchMetrics(model,record,stage,blended){
+  const metrics={...model.profile_metrics};
+  for(const [axis,key] of Object.entries(profileMixes)){
+   const mixed=record?.stages?.[stage]?.[key],base=metrics[axis].coverage;
+   metrics[axis]=displayMetric(mixed,mixed?.base_coverage||{unit:base.unit,planned:base.planned,reviewed:0});
+  }
+  const completion=record?.completion_v130,official=completion?.coverage;
+  metrics.completion=displayMetric(completion,{unit:'fixed_weighted_category',planned:official?.planned??4,reviewed:official?.adjudicated??0});
+  metrics[tasteAxis.id]=blended?blendedTasteMetric(record?.stages?.[stage]?.mathematical_taste):tasteMetric(record?.mathematical_taste);
+  return {...model,profile_metrics:metrics};
  }
  function prepare(data,compare,stage='first'){
-  const revised=stage==='revision',corrected=!revised&&data?.benchmark_version==='1.2.0'&&data?.mathematical_profile_baseline,
+  const modern=hasRevisionStage(data),revised=stage==='revision',corrected=!revised&&modern&&data.mathematical_profile_baseline,
    profile=revised?data?.mathematical_profile_revision:corrected||data?.mathematical_profile;
-  if(!['1.1.0','1.2.0'].includes(data?.benchmark_version)||revised&&data.benchmark_version!=='1.2.0'||
+  if(!(modern||data?.benchmark_version==='1.1.0')||revised&&!modern||
    profile?.schema!==(revised?'math-gauge.mathematical-profile-revision/v1':corrected?'math-gauge.mathematical-profile-baseline/v1':'math-gauge.mathematical-profile/v1')||
    profile.version!==(revised||corrected?'0.1.0':'0.4.0')||profile.benchmark_version!==(revised||corrected?'1.2.0':'1.1.0')||
    profile.reviewer_kind!=='ai'||profile.human_review!=='pending'||!Array.isArray(profile.axes)||profile.axes.length!==7||
@@ -111,7 +185,7 @@
   let models=pool.filter(model=>model.presentation_eligibility?.ranked!==false&&profiles.has(model.id)&&profile.axes.every(axis=>validMetric(profiles.get(model.id)?.[axis.id])&&
     (profiles.get(model.id)[axis.id].coverage.planned===(axis.id==='completion'?8:35)&&profiles.get(model.id)[axis.id].coverage.unit===(axis.id==='completion'?'benchmark_subcategory':'mathematical_family'))))
    .map(model=>({...model,profile_metrics:profiles.get(model.id)})).sort(compare),axes=profile.axes;
-  const capability=data.benchmark_version==='1.2.0'?data.open_research:null;
+  const capability=modern?data.open_research:null;
   if(capability){
    const valid=metric=>validMetric(metric)&&metric.coverage.unit==='open_research_family'&&metric.coverage.planned===5;
    if(capability.schema!=='math-gauge.open-research/v1'||capability.version!=='0.1.0'||capability.benchmark_version!=='1.2.0'||
@@ -126,7 +200,7 @@
    models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,
     open_research:supplied.get(model.id)?.[revised?'revision':'first']||capability.pending_metric}}));
   }
-  const formalization=data.benchmark_version==='1.2.0'?data.formalization_profile:null;
+  const formalization=modern?data.formalization_profile:null;
   if(formalization){
    const valid=metric=>validMetric(metric)&&metric.coverage.unit==='lean_subcategory'&&metric.coverage.planned===3;
    if(formalization.schema!=='math-gauge.formalization-profile/v1'||formalization.version!=='0.1.0'||
@@ -140,6 +214,18 @@
    axes=[axes[0],formalization.axis,...axes.slice(1)];
    models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,formalization:supplied.get(model.id)}}));
   }
+  if(data.benchmark_version==='1.3.0'&&axes.length===9){
+   const companion=data.independent_research_abilities;
+   const blended=companion?.schema==='math-gauge.independent-research-abilities/v3';
+   const byModel=(blended||companion?.schema==='math-gauge.independent-research-abilities/v2')&&companion.edition==='1.3.0'&&
+    companion.source_stages?.[stage]===(revised?'revision-inclusive':'first-answer')?companion.by_model:null;
+   const weight=companion?.taste_blend?.legacy_percent;
+   const displayedTaste=blended&&Number.isInteger(weight)&&weight>0&&weight<100?{...tasteAxis,description:{
+    zh:(100-weight)+'% 独立开放研究三稿品味 RMC，'+weight+'% 六个旧题家族直接评审。旧题证据随画像阶段切换。',
+    en:(100-weight)+'% mathematical taste RMC on the three independent open research manuscripts and '+weight+'% direct taste reviews of six retained families. The retained evidence follows the selected stage.'}}:tasteAxis;
+   axes=[...axes.map(axis=>versionedDescriptions[axis.id]?{...axis,description:versionedDescriptions[axis.id]}:axis),displayedTaste];
+   models=models.map(model=>projectResearchMetrics(model,byModel?.[model.id],stage,blended));
+  }
   return models.length?{profile,axes,models,stage}:null;
  }
  function mount(win){
@@ -149,16 +235,90 @@
   let stage=stageFor(data,new URL(win.location.href).search),prepared=prepare(data,compare,stage);if(!prepared){section.removeAttribute('data-assessment-only');section.hidden=true;return null}section.hidden=false;
   let {models,axes,profile}=prepared;const copy=messages,byId=new Map(models.map(model=>[model.id,model])),svgNS='http://www.w3.org/2000/svg';
   section.removeAttribute('data-assessment-only');
+  if(data.benchmark_version==='1.3.0'){
+   const nav=document.querySelector?.('a[data-assessment-only="1.2.0"][href="#mathematical-profile"]');
+   if(nav){nav.setAttribute('data-assessment-only','1.3.0');nav.hidden=false}
+  }
   const el=id=>document.getElementById('mathematical-profile-'+id),node=(tag,text,className)=>{const item=document.createElement(tag);if(text!==undefined)item.textContent=text;if(className)item.className=className;return item};
   const stageSwitch=el('continuation'),picker=el('picker'),modelChoices=el('choices');
   const svg=(tag,attrs={})=>{const item=document.createElementNS(svgNS,tag);for(const [key,value]of Object.entries(attrs))item.setAttribute(key,String(value));return item};
   let lang='zh',selected=[],signature='',pinned=null,hovered=null,keyboard=null;
   const controls=new Map(),checkboxes=new Map(),series=new Map(),legendButtons=new Map();
-  const t=key=>(axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
-  const coverage=metric=>metric.coverage.unit==='lean_subcategory'?t('formalization')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.unit==='open_research_family'?t('openResearch')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.unit==='benchmark_subcategory'?t('smc')+' · '+metric.coverage.reviewed+'/'+metric.coverage.planned:metric.coverage.reviewed+'/'+metric.coverage.planned+' '+t('settled');
-  const settledCoverage=model=>{const counts=axes.filter(axis=>!['completion','open_research','formalization'].includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
-   return (low===high?low:low+'–'+high)+'/35 '+t('settled')+(model.profile_metrics.formalization?' · '+coverage(model.profile_metrics.formalization):'')+(model.profile_metrics.open_research?' · '+coverage(model.profile_metrics.open_research):'')};
+  const tasteCopy=data.independent_research_abilities?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
+  const t=key=>(axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
+  const viewText=pair=>pair[lang==='en'?1:0];
+  const views=data.benchmark_version==='1.3.0'?buildViews():null;
+  const coverageNames={lean_subcategory:'formalization',open_research_family:'openResearch',benchmark_subcategory:'smc',
+   fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste'};
+  const coverage=metric=>{const {unit,reviewed,planned}=metric.coverage,count=reviewed+'/'+planned,key=coverageNames[unit];
+   const base=key?t(key)+' · '+count:count+' '+t('settled');
+   if(metric.manuscript_coverage)return t('tasteManuscripts')+' · '+metric.manuscript_coverage.reviewed+'/'+metric.manuscript_coverage.planned+' · '+base;
+   const task=metric.task_coverage;
+   if(!task)return base;
+   const observed=t('newTask')+' '+task.reviewed+'/'+task.planned;
+   const components=task.components_planned>1?' ('+t('components')+' '+task.components_reviewed+'/'+task.components_planned+')':'';
+   return (metric.base_coverage?base:t('baseUnknown'))+' · '+observed+components;};
+  const separateCoverage=['formalization','open_research',tasteAxis.id];
+  const settledCoverage=model=>{const counts=axes.filter(axis=>axis.id!=='completion'&&!separateCoverage.includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
+   return (low===high?low:low+'–'+high)+'/35 '+t('settled')+separateCoverage.filter(id=>model.profile_metrics[id]).map(id=>' · '+coverage(model.profile_metrics[id])).join('')};
   const appendLogo=(target,model)=>{if(model.logo?.data_url){const image=node('img');image.src=model.logo.data_url;image.alt='';target.append(image)}};
+  function buildViews(){
+   const radar=el('chart').closest('.mp-layout'),table=el('values').closest('details');
+   const toolbar=node('div',undefined,'mp-view-control'),buttons=node('div',undefined,'segmented');
+   const bars=node('section',undefined,'mp-rank-panel'),axisLabel=node('label',undefined,'mp-rank-axis-label');
+   const axisName=node('span'),axisSelect=node('select'),plot=node('div');
+   plot.setAttribute('role','group');
+   axisLabel.append(axisName,axisSelect);bars.append(axisLabel,plot);
+   const panes={radar,bars,table},toggles={};
+   function choose(key,value){
+    const url=new URL(win.location.href);url.searchParams.set('profile-'+key,value);
+    win.history.replaceState(null,'',url.href);render();
+   }
+   for(const [key,pane] of Object.entries(panes)){
+    pane.id='mathematical-profile-'+key+'-view';pane.dataset.profilePane=key;
+    const button=node('button');button.type='button';button.dataset.profileView=key;
+    button.setAttribute('aria-controls',pane.id);button.addEventListener('click',()=>choose('view',key));
+    toggles[key]=button;buttons.append(button);
+   }
+   buttons.setAttribute('role','group');toolbar.append(buttons);
+   axisSelect.addEventListener('change',()=>choose('axis',axisSelect.value));
+   table.open=true;el('values-title').hidden=true;
+   radar.before(toolbar);radar.after(bars);
+   return {panes,toggles,buttons,axisName,axisSelect,plot};
+  }
+  function renderRank(axis){
+   const definition=axes.find(item=>item.id===axis);
+   views.axisName.textContent=viewText(profileViewCopy.axis);
+   views.axisSelect.replaceChildren(...axes.map(item=>{const option=node('option',item.label[lang]);option.value=item.id;return option}));
+   views.axisSelect.value=axis;
+   views.plot.setAttribute('aria-label',definition.label[lang]+' · '+viewText(profileViewCopy.scale));
+   const {ranked,unknown}=rankAxis(selected.map(id=>byId.get(id)),axis),content=[];
+   const label=model=>{const name=node('span',undefined,'mp-rank-model');appendLogo(name,model);name.append(node('span',model.label));return name;};
+   if(ranked.length){
+    const scale=node('div',undefined,'mp-rank-scale'),ticks=node('div',undefined,'mp-rank-ticks'),rows=node('ol',undefined,'mp-rank-rows');
+    scale.setAttribute('aria-hidden','true');ticks.append(...[0,20,40,60,80,100].map(n=>node('span',String(n))));scale.append(ticks);
+    for(const {model,metric,rank} of ranked){
+     const row=node('li',undefined,'mp-rank-row'),track=node('div',undefined,'mp-rank-track'),bar=node('span',undefined,'mp-rank-bar');
+     row.dataset.profileBarModel=model.id;row.dataset.profileBarRank=String(rank);
+     row.style.setProperty('--mp-model-color',model.theme?.color||brand(model).color);
+     track.setAttribute('aria-hidden','true');bar.style.width=metric.exact+'%';track.append(bar);
+     row.append(node('span',String(rank),'mp-rank-position'),label(model),track,node('span',format(metric.exact),'mp-rank-score'));
+     rows.append(row);
+    }
+    content.push(scale,rows);
+   }
+   if(unknown.length){
+    const list=node('ul',undefined,'mp-unranked-rows');
+    for(const {model,metric} of unknown){
+     const row=node('li',undefined,'mp-unranked-row');row.dataset.profileBarModel=model.id;
+     const interval=metric.lower===0&&metric.upper===100?viewText(profileViewCopy.unknown):format(metric.lower)+'–'+format(metric.upper);
+     row.append(label(model),node('span',interval,'mp-rank-score'),node('small',coverage(metric),'mp-cell-coverage'));
+     list.append(row);
+    }
+    content.push(node('p',viewText(profileViewCopy.unranked),'mp-unranked-title'),list);
+   }
+   views.plot.replaceChildren(...content);
+  }
   function marker(parent,shape,x,y,color){
    let mark;const r=3.5;
    if(shape==='circle'||shape==='ring')mark=svg('circle',{cx:x,cy:y,r,fill:shape==='ring'?'none':'white'});
@@ -213,7 +373,12 @@ button.append(identity);focusEvents(button,id);button.addEventListener('click',(
   function renderTable(){const table=el('values'),caption=node('caption',t('table'));caption.className='mp-sr-only';const head=node('thead'),row=node('tr');const first=node('th',t('model'));first.scope='col';row.append(first);
    axes.forEach(axis=>{const cell=node('th',axis.label[lang]);cell.scope='col';cell.title=axis.description[lang];row.append(cell)});head.append(row);const body=node('tbody');
    for(const id of selected){const model=byId.get(id),tr=node('tr'),name=node('th',model.label);name.scope='row';tr.append(name);
-    axes.forEach(axis=>{const metric=model.profile_metrics[axis.id],cell=node('td');if(metric.exact===null){cell.className='mp-uncertain';cell.append(node('span',format(metric.lower)+'–'+format(metric.upper),'mp-axis-value'),node('small',t('confirmed')+' '+format(metric.confirmed),'mp-cell-confirmed'))}else cell.append(node('span',format(metric.exact),'mp-axis-value'));cell.append(node('small',coverage(metric),'mp-cell-coverage'));tr.append(cell)});body.append(tr);
+    axes.forEach(axis=>{const metric=model.profile_metrics[axis.id],cell=node('td');
+     if(metric.exact===null){cell.className='mp-uncertain';
+      if(axis.id===tasteAxis.id&&metric.lower===0&&metric.upper===100)cell.append(node('span',t('tasteUnknown'),'mp-axis-value'));
+      else cell.append(node('span',format(metric.lower)+'–'+format(metric.upper),'mp-axis-value'),node('small',t('confirmed')+' '+format(metric.confirmed),'mp-cell-confirmed'));
+     }else cell.append(node('span',format(metric.exact),'mp-axis-value'));
+     cell.append(node('small',coverage(metric),'mp-cell-coverage'));tr.append(cell)});body.append(tr);
    }table.replaceChildren(caption,head,body);
   }
   function renderMeanings(){el('meanings').hidden=false;
@@ -236,7 +401,8 @@ button.append(identity);focusEvents(button,id);button.addEventListener('click',(
    if(nextStage!==stage){const next=prepare(data,compare,nextStage);if(next){stage=nextStage;({models,axes,profile}=next);byId.clear();for(const model of models)byId.set(model.id,model);pinned=null;hovered=null;keyboard=null;buildControls();signature=''}}
    stageSwitch.checked=stage==='revision';
    lang=new URLSearchParams(query).get('lang')==='en'?'en':'zh';selected=readSelection(query,models,compare);
-   const key=stage+'|'+lang+'|'+selected.join(',');if(key===signature)return;signature=key;
+   const {view,axis}=views?viewFor(query,axes):{view:null,axis:null};
+   const key=[stage,lang,selected.join(','),view,axis].join('|');if(key===signature)return;signature=key;
    if(!selected.includes(pinned))pinned=null;if(!selected.includes(hovered))hovered=null;if(!selected.includes(keyboard))keyboard=null;
    for(const [id,message]of Object.entries({title:'title',description:'description',review:'review',note:'note','focus-note':'focus','values-title':'values','coverage-note':'coverage',empty:'empty','picker-title':'picker'}))el(id).textContent=t(message);
    el('continuation-label').textContent=t('continuation');
@@ -245,9 +411,19 @@ button.append(identity);focusEvents(button,id);button.addEventListener('click',(
    el('count').textContent=selected.length+'/'+models.length;
    picker.setAttribute('aria-label',t('picker')+' · '+t('selected')+' '+selected.length+t('of')+models.length+' '+t('models'));
    el('empty').hidden=selected.length>0;
-   renderMeanings();renderChart();renderLegend();renderTable();focus();
+   renderMeanings();
+   if(views){
+    views.buttons.setAttribute('aria-label',viewText(profileViewCopy.mode));
+    for(const [name,button] of Object.entries(views.toggles)){
+     button.textContent=viewText(profileViews[name]);button.setAttribute('aria-pressed',String(name===view));
+     views.panes[name].hidden=name!==view;
+    }
+    if(view==='bars')renderRank(axis);
+   }
+   if(!views||view==='radar'){renderChart();renderLegend();focus()}
+   if(!views||view==='table')renderTable();
   }
-  el('continuation-control').hidden=data.benchmark_version!=='1.2.0'||!data.mathematical_profile_revision;
+  el('continuation-control').hidden=!hasRevisionStage(data)||!data.mathematical_profile_revision;
   stageSwitch.addEventListener('change',()=>{
    const url=new URL(win.location.href);
    url.searchParams.set('profile-stage',stageSwitch.checked?'revision':'first');

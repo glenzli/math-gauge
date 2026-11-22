@@ -520,7 +520,8 @@ def validate_execution(run_root: Path, execution_ref: dict, plan: dict, *, allow
         seen_turns.add(replay["turn_id"])
         sent, boundary, sealed = map(_stamp, (entry["sent_at"], entry["boundary_at"], entry["sealed_at"]))
         times = list(map(_stamp, entry["received_at"]))
-        _require(len(times) == len(events) and times == sorted(times) and sent <= boundary <= sealed
+        # Native wire order is preserved above. UTC receipt times are wall-clock observations.
+        _require(len(times) == len(events) and sent <= boundary <= sealed
                  and all(sent <= at <= boundary for at in times)
                  and (last_sealed is None or last_sealed <= sent), "Turn timestamps violate freeze order")
         if final is not None:

@@ -8,12 +8,50 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.preview_open_research_v130 import baseline_data
+from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
 from scripts.results_publication import atomic_write, data_literal
+from math_gauge import independent_research_score_modes as modes
+from math_gauge import legacy_taste
+from math_gauge.research_profile import POLICY_PATH as PROFILE_POLICY_PATH
 
 EDITION = '1.3.0'
 BASE = '1.2.0'
 CONFIG = re.compile(r'(<script type="application/json" id="edition-config">)([\s\S]*?)(</script>)')
+CATEGORY_TEMPLATE = re.compile(r'<template id="independent-research-category-template">[\s\S]*?</template>\n?')
+
+
+def _controller_match(name):
+    return re.compile(r'(?:^|/)'+re.escape(name)+r'(?:\.[a-f0-9]+)?\.js$')
+
+
+def _versioned_asset(result, root, name):
+    text = (root/'scripts/templates'/name).read_text()
+    stem, suffix = name.rsplit('.', 1)
+    path = 'assets/versioned/'+stem+'.'+hashlib.sha256(text.encode()).hexdigest()[:12]+'.'+suffix
+    result[path] = text
+    return path
+
+
+def _independent_category(data, group):
+    from scripts.render_results_site import selected_result
+    from scripts.results_rankings import category_rankings
+
+    models = {model['id']: model for model in data['models']}
+
+    def item(model, mode):
+        return selected_result(model, mode)['metrics'][modes.ITEM]
+
+    def exact_item(model, mode):
+        metric = item(model, mode)
+        # Known contributions still belong to the interval and overall score.
+        # The category compares complete item values only.
+        return {'metrics': {modes.ITEM: dict(metric, confirmed=metric['exact'])}}
+
+    [board] = category_rankings(data['models'], [group], result_selector=exact_item)
+    for mode, rows in board['views'].items():
+        for row in rows:
+            row['state'] = item(models[row['model_id']], mode)['state']
+    return board
 
 
 def prepare_research_preview(files, root):
@@ -30,10 +68,16 @@ def prepare_research_preview(files, root):
     envelope['edition'] = EDITION
     envelope['data']['benchmark_version'] = EDITION
     from math_gauge.independent_research_adoption import PUBLIC_PATH
-    adopted_path = root / PUBLIC_PATH
-    adopted = json.loads(adopted_path.read_bytes()) if adopted_path.is_file() else None
-    board = baseline_data(json.loads(files['data.json']), policy_path=policy,
-                          source_bytes=files['data.json'].encode(), adopted=adopted)
+    adopted_path, overlay_path = root / PUBLIC_PATH, root / modes.PUBLIC_PATH
+    legacy_taste_path = root / legacy_taste.PUBLIC_PATH
+    adopted_bytes = adopted_path.read_bytes() if adopted_path.is_file() else None
+    overlay_bytes = overlay_path.read_bytes() if overlay_path.is_file() else None
+    adopted = json.loads(adopted_bytes) if adopted_bytes is not None else None
+    board, abilities, category_points = baseline_projection(json.loads(files['data.json']),
+        policy_path=policy, profile_policy_path=root/PROFILE_POLICY_PATH, score_modes_policy_path=root/modes.POLICY_PATH,
+        source_bytes=files['data.json'].encode(), adopted=adopted, adopted_bytes=adopted_bytes,
+        overlay_bytes=overlay_bytes, legacy_taste_policy_path=root/legacy_taste.POLICY_PATH,
+        legacy_taste_bytes=legacy_taste_path.read_bytes() if legacy_taste_path.is_file() else None)
     source_models={m['id']:m for m in json.loads(files['data.json'])['models']}
     for row in board['rows']:
         model=source_models[row['id']]
@@ -53,65 +97,92 @@ def prepare_research_preview(files, root):
             unknown += 3
         row['delivery']=dict(planned=45,normal=normal,unknown=unknown)
     envelope['data']['research_preview'] = board
+    envelope['data'][ABILITY_FIELD] = abilities
     # Project new composite metrics from shared scoring, retaining all old payloads.
     from math_gauge.scoring import research_preview_contributions
-    policy_data=json.loads(policy.read_bytes())
+    weights = board['weight_frame']
+    policy_data = dict(legacy_group_weights={key: weights[key] / 100 for key in modes.BASE_GROUPS})
     source_policy=json.loads(files['data.json'])['policy']
     from scripts.results_rankings import set_published_scores
     from scripts.results_editions import chart_scenes
     envelope['data']['edition_paths'] = {'download_prefix':'versions/1.3.0/'}
     by_id = {row['id']: row for row in board['rows']}
     for model in envelope['data']['models']:
-        row = by_id[model['id']]
-        for mode, key in [('partial','RMC'),('capability','MC'),('strict','SMC')]:
+        identifier = model['id']
+        row = by_id[identifier]
+        model_abilities = abilities['by_model'][identifier]
+        download_abilities = dict(abilities, by_model={identifier: model_abilities})
+        # Attach the official SMC coverage before writing any score-mode download.
+        for mode, key in [('strict','SMC'),('partial','RMC'),('capability','MC')]:
             report = model['retry']['combined'] if mode == 'partial' else model[mode]['nonlogical_retry_3']
-            value = row['strict_overall'] if mode == 'strict' else row['composites'][key]
-            known = row['strict_confirmed'] if mode == 'strict' else row['confirmed'][key]
+            value, known = row['composites'][key], row['confirmed'][key]
+            item = row['score_modes'][key]['item']
             source = copy.deepcopy(report['metrics']['earned'])
             source_model = source_models[model['id']]
             source_report = source_model['retry']['combined'] if mode == 'partial' else source_model[mode]['nonlogical_retry_3']
-            known_categories = sum(source_report['metrics'][g]['exact'] is not None for g in ('written', 'lean', 'research'))
-            known_categories += int((row['task_strict'] if mode == 'strict' else row['item']['exact']) is not None)
+            known_categories = sum(source_report['metrics'][g]['exact'] is not None for g in modes.BASE_GROUPS)
+            known_categories += int(item['exact'] is not None)
             report['contributions']=research_preview_contributions(report.get('contributions',{}),source_policy,policy_data)
+            item_coverage = dict(unit='three_round_research_task', planned=1,
+                                 adjudicated=int(item['exact'] is not None), unknown=int(item['exact'] is None))
+            report['metrics'][modes.ITEM] = dict(item, complete=item['exact'] is not None, coverage=item_coverage)
+            for group, points in category_points[identifier][key].items():
+                metadata = report['contributions'].get(group, {})
+                if group == modes.ITEM:
+                    metadata = dict(complete=item['exact'] is not None, coverage=item_coverage)
+                report['contributions'][group] = dict(metadata, **points)
             report['metrics']['earned'] = dict(source, **value, confirmed=known, complete=value['exact'] is not None,
                 coverage=dict(unit='fixed_weighted_category',planned=4,adjudicated=known_categories,unknown=4-known_categories))
             report['metrics']['overall'] = dict(value, complete=value['exact'] is not None,
                 coverage=copy.deepcopy(report['metrics']['earned']['coverage']))
-            report['score_construct'] = 'independent-research-composite-v1.3.0-not-legacy-mode'
+            if mode == 'strict':
+                model_abilities['completion_v130']['coverage'] = copy.deepcopy(report['metrics']['overall']['coverage'])
+            report['score_construct'] = 'independent-research-score-modes-v1.3.0'
             report['base_edition'] = BASE
             suffix = {'partial':'','capability':'-capability','strict':'-strict'}[mode]
             download = dict(schema='math-gauge.independent-research-composite-display/v1',edition=EDITION,
                 base_edition=BASE,model_id=model['id'],score_construct='composite-'+mode,
                 metric=copy.deepcopy(report['metrics']['earned']),
-                group_weights=dict(written=30,lean=30,research=30,independent_open_research=10),
+                group_weights=weights, category_points=copy.deepcopy(category_points[identifier][key]),
                 independent_research=copy.deepcopy(row),source_binding=copy.deepcopy(board['source_binding']),
                 candidate_calls=0,rank_eligible=False)
+            download[ABILITY_FIELD] = download_abilities
             if adopted:
                 download['adoption_binding'] = copy.deepcopy(board['adoption'])
+            if 'score_modes_binding' in board:
+                download['score_modes_binding'] = copy.deepcopy(board['score_modes_binding'])
             result['versions/1.3.0/downloads/'+model['id']+'-combined'+suffix+'-retry.json']=json.dumps(download,ensure_ascii=False,indent=2)+'\n'
         set_published_scores(model)
         if adopted:
-            comparable = all(v['exact'] is not None for v in row['composites'].values()) and row['strict_overall']['exact'] is not None
+            comparable = all(v['exact'] is not None for v in row['composites'].values())
             model['ranking_complete'] = comparable
             if not comparable:
                 model['ranking_values'] = dict.fromkeys(('strict', 'partial', 'capability'))
-    scene_source = json.loads(files['data.json'])
-    scene_source['models'] = envelope['data']['models']
-    envelope['data']['chart_scenes']['chart-groups'] = chart_scenes(scene_source)['chart-groups']
-    for group in envelope['data'].get('category_leaderboards', []):
-        group['weight'] = 30
+    data = envelope['data']
+    for group in data['category_leaderboards']:
+        group['weight'] = weights[group['id']]
         if group['id'] == 'research': group['title'] = '辅助研究'
-    for mode in envelope['data'].get('display_score_modes', []):
-        original = mode['abbreviation']
-        mode['abbreviation'] = original+('基准综合' if mode['id']=='capability' else '综合')
+    for mode in data.get('display_score_modes', []):
         mode['name'] = '1.3 '+mode['abbreviation']
-    for group in envelope['data']['policy']['groups']:
-        old=group['weight'];group['weight']=30
+    for group in data['policy']['groups']:
+        old=group['weight'];group['weight']=weights[group['id']]
         if group['id']=='research':group['title']='辅助研究'
-        for leaf in envelope['data']['policy']['subcategories']:
-            if leaf['id'] in group['children']:leaf['weight']=leaf['weight']*30/old
-    envelope['data']['score_construct'] = 'explicit-composite-30/30/30/10'
-    envelope['data']['research_preview']['weight_frame'] = dict(written=30, lean=30, research=30, independent_open_research=10)
+        for leaf in data['policy']['subcategories']:
+            if leaf['id'] in group['children']:leaf['weight']=leaf['weight']*group['weight']/old
+    item_group = dict(id=modes.ITEM, title=board['category']['zh'], weight=weights[modes.ITEM], children=[])
+    item_board = _independent_category(data, item_group)
+    data['policy']['groups'].append(item_group)
+    data['category_leaderboards'].append(item_board)
+    scene_source = json.loads(files['data.json'])
+    scene_source.update(models=data['models'], category_leaderboards=[item_board])
+    scenes = chart_scenes(scene_source)
+    item_chart = 'category-chart-groups-'+modes.ITEM
+    for mode, rows in item_board['views'].items():
+        for row in rows:
+            scenes[item_chart]['bars'][row['model_id']][mode]['state'] = row['state']
+    for key in ('chart-groups', item_chart):
+        data['chart_scenes'][key] = scenes[key]
+    envelope['data']['score_construct'] = 'independent-research-score-modes-v1.3.0'
     envelope['data']['research_preview']['base_edition'] = BASE
     envelope['data']['research_preview']['condition'] = 'nonlogical_retry_3'
     result['versions/1.3.0/data.json']=json.dumps(envelope['data'],ensure_ascii=False,indent=2)+'\n'
@@ -132,6 +203,11 @@ def prepare_research_preview(files, root):
     notes_path='assets/versioned/edition-notes.'+hashlib.sha256(notes.encode()).hexdigest()[:12]+'.js'
     result[notes_path]=notes;result['assets/edition-notes.js']=notes
     page = str(result['index.html'])
+    if 'id="category-leaderboards"' in page:
+        from scripts.render_results_site import render_category_board
+        tab, panel = render_category_board(data, item_board, subcategories=False)
+        shell = '<template id="independent-research-category-template">'+tab+panel+'</template>\n'
+        page = CATEGORY_TEMPLATE.sub('', page).replace('</main>', shell+'</main>', 1)
     match = CONFIG.search(page)
     if match is None:
         raise ValueError('Keep the existing edition loader and homepage')
@@ -142,15 +218,28 @@ def prepare_research_preview(files, root):
     config['versions'] = dict(sorted(config['versions'].items(), key=lambda pair: tuple(map(int,pair[0].split('.'))), reverse=True))
     # Keep all historical payloads/controllers intact; the local latest entry is 1.3.
     config['scripts']=[notes_path if re.search(r'edition-notes\.[a-f0-9]+\.js$',p) else p for p in config['scripts']]
+    for name in ('results-core', 'board-controls', 'home-results', 'mathematical-profile'):
+        match_controller = _controller_match(name).search
+        if any(match_controller(path) for path in config['scripts']):
+            path = _versioned_asset(result, root, name+'.js')
+            config['scripts'] = [path if match_controller(script) else script for script in config['scripts']]
+    profile_style = re.compile(r'(?<=href=")assets/versioned/mathematical-profile\.[a-f0-9]+\.css(?=")')
+    if profile_style.search(page):
+        page = profile_style.sub(_versioned_asset(result, root, 'mathematical-profile.css'), page)
     config['latest'] = EDITION
-    config['scripts'] = [p for p in config['scripts'] if not re.search(r'research-preview\.[a-f0-9]+\.js$',p)] + [assets['js']]
+    scripts = [path for path in config['scripts'] if not _controller_match('research-preview').search(path)]
+    # The shared board controllers discover their controls on startup.
+    insertion = next((i for i, path in enumerate(scripts) if _controller_match('board-controls').search(path)), len(scripts))
+    scripts.insert(insertion, assets['js'])
+    config['scripts'] = scripts
     page = CONFIG.sub(lambda m:m[1]+data_literal(config)+m[3],page)
     page = re.sub(r'\s*<link rel="stylesheet" href="assets/versioned/research-preview\.[a-f0-9]+\.css">\s*(?=</head>)','',page)
     page = page.replace('</head>','<link rel="stylesheet" href="'+assets['css']+'">\n</head>',1)
     result['index.html'] = page
     catalog = json.loads(result['editions.json'])
     catalog['latest'] = EDITION
-    catalog['editions'] = [dict(version=EDITION,kind='local_unmeasured_preview',data='data/editions/1.3.0/index.json'),
+    edition_kind = 'local_settled_configurations' if adopted else 'local_unmeasured_preview'
+    catalog['editions'] = [dict(version=EDITION,kind=edition_kind,data='data/editions/1.3.0/index.json'),
         *[v for v in catalog['editions'] if v['version'] != EDITION]]
     result['editions.json'] = json.dumps(catalog,ensure_ascii=False,indent=2)+'\n'
     return result

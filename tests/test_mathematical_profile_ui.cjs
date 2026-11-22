@@ -23,8 +23,16 @@ function fixture(data=dataFixture(),query='?edition=1.1.0&lang=zh&score=capabili
  const documentNodes=new Map(),events=new Map(),comparisons=[],changes=[];
  class Element{
   constructor(tag){this.tagName=tag;this.children=[];this.attrs=new Map();this.style={setProperty(){}};this.dataset={};this.listeners=new Map();this.hidden=false;this.checked=false;this.textContent='';}
-  append(...children){this.children.push(...children)}
-  replaceChildren(...children){this.children=children}
+  append(...children){for(const child of children){this.children.push(child);child.parentElement=this}}
+  replaceChildren(...children){this.children=[];this.append(...children)}
+  closest(selector){
+   for(let node=this;node;node=node.parentElement){
+    if(selector.startsWith('.')?node.className===selector.slice(1):node.tagName===selector)return node;
+   }
+   return null;
+  }
+  before(node){const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this),0,node);node.parentElement=this.parentElement}
+  after(node){const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this)+1,0,node);node.parentElement=this.parentElement}
   setAttribute(key,value){this.attrs.set(key,String(value))}
   getAttribute(key){return this.attrs.get(key)??null}
   removeAttribute(key){this.attrs.delete(key)}
@@ -38,17 +46,23 @@ function fixture(data=dataFixture(),query='?edition=1.1.0&lang=zh&score=capabili
   const element=new Element('div');element.id='mathematical-profile'+name;documentNodes.set(element.id,element);
  }
  const section=documentNodes.get('mathematical-profile');section.setAttribute('data-assessment-only','1.1.0');
+ const find=name=>documentNodes.get('mathematical-profile-'+name),radar=new Element('div'),values=new Element('details');
+ radar.className='mp-layout';radar.append(find('chart'),find('legend'));values.append(find('values-title'),find('coverage-note'),find('values'));
+ section.append(radar,values);
+ const profileNav=new Element('a');profileNav.setAttribute('data-assessment-only','1.2.0');
+ profileNav.hidden=data.benchmark_version!=='1.2.0';
  documentNodes.get('mathematical-profile-choices').hidden=true;
  documentNodes.get('mathematical-profile-picker').setAttribute('aria-expanded','false');
  const location=new URL('https://example.test/math-gauge/index.html'+query);
- const win={location,document:{getElementById:id=>documentNodes.get(id)||null,createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag)},
+ const win={location,document:{getElementById:id=>documentNodes.get(id)||null,createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag),
+  querySelector:selector=>selector==='a[data-assessment-only="1.2.0"][href="#mathematical-profile"]'?profileNav:null},
   MG:{d:data,state:{score:'capability'},compareScores:(a,b,mode)=>{comparisons.push(mode);return compare(a,b)}},
   history:{replaceState:(_,__,url)=>{changes.push(url);location.href=url}},
   addEventListener:(key,callback)=>{if(!events.has(key))events.set(key,[]);events.get(key).push(callback)},
   fire:key=>{for(const callback of events.get(key)||[])callback({type:key})}};
  const controller=ui.mount(win);
  const el=name=>documentNodes.get('mathematical-profile'+(name?'-'+name:''));
- return {win,controller,el,changes,comparisons,series:()=>nodesBelow(el('chart')).filter(node=>node.getAttribute('class')==='mp-series')};
+ return {win,controller,el,profileNav,changes,comparisons,series:()=>nodesBelow(el('chart')).filter(node=>node.getAttribute('class')==='mp-series')};
 }
 
 test('default representatives choose the SMC winner per brand, limited to the top five brands',()=>{
@@ -403,6 +417,86 @@ test('unknown formalization is a ninth-axis gap and never becomes a measured zer
  assert.equal(shape.vertices.length,9);assert.equal(shape.vertices[1],null);
  assert.ok(shape.intervals.some(value=>value.axis==='formalization'&&value.lower===25&&value.upper===75));
  data.benchmark_version='1.1.0';assert.equal(ui.prepare(data,compare).axes.length,7);
+});
+
+test('the ten-axis 1.3 profile shares stage and model selections across three views',()=>{
+ const original=formalizationFixture(),data=structuredClone(original);
+ data.benchmark_version='1.3.0';
+ const [measured,zero,unmeasured]=ids;
+ const point=exact=>({exact,lower:exact,upper:exact,confirmed:exact});
+ const mixed=(exact,unit='mathematical_family',planned=35,components=1)=>({...point(exact),
+  base_coverage:{unit,planned,reviewed:planned},task_coverage:{unit:'independent_open_research_task',planned:1,
+   reviewed:1,components_planned:components,components_reviewed:components}});
+ const taste=(result,reviewed)=>({...result,independent_coverage:{unit:'manuscript',planned:3,reviewed:3},
+  legacy_metric:{coverage:{unit:'theorem_extension_family',planned:6,reviewed,observed:reviewed}}});
+ const stage=(initiative,mathematical_taste)=>({initiative_v130:mixed(initiative),depth_v130:mixed(77),
+  open_research_v130:mixed(66,'open_research_family',5,2),discernment_v130:mixed(88),mathematical_taste});
+ const measuredProfile={independent_taste:point(86),stages:{first:stage(62,taste(point(78),6)),
+  revision:stage(72,taste({lower:73,upper:83,confirmed:73,exact:null},3))},completion_v130:{...point(74),
+  coverage:{unit:'fixed_weighted_category',planned:4,adjudicated:4,unknown:0}}};
+ const zeroProfile={stages:Object.fromEntries(['first','revision'].map(stage=>[stage,{mathematical_taste:taste(point(0),6)}]))};
+ data.independent_research_abilities={schema:'math-gauge.independent-research-abilities/v3',edition:'1.3.0',
+  taste_blend:{legacy_percent:20},source_stages:{first:'first-answer',revision:'revision-inclusive'},
+  by_model:{[measured]:measuredProfile,[zero]:zeroProfile}};
+ data.research_preview={rows:[{id:measured,components:{taste:{state:'reviewed',value:86,strict:false}},
+  task_strict:0,composites:{RMC:{exact:57}}}]};
+ for(const stage of ['first','revision']){
+  const legacy=ui.prepare(original,compare,stage),prepared=ui.prepare(data,compare,stage);
+  assert.deepEqual(prepared.axes.slice(0,9).map(axis=>axis.id),legacy.axes.map(axis=>axis.id));
+  assert.equal(prepared.axes.length,10);
+  assert.equal(prepared.axes[9].id,'mathematical_taste');
+  for(const model of prepared.models){
+   const old=legacy.models.find(row=>row.id===model.id).profile_metrics;
+   for(const axis of ['proof','fidelity','closure','formalization'])assert.deepEqual(model.profile_metrics[axis],old[axis]);
+   const {mathematical_taste,completion,initiative}=model.profile_metrics;
+   assert.equal(mathematical_taste.exact,model.id===measured&&stage==='first'?78:model.id===zero?0:null);
+   assert.equal(completion.exact,model.id===measured?74:null);
+   assert.equal(initiative.exact,model.id===measured?(stage==='first'?62:72):null);
+  }
+ }
+ const query='&lang=zh&score=strict&profile-models='+[measured,zero,unmeasured].join(',');
+ const f=fixture(data,'?edition=1.3.0'+query);
+ assert.equal(f.el('').hidden,false);assert.equal(f.el('continuation-control').hidden,false);
+ assert.equal(f.profileNav.hidden,false);assert.equal(f.profileNav.getAttribute('data-assessment-only'),'1.3.0');
+ assert.equal(f.controller.stage(),'revision');
+ const tastePoint=id=>nodesBelow(f.series().find(group=>group.getAttribute('data-profile-model')===id)).find(
+  node=>node.getAttribute('data-profile-point')==='mathematical_taste')?.getAttribute('data-value');
+ assert.equal(tastePoint(measured),undefined);assert.equal(tastePoint(zero),'0');assert.equal(tastePoint(unmeasured),undefined);
+ const measuredSeries=f.series().find(group=>group.getAttribute('data-profile-model')===measured);
+ assert.ok(nodesBelow(measuredSeries).some(node=>node.getAttribute('data-profile-interval')==='mathematical_taste'));
+ assert.match(f.el('legend').children[2].children.at(-1).children[1].textContent,/品味稿件 · 0\/3 · 旧题家族 · 0\/6/);
+ assert.match(f.el('legend').children[0].children.at(-1).children[1].textContent,/开放研究 · 5\/5 · 本题 1\/1 \(分项 2\/2\)/);
+ const profileNodes=()=>nodesBelow(f.el(''));
+ const activePanes=()=>profileNodes().filter(node=>node.dataset.profilePane&&!node.hidden).map(node=>node.dataset.profilePane);
+ const switchView=view=>profileNodes().find(node=>node.dataset.profileView===view).fire('click');
+ const tableTaste=()=>f.el('values').children[2].children.map(row=>row.children.at(-1).children[0].textContent);
+ const rankRows=()=>profileNodes().filter(node=>node.dataset.profileBarModel).map(node=>
+  [node.dataset.profileBarModel,node.dataset.profileBarRank??null,nodesBelow(node).find(child=>child.className==='mp-rank-score').textContent]);
+ assert.deepEqual(activePanes(),['radar']);
+ switchView('table');assert.deepEqual(activePanes(),['table']);
+ assert.deepEqual(tableTaste(),['73.0–83.0','0.0','未知']);
+ switchView('bars');assert.deepEqual(activePanes(),['bars']);
+ const axis=profileNodes().find(node=>node.tagName==='select');
+ axis.value='mathematical_taste';axis.fire('change');
+ assert.deepEqual(rankRows(),[[zero,'1','0.0'],[measured,null,'73.0–83.0'],[unmeasured,null,'未知']]);
+ f.el('continuation').checked=false;f.el('continuation').fire('change');
+ assert.equal(f.controller.stage(),'first');
+ assert.deepEqual(rankRows(),[[measured,'1','78.0'],[zero,'2','0.0'],[unmeasured,null,'未知']]);
+ assert.equal(f.win.location.searchParams.get('profile-view'),'bars');
+ assert.equal(f.win.location.searchParams.get('profile-axis'),'mathematical_taste');
+ const restored=fixture(data,f.win.location.search);
+ assert.ok(nodesBelow(restored.el('')).some(node=>node.dataset.profilePane==='bars'&&!node.hidden));
+ assert.equal(nodesBelow(restored.el('')).find(node=>node.tagName==='select').value,'mathematical_taste');
+ switchView('radar');assert.equal(tastePoint(measured),'78');
+ f.controller.setSelection([zero]);switchView('bars');assert.deepEqual(rankRows(),[[zero,'1','0.0']]);
+ assert.equal(f.win.location.searchParams.get('profile-models'),zero);
+ assert.equal(new URL(f.win.location.href).searchParams.get('score'),'strict');
+
+ const oldWithCompanion={...original,independent_research_abilities:data.independent_research_abilities};
+ const oldQuery='?edition=1.2.0'+query,old=fixture(original,oldQuery),same=fixture(oldWithCompanion,oldQuery);
+ const tableText=page=>nodesBelow(page.el('values')).map(node=>[node.tagName,node.textContent]);
+ assert.deepEqual(tableText(same),tableText(old));assert.equal(same.profileNav.getAttribute('data-assessment-only'),'1.2.0');
+ assert.ok(!nodesBelow(same.el('')).some(node=>node.dataset.profileView));
 });
 
 test('formalization rejects a changed denominator, duplicate or missing selected model',()=>{

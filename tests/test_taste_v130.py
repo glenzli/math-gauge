@@ -42,7 +42,7 @@ class ProtocolFixture(unittest.TestCase):
             case_id='CASE-FIXTURE', packet_forbidden_literals=['EVALUATOR-ONLY-SENTINEL'],
             supporting_references=[], gates={
                 'autonomy': [gate('A1', ['R1']), gate('A2', ['R2'])],
-                'taste': [gate('T1', list(flow.ROUNDS))],
+                'taste': [gate(f'T{i}', list(flow.ROUNDS)) for i in range(1, 4)],
                 'capacity': [gate(f'C{i}', ['R3']) for i in range(5)] + [gate('optional', ['R3'], False)]},
             round_coverage={'autonomy': ['R1', 'R2'], 'taste': list(flow.ROUNDS), 'capacity': list(flow.ROUNDS)})
         write_json(self.case / 'evaluator/review-contract.json', self.contract)
@@ -387,12 +387,25 @@ class DisplayProjectionTests(unittest.TestCase):
 class SharedHomepageEditionTests(unittest.TestCase):
     def test_original_homepage_adds_reverse_ordered_version_and_reweighted_bars(self):
         import subprocess
+        from math_gauge.independent_research_score_modes import POLICY_FILE as MODE_POLICY_FILE
+        from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE
         from scripts.results_research_preview import prepare_research_preview, CONFIG
         root=flow.POLICY_FILE.parents[3]
         names=('index.html','editions.json','data.json','data/editions/1.2.0/index.json')
         original={name:subprocess.check_output(['git','show','HEAD:site/'+name],cwd=root).decode() for name in names}
         before=deepcopy(original)
-        result=prepare_research_preview(original,root)
+        # This scenario has no adopted research evidence, regardless of which
+        # real configurations have since been settled in the local workspace.
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            preview_root=Path(directory)
+            policy=preview_root/'protocol/mathematical-taste/v1.3.0/policy.json'
+            policy.parent.mkdir(parents=True)
+            shutil.copyfile(flow.POLICY_FILE,policy)
+            shutil.copyfile(PROFILE_POLICY_FILE,policy.with_name('profile-policy.json'))
+            shutil.copyfile(MODE_POLICY_FILE,policy.with_name('score-modes-policy.json'))
+            shutil.copytree(root/'scripts/templates',preview_root/'scripts/templates')
+            result=prepare_research_preview(original,preview_root)
         self.assertEqual(original,before)
         for key in ('data.json','data/editions/1.2.0/index.json'):
             self.assertEqual(result[key],original[key])
@@ -430,12 +443,15 @@ class SharedHomepageEditionTests(unittest.TestCase):
 class PrivateMarkerProjectionTests(unittest.TestCase):
     def test_private_fixture_marker_never_reaches_public_html_client_or_download(self):
         import subprocess,uuid
+        from math_gauge import independent_research_score_modes as modes
         from scripts.preview_open_research_v130 import fixture_data,public_row
         marker=uuid.uuid4().hex
         root=flow.POLICY_FILE.parents[3]
+        policy, _ = modes.load_policy()
         grades={k:dict(score=v,strict=False) for k,v in zip(flow.AXES,(80,0,60))}
-        report=flow.preview(dict.fromkeys(('MC','RMC','SMC'),50),{},status='reviewed',review=grades,
-            base_groups={m:dict.fromkeys(('written','lean','research'),50) for m in ('MC','RMC','SMC')})
+        base = {mode: dict(metrics={k: dict(exact=50) for k in ('overall', *modes.BASE_GROUPS)})
+                for mode in modes.MODES}
+        report=modes.project_scores(base, policy, adopted=dict(status='reviewed', axes=grades))
         report['private_evaluator_notes']=marker
         with tempfile.TemporaryDirectory() as directory:
             work=Path(directory);private=work/'private';public=work/'public';private.mkdir();public.mkdir()

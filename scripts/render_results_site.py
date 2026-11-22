@@ -749,15 +749,18 @@ def render_content_rates(data):
             +'</figure><p class="panel-foot"><a data-context-link href="method.html#content-rate-method">计算方法 →</a></p></section>')
 
 
-def render_category_leaderboards(data):
-    tabs, panels = [], []
-    for index, group in enumerate(data['category_leaderboards']):
-        cid, title = html.escape(group['id'], quote=True), html.escape(group['title'])
-        tabs.append('<button role="tab" id="category-tab-'+cid+'" aria-controls="category-panel-'+cid
-                    +'" aria-selected="'+str(index == 0).lower()+'" tabindex="'+('0' if index == 0 else '-1')
-                    +'">'+title+'</button>')
-        panels.append('<section role="tabpanel" class="category-ranking-panel view-board" data-board="'+cid+'" id="category-panel-'+cid
-                      +'" aria-labelledby="category-tab-'+cid+'"'+(' hidden' if index else '')+'>'
+def render_category_board(data, group, *, selected=False, subcategories=True):
+    cid, title = html.escape(group['id'], quote=True), html.escape(group['title'])
+    tab = ('<button role="tab" id="category-tab-'+cid+'" aria-controls="category-panel-'+cid
+           +'" aria-selected="'+str(selected).lower()+'" tabindex="'+('0' if selected else '-1')
+           +'">'+title+'</button>')
+    breakdown = ('<details class="category-subcategories" id="category-subcategories-'+cid+'">'
+                 '<summary><span>子类成绩</span><span class="subcategory-mode" data-subcategory-mode>SMC</span></summary>'
+                 '<p class="panel-desc">按当前分类的排序口径展示；每格为总榜贡献分 / 该项满分。</p>'
+                 '<div class="table-wrap"><table class="compact subcategory-table" id="subcategory-table-'+cid+'"></table></div>'
+                 '</details>') if subcategories else ''
+    panel = ('<section role="tabpanel" class="category-ranking-panel view-board" data-board="'+cid+'" id="category-panel-'+cid
+                      +'" aria-labelledby="category-tab-'+cid+'"'+('' if selected else ' hidden')+'>'
                       '<div class="panel-head"><div><h3>'+title+'排行榜</h3><p class="panel-desc">类内满分100 · 总榜权重'
                       +str(group['weight'])+'%</p></div>'
                       +'<div class="board-toolbar">'+view_control()+sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'strict')
@@ -768,14 +771,18 @@ def render_category_leaderboards(data):
                                +mode['abbreviation']+'</span>' for mode in data['display_score_modes'])
                       +'</span></figcaption>'+grouped_bars(data, group)+'</figure>'
                       '<div class="table-wrap" data-view-pane="table" hidden><table class="compact category-ranking" id="category-ranking-'
-                      +cid+'"></table></div>'
-                      '<details class="category-subcategories" id="category-subcategories-'+cid+'">'
-                      '<summary><span>子类成绩</span><span class="subcategory-mode" data-subcategory-mode>SMC</span></summary>'
-                      '<p class="panel-desc">按当前分类的排序口径展示；每格为总榜贡献分 / 该项满分。</p>'
-                      '<div class="table-wrap"><table class="compact subcategory-table" id="subcategory-table-'+cid+'"></table></div>'
-                      '</details>'
+                      +cid+'"></table></div>'+breakdown
                       +(render_subboard(data.get('manuscript_observations'), chart_renderer=horizontal_chart, controls=board_settings('initiative', [('groups','已核实额外成果组'),('coverage','审阅覆盖')])) if group['id']=='research' else '')
                       +'</section>')
+    return tab, panel
+
+
+def render_category_leaderboards(data):
+    tabs, panels = [], []
+    for index, group in enumerate(data['category_leaderboards']):
+        tab, panel = render_category_board(data, group, selected=index == 0)
+        tabs.append(tab)
+        panels.append(panel)
     return ('<section id="category-leaderboards" aria-labelledby="category-leaderboards-title">'
             '<div class="section-title"><h2 id="category-leaderboards-title">分类排行榜</h2>'
             '<span class="section-context">三个大类独立排序</span></div><div class="panel">'

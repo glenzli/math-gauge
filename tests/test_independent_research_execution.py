@@ -1,6 +1,7 @@
 """Synthetic wire events and queue boundaries, without a model or private case."""
 
 import copy
+from datetime import timedelta
 import json
 import unittest
 
@@ -9,9 +10,11 @@ import test_taste_v130 as case_fixture
 
 
 class FixtureTransport:
-    def __init__(self, case, model, control, work, *, stop=None, attachment=False):
+    def __init__(self, case, model, control, work, *, stop=None, attachment=False,
+                 first_round_clock_offset=None):
         self.case, self.model, self.control, self.work = case, model, control, work
         self.stop, self.attachment = stop, attachment
+        self.first_round_clock_offset = first_round_clock_offset
 
     def __enter__(self):
         self.case.assertFalse(self.case.active)
@@ -68,7 +71,14 @@ class FixtureTransport:
             status = "failed" if (rid, "failed") == self.stop else "completed"
             notice("turn/completed", turn={"id": turn, "status": status})
         at = runner.utc()
-        return {"lines": [runner.json_bytes(event) for event in events], "received_at": [at] * len(events),
+        received = [at] * len(events)
+        if rid == "R1" and self.first_round_clock_offset is not None:
+            boundary = runner._stamp(at)
+            sent = (boundary - timedelta(microseconds=10)).isoformat()
+            first = boundary - timedelta(microseconds=4)
+            received[0] = first.isoformat()
+            received[1] = (first + self.first_round_clock_offset).isoformat()
+        return {"lines": [runner.json_bytes(event) for event in events], "received_at": received,
                 "sent_at": sent, "boundary_at": at, "cutoff": cutoff, "pids": {"fixture": True}}
 
 
@@ -121,6 +131,35 @@ class ResearchExecutionFixture(unittest.TestCase):
             self.assertEqual(data["rounds"][0]["usage_events"][0]["last"]["outputTokens"], 2)
             with self.assertRaisesRegex(ValueError, "Fixture"):
                 runner.validate_execution(self.run_root, row["execution"], self.plan)
+
+    def test_wall_clock_reversal_preserves_original_wire_and_first_final(self):
+        result = runner.execute_queue(self.run_root,
+            lambda *args: FixtureTransport(self, *args, first_round_clock_offset=timedelta(microseconds=-2)),
+            fixture=True)
+        ref = result["cohort"][0]["execution"]
+        manifest = self.run_root / ref["path"]
+        data = json.loads(manifest.read_bytes())
+        first_round = data["rounds"][0]
+        receipts = first_round["received_at"]
+        self.assertEqual(runner._stamp(receipts[0]) - runner._stamp(receipts[1]), timedelta(microseconds=2))
+        final = self.run_root / data["state"] / "R1.md"
+        artifacts = [manifest, self.run_root / first_round["wire_events"]["path"],
+                     self.run_root / first_round["seal"]["path"], final]
+        originals = {path: path.read_bytes() for path in artifacts}
+
+        validated = runner.validate_execution(self.run_root, ref, self.plan, allow_fixture=True)
+
+        self.assertEqual(validated["outcome"], "normal-finals")
+        self.assertEqual(final.read_bytes(), b"Synthetic final R1.\n")
+        self.assertEqual({path: path.read_bytes() for path in artifacts}, originals)
+
+    def test_receipt_after_native_boundary_remains_invalid(self):
+        result = runner.execute_queue(self.run_root,
+            lambda *args: FixtureTransport(self, *args, first_round_clock_offset=timedelta(microseconds=5)),
+            fixture=True)
+        ref = result["cohort"][0]["execution"]
+        with self.assertRaisesRegex(ValueError, "Turn timestamps violate freeze order"):
+            runner.validate_execution(self.run_root, ref, self.plan, allow_fixture=True)
 
     def test_native_error_after_a_body_neither_freezes_it_nor_starts_next_model(self):
         result = runner.execute_queue(self.run_root,

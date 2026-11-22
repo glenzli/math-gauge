@@ -6,6 +6,14 @@
  const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
  const renderedViews=new Map();
  const displayKey=(key,score=state.score)=>JSON.stringify([key,state.condition,score]);
+ function scoreReadout(node,metric,text,interval,tooltip=node){
+  const status=metric.value==null?window.MGResearchPreview?.categoryStatus?.(metric.state,state.lang):null;
+  node.textContent=status?status.text:text;
+  if(metric.state!=='not-tested')tooltip.title=interval;
+  else tooltip.removeAttribute('title');
+  if(status){node.dataset.researchCategoryState=metric.state;node.setAttribute('aria-label',status.label)}
+  return status?status.label:text;
+ }
  function editionCharts(){
   Object.entries(d.chart_scenes||{}).forEach(([id,scene])=>{
    const groups=el(id);if(!groups)return;
@@ -27,10 +35,10 @@
     const spoken=[];
     Object.entries(modes).forEach(([mode,value])=>{
      const row=group.querySelector('.metric-bar-row[data-score-mode="'+mode+'"]'),bar=row.querySelector('.score-bar'),readout=row.querySelector('.chart-value');
-     bar.dataset.score=value.value??'';bar.style.left=value.left+'%';bar.style.width=value.width+'%';readout.textContent=value.text;readout.title=value.interval;
-     spoken.push(modes[mode].text);
+     bar.dataset.score=value.value??'';bar.style.left=value.left+'%';bar.style.width=value.width+'%';
+     spoken.push(scoreReadout(readout,value,value.text,value.interval));
     });
-    const model=d.models.find(m=>m.id===mid);group.setAttribute('aria-label',model.label+' · '+['MC','RMC','SMC'].map((name,i)=>name+' '+Object.values(modes)[i].text).join('，'));
+    const model=d.models.find(m=>m.id===mid);group.setAttribute('aria-label',model.label+' · '+['MC','RMC','SMC'].map((name,i)=>name+' '+spoken[i]).join('，'));
    });
   });
  }
@@ -102,7 +110,9 @@
    items.forEach(item=>{
     const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank??'—';r.insertCell().append(modelLink(m,score));
     const harness=r.insertCell();harness.className='category-harness';harness.textContent=harnessName(m);
-    d.display_score_modes.forEach(mode=>{const v=views[mode.id][m.id],c=r.insertCell();c.dataset.displayMode=mode.id;c.className='numeric score-cell'+(mode.id===score?' primary-score':'');if(v.value<0)c.classList.add('negative');c.append(node('span',f(v.value),'score-number'));c.title='完整分区间 '+f(v.lower)+'–'+f(v.upper)});
+    d.display_score_modes.forEach(mode=>{const v=views[mode.id][m.id],c=r.insertCell();c.dataset.displayMode=mode.id;c.className='numeric score-cell'+(mode.id===score?' primary-score':'');if(v.value<0)c.classList.add('negative');
+     const text=node('span',null,'score-number');scoreReadout(text,v,f(v.value),'完整分区间 '+f(v.lower)+'–'+f(v.upper),c);c.append(text);
+    });
    });
   });
   selectCategory(category,false);
