@@ -67,6 +67,17 @@
   scope:['研究自主（A）进入研究主动性和开放研究能力，研究能力（C）进入数学深度和开放研究能力，数学品味（T）进入品味和数学审辨力。品味还合并六个旧题家族的直接评审。切换阶段会改变旧证据基底，严格完成度共用 1.3 主榜 SMC。','Research autonomy (A) contributes to initiative and open research capability. Research capacity (C) contributes to mathematical depth and open research capability. Mathematical taste (T) contributes to taste and discernment. Taste also includes direct reviews of six retained families. Switching stages changes the retained evidence, while strict completion uses the same official 1.3 SMC.'],
   coverage:['品味分别显示三稿与六家族的覆盖，缺少可评证据时保留区间。','Taste reports coverage separately for three manuscripts and six families. Missing evidence leaves an interval.'],
   legacyTaste:['旧题家族','Retained families']};
+ const strictTasteMessages={...blendedTasteMessages,
+  description:['每轴0–100 · 数学品味采用严格检查与复核','0–100 per axis · Strict mathematical taste assessment'],
+  scope:['研究自主（A）用于研究主动性和开放研究能力，研究能力（C）用于数学深度和开放研究能力。数学品味（T）采用新题严格检查和旧题严格复核。数学审辨力仍使用新题品味 RMC。两个阶段共用 1.3 主榜严格完成度。','Research autonomy (A) contributes to initiative and open research capability. Research capacity (C) contributes to mathematical depth and open research capability. Taste (T) uses new-task strict checks and strict reviews of retained answers. Discernment continues to use new-task taste RMC. Both stages use the official 1.3 SMC for strict completion.'],
+  coverage:['新题覆盖按已判定的品味检查统计。旧题覆盖按该阶段可确定品味分的家族统计。','New-task coverage counts settled taste checkpoints. Retained coverage counts families with a determinate taste score for this stage.'],
+  tasteCheckpoints:['品味检查已判定','Taste checks settled'],legacyTaste:['旧题有确值家族','Retained families scored'],
+  strictSourceUnavailable:['旧题严格复核汇总未提供','Retained strict assessment unavailable']};
+ const strictTasteStates={
+  'not-tested':['新题未测','New task untested'], 'review-pending':['品味待评','Taste review pending'],
+  'insufficient-evidence':['检查证据不足','Insufficient checkpoint evidence'], 'delivery-failed':['未正常交付','No normal delivery'],
+  unavailable:['品味检查未提供','Taste checkpoints unavailable']};
+ const strictTasteSchema='math-gauge.independent-research-abilities/v4';
  const profileViews={radar:['雷达图','Radar'],bars:['按轴排名','Axis ranking'],table:['表格','Table']};
  const profileViewCopy={mode:['画像展示方式','Profile view'],axis:['排名维度','Ranking axis'],
   unranked:['证据未齐 · 未排名','Incomplete evidence · Unranked'],unknown:['未知','Unknown'],scale:['分数 · 0–100','Score · 0–100']};
@@ -131,7 +142,7 @@
  function geometry(axes,metrics){
   const vertices=axes.map((axis,index)=>metrics[axis.id].exact===null?null:{...point(index,metrics[axis.id].exact,axes.length),axis:axis.id,value:metrics[axis.id].exact});
   const segments=[];for(let i=0;i<axes.length;i++){const next=(i+1)%axes.length;if(vertices[i]&&vertices[next])segments.push([vertices[i],vertices[next]])}
-  const intervals=axes.flatMap((axis,index)=>{const metric=metrics[axis.id];return metric.exact===null&&(metric.coverage.reviewed>0||metric.coverage.observed>0||metric.task_coverage?.components_reviewed>0||metric.manuscript_coverage?.reviewed>0)?
+  const intervals=axes.flatMap((axis,index)=>{const metric=metrics[axis.id];return metric.exact===null&&(metric.coverage.reviewed>0||metric.coverage.observed>0||metric.task_coverage?.components_reviewed>0||metric.taste_coverage?.reviewed>0)?
    [{axis:axis.id,index,lower:metric.lower,upper:metric.upper,from:point(index,metric.lower,axes.length),to:point(index,metric.upper,axes.length)}]:[]});
   return {vertices,segments,intervals,complete:vertices.every(Boolean)};
  }
@@ -151,16 +162,18 @@
   const metric={...record,coverage};
   return validMetric(metric)?metric:{exact:null,lower:0,upper:100,confirmed:0,coverage};
  }
- function blendedTasteMetric(value){
-  const families=value?.legacy_metric?.coverage,manuscripts=value?.independent_coverage;
-  if(families?.unit==='theorem_extension_family'&&families.planned===6&&manuscripts?.unit==='manuscript'&&
-   manuscripts.planned===3&&[0,3].includes(manuscripts.reviewed)&&validMetric({...value,coverage:families})){
-   return {...value,coverage:families,manuscript_coverage:manuscripts};
+ function blendedTasteMetric(value,strict){
+  const families=value?.legacy_metric?.coverage,coverage=value?.independent_coverage;
+  const unit=strict?'taste_checkpoint':'manuscript';
+  const reviewed=strict?[0,1,2,3]:[0,3];
+  if(families?.unit==='theorem_extension_family'&&families.planned===6&&coverage?.unit===unit&&
+   coverage.planned===3&&reviewed.includes(coverage.reviewed)&&validMetric({...value,coverage:families})){
+   return {...value,coverage:families,taste_coverage:coverage};
   }
   return {...displayMetric(null,{unit:'theorem_extension_family',planned:6,reviewed:0,observed:0}),
-   manuscript_coverage:{unit:'manuscript',planned:3,reviewed:0}};
+   taste_coverage:{unit,planned:3,reviewed:0},...(strict?{legacy_review_available:false}:{})};
  }
- function projectResearchMetrics(model,record,stage,blended){
+ function projectResearchMetrics(model,record,stage,blended,strict){
   const metrics={...model.profile_metrics};
   for(const [axis,key] of Object.entries(profileMixes)){
    const mixed=record?.stages?.[stage]?.[key],base=metrics[axis].coverage;
@@ -168,7 +181,7 @@
   }
   const completion=record?.completion_v130,official=completion?.coverage;
   metrics.completion=displayMetric(completion,{unit:'fixed_weighted_category',planned:official?.planned??4,reviewed:official?.adjudicated??0});
-  metrics[tasteAxis.id]=blended?blendedTasteMetric(record?.stages?.[stage]?.mathematical_taste):tasteMetric(record?.mathematical_taste);
+  metrics[tasteAxis.id]=blended?blendedTasteMetric(record?.stages?.[stage]?.mathematical_taste,strict):tasteMetric(record?.mathematical_taste);
   return {...model,profile_metrics:metrics};
  }
  function prepare(data,compare,stage='first'){
@@ -216,15 +229,20 @@
   }
   if(data.benchmark_version==='1.3.0'&&axes.length===9){
    const companion=data.independent_research_abilities;
-   const blended=companion?.schema==='math-gauge.independent-research-abilities/v3';
-   const byModel=(blended||companion?.schema==='math-gauge.independent-research-abilities/v2')&&companion.edition==='1.3.0'&&
+   const strict=companion?.schema===strictTasteSchema;
+   const blended=strict||companion?.schema==='math-gauge.independent-research-abilities/v3';
+   const strictSources=!strict||companion.taste_blend?.independent_mode==='SMC'&&companion.taste_blend?.legacy_component_version==='0.2.0';
+   const byModel=strictSources&&(blended||companion?.schema==='math-gauge.independent-research-abilities/v2')&&companion.edition==='1.3.0'&&
     companion.source_stages?.[stage]===(revised?'revision-inclusive':'first-answer')?companion.by_model:null;
    const weight=companion?.taste_blend?.legacy_percent;
-   const displayedTaste=blended&&Number.isInteger(weight)&&weight>0&&weight<100?{...tasteAxis,description:{
+   const described=Number.isInteger(weight)&&weight>0&&weight<100;
+   const displayedTaste=blended&&described?{...tasteAxis,description:strict?{
+    zh:(100-weight)+'% 独立开放研究品味 SMC（三项严格检查），'+weight+'% 六个旧题家族按严格标准复核的百分制品味分。旧题证据随画像阶段切换。',
+    en:(100-weight)+'% independent open research taste SMC (three strict checkpoints) and '+weight+'% strict 0–100 taste review of six retained families. The retained evidence follows the selected stage.'}:{
     zh:(100-weight)+'% 独立开放研究三稿品味 RMC，'+weight+'% 六个旧题家族直接评审。旧题证据随画像阶段切换。',
     en:(100-weight)+'% mathematical taste RMC on the three independent open research manuscripts and '+weight+'% direct taste reviews of six retained families. The retained evidence follows the selected stage.'}}:tasteAxis;
    axes=[...axes.map(axis=>versionedDescriptions[axis.id]?{...axis,description:versionedDescriptions[axis.id]}:axis),displayedTaste];
-   models=models.map(model=>projectResearchMetrics(model,byModel?.[model.id],stage,blended));
+   models=models.map(model=>projectResearchMetrics(model,byModel?.[model.id],stage,blended,strict));
   }
   return models.length?{profile,axes,models,stage}:null;
  }
@@ -244,7 +262,9 @@
   const svg=(tag,attrs={})=>{const item=document.createElementNS(svgNS,tag);for(const [key,value]of Object.entries(attrs))item.setAttribute(key,String(value));return item};
   let lang='zh',selected=[],signature='',pinned=null,hovered=null,keyboard=null;
   const controls=new Map(),checkboxes=new Map(),series=new Map(),legendButtons=new Map();
-  const tasteCopy=data.independent_research_abilities?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
+  const tasteCompanion=data.independent_research_abilities;
+  const strictTaste=tasteCompanion?.schema===strictTasteSchema;
+  const tasteCopy=strictTaste?strictTasteMessages:tasteCompanion?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
   const t=key=>(axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
   const viewText=pair=>pair[lang==='en'?1:0];
   const views=data.benchmark_version==='1.3.0'?buildViews():null;
@@ -252,7 +272,14 @@
    fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste'};
   const coverage=metric=>{const {unit,reviewed,planned}=metric.coverage,count=reviewed+'/'+planned,key=coverageNames[unit];
    const base=key?t(key)+' · '+count:count+' '+t('settled');
-   if(metric.manuscript_coverage)return t('tasteManuscripts')+' · '+metric.manuscript_coverage.reviewed+'/'+metric.manuscript_coverage.planned+' · '+base;
+   const taste=metric.taste_coverage;
+   if(taste){
+    const checkpoints=taste.unit==='taste_checkpoint';
+    const status=checkpoints?strictTasteStates[metric.independent_metric?.state]:null;
+    let text=t(checkpoints?'tasteCheckpoints':'tasteManuscripts')+' · '+taste.reviewed+'/'+taste.planned;
+    if(status)text+=' · '+viewText(status);
+    return text+' · '+base+(metric.legacy_review_available===false?' · '+t('strictSourceUnavailable'):'');
+   }
    const task=metric.task_coverage;
    if(!task)return base;
    const observed=t('newTask')+' '+task.reviewed+'/'+task.planned;
@@ -382,7 +409,13 @@ button.append(identity);focusEvents(button,id);button.addEventListener('click',(
    }table.replaceChildren(caption,head,body);
   }
   function renderMeanings(){el('meanings').hidden=false;
-   el('meanings-title').textContent=t('meanings');el('meanings-scope').textContent=t('scope');
+   el('meanings-title').textContent=t('meanings');
+   const reviews=strictTaste?tasteCompanion.legacy_taste_binding?.review_coverage:null;
+   const reviewScope=reviews?viewText([
+    `旧题严格复核已审查 ${reviews.assessed}/${reviews.planned} 份，其中 ${reviews.scored} 份可评分。原文缺失 ${reviews.source_missing} 份，核验未决 ${reviews.verification_unresolved} 份。`,
+    `Strict review assessed ${reviews.assessed}/${reviews.planned} retained submissions and scored ${reviews.scored}. Source files were missing for ${reviews.source_missing}, and verification remains unresolved for ${reviews.verification_unresolved}.`
+   ]):'';
+   el('meanings-scope').textContent=[t('scope'),reviewScope].filter(Boolean).join(' ');
    el('meanings-list').replaceChildren(...axes.map(axis=>{const item=node('div',undefined,'mp-axis-definition'),description=node('dd',axis.description[lang]);
     if(axisContext[axis.id])description.append(node('span',axisContext[axis.id][lang==='en'?1:0],'mp-axis-context'));
     item.append(node('dt',axis.label[lang]),description);return item}));

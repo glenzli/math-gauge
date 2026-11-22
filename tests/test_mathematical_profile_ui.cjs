@@ -419,7 +419,7 @@ test('unknown formalization is a ninth-axis gap and never becomes a measured zer
  data.benchmark_version='1.1.0';assert.equal(ui.prepare(data,compare).axes.length,7);
 });
 
-test('the ten-axis 1.3 profile shares stage and model selections across three views',()=>{
+test('strict taste shares stage and model selections across the three ten-axis profile views',()=>{
  const original=formalizationFixture(),data=structuredClone(original);
  data.benchmark_version='1.3.0';
  const [measured,zero,unmeasured]=ids;
@@ -427,17 +427,22 @@ test('the ten-axis 1.3 profile shares stage and model selections across three vi
  const mixed=(exact,unit='mathematical_family',planned=35,components=1)=>({...point(exact),
   base_coverage:{unit,planned,reviewed:planned},task_coverage:{unit:'independent_open_research_task',planned:1,
    reviewed:1,components_planned:components,components_reviewed:components}});
- const taste=(result,reviewed)=>({...result,independent_coverage:{unit:'manuscript',planned:3,reviewed:3},
-  legacy_metric:{coverage:{unit:'theorem_extension_family',planned:6,reviewed,observed:reviewed}}});
+ const taste=(result,reviewed,state='reviewed')=>({...result,
+  independent_metric:{state},independent_coverage:{unit:'taste_checkpoint',planned:3,reviewed:state==='reviewed'?3:0},
+  legacy_review_available:state==='reviewed',legacy_metric:{coverage:{unit:'theorem_extension_family',planned:6,reviewed,observed:reviewed}}});
  const stage=(initiative,mathematical_taste)=>({initiative_v130:mixed(initiative),depth_v130:mixed(77),
   open_research_v130:mixed(66,'open_research_family',5,2),discernment_v130:mixed(88),mathematical_taste});
- const measuredProfile={independent_taste:point(86),stages:{first:stage(62,taste(point(78),6)),
-  revision:stage(72,taste({lower:73,upper:83,confirmed:73,exact:null},3))},completion_v130:{...point(74),
+ const measuredProfile={independent_taste:point(86),independent_taste_smc:point(100),stages:{first:stage(62,taste(point(90),6)),
+  revision:stage(72,taste({lower:83,upper:93,confirmed:83,exact:null},3))},completion_v130:{...point(74),
   coverage:{unit:'fixed_weighted_category',planned:4,adjudicated:4,unknown:0}}};
  const zeroProfile={stages:Object.fromEntries(['first','revision'].map(stage=>[stage,{mathematical_taste:taste(point(0),6)}]))};
- data.independent_research_abilities={schema:'math-gauge.independent-research-abilities/v3',edition:'1.3.0',
-  taste_blend:{legacy_percent:20},source_stages:{first:'first-answer',revision:'revision-inclusive'},
-  by_model:{[measured]:measuredProfile,[zero]:zeroProfile}};
+ const untested=taste({lower:0,upper:100,confirmed:0,exact:null},0,'not-tested');
+ const untestedProfile={stages:{first:{mathematical_taste:untested},revision:{mathematical_taste:untested}}};
+ data.independent_research_abilities={schema:'math-gauge.independent-research-abilities/v4',edition:'1.3.0',
+  taste_blend:{legacy_percent:20,independent_mode:'SMC',legacy_component_version:'0.2.0'},
+  legacy_taste_binding:{version:'0.2.0',review_coverage:{planned:7,assessed:7,scored:6,source_missing:1,verification_unresolved:0}},
+  source_stages:{first:'first-answer',revision:'revision-inclusive'},
+  by_model:{[measured]:measuredProfile,[zero]:zeroProfile,[unmeasured]:untestedProfile}};
  data.research_preview={rows:[{id:measured,components:{taste:{state:'reviewed',value:86,strict:false}},
   task_strict:0,composites:{RMC:{exact:57}}}]};
  for(const stage of ['first','revision']){
@@ -449,7 +454,7 @@ test('the ten-axis 1.3 profile shares stage and model selections across three vi
    const old=legacy.models.find(row=>row.id===model.id).profile_metrics;
    for(const axis of ['proof','fidelity','closure','formalization'])assert.deepEqual(model.profile_metrics[axis],old[axis]);
    const {mathematical_taste,completion,initiative}=model.profile_metrics;
-   assert.equal(mathematical_taste.exact,model.id===measured&&stage==='first'?78:model.id===zero?0:null);
+   assert.equal(mathematical_taste.exact,model.id===measured&&stage==='first'?90:model.id===zero?0:null);
    assert.equal(completion.exact,model.id===measured?74:null);
    assert.equal(initiative.exact,model.id===measured?(stage==='first'?62:72):null);
   }
@@ -464,8 +469,9 @@ test('the ten-axis 1.3 profile shares stage and model selections across three vi
  assert.equal(tastePoint(measured),undefined);assert.equal(tastePoint(zero),'0');assert.equal(tastePoint(unmeasured),undefined);
  const measuredSeries=f.series().find(group=>group.getAttribute('data-profile-model')===measured);
  assert.ok(nodesBelow(measuredSeries).some(node=>node.getAttribute('data-profile-interval')==='mathematical_taste'));
- assert.match(f.el('legend').children[2].children.at(-1).children[1].textContent,/品味稿件 · 0\/3 · 旧题家族 · 0\/6/);
+ assert.match(f.el('legend').children[2].children.at(-1).children[1].textContent,/0\/3 · 新题未测 · 旧题有确值家族 · 0\/6 · 旧题严格复核汇总未提供/);
  assert.match(f.el('legend').children[0].children.at(-1).children[1].textContent,/开放研究 · 5\/5 · 本题 1\/1 \(分项 2\/2\)/);
+ assert.match(f.el('meanings-scope').textContent,/已审查 7\/7 份.*原文缺失 1 份/);
  const profileNodes=()=>nodesBelow(f.el(''));
  const activePanes=()=>profileNodes().filter(node=>node.dataset.profilePane&&!node.hidden).map(node=>node.dataset.profilePane);
  const switchView=view=>profileNodes().find(node=>node.dataset.profileView===view).fire('click');
@@ -474,20 +480,20 @@ test('the ten-axis 1.3 profile shares stage and model selections across three vi
   [node.dataset.profileBarModel,node.dataset.profileBarRank??null,nodesBelow(node).find(child=>child.className==='mp-rank-score').textContent]);
  assert.deepEqual(activePanes(),['radar']);
  switchView('table');assert.deepEqual(activePanes(),['table']);
- assert.deepEqual(tableTaste(),['73.0–83.0','0.0','未知']);
+ assert.deepEqual(tableTaste(),['83.0–93.0','0.0','未知']);
  switchView('bars');assert.deepEqual(activePanes(),['bars']);
  const axis=profileNodes().find(node=>node.tagName==='select');
  axis.value='mathematical_taste';axis.fire('change');
- assert.deepEqual(rankRows(),[[zero,'1','0.0'],[measured,null,'73.0–83.0'],[unmeasured,null,'未知']]);
+ assert.deepEqual(rankRows(),[[zero,'1','0.0'],[measured,null,'83.0–93.0'],[unmeasured,null,'未知']]);
  f.el('continuation').checked=false;f.el('continuation').fire('change');
  assert.equal(f.controller.stage(),'first');
- assert.deepEqual(rankRows(),[[measured,'1','78.0'],[zero,'2','0.0'],[unmeasured,null,'未知']]);
+ assert.deepEqual(rankRows(),[[measured,'1','90.0'],[zero,'2','0.0'],[unmeasured,null,'未知']]);
  assert.equal(f.win.location.searchParams.get('profile-view'),'bars');
  assert.equal(f.win.location.searchParams.get('profile-axis'),'mathematical_taste');
  const restored=fixture(data,f.win.location.search);
  assert.ok(nodesBelow(restored.el('')).some(node=>node.dataset.profilePane==='bars'&&!node.hidden));
  assert.equal(nodesBelow(restored.el('')).find(node=>node.tagName==='select').value,'mathematical_taste');
- switchView('radar');assert.equal(tastePoint(measured),'78');
+ switchView('radar');assert.equal(tastePoint(measured),'90');
  f.controller.setSelection([zero]);switchView('bars');assert.deepEqual(rankRows(),[[zero,'1','0.0']]);
  assert.equal(f.win.location.searchParams.get('profile-models'),zero);
  assert.equal(new URL(f.win.location.href).searchParams.get('score'),'strict');

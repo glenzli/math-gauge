@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge import independent_research_adoption as adoption
 from math_gauge import independent_research_score_modes as modes
-from math_gauge import legacy_taste
+from math_gauge import legacy_taste_strict
 from math_gauge.taste_v130 import POLICY_FILE
 from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE, SCHEMA as PROFILE_SCHEMA
 from math_gauge.research_profile import STAGES, load_policy as load_profile_policy, project_models
@@ -76,8 +76,9 @@ def fixture_data():
 
 def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_policy_path=PROFILE_POLICY_FILE,
                         score_modes_policy_path=modes.POLICY_FILE, source_bytes=None, adopted=None,
-                        adopted_bytes=None, overlay_bytes=None, legacy_taste_policy_path=legacy_taste.POLICY_FILE,
-                        legacy_taste_bytes=None):
+                        adopted_bytes=None, overlay_bytes=None,
+                        legacy_taste_strict_policy_path=legacy_taste_strict.POLICY_FILE,
+                        legacy_taste_strict_bytes=None):
     """Build versioned public rows, ability aggregates and group points from the same score result."""
     source = ROOT / 'site/data.json'
     raw = (source_bytes if source_bytes is not None else source.read_bytes() if source_data is None
@@ -136,20 +137,23 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
             index_sha256=hashlib.sha256(adopted_bytes).hexdigest(), cohort=adopted['cohort'],
             planned_cohort=adopted['planned_cohort'], human_review='pending')
     legacy_results = None
-    if legacy_taste_bytes is not None:
-        _, taste_policy_sha = legacy_taste.load_policy(legacy_taste_policy_path)
-        legacy_results = legacy_taste.validate_public(json.loads(legacy_taste_bytes), taste_policy_sha,
-                                                      data, source_binding['sha256'])
+    if legacy_taste_strict_bytes is not None:
+        taste_policy, taste_policy_sha = legacy_taste_strict.load_policy(legacy_taste_strict_policy_path)
+        legacy_results = legacy_taste_strict.validate_public(json.loads(legacy_taste_strict_bytes), taste_policy_sha,
+                                                            data, source_binding['sha256'], policy=taste_policy)
     abilities = project_models(data, profile_reports, profile_policy, legacy_policy['new_axis_denominators'],
-                              legacy_taste=legacy_results['models'] if legacy_results is not None else None)
+                              legacy_taste_strict=legacy_results['models'] if legacy_results is not None else None)
     companion = dict(schema=PROFILE_SCHEMA, edition='1.3.0', base_edition='1.2.0', source_stages=dict(STAGES),
         source_binding=source_binding, policy_sha256=policy_sha256, profile_policy_sha256=profile_policy_sha256,
         score_modes_policy_sha256=score_modes_policy_sha256,
         taste_blend=dict(profile_policy['mathematical_taste']), by_model=abilities)
     if legacy_results is not None:
-        companion['legacy_taste_binding'] = dict(policy_sha256=taste_policy_sha,
-            index_sha256=hashlib.sha256(legacy_taste_bytes).hexdigest(),
-            source_catalog_sha256=legacy_results['source_catalog_sha256'])
+        companion['legacy_taste_binding'] = dict(version=legacy_results['version'],
+            policy_sha256=taste_policy_sha, index_sha256=hashlib.sha256(legacy_taste_strict_bytes).hexdigest(),
+            source_catalog_sha256=legacy_results['source_catalog_sha256'],
+            base_scope_policy_sha256=legacy_results['base_scope_policy_sha256'],
+            previous_review_sha256=legacy_results['previous_review_sha256'],
+            review_sha256=legacy_results['review_sha256'], review_coverage=legacy_results['review_coverage'])
     if score_modes_binding is not None:
         board['score_modes_binding'] = score_modes_binding
         companion['score_modes_binding'] = score_modes_binding

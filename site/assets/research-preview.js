@@ -255,6 +255,7 @@
     delete projection.weight_frame; delete projection.base_edition; delete projection.condition;
     validate(projection);
     const doc = root.document, table = doc.getElementById('ranking');
+    doc.getElementById('independent-research-preview-note')?.remove();
     mountCategory(doc);
     if (!table) return;
     doc.documentElement.setAttribute('data-independent-research-preview','');
@@ -274,11 +275,6 @@
       }
       scope.textContent = text;
     }
-    let note = doc.getElementById('independent-research-preview-note');
-    if (!note) { note = doc.createElement('p'); note.id = 'independent-research-preview-note'; note.className = 'panel-desc independent-research-note'; doc.getElementById('leaderboard').prepend(note); }
-    const progress = board.adoption ? `${board.adoption.cohort.length}/${board.adoption.planned_cohort.length}` : null;
-    note.textContent = progress ? (en ? `1.3.0: Written 30 / Lean 30 / Supporting research 30 / Independent open research 10. Adopted ${progress} planned configurations after independent Sol 6.1 Max reviews. Other new-task scores remain blank; a comparison rank requires complete score coverage.` : `1.3.0：书面30／Lean30／辅助研究30／独立开放研究10。独立 Sol 6.1 Max 评审后已采用 ${progress} 个计划配置。其余新题留空，完整成绩证据齐备后才有可比较名次。`) : en ? '1.3.0: Written 30 / Lean 30 / Supporting research 30 / Independent open research 10. New tasks are unmeasured. Bars show confirmed contributions reweighted from 1.2.0, with the unmeasured ten points retained as unknown.' :
-      '1.3.0：书面30／Lean30／辅助研究30／独立开放研究10。新题三项尚未实测。柱状图按新权重显示原1.2证据的已确认贡献；新增10分保留未知区间，未把已测部分归一化。';
     const rows = new Map(board.rows.map(r=>[r.id,r]));
     for (const row of doc.querySelectorAll('#ranking-body tr')) {
       const link=row.querySelector('.model-name');if(!link)continue;

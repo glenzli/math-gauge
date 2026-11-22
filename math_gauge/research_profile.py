@@ -4,15 +4,18 @@ import hashlib
 import json
 from pathlib import Path
 
+from .independent_research_score_modes import REQUIRED_CRITERIA
 from .legacy_taste import FAMILIES as LEGACY_FAMILIES, UNIT as LEGACY_UNIT
 from .scoring import _average, _bound, _interval, _percent
 
 
 POLICY_PATH = Path('protocol/mathematical-taste/v1.3.0/profile-policy.json')
 POLICY_FILE = Path(__file__).resolve().parents[1] / POLICY_PATH
-SCHEMA = 'math-gauge.independent-research-abilities/v3'
+SCHEMA = 'math-gauge.independent-research-abilities/v4'
 STAGES = dict(first='first-answer', revision='revision-inclusive')
 _FIELDS = ('lower', 'upper', 'exact')
+_TASTE_CHECKS = REQUIRED_CRITERIA['taste']
+_TASTE_SOURCES = dict(independent_mode='SMC', legacy_component_version='0.2.0')
 _ROUTES = {
     'initiative_v130': ('initiative', {'autonomy'}),
     'depth_v130': ('depth', {'capacity'}),
@@ -25,13 +28,14 @@ def load_policy(path):
     raw = Path(path).read_bytes()
     policy = json.loads(raw)
     if (set(policy) != {'schema', 'edition', 'base_edition', 'routes', 'mathematical_taste'}
-            or policy['schema'] != 'math-gauge.independent-research-profile-policy/v2'
+            or policy['schema'] != 'math-gauge.independent-research-profile-policy/v3'
             or policy['edition'] != '1.3.0' or policy['base_edition'] != '1.2.0'
             or set(policy['routes']) != set(_ROUTES)):
         raise ValueError('Invalid independent research profile policy')
     taste = policy['mathematical_taste']
-    if (set(taste) != {'legacy_percent'} or type(taste['legacy_percent']) is not int
-            or not 0 < taste['legacy_percent'] < 100):
+    if (set(taste) != {'legacy_percent', *_TASTE_SOURCES}
+            or any(taste[key] != value for key, value in _TASTE_SOURCES.items())
+            or type(taste['legacy_percent']) is not int or not 0 < taste['legacy_percent'] < 100):
         raise ValueError('Invalid fixed mathematical taste profile blend')
     for axis, route in policy['routes'].items():
         base_axis, components = _ROUTES[axis]
@@ -103,24 +107,41 @@ def _blend_axis(base, grades, route):
         base_weight=weights[0] / 100, item_weight=weights[1] / 100, component_weights=dict(parts))
 
 
-def _blend_taste(independent, legacy, *, manuscripts, legacy_percent):
+def _independent_taste_smc(report):
+    missing_state = 'not-tested' if report is None else 'unavailable'
+    report = report or {}
+    metric = report.get('score_modes', {}).get('SMC', {}).get('components', {}).get('taste')
+    counts = report.get('criteria', {}).get('taste')
+    coverage = dict(unit='taste_checkpoint', planned=_TASTE_CHECKS, reviewed=0)
+    if metric is None and counts is None:
+        return dict(lower=0, upper=100, exact=None, confirmed=0, state=missing_state, coverage=coverage)
+    if (metric is None or counts is None or counts['planned'] != _TASTE_CHECKS
+            or type(counts['unknown']) is not int or not 0 <= counts['unknown'] <= _TASTE_CHECKS
+            or (metric['exact'] is None) != (counts['unknown'] > 0)):
+        raise ValueError('Mathematical taste SMC must retain its settled checkpoint coverage')
+    coverage['reviewed'] = _TASTE_CHECKS - counts['unknown']
+    return dict({key: metric[key] for key in (*_FIELDS, 'confirmed', 'state')}, coverage=coverage)
+
+
+def _blend_taste(independent, legacy, *, legacy_percent):
+    legacy_available = legacy is not None
     if legacy is None:
         legacy = dict(lower=0, upper=100, exact=None, confirmed=0,
                       coverage=dict(unit=LEGACY_UNIT, planned=LEGACY_FAMILIES, reviewed=0, observed=0))
-    current = _score_interval(independent)
     weights = [100 - legacy_percent, legacy_percent]
-    interval = _average([current, _source_interval(legacy)], weights)
-    confirmed = _average([(current[0],) * 3, (_score_interval(legacy['confirmed'])[2],) * 3], weights)[2]
+    interval = _average([_source_interval(metric) for metric in (independent, legacy)], weights)
+    confirmed = _average([(_score_interval(metric['confirmed'])[2],) * 3 for metric in (independent, legacy)],
+                         weights)[2]
     return dict(_published_metric(interval, confirmed),
-                independent_metric=_published_metric(current, current[0]), legacy_metric=legacy,
-                independent_coverage=dict(unit='manuscript', planned=manuscripts,
-                                          reviewed=manuscripts if independent is not None else 0),
+                independent_metric={key: independent[key] for key in (*_FIELDS, 'confirmed', 'state')},
+                independent_coverage=independent['coverage'], legacy_metric=legacy,
+                legacy_review_available=legacy_available,
                 independent_weight=weights[0] / 100, legacy_weight=weights[1] / 100)
 
 
-def project_models(data, reports, policy, denominators, *, legacy_taste=None):
-    """Share one independent grade across stages with their own old evidence."""
-    legacy_taste = legacy_taste or {}
+def project_models(data, reports, policy, denominators, *, legacy_taste_strict=None):
+    """Share the independent taste SMC across stages with their own strict legacy evidence."""
+    legacy_taste_strict = legacy_taste_strict or {}
     if data.get('mathematical_profile_baseline') is not None:
         first = _indexed_profiles(data, 'mathematical_profile_baseline', 'mathematical-profile-baseline')
     else:
@@ -143,6 +164,7 @@ def project_models(data, reports, policy, denominators, *, legacy_taste=None):
             row[axis] = dict(lower=0 if value is None else value, upper=100 if value is None else value, exact=value,
                 comparable=value is not None, observed=planned if value is not None else 0,
                 denominator={key: denominators[denominator][key] for key in ('unit', 'planned', 'rounds')})
+        row['independent_taste_smc'] = _independent_taste_smc(report)
         row['completion_v130'] = dict(report['strict_overall'] if report is not None else dict(lower=0, upper=100, exact=None),
             confirmed=report['strict_confirmed'] if report is not None else 0, coverage=None,
             source='same-v130-strict-overall', additional_projection_weight=0)
@@ -153,8 +175,7 @@ def project_models(data, reports, policy, denominators, *, legacy_taste=None):
             row['stages'][stage] = {axis: _blend_axis(baselines.get(route['base_axis']), grades, route)
                                     for axis, route in policy['routes'].items()}
             row['stages'][stage]['mathematical_taste'] = _blend_taste(
-                grades.get('taste'), legacy_taste.get(identifier, {}).get(stage),
-                manuscripts=denominators['mathematical_taste']['planned'],
+                row['independent_taste_smc'], legacy_taste_strict.get(identifier, {}).get(stage),
                 legacy_percent=policy['mathematical_taste']['legacy_percent'])
         projected[identifier] = row
     return projected

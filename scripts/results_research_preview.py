@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
 from scripts.results_publication import atomic_write, data_literal
 from math_gauge import independent_research_score_modes as modes
-from math_gauge import legacy_taste
+from math_gauge import legacy_taste_strict
 from math_gauge.research_profile import POLICY_PATH as PROFILE_POLICY_PATH
 
 EDITION = '1.3.0'
@@ -69,15 +69,15 @@ def prepare_research_preview(files, root):
     envelope['data']['benchmark_version'] = EDITION
     from math_gauge.independent_research_adoption import PUBLIC_PATH
     adopted_path, overlay_path = root / PUBLIC_PATH, root / modes.PUBLIC_PATH
-    legacy_taste_path = root / legacy_taste.PUBLIC_PATH
+    legacy_taste_path = root / legacy_taste_strict.PUBLIC_PATH
     adopted_bytes = adopted_path.read_bytes() if adopted_path.is_file() else None
     overlay_bytes = overlay_path.read_bytes() if overlay_path.is_file() else None
     adopted = json.loads(adopted_bytes) if adopted_bytes is not None else None
     board, abilities, category_points = baseline_projection(json.loads(files['data.json']),
         policy_path=policy, profile_policy_path=root/PROFILE_POLICY_PATH, score_modes_policy_path=root/modes.POLICY_PATH,
         source_bytes=files['data.json'].encode(), adopted=adopted, adopted_bytes=adopted_bytes,
-        overlay_bytes=overlay_bytes, legacy_taste_policy_path=root/legacy_taste.POLICY_PATH,
-        legacy_taste_bytes=legacy_taste_path.read_bytes() if legacy_taste_path.is_file() else None)
+        overlay_bytes=overlay_bytes, legacy_taste_strict_policy_path=root/legacy_taste_strict.POLICY_PATH,
+        legacy_taste_strict_bytes=legacy_taste_path.read_bytes() if legacy_taste_path.is_file() else None)
     source_models={m['id']:m for m in json.loads(files['data.json'])['models']}
     for row in board['rows']:
         model=source_models[row['id']]

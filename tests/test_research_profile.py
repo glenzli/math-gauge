@@ -15,6 +15,11 @@ class ResearchProfileTests(unittest.TestCase):
         self.denominators = json.loads(SCORE_POLICY.read_bytes())['new_axis_denominators']
         self.report = dict(subscores=dict(autonomy=None, taste=86, capacity=70),
                            strict_overall=dict(lower=72, upper=72, exact=72), strict_confirmed=72)
+        self.taste_smc = dict.fromkeys(('lower', 'upper', 'exact', 'confirmed'), 66.6666666667)
+        self.taste_smc['state'] = 'reviewed'
+        self.report['score_modes'] = dict(SMC=dict(components=dict(taste=self.taste_smc)))
+        self.report['criteria'] = dict(taste=dict(planned=3, passed=2, unknown=0))
+        self.report['strict_verdicts'] = dict(taste=False)
         self.data = {'open_research': dict(schema='math-gauge.open-research/v1', benchmark_version='1.2.0',
             models=[dict(id='fixture', first=dict(lower=50, upper=50, exact=50,
                 coverage=dict(unit='open_research_family', planned=5, reviewed=5)), revision=None)])}
@@ -46,7 +51,7 @@ class ResearchProfileTests(unittest.TestCase):
             after = self.projection(policy)
             self.assertEqual(before['stages']['first']['open_research_v130']['exact'], 50)
             self.assertEqual(after['stages']['first']['open_research_v130']['exact'], 46)
-            for key in ('open_research_autonomy', 'independent_taste', 'completion_v130'):
+            for key in ('open_research_autonomy', 'independent_taste', 'independent_taste_smc', 'completion_v130'):
                 self.assertEqual(after[key], before[key])
             self.policy['routes']['open_research_v130']['component_weights']['autonomy'] = 0
             path.write_text(json.dumps(self.policy))
@@ -62,12 +67,33 @@ class ResearchProfileTests(unittest.TestCase):
         before = self.projection(self.policy)
         self.policy['mathematical_taste']['legacy_percent'] = 25
         project = profile.project_models(self.data, {'fixture': self.report}, self.policy,
-                                         self.denominators, legacy_taste=source)['fixture']
-        self.assertEqual(project['stages']['first']['mathematical_taste']['exact'], 77)
+                                         self.denominators, legacy_taste_strict=source)['fixture']
+        self.assertEqual(project['independent_taste']['exact'], 86)
+        self.assertEqual(project['independent_taste_smc']['exact'], self.taste_smc['exact'])
+        self.assertAlmostEqual(project['stages']['first']['mathematical_taste']['exact'], 62.5)
         known = project['stages']['revision']['mathematical_taste']
-        self.assertEqual((known['lower'], known['upper'], known['exact']), (64.5, 89.5, None))
+        self.assertAlmostEqual(known['lower'], 50)
+        self.assertAlmostEqual(known['upper'], 75)
+        self.assertIsNone(known['exact'])
+        self.assertFalse(known['legacy_review_available'])
         self.assertEqual(known['legacy_metric']['coverage']['reviewed'], 0)
-        self.assertEqual(known['independent_coverage'], dict(unit='manuscript', planned=3, reviewed=3))
+        self.assertEqual(known['independent_coverage'], dict(unit='taste_checkpoint', planned=3, reviewed=3))
         for stage_id in ('first', 'revision'):
             for axis in ('initiative_v130', 'depth_v130', 'open_research_v130', 'discernment_v130'):
                 self.assertEqual(project['stages'][stage_id][axis], before['stages'][stage_id][axis])
+
+    def test_unresolved_checkpoints_keep_source_bounds_and_zero_is_known(self):
+        self.report['criteria']['taste'].update(passed=1, unknown=1)
+        self.taste_smc.update(lower=33.3333333333, upper=66.6666666667, exact=None,
+                              confirmed=33.3333333333, state='insufficient-evidence')
+        blended = self.projection(self.policy)['stages']['first']['mathematical_taste']
+        self.assertAlmostEqual(blended['lower'], 80 / 3)
+        self.assertAlmostEqual(blended['upper'], 160 / 3 + 20)
+        self.assertIsNone(blended['exact'])
+        self.assertEqual(blended['independent_coverage']['reviewed'], 2)
+        self.assertEqual(blended['independent_metric']['state'], 'insufficient-evidence')
+        self.report['criteria']['taste'].update(passed=0, unknown=0)
+        self.taste_smc.update(lower=0, upper=0, exact=0, confirmed=0, state='reviewed')
+        raw = self.projection(self.policy)['independent_taste_smc']
+        self.assertEqual(raw['exact'], 0)
+        self.assertEqual(raw['coverage']['reviewed'], 3)

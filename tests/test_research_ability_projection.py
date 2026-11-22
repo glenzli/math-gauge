@@ -7,7 +7,7 @@ import unittest
 
 from math_gauge.independent_research_adoption import KIND, PUBLIC_PATH, SCHEMA
 from math_gauge import independent_research_score_modes as modes
-from math_gauge import legacy_taste as taste
+from math_gauge import legacy_taste as taste, legacy_taste_strict as strict_taste
 from math_gauge.open_research import encoded, reference
 from math_gauge.research_profile import POLICY_FILE as PROFILE_POLICY_FILE, POLICY_PATH as PROFILE_POLICY_PATH
 from math_gauge.taste_v130 import POLICY_FILE
@@ -101,7 +101,9 @@ def legacy_fixture(root, data, raw):
     final = dict(evidence=dict(answer=source), response_sha256=source['sha256'], status='normal_final')
     cases = {MARKER + str(i): final for i in range(6)}
     selected_case = next(iter(cases))
-    models = {mid: dict(first=cases, revision={}) for mid in sorted(taste.profile_model_ids(data))}
+    unrun = {cid: dict(status='unrun') for cid in cases}
+    models = {mid: dict(first=cases if mid == MEASURED else unrun, revision={})
+              for mid in sorted(taste.profile_model_ids(data))}
     models[PROFILE_ONLY]['revision'] = None
     models[MEASURED]['revision'] = {selected_case: final}
     private_catalogue = encoded(dict(source_binding=dict(edition='1.2.0', sha256=taste.sha256(raw)), models=models))
@@ -115,8 +117,22 @@ def legacy_fixture(root, data, raw):
                                                                 ('revision', {selected_case:0}))
         for case_id, score in records.items()]
     policy, digest = taste.load_policy()
-    return encoded(taste.prepare_public(dict(public=root, private=private), private_catalogue,
-                                         [encoded(review)], policy, digest))
+    strict_policy, strict_digest = strict_taste.load_policy()
+    previous_review = encoded(review)
+    strict_review = dict(review, schema=strict_taste.REVIEW_SCHEMA, version=strict_taste.VERSION,
+                         policy_sha256=strict_digest, previous_review_sha256=taste.sha256(previous_review))
+    strict_review['judgments'] = []
+    for row in review['judgments']:
+        first = row['stage'] == 'first'
+        criteria = {name: dict(points=points, reason=MARKER, evidence=row['evidence']) for name, points in
+                    zip(strict_taste.DIMENSIONS, (30, 20, 10) if first else (0, 0, 0))}
+        strict_review['judgments'].append(dict(row, score=60 if first else 0, criteria=criteria,
+            strict_checks=dict(credited_work_closed=first, scope_faithful=True, no_silent_repair=True), unresolved_kind=None))
+    roots = dict(public=root, private=private)
+    legacy = taste.prepare_public(roots, private_catalogue, [previous_review], policy, digest)
+    strict = strict_taste.prepare_public(roots, private_catalogue, [encoded(strict_review)], [previous_review],
+                                         strict_policy, strict_digest, policy, digest)
+    return encoded(legacy), encoded(strict)
 
 
 class ResearchAbilityProjectionTests(unittest.TestCase):
@@ -137,6 +153,7 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
         self.assertEqual(axes['independent_taste']['exact'], 50)
         self.assertEqual(axes['independent_taste']['denominator']['planned'], 3)
         self.assertEqual(axes['independent_taste']['observed'], 3)
+        self.assertEqual(axes['independent_taste_smc']['exact'], 100)
         first, revision = (axes['stages'][stage] for stage in ('first', 'revision'))
         self.assertEqual(first['discernment_v130']['exact'], 50)
         self.assertEqual(revision['discernment_v130']['exact'], 70)
@@ -218,9 +235,12 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(content)
-            before = prepare_research_preview(files, root)
+            previous_legacy, strict_legacy = legacy_fixture(root, data, raw)
             (root / taste.POLICY_PATH).write_bytes(taste.POLICY_FILE.read_bytes())
-            (root / taste.PUBLIC_PATH).write_bytes(legacy_fixture(root, data, raw))
+            (root / taste.PUBLIC_PATH).write_bytes(previous_legacy)
+            before = prepare_research_preview(files, root)
+            (root / strict_taste.POLICY_PATH).write_bytes(strict_taste.POLICY_FILE.read_bytes())
+            (root / strict_taste.PUBLIC_PATH).write_bytes(strict_legacy)
             outputs = prepare_research_preview(files, root)
 
         self.assertEqual(outputs['data.json'], files['data.json'])
@@ -232,9 +252,15 @@ class ResearchAbilityProjectionTests(unittest.TestCase):
         for key in ('models', 'research_preview', 'chart_scenes', 'category_leaderboards'):
             self.assertEqual(view[key], old_view[key])
         companion = view[ABILITY_FIELD]
+        self.assertNotIn('legacy_taste_binding', old_view[ABILITY_FIELD])
+        before_taste = old_view[ABILITY_FIELD]['by_model'][MEASURED]['stages']['first']['mathematical_taste']
+        self.assertEqual((before_taste['lower'], before_taste['upper'], before_taste['exact']), (80, 100, None))
+        self.assertFalse(before_taste['legacy_review_available'])
         profiles = companion['by_model'][MEASURED]['stages']
-        self.assertEqual(profiles['first']['mathematical_taste']['exact'], 55)
-        self.assertEqual(profiles['revision']['mathematical_taste']['exact'], 54.5)
+        self.assertEqual(profiles['first']['mathematical_taste']['exact'], 92)
+        self.assertEqual(profiles['revision']['mathematical_taste']['exact'], 91.6)
+        self.assertTrue(profiles['first']['mathematical_taste']['legacy_review_available'])
+        self.assertEqual(companion['legacy_taste_binding']['review_coverage']['assessed'], 7)
         self.assertEqual(profiles['revision']['mathematical_taste']['legacy_metric']['coverage']['planned'], 6)
         self.assertEqual(json.loads(outputs['versions/1.3.0/data.json'])[ABILITY_FIELD], companion)
         completion = companion['by_model'][MEASURED]['completion_v130']

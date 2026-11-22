@@ -219,7 +219,7 @@ test('the lexical MG controller installs one native category and leaves the main
     prepend(node){this.children.unshift(node);node.parent=this;if(node.id)nodes.set(node.id,node);}
     setAttribute(key,val){this.attrs[key]=val;}
     insertBefore(node,last){this.children.splice(this.children.indexOf(last),0,node);node.parent=this;}
-    remove(){if(this.parent)this.parent.children.splice(this.parent.children.indexOf(this),1);}
+    remove(){if(this.parent)this.parent.children.splice(this.parent.children.indexOf(this),1);if(this.id)nodes.delete(this.id);}
     insertAdjacentElement(_,node){(this.adjacent??=[]).push(node);nodes.set(node.id,node);}
   }
   const table=new Element('table'),wrap=new Element('div'),head=new Element('tr'),body=new Element('tr');
@@ -232,6 +232,8 @@ test('the lexical MG controller installs one native category and leaves the main
   const link={href:'https://example.test/models/'+board.rows[0].id+'/index.html?edition=1.3.0',dataset:{}};
   body.querySelector=()=>link;
   for(const [id,node] of [['ranking',table],['leaderboard',new Element('section')],['leaderboard-desc',new Element('p')]])nodes.set(id,node);
+  const banner=new Element('p');banner.id='independent-research-preview-note';
+  nodes.get('leaderboard').append(banner);
   const resourceHeadings=['cost-title','timing-title','cost-frontier-title'].map(id=>{
     const heading=new Element('h2');nodes.set(id,heading);return heading;
   });
@@ -260,7 +262,7 @@ test('the lexical MG controller installs one native category and leaves the main
   const source=readFileSync(new URL('../scripts/templates/research-preview.js',import.meta.url),'utf8');
   vm.runInNewContext('const MG='+JSON.stringify({d:data,state:{lang:'zh',score:'strict'}})+';\n'+source,context);
   assert.equal(html.attrs['data-independent-research-preview'],'');
-  assert.match(nodes.get('independent-research-preview-note').textContent,/已采用 1\/2/);
+  assert.ok(!nodes.has(banner.id),'a stale adoption banner is removed');
   assert.equal(table.tHead.rows.length,1);
   assert.equal(body.cells.length,8,'main table retains only original overall columns');
   assert.ok(body.cells.every(c=>!Object.hasOwn(c.dataset,'independentCell')));
@@ -279,6 +281,7 @@ test('the lexical MG controller installs one native category and leaves the main
   assert.equal(location.searchParams.get('score'),'capability');
   assert.equal(location.hash,'#assessment-guide');
   context.MGResearchPreview.decorate();
+  assert.ok(!nodes.has(banner.id),'rendering never restores the adoption banner');
   assert.equal(table.tHead.rows.length,1,'rerender must not add project columns');
   assert.equal(tabs.children.length,1,'rerender keeps one fourth category tab');
   vm.runInContext("MG.state.lang = 'en'; MGResearchPreview.decorate();",context);

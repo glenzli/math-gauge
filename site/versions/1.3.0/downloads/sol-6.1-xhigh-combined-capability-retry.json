@@ -245,7 +245,7 @@
   "candidate_calls": 0,
   "rank_eligible": false,
   "independent_research_abilities": {
-    "schema": "math-gauge.independent-research-abilities/v3",
+    "schema": "math-gauge.independent-research-abilities/v4",
     "edition": "1.3.0",
     "base_edition": "1.2.0",
     "source_stages": {
@@ -257,10 +257,12 @@
       "sha256": "bfaa10cb07423b46d89f030a2a5622787ad5028c1fe18898a5949f16d2961571"
     },
     "policy_sha256": "3cc90aeda26341823e23636344ed3e0ad900a62f332112e9a12a961b10126dd9",
-    "profile_policy_sha256": "301f55b935d2a86ee3cbabe67aa8bc2c2cbd317929ccd32b93c1a8bd16b9fd0b",
+    "profile_policy_sha256": "88cedf84247aab634a44b5bc8b5eaa326d1ec37829081abb23faf5493ae28dbf",
     "score_modes_policy_sha256": "615e06372328e1aa53fe6566434ca0234ca9c15b2f7670f092d3cedd242b920a",
     "taste_blend": {
-      "legacy_percent": 20
+      "legacy_percent": 20,
+      "independent_mode": "SMC",
+      "legacy_component_version": "0.2.0"
     },
     "by_model": {
       "sol-6.1-xhigh": {
@@ -293,6 +295,18 @@
               "R2",
               "R3"
             ]
+          }
+        },
+        "independent_taste_smc": {
+          "lower": 66.6666666667,
+          "upper": 66.6666666667,
+          "exact": 66.6666666667,
+          "confirmed": 66.6666666667,
+          "state": "reviewed",
+          "coverage": {
+            "unit": "taste_checkpoint",
+            "planned": 3,
+            "reviewed": 3
           }
         },
         "completion_v130": {
@@ -457,33 +471,35 @@
               }
             },
             "mathematical_taste": {
-              "lower": 91.6666666666,
-              "upper": 95.0,
-              "exact": null,
-              "confirmed": 91.6666666667,
+              "lower": 73.3333333334,
+              "upper": 73.3333333334,
+              "exact": 73.3333333334,
+              "confirmed": 73.3333333334,
               "independent_metric": {
-                "lower": 95.0,
-                "upper": 95.0,
-                "exact": 95.0,
-                "confirmed": 95.0
-              },
-              "legacy_metric": {
-                "lower": 78.3333333333,
-                "upper": 95.0,
-                "exact": null,
-                "confirmed": 78.3333333333,
-                "coverage": {
-                  "unit": "theorem_extension_family",
-                  "planned": 6,
-                  "observed": 5,
-                  "reviewed": 5
-                }
+                "lower": 66.6666666667,
+                "upper": 66.6666666667,
+                "exact": 66.6666666667,
+                "confirmed": 66.6666666667,
+                "state": "reviewed"
               },
               "independent_coverage": {
-                "unit": "manuscript",
+                "unit": "taste_checkpoint",
                 "planned": 3,
                 "reviewed": 3
               },
+              "legacy_metric": {
+                "lower": 100.0,
+                "upper": 100.0,
+                "exact": 100.0,
+                "confirmed": 100.0,
+                "coverage": {
+                  "unit": "theorem_extension_family",
+                  "planned": 6,
+                  "observed": 6,
+                  "reviewed": 6
+                }
+              },
+              "legacy_review_available": true,
               "independent_weight": 0.8,
               "legacy_weight": 0.2
             }
@@ -635,33 +651,35 @@
               }
             },
             "mathematical_taste": {
-              "lower": 92.5333333333,
-              "upper": 95.2,
-              "exact": null,
-              "confirmed": 92.5333333333,
+              "lower": 73.3333333334,
+              "upper": 73.3333333334,
+              "exact": 73.3333333334,
+              "confirmed": 73.3333333334,
               "independent_metric": {
-                "lower": 95.0,
-                "upper": 95.0,
-                "exact": 95.0,
-                "confirmed": 95.0
+                "lower": 66.6666666667,
+                "upper": 66.6666666667,
+                "exact": 66.6666666667,
+                "confirmed": 66.6666666667,
+                "state": "reviewed"
+              },
+              "independent_coverage": {
+                "unit": "taste_checkpoint",
+                "planned": 3,
+                "reviewed": 3
               },
               "legacy_metric": {
-                "lower": 82.6666666666,
-                "upper": 96.0,
-                "exact": null,
-                "confirmed": 82.6666666667,
+                "lower": 100.0,
+                "upper": 100.0,
+                "exact": 100.0,
+                "confirmed": 100.0,
                 "coverage": {
                   "unit": "theorem_extension_family",
                   "planned": 6,
                   "observed": 6,
-                  "reviewed": 5
+                  "reviewed": 6
                 }
               },
-              "independent_coverage": {
-                "unit": "manuscript",
-                "planned": 3,
-                "reviewed": 3
-              },
+              "legacy_review_available": true,
               "independent_weight": 0.8,
               "legacy_weight": 0.2
             }
@@ -670,9 +688,28 @@
       }
     },
     "legacy_taste_binding": {
-      "policy_sha256": "e8019dfdaa81ad15022e3062e97e71c14e44f3136c30cc2afd20b8430a790322",
-      "index_sha256": "aea5159e75f489f194e71c09ec610f79234b80a37d9b724ba7f0c3d6f8a78b51",
-      "source_catalog_sha256": "fd8f1239d3a79bd5c53ea547898ab3c4a9e1afcdb436ab2eb6cf861172aa4a97"
+      "version": "0.2.0",
+      "policy_sha256": "ef92cae3ea1793088a16fb85539df990f1620a9d8cd9c40b3819d06cdc85205e",
+      "index_sha256": "d958609cc875b0d229b3f5007b8ecb35ced674dc847e80aeb1b87d13a683035c",
+      "source_catalog_sha256": "fd8f1239d3a79bd5c53ea547898ab3c4a9e1afcdb436ab2eb6cf861172aa4a97",
+      "base_scope_policy_sha256": "e8019dfdaa81ad15022e3062e97e71c14e44f3136c30cc2afd20b8430a790322",
+      "previous_review_sha256": [
+        "285659ad30e6069b7ee9205e9a5f04a4631a9a3e002764073785374541a864ce",
+        "d582af379bc2385515233e81bd323e6048138033ac2f86378d10304ebd006ace",
+        "bc74d98f9fb5f0d4a61b80874eeb068630049712515129475b9eee5bb8d08445"
+      ],
+      "review_sha256": [
+        "c81af35dda064558267c2c78f94d986d76684f219f3039c8a325cc7253c1981c",
+        "b532a03458dbbc7d8e6ad668b48021aa08c0f05fc01f2af76813a0dd0815611e",
+        "982ff4e92aa11ff3ba379202eeaef1ee9f65c2f584e80ae1f0ee1f63a10e31a3"
+      ],
+      "review_coverage": {
+        "planned": 209,
+        "assessed": 209,
+        "scored": 209,
+        "source_missing": 0,
+        "verification_unresolved": 0
+      }
     },
     "score_modes_binding": {
       "policy_sha256": "615e06372328e1aa53fe6566434ca0234ca9c15b2f7670f092d3cedd242b920a",
