@@ -2,7 +2,8 @@
 (() => {
  'use strict';
  const {d,state,node,result,f}=MG,main=document.querySelector('main');if(!main)return;
- const isRevision=d.benchmark_version==='1.2.0',english=()=>state.lang==='en';
+ const isIndependent=d.benchmark_version==='1.3.0'&&!!d.research_preview;
+ const isRevision=d.benchmark_version==='1.2.0'||isIndependent,english=()=>state.lang==='en';
  const text=(zh,en)=>english()?en:zh;
  const section=(id,title,collapsible=false)=>{
   let panel=document.getElementById(id);
@@ -54,17 +55,19 @@
  }
  function assessmentGuide(){
   const shell=document.querySelector('[data-assessment-guide]');if(!shell)return false;
+  if(isIndependent)Object.assign(shell.dataset,{tasks:'40',public:'25',private:'15',families:'36',total:'100'});
   const expanded=shell.querySelector('.guide-details')?.open,guide=node('div',null,'assessment-guide-body');Object.assign(guide.dataset,shell.dataset);
   const summary=node('summary'),brief=node('span',null,'guide-summary-text');
   brief.append(node('strong',text('评测指南','Assessment guide')),
-   node('span',text(shell.dataset.tasks+'题 · 书面35／Lean35／研究30 · 满分'+shell.dataset.total,shell.dataset.tasks+' tasks · Written35 / Lean35 / Research30 · '+shell.dataset.total+' points')),
+   node('span',isIndependent?text('40题 · 45次规定交付 · 书面30／Lean30／辅助研究30／独立开放研究10 · 满分100','40 tasks · 45 prescribed deliveries · Written30 / Lean30 / Supporting30 / Independent10 · 100 points'):text(shell.dataset.tasks+'题 · 书面35／Lean35／研究30 · 满分'+shell.dataset.total,shell.dataset.tasks+' tasks · Written35 / Lean35 / Research30 · '+shell.dataset.total+' points')),
    node('small',text('展开查看题型、计算方法、作答流程与三种指标','Expand for task categories, scoring, process and the three measures')));
   summary.append(brief);shell.replaceChildren(summary,guide);shell.setAttribute('aria-label',text('评测指南','Assessment guide'));
   const head=node('div',null,'guide-head'),title=node('h3',text('题库范围','Task scope')),catalog=node('a',text('题目目录 ↗','Task catalog ↗'));
   catalog.href='../cases/README.md';head.append(title,catalog);guide.append(head);
   guide.append(node('p',text(guide.dataset.tasks+'项首答（公开'+guide.dataset.public+'／私有'+guide.dataset.private+'） · '+guide.dataset.families+'个数学家族 · 总分'+guide.dataset.total,
    guide.dataset.tasks+' initial tasks ('+guide.dataset.public+' public / '+guide.dataset.private+' private) · '+guide.dataset.families+' mathematical families · '+guide.dataset.total+' total points'),'guide-scope'));
-  const names={written:text('书面证明','Written proofs'),lean:'Lean',research:text('数学研究','Mathematical research'),
+  if(isIndependent)guide.append(node('p',text('固定交付共45次：39项原初答＋3轮Lean自查＋新题3轮。中性续答按各模型自己的失分集合选取，保留原1.2规则及单独的交付明细，不混为相同任务集。','45 fixed deliveries: 39 original answers, 3 Lean self-checks and 3 independent-research rounds. Neutral continuations retain each model’s own selected loss set and separate delivery evidence.')));
+  const names={written:text('书面证明','Written proofs'),lean:'Lean',research:text(isIndependent?'辅助研究':'数学研究',isIndependent?'Supporting research':'Mathematical research'),
    'written-argument':text('书面论证','Written arguments'),'argument-review':text('论证审阅','Argument review'),'lean-audit':text('语义审计','Semantic audit'),'lean-formalization':text('形式化','Formalization'),'lean-selfcheck':text('对齐自查','Alignment self-check'),
    'background-check':text('背景核查','Background check'),'manuscript-completion':text('想法手稿化','Idea-to-manuscript'),'theorem-extension':text('命题拓展','Theorem extension')};
   const tasks={written:text('16项首答','16 initial tasks'),lean:text('8项首答＋3轮固定自查','8 initial tasks + 3 fixed self-checks'),research:text('15项首答','15 initial tasks')};
@@ -74,15 +77,19 @@
   d.policy.groups.forEach(group=>{const r=body.insertRow(),label=node('th',names[group.id]);label.scope='row';r.append(label);
    const count=r.insertCell();count.className='guide-category-tasks';count.textContent=tasks[group.id];
    const share=r.insertCell();share.className='guide-category-share';share.textContent=text(group.weight+'分 · '+group.weight+'%',group.weight+' points · '+group.weight+'%');
-   const parts=r.insertCell();parts.className='guide-category-parts';parts.textContent=group.children.map(id=>{const part=d.policy.subcategories.find(item=>item.id===id);return names[id]+' '+part.weight}).join(' · ');
-  });guide.append(taxonomy);
+   const parts=r.insertCell();parts.className='guide-category-parts';parts.textContent=group.children.map(id=>{const part=d.policy.subcategories.find(item=>item.id===id);return names[id]+' '+(isIndependent?Number(part.weight.toFixed(2)):part.weight)}).join(' · ');
+  });
+  if(isIndependent){const r=body.insertRow();r.append(node('th',text('独立开放研究','Independent open research')));r.insertCell().textContent=text('1题，固定3轮','1 task, 3 fixed rounds');r.insertCell().textContent='10 / 10%';r.insertCell().textContent=text('研究自主25% · 数学品味25% · 研究能力50%','Autonomy25% · Taste25% · Capacity50%');}
+  guide.append(taxonomy);
   const explain=(heading,content,cls='')=>{const block=node('section',null,'guide-section '+cls);block.append(node('h3',heading),node('p',content));guide.append(block);return block};
   explain(text('汇总方法','How scores are combined'),text('逐题审核，相关变体先在同一数学家族内合并，再按固定权重汇总。未测保持未知，不把已测部分重新放大到100分。','Each task is reviewed; related variants are combined within their mathematical family, then aggregated with fixed weights. Unrun work stays unknown; measured coverage is never rescaled to 100.'));
+  if(isIndependent)explain(text('1.3总分','1.3 overall scores'),text('从原分项分别重算：书面、Lean、辅助研究各30%，独立开放研究题分10%。A/T/C先合成一道题；题Strict要求三门都通过。旧三分定义、答卷、审核和1.2源结果保留；新版明确为综合视图，MC基准综合包含新题A/T/C，不能当成旧纯数学MC。未测分数留空，柱图显示已确认贡献，完整分仍保留未知区间，不把90分归一化到100。','Reweight each original group to30%, then add the independent task at10%. A/T/C form one task; Strict requires all three gates. Original modes and evidence are retained. The new MC-based composite is explicitly different from pure mathematical MC. Unmeasured fields stay blank; confirmed credit and unresolved intervals remain separate.'));
   const flow=explain(text('作答流程','Answering process'),text('39项首答任务分别交付，按规定的有效尝试规则选卷。','The 39 initial tasks are delivered separately and selected under the prescribed effective-attempt rule.'));
   const branches=node('div',null,'guide-flow-branches');
   branches.append(node('p',text('整章Lean（MG-C003）→ 固定3轮自查','Whole-chapter Lean (MG-C003) → 3 fixed self-checks')));
   if(isRevision)branches.append(node('p',text('非Lean已知失分题 → 1次中性续答；首答三项全满免跑','Non-Lean tasks with known loss → 1 neutral continuation; first answers full in all three modes are exempt')));
   else branches.append(node('p',text('其余任务 → 按本版规则选定的首答计分','Other tasks → score the first-answer delivery selected by this edition')));
+  if(isIndependent)branches.append(node('p',text('独立开放研究：同一全新求解会话，R1研究→冻结→R2独立推进→冻结→R3自审定稿；无方向反馈、无第四轮neutral continuation。只用固定材料、本地工具和预置依赖，禁外部检索；隔离与运行证据分别核验。','Independent research: one fresh solving session; freeze R1, continue independently in R2, freeze again, then self-audit and finalize R3. No directional feedback or fourth neutral round; fixed local materials only, with operational isolation verified separately.')));
   flow.append(branches);
   const metrics=node('section',null,'guide-section');metrics.append(node('h3',text('三种指标','Three score concepts')));
   const definitions=node('dl',null,'guide-metrics');

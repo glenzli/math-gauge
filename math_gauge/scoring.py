@@ -4159,3 +4159,163 @@ def score_open_research(inputs):
     return dict(schema='math-gauge.open-research-score/v1',version=VERSION,
         benchmark_version=EDITION,condition=CONDITION,model_id=inputs.review['model_id'],
         first=metrics['first'],revision=metrics['revision'],tasks=task_scores,**BOUNDARIES)
+
+
+def score_research_preview(base, base_axes, *, status, review, policy, base_groups=None):
+    """Unranked 1.3 composite, with fixed unknown bounds and unchanged legacy modes.
+
+    This separate construct includes invited autonomy/taste. It is deliberately
+    never returned under the legacy MC/RMC/SMC score names.
+    """
+    axes = ('autonomy', 'taste', 'capacity')
+
+    def number(value, maximum=100):
+        if type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= maximum:
+            raise ValueError('Expected a finite score or policy weight')
+        return Fraction(str(value))
+
+    def bounds(value, signed=False):
+        def read(v):
+            if signed and type(v) in (int,float) and math.isfinite(v) and -100 <= v < 0:
+                return Fraction(str(v))
+            return number(v)
+        if value is None:
+            return Fraction(-100 if signed else 0), Fraction(100), None
+        if isinstance(value, dict):
+            lo, hi = read(value['lower']), read(value['upper'])
+            exact = None if value['exact'] is None else read(value['exact'])
+            if lo > hi or (exact is not None and not lo == hi == exact):
+                raise ValueError('Inconsistent score bounds')
+            return lo, hi, exact
+        point = read(value)
+        return point, point, point
+
+    def metric(value):
+        lo, hi, exact = value
+        return dict(lower=float(lo), upper=float(hi), exact=None if exact is None else float(exact))
+
+    def blend(old, new, weight):
+        a, b = bounds(old), bounds(new)
+        return metric(((1-weight)*a[0]+weight*b[0], (1-weight)*a[1]+weight*b[1],
+                       None if a[2] is None or b[2] is None else (1-weight)*a[2]+weight*b[2]))
+
+    if (policy.get('schema') != 'math-gauge.taste-preview-policy/v1'
+            or policy.get('edition') != '1.3.0' or policy.get('rank_eligible') is not False
+            or policy.get('status') != 'local-preview-weights-not-ratified'
+            or policy.get('strict_item') != 'all-three'
+            or policy.get('composite_semantics') != 'independent-overall-view-not-legacy-MC-RMC-SMC'):
+        raise ValueError('Not an unratified independent preview policy')
+    if status not in {'not-run', 'invalid', 'delivery-failed', 'reviewed', 'review-pending'}:
+        raise ValueError('Unknown research delivery state')
+    if set(base) != {'MC', 'RMC', 'SMC'}:
+        raise ValueError('All three original modes must be retained')
+    for value in [*base.values(), *base_axes.values()]:
+        bounds(value)
+    if (status == 'reviewed') != (review is not None):
+        raise ValueError('Only a source-validated review may supply grades')
+    if policy['axis_routes'] != dict(autonomy='open_research_autonomy', taste='mathematical_taste',
+                                    capacity='open_research_v130'):
+        raise ValueError('Autonomy must remain independent of legacy initiative')
+    weights = policy['continuous_item_weights']
+    if set(weights) != set(axes):
+        raise ValueError('Three fixed component weights required')
+    weights = {k: number(v, 1) for k, v in weights.items()}
+    reserve = number(policy['overall_item_weight'], 1)
+    if sum(weights.values()) != 1 or any(v <= 0 for v in weights.values()) or not 0 < reserve < 1:
+        raise ValueError('Invalid fixed preview weights')
+    group_weights = policy['legacy_group_weights']
+    if set(group_weights) != {'written', 'lean', 'research'}:
+        raise ValueError('All three legacy groups need fixed weights')
+    group_weights = {k: number(v, 1) for k, v in group_weights.items()}
+    if sum(group_weights.values()) + reserve != 1 or any(v <= 0 for v in group_weights.values()):
+        raise ValueError('Legacy groups plus independent research must total one')
+    if base_groups is None:
+        base_groups = {mode: dict.fromkeys(group_weights) for mode in base}
+    if set(base_groups) != set(base) or any(set(row) != set(group_weights) for row in base_groups.values()):
+        raise ValueError('Need original group evidence in each mode, never rescale an old total')
+    for mode, row in base_groups.items():
+        for value in row.values():
+            bounds(value, signed=mode == 'RMC')
+    def overall(mode, item):
+        portions = [(w, bounds(base_groups[mode][g], signed=mode == 'RMC')) for g, w in group_weights.items()]
+        portions.append((reserve, bounds(item)))
+        low = max(Fraction(0), sum(w*v[0] for w, v in portions))
+        high = max(Fraction(0), sum(w*v[1] for w, v in portions))
+        return metric((low, high, low if all(v[2] is not None for _, v in portions) else None))
+    values, stricts = dict.fromkeys(axes), dict.fromkeys(axes)
+    if review is not None:
+        if set(review) != set(axes):
+            raise ValueError('Three separately reviewed axes required')
+        for key, row in review.items():
+            bounds(row['score'])
+            if row['strict'] is not None and type(row['strict']) is not bool:
+                raise ValueError('Strict gate must be boolean or unknown')
+            values[key], stricts[key] = row['score'], row['strict']
+    strict = (0 if False in stricts.values() else
+              100 if all(v is True for v in stricts.values()) else None)
+    lo = sum(weights[k]*bounds(values[k])[0] for k in axes)
+    hi = sum(weights[k]*bounds(values[k])[1] for k in axes)
+    item = metric((lo, hi, lo if all(values[k] is not None for k in axes) else None))
+    if status == 'delivery-failed':
+        # Operational loss is explicit. Missing process evidence remains unknown.
+        item, strict = metric((Fraction(0), Fraction(0), Fraction(0))), 0
+    composites = {key: overall(key, item) for key in base}
+    strict_overall = overall('SMC', strict)
+    def confirmed(mode, addition):
+        total = sum(w*(Fraction(str(v.get('confirmed', 0))) if isinstance(v, dict) and v.get('exact') is None else (bounds(v, signed=mode == 'RMC')[2] or Fraction(0)))
+                    for g,w in group_weights.items() for v in [base_groups[mode][g]])
+        return float(max(Fraction(0),total + reserve*Fraction(str(addition))))
+    item_confirmed = float(weighted) if (weighted := item['exact']) is not None else float(lo)
+    confirmed_scores = {mode: confirmed(mode, item_confirmed) for mode in base}
+    strict_confirmed = confirmed('SMC', strict or 0)
+    abilities = {}
+    for source, target in [('autonomy', 'open_research_autonomy'), ('taste', 'mathematical_taste')]:
+        denominator = deepcopy(policy['new_axis_denominators'][target])
+        abilities[target] = dict(**metric(bounds(values[source])), denominator=denominator,
+            observed=denominator['planned'] if values[source] is not None else 0,
+            comparable=values[source] is not None)
+    for target, route in policy['existing_axis_item_weights'].items():
+        if target not in {'discernment_v130', 'open_research_v130'}:
+            raise ValueError('Legacy axes must not be silently overwritten')
+        source, old = route['item'], route['base']
+        if source not in axes or old not in {'discernment', 'open_research'}:
+            raise ValueError('Invalid explicit profile route')
+        weight = number(route['weight'], 1)
+        if not 0 < weight < 1:
+            raise ValueError('Invalid profile weight')
+        abilities[target] = dict(**blend(base_axes.get(old), values[source], weight),
+            base_axis=old, item_axis=source, item_weight=float(weight),
+            denominator=dict(base_weight=float(1-weight), item_weight=float(weight),
+                             item_planned=1, unit='fixed_weighted_opportunities'),
+            item_observed=int(values[source] is not None),
+            base_coverage=deepcopy(base_axes.get(old, {}).get('coverage'))
+                if isinstance(base_axes.get(old), dict) else None)
+    abilities['completion_v130'] = dict(**strict_overall, source='same-v130-strict-overall',
+                                        additional_projection_weight=0)
+    return dict(schema='math-gauge.research-overall-preview/v1', edition='1.3.0',
+        status=status, category=deepcopy(policy['category']), rank_eligible=False, weights_ratified=False,
+        legacy_scores=deepcopy(base), legacy_abilities=deepcopy(base_axes),
+        legacy_groups=deepcopy(base_groups), group_weights={k: float(v) for k, v in group_weights.items()},
+        subscores=values, strict_verdicts=stricts, item_composite=item, item_strict=strict,
+        composite_by_base=composites, confirmed_by_base=confirmed_scores, strict_confirmed=strict_confirmed,
+        strict_overall=strict_overall, abilities=abilities,
+        coverage=dict(unit='three_round_research_task', planned=1,
+                      reviewed=int(all(v is not None for v in values.values())),
+                      components_planned=3, components_reviewed=sum(v is not None for v in values.values())),
+        comparable_preview=(status == 'reviewed' and all(v['exact'] is not None for v in composites.values())
+                            and strict_overall['exact'] is not None))
+
+
+def research_preview_contributions(contributions, original_policy, preview_policy):
+    """Reweight existing point contributions within their original category ratios."""
+    result = deepcopy(contributions)
+    for group in original_policy['groups']:
+        ratio = (100 * Fraction(str(preview_policy['legacy_group_weights'][group['id']]))
+                 / Fraction(str(group['weight'])))
+        for key in group['children']:
+            if key not in result:
+                continue
+            for field in ('exact', 'lower', 'upper', 'confirmed'):
+                if result[key].get(field) is not None:
+                    result[key][field] = float(Fraction(str(result[key][field])) * ratio)
+    return result

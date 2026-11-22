@@ -311,9 +311,11 @@ def edition_supplemental(supplemental, *, historical, unavailable, timing, cost)
 def prepare_edition_publication(files, root, current_data, *, base_data=None, base_timing=None,
                                 base_cost=None, current_timing=None, current_cost=None):
     if current_data.get('benchmark_version') == '1.2.0':
-        return prepare_neutral_publication(files, root, current_data, base_data=base_data,
+        prepared = prepare_neutral_publication(files, root, current_data, base_data=base_data,
             base_timing=base_timing, base_cost=base_cost, current_timing=current_timing,
             current_cost=current_cost)
+        from scripts.results_research_preview import prepare_research_preview
+        return prepare_research_preview(prepared, root)
     from math_gauge.editions import load_assessment_transition
     transition=load_assessment_transition(root)
     if transition is None:
