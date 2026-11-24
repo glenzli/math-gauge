@@ -565,3 +565,65 @@ test('the newly admitted Astra configuration has its own stable same-brand style
  assert.equal(styles.at(-1).index,10);
  assert.deepEqual(styles.slice(0,10).map(style=>style.index),[0,1,2,3,4,5,6,7,8,9]);
 });
+
+function opportunityFixture(){
+ const data=formalizationFixture();data.benchmark_version='1.3.0';
+ const metric=(value,planned,reviewed=planned)=>({exact:value,confirmed:value??0,lower:value??0,upper:value??100,
+  coverage:{unit:'research_opportunity',planned,reviewed}});
+ data.research_initiative={schema:'math-gauge.research-initiative/v1',version:'0.1.0',benchmark_version:'1.3.0',
+  reviewer_kind:'ai',human_review:'pending',post_observation:true,new_candidate_calls:0,main_scores_modified:false,
+  original_bytes_rewritten:false,policy_sha256:'a'.repeat(64),source:{sha256:'b'.repeat(64)},
+  models:data.models.map((model,index)=>({id:model.id,metric:metric(index===0?25:0,28),
+   legacy_metric:metric(index===0?25:0,27),extension_metric:metric(index===0?25:0,1),
+   legacy_weight:'27/28',extension_weight:'1/28'}))};
+ const pending=data.research_initiative.models[2];
+ pending.extension_metric=metric(null,1,0);
+ pending.metric={...metric(null,28,27),upper:100/28};
+ return data;
+}
+
+test('common-opportunity reviews replace only current initiative, without mutating source scores or historical profiles',()=>{
+ const data=opportunityFixture(),original=structuredClone(data),without=structuredClone(data);delete without.research_initiative;
+ const prior=ui.prepare(without,compare),current=ui.prepare(data,compare);
+ for(const model of current.models){
+  const old=prior.models.find(row=>row.id===model.id);
+  for(const axis of current.axes.filter(axis=>axis.id!=='initiative'))
+   assert.deepEqual(model.profile_metrics[axis.id],old.profile_metrics[axis.id]);
+  assert.deepEqual(model.profile_metrics.initiative,data.research_initiative.models.find(row=>row.id===model.id).metric);
+ }
+ assert.deepEqual(data,original);
+ data.benchmark_version='1.2.0';without.benchmark_version='1.2.0';
+ assert.deepEqual(ui.prepare(data,compare),ui.prepare(without,compare),'1.2 ignores the new current-only component');
+});
+
+test('known-zero initiative remains zero while missing new-task evidence retains the fixed opportunity interval',()=>{
+ const data=opportunityFixture(),prepared=ui.prepare(data,compare),models=new Map(prepared.models.map(row=>[row.id,row]));
+ assert.equal(models.get(ids[1]).profile_metrics.initiative.exact,0);
+ const pending=models.get(ids[2]).profile_metrics.initiative;
+ assert.equal(pending.exact,null);assert.equal(pending.upper,100/28);assert.equal(pending.coverage.reviewed,27);
+ data.research_initiative.models=data.research_initiative.models.filter(row=>row.id!==ids[0]);
+ const missing=ui.prepare(data,compare).models.find(row=>row.id===ids[0]).profile_metrics.initiative;
+ assert.deepEqual([missing.exact,missing.lower,missing.upper,missing.coverage.reviewed],[null,0,100,0],
+  'a configuration without the new review must not inherit the old, differently weighted score');
+});
+
+test('opportunity source, weights and coverage are validated before displaying revised initiative',()=>{
+ for(const change of [d=>d.research_initiative.policy_sha256='bad',
+  d=>d.research_initiative.models[0].extension_weight='1/5',
+  d=>d.research_initiative.models[0].metric.coverage.planned=35,
+  d=>d.research_initiative.models[0].metric.coverage.reviewed=27,
+  d=>d.research_initiative.models.push(d.research_initiative.models[0])]){
+  const data=opportunityFixture();change(data);assert.equal(ui.prepare(data,compare),null);
+ }
+});
+
+test('initiative coverage uses opportunities separately from family coverage and preserves URL controls',()=>{
+ const f=fixture(opportunityFixture(),'?edition=1.3.0&profile-models='+ids[2]+'&profile-view=radar&profile-axis=initiative&score=strict');
+ const legend=nodesBelow(f.el('legend')).map(node=>node.textContent).join(' ');
+ assert.match(legend,/拓展机会 · 27\/28/);assert.doesNotMatch(legend,/27–35\/35/);
+ assert.match(f.el('meanings-scope').textContent,/28个拓展机会/);
+ f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
+ assert.match(f.el('meanings-scope').textContent,/28 common extension opportunities/);
+ assert.equal(new URL(f.win.location.href).searchParams.get('profile-axis'),'initiative');
+ assert.deepEqual(f.controller.selected(),[ids[2]]);
+});

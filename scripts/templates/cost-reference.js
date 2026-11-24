@@ -1,6 +1,13 @@
 /* Total cost observations; scores and timing samples come from their existing owners. */
 (() => {
  'use strict';
+ function scoreDomain(values){
+  const known=values.filter(Number.isFinite),minimum=known.length?Math.min(...known):0;
+  const lower=Math.min(80,Math.max(0,Math.floor(minimum/20)*20));
+  return {lower,upper:100,ticks:Array.from({length:(100-lower)/20+1},(_,i)=>lower+i*20)};
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={scoreDomain};
+ if(typeof document==='undefined')return;
  const source=document.getElementById('cost-reference-data');if(!source)return;
  const data=JSON.parse(source.textContent),board=document.getElementById('cost-board'),plot=document.getElementById('cost-plot');
  data.models=data.models.filter(model=>model.presentation_eligibility?.ranked!==false);
@@ -22,13 +29,14 @@
   range:['估算范围','Scenario range'],minutes:['分钟','min'],
   costNote:['虚线连接费用已核对且具有完整成绩的 Pareto 前沿模型。','The dashed line connects Pareto-frontier models with verified costs and complete evaluations.'],
   timeNote:['虚线标出用同一组日常五题的已记录加权耗时与完整数学成绩计算的前沿。耗时包含工具和等待。','The dashed frontier uses recorded weighted time for the same five everyday tasks and completed mathematical evaluations. Time includes tools and waiting.'],
-  noData:['没有足够的数据绘图。','Insufficient data to plot.'],score:['成绩','Score'],lowerBound:['仅有成本下限','Cost lower bound only'],
+  noData:['没有足够的数据绘图。','Insufficient data to plot.'],score:['成绩','Score'],lowerBound:['仅有成本下限','Cost lower bound only'],confirmed:['已确认','Confirmed'],
+  reviewCost:['独立评审费用','Independent review cost'],reviewCostUnknown:['未知（缺少原生用量）','Unknown (native usage unavailable)'],reviewSeparate:['单列，不计入候选成本','Separate; excluded from candidate costs'],
   highlight:['高亮','Highlight'],
   clearSelection:['清除高亮','Clear highlights'],pinLabel:['固定高亮','Pin highlight'],unpinLabel:['取消高亮','Unpin highlight'],
   selectionCount:['已固定 {count} 个','{count} pinned'],
   interactionHint:['悬停查看详情，点击点或名称可固定高亮。','Hover for details; click a point or name to pin its highlight.']
  };
- if(data.benchmark_version==='1.2.0')Object.assign(labels,{
+ if(['1.2.0','1.3.0'].includes(data.benchmark_version))Object.assign(labels,{
   subtitle:['首答＋采纳续答 · 美元','First answers + adopted continuations · USD'],
   scope:['计入首答、三轮规定自查及采纳续答的有效尝试开销，复用试答只计一次。已确认的系统及网络故障只记在重试附表。',
          'Includes effective attempts for first answers, the three prescribed self-checks and adopted continuations. Each reused trial is counted once. Confirmed system and network failures appear in the retry appendix.'],
@@ -37,6 +45,15 @@
   timeNote:['虚线标出用共有样本题的加权耗时与完整数学成绩计算的 Pareto 前沿。','The dashed Pareto frontier uses weighted time for the shared tasks and complete mathematical scores.'],
   priceNote:['沿用原公开API参考价与缓存口径；原费用估算仍标估算，未知后端身份保持未知。判卷、其他提示分支和打包等待不计入候选成本。','Original public API reference prices and cache treatment are retained. Existing estimates remain estimates; unknown backend identity stays unknown. Reviews, other feedback branches and packaging waits are excluded.']
  });
+ if(data.benchmark_version==='1.3.0')Object.assign(labels,{
+  subtitle:['首答＋采纳续答＋独立开放研究 · 美元','First answers + adopted continuations + independent open research · USD'],
+  scope:['在原采用作答的完整费用上，计入独立开放研究三轮的有效作答开销。跨轮累计用量去重，不按题目评分权重折算费用。未测或用量缺失保留未知及已知成本下限；评审费用单列，不计入候选成本。',
+   'Adds the effective cost of all three independent-research rounds to the retained attempts. Cumulative usage across rounds is deduplicated; score weights never discount cost. Unrun work or missing usage retains unknown totals and known cost lower bounds. Review costs are separate from candidate costs.'],
+  timeNote:['耗时仅比较共有样本题，不包含独立开放研究。纵轴为当前版本成绩；虚线前沿只使用该口径下资源与成绩均完整的数据。',
+   'Timing compares the shared sample tasks and excludes independent open research. Scores use the current edition; the dashed frontier requires complete resources and scores for the selected mode.'],
+  costNote:['纵轴为当前版本成绩；未完成成绩显示已确认贡献并保留完整区间。虚线前沿只使用候选成本与该口径成绩均完整的数据。',
+   'Scores use the current edition. Incomplete scores show confirmed contributions with their full intervals retained. The dashed frontier requires complete candidate costs and complete scores for the selected mode.']
+ });
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const svg=(tag,attrs={},text)=>{const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));if(text!=null)n.textContent=text;return n};
  let lang='zh',axis='cost',mode='strict',selected=new Set();
@@ -44,6 +61,12 @@
  const money=v=>'$'+v.toLocaleString(locale(),{minimumFractionDigits:2,maximumFractionDigits:2});
  const amount=m=>m.total_usd??(m.status==='partial'?m.known_usd:null);
  const costText=m=>amount(m)==null?'—':(m.status==='estimated'?'≈ ':m.status==='partial'?'≥ ':'')+money(amount(m));
+ const scoreText=m=>{
+  const score=m.scores[mode],value=score.value.toFixed(2);
+  if(score.complete)return value;
+  const range=Number.isFinite(score.lower)&&Number.isFinite(score.upper)?' ('+score.lower.toFixed(2)+'–'+score.upper.toFixed(2)+')':'';
+  return t('confirmed')+' '+value+range;
+ };
  const brand=m=>m.theme.color||m.theme.ink||'#556f98';
  const modelOrder=(a,b)=>window.MG?.compareModelOrder?.(a.model_id,b.model_id)??a.model_id.localeCompare(b.model_id);
  function link(m){const a=node('a',m.label);a.title=m.label;const target='models/'+encodeURIComponent(m.model_id)+'/index.html?lang='+lang+'&score='+mode;const url=new URL(window.MG?MG.href(target):target,document.baseURI);url.searchParams.set('score',mode);a.href=url.href;return a}
@@ -79,10 +102,12 @@
    const max=Math.max(...rows.map(m=>m.seconds/60),1),step=max>100?30:max>40?10:max>15?5:2,limit=Math.ceil(max/step)*step;
    x=v=>left+v/limit*(right-left);ticks=Array.from({length:Math.round(limit/step)+1},(_,i)=>i*step);
   }
-  const y=v=>bottom-Math.max(0,Math.min(100,v))/100*(bottom-top);
-  for(let value=0;value<=100;value+=20){plot.append(svg('line',{x1:left,y1:y(value),x2:right,y2:y(value),class:'cost-grid'}),svg('text',{x:left-14,y:y(value)+4,'text-anchor':'end',class:'cost-axis-text'},value))}
+  const domain=scoreDomain(rows.map(m=>m.scores[mode].value));
+  plot.dataset.scoreMin=String(domain.lower);plot.dataset.scoreMax=String(domain.upper);
+  const y=v=>bottom-(Math.max(domain.lower,Math.min(domain.upper,v))-domain.lower)/(domain.upper-domain.lower)*(bottom-top);
+  for(const value of domain.ticks){plot.append(svg('line',{x1:left,y1:y(value),x2:right,y2:y(value),class:'cost-grid'}),svg('text',{x:left-14,y:y(value)+4,'text-anchor':'end',class:'cost-axis-text'},value))}
   ticks.forEach(value=>{plot.append(svg('line',{x1:x(value),y1:top,x2:x(value),y2:bottom,class:'cost-grid'}),svg('text',{x:x(value),y:bottom+24,'text-anchor':'middle',class:'cost-axis-text'},axis==='cost'?'$'+value.toLocaleString(locale()):value))});
-  plot.append(svg('text',{x:left,y:17,class:'cost-axis-title'},({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' / 100'),svg('text',{x:(left+right)/2,y:H-27,'text-anchor':'middle',class:'cost-axis-title'},t(axis==='cost'?'costAxis':'timeAxis')));
+  plot.append(svg('text',{x:left,y:17,class:'cost-axis-title'},({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' / 100 · '+domain.lower+'–100'),svg('text',{x:(left+right)/2,y:H-27,'text-anchor':'middle',class:'cost-axis-title'},t(axis==='cost'?'costAxis':'timeAxis')));
   const frontier=new Set(data.frontiers[mode][axis]),byId=Object.fromEntries(rows.map(m=>[m.model_id,m]));
   const fp=data.frontiers[mode][axis].filter(id=>byId[id]).map(id=>byId[id]);
   const connectorLayer=svg('g',{class:'cost-connectors','aria-hidden':'true'}),pointLayer=svg('g'),labelLayer=svg('g');
@@ -102,7 +127,7 @@
    const p=svg('circle',{cx,cy,r,class:'cost-model-point '+resourceStatus,
     fill:complete?brand(m):'#fff',stroke:brand(m),tabindex:0,role:'button','data-cost-point':m.model_id,
     'aria-pressed':selected.has(m.model_id),
-    'aria-label':m.label+' · '+resourceText+' · '+({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2)+' · '+delivery});
+    'aria-label':m.label+' · '+resourceText+' · '+({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+scoreText(m)+' · '+delivery});
    if(frontier.has(m.model_id))p.setAttribute('stroke-width','3');
    const target=svg('g',{class:'cost-model-target','data-cost-model':m.model_id});
    const halo=svg('circle',{cx,cy,r:7,class:'cost-point-halo',fill:'none',stroke:brand(m),'aria-hidden':'true'});
@@ -144,7 +169,7 @@
     state.line.style.display=active||pinned||state.layout.connector.needed?'':'none';
    });
    if(id==null){tooltip.hidden=true;return}
-   const state=states.get(id),m=state.m,score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2);
+   const state=states.get(id),m=state.m,score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+scoreText(m);
    tooltip.textContent=m.label+'\n'+state.delivery+'\n'+t('total')+' '+costText(m)+'\n'+score+(m.seconds==null?'':'\n'+t('timeLabel')+' '+(m.seconds/60).toFixed(1))+
     (m.status==='estimated'?'\n'+t('range')+' '+m.estimate_range_usd.map(money).join('–'):m.status==='partial'?'\n'+t('lowerBound'):'');
    tooltip.hidden=false;
@@ -171,7 +196,7 @@
   const table=document.getElementById('cost-plot-table');table.replaceChildren();
   [...rows].sort(modelOrder).forEach(m=>{
    const tr=document.createElement('tr'),name=node('th');name.scope='row';name.append(link(m));tr.append(name);
-   for(const text of [costText(m),m.scores[mode].value.toFixed(2),m.seconds==null?'—':(m.seconds/60).toFixed(1)])tr.append(node('td',text,'numeric'));
+   for(const text of [costText(m),scoreText(m),m.seconds==null?'—':(m.seconds/60).toFixed(1)])tr.append(node('td',text,'numeric'));
    const cell=node('td'),pin=node('button',t(selected.has(m.model_id)?'unpinLabel':'pinLabel'),'cost-pin-button');pin.type='button';pin.dataset.costPin=m.model_id;
    pin.setAttribute('aria-pressed',String(selected.has(m.model_id)));pin.setAttribute('aria-label',t(selected.has(m.model_id)?'unpinLabel':'pinLabel')+' · '+m.label);
    pin.addEventListener('click',()=>{toggleSelection(m.model_id);document.querySelector('[data-cost-pin="'+m.model_id+'"]').focus({preventScroll:true})});
@@ -215,6 +240,11 @@
   document.getElementById('cost-estimate-legend').hidden=!hasEstimates;
   document.getElementById('cost-estimate-legend').style.display=hasEstimates?'':'none';
   document.getElementById('cost-frontier-note').textContent=t(axis==='cost'?'costNote':'timeNote');document.getElementById('cost-table-score').textContent=scoreName;
+  if(data.review_overhead){
+   let review=document.getElementById('cost-review-overhead');
+   if(!review){review=node('p',null,'panel-foot');review.id='cost-review-overhead';document.getElementById('cost-unavailable').after(review)}
+   review.textContent=t('reviewCost')+'：'+(data.review_overhead.total_usd==null?t('reviewCostUnknown'):money(data.review_overhead.total_usd))+' · '+t('reviewSeparate');
+  }
   board.setAttribute('aria-label',t('title'));renderBoard();renderPlot();
  }
  document.querySelectorAll('[data-cost-axis],[data-cost-score]').forEach(b=>b.addEventListener('click',()=>{const u=new URL(location.href);if(b.dataset.costAxis)u.searchParams.set('cost-axis',b.dataset.costAxis);else u.searchParams.set('cost-score',b.dataset.costScore);history.replaceState(null,'',u);render()}));

@@ -82,6 +82,14 @@
    'Research initiative retains unsolicited first-answer evidence and adds the extension level. Capacity (C) contributes to depth and open research capability. Discernment uses task taste RMC. Mathematical taste combines the net credit of passed checks with retained strict reviews, including adopted continuations. Strict completion uses the official 1.3 SMC.'],
   coverage:['新题检查覆盖与严格净信用分开。旧题覆盖按本阶段品味有确值的家族统计。',
    'New-task checkpoint coverage is shown separately from strict net credit. Retained coverage counts families with a determinate taste score for the selected stage.']};
+ const opportunityMessages={
+  scope:['研究主动性按共同的28个拓展机会重新评审：27个原题首答，加上独立研究三稿中的一个域外机会。每个机会等权，统一评0–4档；必做证明和常规工具不算拓展，实际成立的深入追问或明确障碍才计入。其余轴与主榜成绩保持原口径。',
+   'Research initiative is independently reviewed on 28 common extension opportunities: 27 original first answers and one beyond-scope opportunity across the three research manuscripts. Each has equal weight on one 0–4 scale. Required proofs and routine tools are excluded; verified further inquiry and precise barriers count. Other axes and leaderboard scores retain their existing methods.'],
+  coverage:['研究主动性单独显示28个拓展机会的覆盖；新题未测保留未知，不补零。其他维度仍分别显示原有家族、子类或检查覆盖。',
+   'Initiative reports coverage of 28 extension opportunities separately. An untested new task remains unknown. Other axes retain their family, subcategory or checkpoint coverage.'],
+  initiativeOpportunities:['拓展机会','Extension opportunities']};
+ const opportunityDescription={zh:'27个原题首答与独立研究三稿中的1个拓展机会，等权按0–4档核验实际自发追问；不由完成分或旧E档换算，也不表示能力上限。',
+  en:'Verified unsolicited inquiry across 27 original first answers and one opportunity in the three research manuscripts, equally weighted on a common 0–4 scale. It is not inferred from completion scores or old E labels, and is not a capability ceiling.'};
  const strictTasteStates={
   'not-tested':['新题未测','New task untested'], 'review-pending':['品味待评','Taste review pending'],
   'insufficient-evidence':['检查证据不足','Insufficient checkpoint evidence'], 'delivery-failed':['未正常交付','No normal delivery'],
@@ -90,13 +98,16 @@
  const valueTasteSchema='math-gauge.independent-research-abilities/v5';
  const strictCreditTasteSchema='math-gauge.independent-research-abilities/v6';
  const itemWeightTasteSchema='math-gauge.independent-research-abilities/v7';
- const strictCreditTasteCompanion=companion=>[strictCreditTasteSchema,itemWeightTasteSchema].includes(companion?.schema);
+ const externalTasteSchema='math-gauge.independent-research-abilities/v8';
+ const strictCreditTasteCompanion=companion=>[strictCreditTasteSchema,itemWeightTasteSchema,externalTasteSchema].includes(companion?.schema);
  const valueTasteCompanion=companion=>companion?.schema===valueTasteSchema||strictCreditTasteCompanion(companion);
  const strictTasteCompanion=companion=>companion?.schema===strictTasteSchema||valueTasteCompanion(companion);
  function matchesItemWeightSource(companion,board){
   const expected=board?.item_weight_binding,binding=companion.item_weight_binding;
   return expected?.version==='0.1.0'&&binding&&Object.keys(expected).length===Object.keys(binding).length&&
-   Object.entries(expected).every(([key,value])=>binding[key]===value);
+   Object.entries(expected).every(([key,value])=>binding[key]===value)&&
+   (companion.schema!==externalTasteSchema||board?.schema==='math-gauge.research-board-preview/v6'&&
+    JSON.stringify(companion.external_binding)===JSON.stringify(board.external_binding));
  }
  const profileViews={radar:['雷达图','Radar'],bars:['按轴排名','Axis ranking'],table:['表格','Table']};
  const profileViewCopy={mode:['画像展示方式','Profile view'],axis:['排名维度','Ranking axis'],
@@ -165,6 +176,23 @@
  function validMetric(metric){return metric&&finite(metric.confirmed)&&finite(metric.lower)&&finite(metric.upper)&&metric.lower<=metric.upper&&
   (metric.exact===null||finite(metric.exact)&&metric.exact>=metric.lower&&metric.exact<=metric.upper)&&
   metric.coverage&&Number.isInteger(metric.coverage.reviewed)&&Number.isInteger(metric.coverage.planned)&&metric.coverage.reviewed>=0&&metric.coverage.planned>=metric.coverage.reviewed}
+ function opportunityProjection(data){
+  if(data.benchmark_version!=='1.3.0'||!Object.hasOwn(data,'research_initiative'))return null;
+  const source=data.research_initiative,hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+  const valid=(metric,planned)=>validMetric(metric)&&metric.coverage.unit==='research_opportunity'&&metric.coverage.planned===planned&&
+   metric.confirmed>=metric.lower&&metric.confirmed<=metric.upper&&
+   (metric.exact===null)===(metric.coverage.reviewed<planned)&&
+   (metric.exact===null||metric.lower===metric.exact&&metric.upper===metric.exact);
+  if(source?.schema!=='math-gauge.research-initiative/v1'||source.version!=='0.1.0'||source.benchmark_version!=='1.3.0'||
+   source.reviewer_kind!=='ai'||source.human_review!=='pending'||source.post_observation!==true||
+   source.new_candidate_calls!==0||source.main_scores_modified!==false||source.original_bytes_rewritten!==false||
+   !hash(source.policy_sha256)||!hash(source.source?.sha256)||!Array.isArray(source.models)||
+   new Set(source.models.map(row=>row.id)).size!==source.models.length||source.models.some(row=>typeof row.id!=='string'||
+    row.legacy_weight!=='27/28'||row.extension_weight!=='1/28'||
+    !valid(row.metric,28)||!valid(row.legacy_metric,27)||!valid(row.extension_metric,1)||
+    row.metric.coverage.reviewed!==row.legacy_metric.coverage.reviewed+row.extension_metric.coverage.reviewed))return false;
+  return new Map(source.models.map(row=>[row.id,row.metric]));
+ }
  function point(index,value,count=7){const angle=-Math.PI/2+index*2*Math.PI/count;return {x:260+Math.cos(angle)*148*value/100,y:225+Math.sin(angle)*148*value/100}}
  function geometry(axes,metrics){
   const vertices=axes.map((axis,index)=>metrics[axis.id].exact===null?null:{...point(index,metrics[axis.id].exact,axes.length),axis:axis.id,value:metrics[axis.id].exact});
@@ -265,7 +293,7 @@
    const descriptions=valueTasteCompanion(companion)?valueDescriptions:versionedDescriptions;
    const blended=strict||companion?.schema==='math-gauge.independent-research-abilities/v3';
    const strictSources=!strict||companion.taste_blend?.independent_mode==='SMC'&&companion.taste_blend?.legacy_component_version==='0.2.0';
-   const weightSource=companion?.schema!==itemWeightTasteSchema||matchesItemWeightSource(companion,data.research_preview);
+   const weightSource=![itemWeightTasteSchema,externalTasteSchema].includes(companion?.schema)||matchesItemWeightSource(companion,data.research_preview);
    const byModel=strictSources&&weightSource&&(blended||companion?.schema==='math-gauge.independent-research-abilities/v2')&&companion.edition==='1.3.0'&&
     companion.source_stages?.[stage]===(revised?'revision-inclusive':'first-answer')?companion.by_model:null;
    const weight=companion?.taste_blend?.legacy_percent;
@@ -279,6 +307,13 @@
     en:(100-weight)+'% mathematical taste RMC on the three independent open research manuscripts and '+weight+'% direct taste reviews of six retained families including adopted continuations.'}}:tasteAxis;
    axes=[...axes.map(axis=>descriptions[axis.id]?{...axis,description:descriptions[axis.id]}:axis),displayedTaste];
    models=models.map(model=>projectResearchMetrics(model,byModel?.[model.id],stage,blended,strict));
+  }
+  const initiative=opportunityProjection(data);
+  if(initiative===false)return null;
+  if(initiative){
+   axes=axes.map(axis=>axis.id==='initiative'?{...axis,description:opportunityDescription}:axis);
+   models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,initiative:initiative.get(model.id)||{
+    exact:null,lower:0,upper:100,confirmed:0,coverage:{unit:'research_opportunity',planned:28,reviewed:0}}}}));
   }
   return models.length?{profile,axes,models,stage}:null;
  }
@@ -306,12 +341,13 @@
   const tasteCopy=strictCreditTasteCompanion(tasteCompanion)?strictCreditTasteMessages:
    valueTasteCompanion(tasteCompanion)?valueTasteMessages:strictTaste?strictTasteMessages:
    tasteCompanion?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
-  const t=key=>(axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
+  const opportunityBased=current&&!!data.research_initiative;
+  const t=key=>(opportunityBased&&opportunityMessages[key]||axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
   const viewText=pair=>pair[lang==='en'?1:0];
   const views=current?buildViews():null;
   const compactCoverage=current;
   const coverageNames={lean_subcategory:'formalization',open_research_family:'openResearch',benchmark_subcategory:'smc',
-   fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste'};
+   fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste',research_opportunity:'initiativeOpportunities'};
   const coverage=metric=>{const {unit,reviewed,planned}=metric.coverage,count=reviewed+'/'+planned,key=coverageNames[unit];
    const base=compactCoverage&&reviewed===planned?'':key?t(key)+' · '+count:count+' '+t('settled');
    const taste=metric.taste_coverage;
@@ -330,7 +366,7 @@
     compactCoverage&&task.reviewed===task.planned&&!componentsMissing?'':t('newTask')+' '+task.reviewed+'/'+task.planned;
    const components=task.components_planned>1&&(!compactCoverage||componentsMissing)?' ('+t('components')+' '+task.components_reviewed+'/'+task.components_planned+')':'';
    return [metric.base_coverage?base:t('baseUnknown'),observed+components].filter(Boolean).join(' · ');};
-  const separateCoverage=['formalization','open_research',tasteAxis.id];
+  const separateCoverage=['formalization','open_research',tasteAxis.id,...(opportunityBased?['initiative']:[])];
   const settledCoverage=model=>{const counts=axes.filter(axis=>axis.id!=='completion'&&!separateCoverage.includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
    const families=compactCoverage&&low===35?'':(low===high?low:low+'–'+high)+'/35 '+t('settled');
    return [families,...separateCoverage.filter(id=>model.profile_metrics[id]).map(id=>coverage(model.profile_metrics[id]))].filter(Boolean).join(' · ')};

@@ -190,6 +190,55 @@ def render_run_notes(harness):
             '</h2></div><div class="prose">'+body+'</div></section>')
 
 
+def render_model_review_notes(model, root):
+    """Show source-bound commentary without changing the selected score edition."""
+    root = Path(root)
+    path = root / 'docs/model-review-notes.json'
+    if not path.is_file():
+        return ''
+    document = json.loads(path.read_text())
+    if document.get('schema') != 'math-gauge.model-review-notes/v1':
+        raise ValueError('Unsupported model review notes')
+    note = next((row for row in document['notes'] if model['id'] in row['model_ids']), None)
+    if note is None:
+        return ''
+    expected = note['source_manifests'][model['id']]
+    if model.get('tx_calibration', {}).get('manifest') != expected:
+        raise ValueError('Model review note belongs to a different original score source')
+    scores = {}
+    for mid, reference in note['source_manifests'].items():
+        manifest = json.loads(evidence_bytes(root, reference))
+        if manifest['model_id'] != mid or manifest['benchmark_version'] != note['source_edition']:
+            raise ValueError('Model comparison source identity differs')
+        scores[mid] = {mode: json.loads(evidence_bytes(root, views[note['condition']]))
+                      ['metrics']['earned']['exact'] for mode, views in manifest['scores'].items()}
+
+    def bilingual(value):
+        return ('<span data-lang-content="zh">'+html.escape(value['zh'])+'</span>'
+                '<span data-lang-content="en" hidden>'+html.escape(value['en'])+'</span>')
+
+    rows = ''.join('<tr><th scope="row">'+label+'</th>'
+                   + ''.join('<td>'+f'{scores[mid][mode]:.2f}'+'</td>' for mid in note['model_ids'])
+                   + '</tr>' for mode, label in (('capability', 'MC'), ('partial', 'RMC'), ('strict', 'SMC')))
+    paragraphs = ''.join(interface_paragraph(row['zh'], row['en']) for row in note['paragraphs'])
+    links = []
+    for source in note['sources']:
+        if not source['url'].startswith('https://'):
+            raise ValueError('Model comparison references require HTTPS')
+        links.append('<li><a href="'+html.escape(source['url'], quote=True)
+                     +'" target="_blank" rel="noreferrer">'+bilingual(source)+'</a></li>')
+    return ('<section class="panel" id="'+html.escape(note['id'], quote=True)+'">'
+            '<div class="panel-head"><h2>'+bilingual(note['title'])+'</h2></div>'
+            '<article class="prose">'+interface_paragraph(note['scope']['zh'], note['scope']['en'])
+            +interface_paragraph(note['conclusion']['zh'], note['conclusion']['en'])+'</article>'
+            '<div class="table-wrap"><table class="compact"><thead><tr>'
+            +''.join('<th scope="col">'+bilingual(label)+'</th>' for label in note['labels'])
+            +'</tr></thead><tbody>'+rows+'</tbody></table></div>'
+            '<details class="evidence-fold"><summary>'+bilingual(note['detail_summary'])+'</summary>'
+            '<article class="prose">'+paragraphs+'<ul>'+''.join(links)+'</ul></article></details>'
+            +'<p class="panel-foot">'+bilingual(note['footer'])+'</p></section>')
+
+
 def descriptor(root, item, *, role):
     raw = evidence_bytes(root, item)
     return {'path': str((root / item['path']).relative_to(root.parents[3])),
@@ -540,6 +589,7 @@ def render_model(page, data, model, cases, record, folder, markdown, *, download
     details = compact_data(data, model)
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>')
+    body += render_model_review_notes(model, root)
     body += render_run_notes(model['harness'])
     if model.get('harness_correction'):
         correction = model['harness_correction']

@@ -4,7 +4,7 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge evaluates models on mathematical work: written proofs, Lean formalization and mathematical research tasks. The current scoring edition is **[1.2.0](docs/neutral-revision.md)**; the latest published task distribution is **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**.
+Math Gauge evaluates models on mathematical work: written proofs, Lean formalization and mathematical research tasks. The current assessment edition is **[1.3.0](docs/scoring-guide.md#english)**; the latest published task distribution is **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**.
 
 [Live leaderboard](https://glenzli.com/benchmarks/math-gauge/?lang=en) · [Full results](docs/results.md) · [Public tasks](cases/README.md) · [Harness guide](docs/harness-guide.md)
 
@@ -28,11 +28,12 @@ Over the course of this work, I moved from mainly using Gemini and Claude to GPT
 
 | Area | Points | Main tasks |
 |---|---:|---|
-| Written proof | 35 | Arguments, counterexamples, boundary analysis and review of existing arguments. |
-| Lean | 35 | Semantic audits, formalization and three successive self-checks, assessing code, mathematical alignment and error correction. |
-| Mathematical research | 30 | Background checks, theorem extensions and developing an idea into a rigorous manuscript. |
+| Written proof | 30 | Arguments, counterexamples, boundary analysis and review of existing arguments. |
+| Lean | 30 | Semantic audits, formalization and three successive self-checks, assessing code, mathematical alignment and error correction. |
+| Supporting research | 30 | Background checks, theorem extensions and developing an idea into a rigorous manuscript. |
+| Independent open research | 10 | Three successive manuscripts in one research session, assessing mathematical taste, research capacity and self-review. |
 
-The full assessment has **39 initial tasks: 25 public and 14 private, spanning 35 mathematical families**. Three self-check rounds continue the same whole-chapter Lean project, giving 42 prescribed deliveries. Related variants are aggregated within families; public and private tasks share the same runner and scoring rules.
+The source suite has **39 initial tasks: 25 public and 14 private, spanning 35 mathematical families**, plus three self-checks of one whole-chapter Lean project. Edition1.3.0 adds one private independent open-research task with three manuscripts: **40 logical tasks, 36 mathematical families and45 prescribed deliveries** in total. Each model’s selected non-Lean neutral revisions are additional. Related variants are combined within families; public and private tasks share execution and scoring rules. The published1.0.0 distribution remains sealed.
 
 For a first example, read the [matrix-estimate idea-to-manuscript task](cases/manuscript-completion/MG-MCP003/task.md). The [task catalog](cases/README.md) and [selection rationale](docs/selection.md) explain the subcategories, weights and choices. Candidates receive only task text and explicitly supplied materials; references and rubrics stay outside their answer context. Private task text, raw answers and individual reviews remain private.
 
@@ -40,32 +41,40 @@ For a first example, read the [matrix-estimate idea-to-manuscript task](cases/ma
 
 | Score | Meaning |
 |---|---|
-| **SMC · Strict Mathematical Completion** | Each delivery receives binary whole-task credit; edition1.2.0 weights the first and revision judgments. Lean self-checking still uses the complete three-round trajectory. |
+| **SMC · Strict Mathematical Completion** | Source tasks use whole-task or whole-Lean-trajectory acceptance; independent open research retains strictly accepted net mathematical credit. Components are combined using the selected edition’s weights. |
 | **RMC · Reliable Mathematical Capability** | Reliable mathematical work after deductions for false claims, misjudgments and related errors. |
 | **MC · Mathematical Capability** | Verified positive mathematical contributions, including valid progress on unfinished tasks. |
 
-All three use the same rule-selected answers and fixed weights, reported against **100 points**. Unrun tasks retain unknown ranges; measured coverage is never scaled up to a full score. Each task uses the first normal final allowed by the rules. Without one, verified original work present by the cutoff may earn MC; RMC and SMC are zero. Edition1.2.0 adds one neutral revision for non-Lean loss tasks. All three modes on a selected task use **80% first answer plus20% revision**, including regressions; tasks already full in all three modes are exempt, and Lean results stay unchanged. The two strict judgments remain separate. See the [revision protocol](protocol/neutral-revision.md) and [scoring specification](protocol/benchmark-scoring.md).
+All three use the same rule-selected answers and fixed weights, reported against **100 points**. Unrun tasks retain unknown ranges; measured coverage is never scaled up to a full score. Each task uses the first normal final allowed by the rules. Without one, verified original work present by the cutoff may earn MC; RMC and SMC are zero. Edition 1.2.0 adds one neutral revision for non-Lean loss tasks. All three modes on a selected task use **80% first answer plus20% revision**, including regressions; tasks already full in all three modes are exempt, and Lean results stay unchanged. The two strict judgments remain separate. See the [revision protocol](protocol/neutral-revision.md) and [scoring specification](protocol/benchmark-scoring.md).
+
+Edition1.3.0 assigns30 points each to written proof, Lean and supporting research, and10 to independent open research. The new task combines **mathematical taste and research capacity at2:1** before entering the overall score once. Its SMC is not a checkpoint pass fraction. See the [complete rules, formulas and metric index](docs/scoring-guide.md#english).
 
 Theorem-extension tasks also assess the research increment actually delivered: R1 is useful local progress, R2 is a substantive extension, and R3 is a deep and complete research contribution. Equivalent routes and strong results inside the proof receive the same credit. SMC for this category requires a correct baseline and a complete R3 result. B2/R0 means the original proof is correct without additional research credit. See the [1.1.0 scoring notes](docs/theorem-extension-reassessment.md) for the detailed standards.
 
 ## Current results
 
-The leaderboard opens **1.2.0**, sorted by SMC, with controls for SMC / RMC / MC, category scores and model details. It now includes **17 settled configurations and 206 neutral revisions**, of which 102 are full in all three modes. Each configuration revises its own loss set, so these rates are not a same-task ranking. The [full results](docs/results.md) retain score tables and batch notes; [edition switching](docs/edition-views.md) explains access to historical results.
+The leaderboard opens **1.3.0**, sorted by SMC, with controls for SMC / RMC / MC, categories, model details and historical editions. **17 configurations** currently have adopted three-manuscript independent-research results. [Full results](docs/results.md) retain totals and sources. Carbon medium’s new research test remains pending and receives no inherited result.
 
-[Gemini 4 Neon (xHigh)](https://glenzli.com/benchmarks/math-gauge/models/gemini-4-neon-xhigh/?lang=en) completed 39 initial tasks, three Lean self-checks and 18 neutral revisions. Its 1.2.0 scores are **SMC 61.17 / RMC 86.98 / MC 93.52**; two of its 18 revisions are full in all three modes. See the [run results](docs/results.md#gemini-4-neon-xhigh--2026-11-22) for categories, original answers, execution conditions and reference resources.
+| Configuration (current 1.3 excerpt) | SMC | RMC | MC |
+|---|---:|---:|---:|
+| Sol 6.2 (max) | 90.79 | 93.75 | 93.85 |
+| Astra 6 (max) | 90.42 | 94.09 | 94.13 |
+| Sol 6.1 (max) | 90.19 | 93.51 | 93.86 |
 
-All six theorem-extension tasks have undergone a [uniform original-answer review](docs/theorem-extension-review-corrections.md), correcting five missed contributions. Rankings, category scores and the screenshots below are updated.
+The 1.2.0 baseline now has **18 settled configurations and 221 neutral revisions**, including 107 revisions full in all three modes. Carbon medium’s baseline scores are **SMC 66.32 / RMC 82.94 / MC 94.01**. Configurations revise their own loss sets, so full-score rates are not matched-task rankings; baseline scores and gains remain separately available.
 
-Costs include the full resource use of effective initial answers, self-checks and adopted revisions. Timing compares 12 commonly timed public non-Lean tasks, with whole-chapter formalization separate. Nine-axis mathematical profiles offer first-answer and revision-inclusive stages, separately show [formalization](docs/formalization-profile.md), and distinguish [open research capability from research initiative](docs/open-research.md). Content reliability, complete-goal attainment and additional-result observations remain first-answer diagnostics.
+The current ten-axis mathematical profile covers reasoning, fidelity, discernment, depth, closure, [mathematical taste](docs/open-research-v130.md), [open-research capability](docs/open-research.md), [formalization](docs/formalization-profile.md), strict completion and [research initiative](docs/research-initiative.md). Formalization uses full Lean SMC; initiative is independently reviewed over 28 common opportunities. These axes do not add another score contribution. Content reliability, complete-goal attainment and additional-result observations remain first-answer diagnostics.
 
-GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon are withdrawn from 1.2.0; their 1.1.0 and earlier scores, original answers and reviews are retained. Other selected configurations awaiting returns remain available in earlier editions. Results use **AI review, with partial human spot checks**, retaining actual reviewer attribution by batch. Human mathematical review of Neon remains pending. See the [review process](docs/review-process.md) and [revision notes](docs/neutral-revision.md).
+Cost includes effective initial answers, Lean self-checks, adopted revisions and independent-research work in full. Timing still compares shared public non-Lean tasks, with whole-chapter formalization separate. Research cost and timing scopes are stated separately in the [cost](docs/cost-reference.md) and [timing](docs/answer-timings.md) methods.
+
+GLM 5.3, Gemini 3.8 Flash and Gemini 4 Argon are excluded from the current cohort from 1.2.0 onward; historical scores, original answers and reviews remain available. Results use **AI review, with partial human spot checks**, retaining actual attribution by batch. Human mathematical review of the new independent-research work remains pending. See the [review process](docs/review-process.md) and [edition guide](docs/edition-views.md).
 
 [![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en)
 
 <details>
 <summary>Cost and timing screenshots</summary>
 
-Both plots show the current 1.2.0 RMC view. Cost uses archived API reference tariffs or confirmed test-date charges and includes adopted revisions in full. Time includes tools and waiting and depends on the execution environment. See the [cost method](docs/cost-reference.md) and [timing method](docs/answer-timings.md) for sources and limits.
+Both plots show the current 1.3.0 RMC view. Cost uses archived API reference tariffs or confirmed test-date charges and includes adopted revisions and independent open research in full. Time compares shared public non-Lean tasks, includes tools and waiting, and depends on the execution environment. See the [cost method](docs/cost-reference.md) and [timing method](docs/answer-timings.md) for sources and limits.
 
 [![Math Gauge English cost–RMC frontier](docs/screenshots/cost-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=cost&cost-score=partial#cost-frontier)
 
@@ -74,11 +83,11 @@ Both plots show the current 1.2.0 RMC view. Cost uses archived API reference tar
 </details>
 
 <details>
-<summary>Nine-axis mathematical profile</summary>
+<summary>Ten-axis mathematical profile</summary>
 
-Formalization uses full Lean SMC, including semantic audits, initial engineering and the three-round alignment self-check trajectory. Both stages retain the same results, with no new candidate calls or changes to main scores.
+The profile includes mathematical taste, open-research capability and research initiative. Formalization uses full Lean SMC, including semantic audits, initial engineering and the three-round alignment self-check trajectory. Each axis uses its corresponding review sources and adds no extra contribution to the main score.
 
-[![Math Gauge nine-axis mathematical profile](docs/screenshots/mathematical-profile-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&profile-stage=first#mathematical-profile)
+[![Math Gauge ten-axis mathematical profile](docs/screenshots/mathematical-profile-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?edition=1.3.0&lang=en#mathematical-profile)
 
 </details>
 
@@ -97,8 +106,9 @@ To run the assessment, use the [harness and delivery guide](docs/harness-guide.m
 | To learn about | Start here |
 |---|---|
 | Tasks and selection | [Public tasks](cases/README.md) · [Selection rationale](docs/selection.md) |
+| Complete rules | [Every score, formula and metric](docs/scoring-guide.md#english) · [Independent open research](docs/open-research-v130.md) |
 | Scoring and review | [Evaluation protocol](protocol/evaluation.md) · [Scoring specification](protocol/benchmark-scoring.md) · [Review process](docs/review-process.md) |
-| Supplementary metrics | [Mathematical profile: first answers / including revisions](docs/mathematical-profile-revision.md) · [Content reliability and goal attainment](protocol/content-rates.md) · [Additional manuscript results](docs/manuscript-observations.md) |
+| Supplementary metrics | [Ten-axis mathematical profile](docs/scoring-guide.md#english) · [Content reliability and goal attainment](protocol/content-rates.md) · [Additional manuscript results](docs/manuscript-observations.md) |
 | Execution and records | [Harness and delivery guide](docs/harness-guide.md) · [Result-record contract](protocol/result-record.md) |
 | Time and cost | [Timing method](docs/answer-timings.md) · [Cost method](docs/cost-reference.md) |
 | Failures and supplements | [Source corrections](docs/harness-corrections.md) · [Whole-chapter self-check supplements](docs/c003-sealed-continuation.md) · [Attempt and retry statistics](docs/execution-attempts.md) |

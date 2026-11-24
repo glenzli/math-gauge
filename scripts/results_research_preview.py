@@ -10,11 +10,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
 from scripts.results_publication import atomic_write, data_literal
+from scripts.results_research_baseline import (CURRENT_PATH, baseline_homepage,
+    retain_publication_sources, select_baseline)
 from math_gauge import independent_research_item_weights as item_weights
+from math_gauge import independent_research_external as external
+from math_gauge import independent_research_native as native
 from math_gauge import independent_research_score_modes as modes
 from math_gauge import independent_research_strict_credit as credit
 from math_gauge import independent_research_value as value_revision
 from math_gauge import legacy_taste_strict
+from math_gauge import research_initiative
 from math_gauge.research_profile import POLICY_PATH as PROFILE_POLICY_PATH, VALUE_POLICY_PATH
 
 EDITION = '1.3.0'
@@ -67,9 +72,6 @@ def prepare_research_preview(files, root):
     original = json.loads(files[target])
     if original['edition'] != BASE or original['page'] != 'index.html':
         raise ValueError('Preview requires an authenticated existing homepage edition')
-    envelope = copy.deepcopy(original)
-    envelope['edition'] = EDITION
-    envelope['data']['benchmark_version'] = EDITION
     from math_gauge.independent_research_adoption import PUBLIC_PATH
     adopted_path, overlay_path = root / PUBLIC_PATH, root / modes.PUBLIC_PATH
     legacy_taste_path = root / legacy_taste_strict.PUBLIC_PATH
@@ -85,18 +87,29 @@ def prepare_research_preview(files, root):
     adopted_bytes = adopted_path.read_bytes() if adopted_path.is_file() else None
     overlay_bytes = overlay_path.read_bytes() if overlay_path.is_file() else None
     adopted = json.loads(adopted_bytes) if adopted_bytes is not None else None
-    board, abilities, category_points = baseline_projection(json.loads(files['data.json']),
+    baseline = select_baseline(files, root, adopted)
+    envelope = baseline_homepage(original, baseline, root)
+    envelope['edition'] = EDITION
+    envelope['data']['benchmark_version'] = EDITION
+    external_path = root / external.PUBLIC_PATH
+    external_bytes = external_path.read_bytes() if external_path.is_file() else None
+    external_index = external.load_public(root) if external_bytes is not None else None
+    native_path = root / native.PUBLIC_PATH
+    native_bytes = native_path.read_bytes() if native_path.is_file() else None
+    native_index = native.load_public(root) if native_bytes is not None else None
+    board, abilities, category_points = baseline_projection(baseline.data,
         policy_path=policy, profile_policy_path=root/(VALUE_POLICY_PATH if revised else PROFILE_POLICY_PATH),
         score_modes_policy_path=root/modes.POLICY_PATH,
-        source_bytes=files['data.json'].encode(), adopted=adopted, adopted_bytes=adopted_bytes,
+        source_bytes=baseline.raw.encode(), adopted=adopted, adopted_bytes=adopted_bytes,
         overlay_bytes=overlay_bytes, legacy_taste_strict_policy_path=root/legacy_taste_strict.POLICY_PATH,
         legacy_taste_strict_bytes=legacy_taste_path.read_bytes() if legacy_taste_path.is_file() else None,
         value_policy_path=value_policy_path if revised else None,
         value_bytes=value_path.read_bytes() if value_path.is_file() else None,
         strict_credit_policy_path=strict_policy_path if strict_policy_path.is_file() else None,
         strict_credit_bytes=strict_path.read_bytes() if strict_path.is_file() else None,
-        item_weight_policy_path=item_weight_policy_path if item_weight_policy_path.is_file() else None)
-    source_models={m['id']:m for m in json.loads(files['data.json'])['models']}
+        item_weight_policy_path=item_weight_policy_path if item_weight_policy_path.is_file() else None,
+        external_bytes=external_bytes, native_bytes=native_bytes)
+    source_models={m['id']:m for m in baseline.data['models']}
     for row in board['rows']:
         model=source_models[row['id']]
         normal=model.get('answer_delivery',{}).get('active_final')
@@ -111,16 +124,23 @@ def prepare_research_preview(files, root):
             else:unknown+=1
         if adopted and row['id'] in adopted['models']:
             normal += adopted['models'][row['id']]['normal_rounds']
+        elif external_index and row['id'] in external_index['models']:
+            normal += external_index['models'][row['id']]['normal_rounds']
+        elif native_index and row['id'] in native_index['models']:
+            normal += native_index['models'][row['id']]['normal_rounds']
         else:
             unknown += 3
         row['delivery']=dict(planned=45,normal=normal,unknown=unknown)
     envelope['data']['research_preview'] = board
     envelope['data'][ABILITY_FIELD] = abilities
+    initiative = research_initiative.load_public(root, benchmark_version=EDITION)
+    if initiative is not None:
+        envelope['data']['research_initiative'] = initiative
     # Project new composite metrics from shared scoring, retaining all old payloads.
     from math_gauge.scoring import research_preview_contributions
     weights = board['weight_frame']
     policy_data = dict(legacy_group_weights={key: weights[key] / 100 for key in modes.BASE_GROUPS})
-    source_policy=json.loads(files['data.json'])['policy']
+    source_policy=baseline.data['policy']
     from scripts.results_rankings import set_published_scores
     from scripts.results_editions import chart_scenes
     envelope['data']['edition_paths'] = {'download_prefix':'versions/1.3.0/'}
@@ -165,6 +185,9 @@ def prepare_research_preview(files, root):
                 independent_research=copy.deepcopy(row),source_binding=copy.deepcopy(board['source_binding']),
                 candidate_calls=0,rank_eligible=False)
             download[ABILITY_FIELD] = download_abilities
+            if initiative is not None:
+                download['research_initiative'] = dict(initiative,
+                    models=[entry for entry in initiative['models'] if entry['id'] == identifier])
             if adopted:
                 download['adoption_binding'] = copy.deepcopy(board['adoption'])
             if 'score_modes_binding' in board:
@@ -176,6 +199,10 @@ def prepare_research_preview(files, root):
                 download['strict_credit_binding'] = copy.deepcopy(board['strict_credit_binding'])
             if 'item_weight_binding' in board:
                 download['item_weight_binding'] = copy.deepcopy(board['item_weight_binding'])
+            if 'external_binding' in board:
+                download['external_binding'] = copy.deepcopy(board['external_binding'])
+            if 'native_binding' in board:
+                download['native_binding'] = copy.deepcopy(board['native_binding'])
             result['versions/1.3.0/downloads/'+model['id']+'-combined'+suffix+'-retry.json']=json.dumps(download,ensure_ascii=False,indent=2)+'\n'
         set_published_scores(model)
         if adopted or revised:
@@ -198,7 +225,7 @@ def prepare_research_preview(files, root):
     item_board = _independent_category(data, item_group)
     data['policy']['groups'].append(item_group)
     data['category_leaderboards'].append(item_board)
-    scene_source = json.loads(files['data.json'])
+    scene_source = copy.deepcopy(baseline.data)
     scene_source.update(models=data['models'], category_leaderboards=[item_board])
     scenes = chart_scenes(scene_source)
     item_chart = 'category-chart-groups-'+modes.ITEM
@@ -210,6 +237,30 @@ def prepare_research_preview(files, root):
     envelope['data']['score_construct'] = construct
     envelope['data']['research_preview']['base_edition'] = BASE
     envelope['data']['research_preview']['condition'] = 'nonlogical_retry_3'
+    supplemental = envelope.get('supplemental', {})
+    if supplemental.get('cost-reference-data') is not None:
+        from scripts.cost_reference import independent_research_reference
+        supplemental['cost-reference-data'] = independent_research_reference(
+            root, data, supplemental['cost-reference-data'], adoption=adopted, external_adoption=external_index,
+            native_adoption=native_index)
+        if baseline.retained:
+            result['versions/1.3.0/downloads/cost-reference.json'] = json.dumps(
+                supplemental['cost-reference-data'], ensure_ascii=False, indent=2)+'\n'
+        if native_index:
+            result['versions/1.3.0/downloads/native-results.json'] = native_path.read_text()
+        native_resource_path = root / 'protocol/mathematical-taste/v1.3.0/native-resources.json'
+        if native_resource_path.is_file():
+            result['versions/1.3.0/downloads/native-resources.json'] = native_resource_path.read_text()
+        resource_path = root / 'protocol/mathematical-taste/v1.3.0/independent-research-resources.json'
+        if resource_path.is_file():
+            result['versions/1.3.0/downloads/independent-research-resources.json'] = resource_path.read_text()
+        external_resource_path = root / 'protocol/mathematical-taste/v1.3.0/external-resources.json'
+        if external_resource_path.is_file():
+            result['versions/1.3.0/downloads/external-resources.json'] = external_resource_path.read_text()
+    if baseline.retained and supplemental.get('timing-reference-data') is not None:
+        timing = supplemental['timing-reference-data']
+        timing['data_link'] = 'versions/1.3.0/downloads/timing-reference.json'
+        result[timing['data_link']] = json.dumps(timing, ensure_ascii=False, indent=2)+'\n'
     result['versions/1.3.0/data.json']=json.dumps(envelope['data'],ensure_ascii=False,indent=2)+'\n'
     literal = data_literal(envelope)
     digest = hashlib.sha256(literal.encode()).hexdigest()
@@ -243,7 +294,7 @@ def prepare_research_preview(files, root):
     config['versions'] = dict(sorted(config['versions'].items(), key=lambda pair: tuple(map(int,pair[0].split('.'))), reverse=True))
     # Keep all historical payloads/controllers intact; the local latest entry is 1.3.
     config['scripts']=[notes_path if re.search(r'edition-notes\.[a-f0-9]+\.js$',p) else p for p in config['scripts']]
-    for name in ('results-core', 'board-controls', 'home-results', 'mathematical-profile'):
+    for name in ('results-core', 'board-controls', 'home-results', 'mathematical-profile', 'cost-reference'):
         match_controller = _controller_match(name).search
         if any(match_controller(path) for path in config['scripts']):
             path = _versioned_asset(result, root, name+'.js')
@@ -267,6 +318,7 @@ def prepare_research_preview(files, root):
     catalog['editions'] = [dict(version=EDITION,kind=edition_kind,data='data/editions/1.3.0/index.json'),
         *[v for v in catalog['editions'] if v['version'] != EDITION]]
     result['editions.json'] = json.dumps(catalog,ensure_ascii=False,indent=2)+'\n'
+    retain_publication_sources(result, baseline)
     return result
 
 
@@ -274,7 +326,9 @@ def install_local(root):
     """Update only the new resources, original index and edition catalog; no full rebuild."""
     root = Path(root)
     site = root/'site'
-    names = ('index.html','editions.json','data.json','data/editions/1.2.0/index.json')
+    names = ['index.html','editions.json','data.json','data/editions/1.2.0/index.json']
+    if (site / CURRENT_PATH).is_file():
+        names.append(CURRENT_PATH)
     original = {name:(site/name).read_text() for name in names}
     prepared = prepare_research_preview(original,root)
     for name, text in prepared.items():

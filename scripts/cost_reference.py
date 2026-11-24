@@ -10,6 +10,17 @@ from math_gauge.editions import result_archive, source_edition
 from math_gauge.records import evidence_bytes
 
 DATA_PATH = "results/costs/v0.1.0/current.json"
+SCORE_MODES = ("capability", "partial", "strict")
+
+
+def _frontiers(rows):
+    result = {}
+    for mode in SCORE_MODES:
+        points = [{**row, "score": row["scores"][mode]["value"],
+                   "score_complete": row["scores"][mode]["complete"]} for row in rows
+                  if row.get("presentation_eligibility", {}).get("ranked", True)]
+        result[mode] = {axis: pareto_frontier(points, axis=axis) for axis in ("cost", "time")}
+    return result
 
 
 def selected_cost_source(folder, model, base):
@@ -89,7 +100,7 @@ def build_reference(root, *, display_data, timing_reference, base_reference=None
         normal_finals = submission.get("active_final")
         item["answer_delivery"] = {"planned": 39, "active_final": normal_finals,
                                    "complete": submission.get("planned") == 39 and normal_finals == 39}
-        for mode in ("capability", "partial", "strict"):
+        for mode in SCORE_MODES:
             result = model["retry"]["combined"] if mode == "partial" else model[mode]["nonlogical_retry_3"]
             metrics = result["metrics"]
             item["scores"][mode] = {"value": metrics["earned"]["confirmed"],
@@ -98,14 +109,8 @@ def build_reference(root, *, display_data, timing_reference, base_reference=None
         rows.append(item)
     if set(costs) != {row["model_id"] for row in rows}:
         raise ValueError("Cost reference has a retired or duplicate model")
-    frontiers = {}
-    for mode in ("capability", "partial", "strict"):
-        points = [{**row, "score": row["scores"][mode]["value"],
-                   "score_complete": row["scores"][mode]["complete"]} for row in rows
-                  if row.get('presentation_eligibility', {}).get('ranked', True)]
-        frontiers[mode] = {axis: pareto_frontier(points, axis=axis) for axis in ("cost", "time")}
     return {"schema": "math-gauge.cost-presentation/v1", "version": "0.1.0", "currency": "USD",
-            "as_of": document["as_of"], "models": rows, "frontiers": frontiers,
+            "as_of": document["as_of"], "models": rows, "frontiers": _frontiers(rows),
             "source": DATA_PATH, "source_evidence_sha256": document["private_source_sha256"],
             "prices": document["prices"], **({"source_overrides": overrides} if overrides else {})}
 
@@ -137,16 +142,73 @@ def revision_reference(root, display_data, timing_reference, base_reference):
         row['coverage']['planned'] += planned
         row['coverage']['complete'] += complete
         row['coverage']['missing'] += planned - complete
-        for mode in ('capability', 'partial', 'strict'):
+        for mode in SCORE_MODES:
             score = model['retry']['combined'] if mode == 'partial' else model[mode]['nonlogical_retry_3']
             row['scores'][mode] = {'value': score['metrics']['earned']['confirmed'],
                                   'complete': score['metrics']['overall']['exact'] is not None}
-    result['frontiers'] = {}
-    for mode in ('capability', 'partial', 'strict'):
-        points = [{**row, 'score': row['scores'][mode]['value'],
-                   'score_complete': row['scores'][mode]['complete']} for row in result['models']
-                  if row.get('presentation_eligibility', {}).get('ranked', True)]
-        result['frontiers'][mode] = {axis: pareto_frontier(points, axis=axis) for axis in ('cost', 'time')}
+    result['frontiers'] = _frontiers(result['models'])
+    return result
+
+
+def independent_research_reference(root, display_data, base_reference, *, adoption, external_adoption=None,
+                                   native_adoption=None):
+    """Use the 1.3 scores and add full candidate cost. Retain the shared timing sample."""
+    import copy
+    from scripts.results_independent_research_resources import (DATA_PATH, EXTERNAL_DATA_PATH, NATIVE_DATA_PATH, ROUNDS,
+        REVIEW_OVERHEAD, load_external_public, load_native_public, load_public)
+    from scripts.results_revision_resources import combine_costs
+
+    if display_data.get('benchmark_version') != '1.3.0' or base_reference.get('benchmark_version') != '1.2.0':
+        raise ValueError('Independent research cost reference requires 1.3 scores and the retained 1.2 costs')
+    resource = load_public(root, adoption)
+    added = load_external_public(root, external_adoption)
+    added_native = load_native_public(root, native_adoption) if native_adoption else None
+    resources = dict(resource['models']) if resource else {}
+    if added:
+        if resources.keys() & added['models'].keys():
+            raise ValueError('Native and external cost cohorts overlap')
+        resources.update(added['models'])
+    if added_native:
+        if resources.keys() & added_native['models'].keys():
+            raise ValueError('Separate native resource cohorts overlap')
+        resources.update(added_native['models'])
+    display = {model['id']: model for model in display_data['models']}
+    result = copy.deepcopy(base_reference)
+    result.update(benchmark_version='1.3.0', base_assessment_version='1.2.0',
+                  independent_research_in_time_reference=False,
+                  independent_research_resource_source=DATA_PATH if resource else None,
+                  independent_research_source_sha256=resource['source_evidence_sha256'] if resource else None,
+                  external_research_resource_source=EXTERNAL_DATA_PATH if added else None,
+                  external_research_source_sha256=added['source_evidence_sha256'] if added else None,
+                  native_research_resource_source=NATIVE_DATA_PATH if added_native else None,
+                  native_research_source_sha256=added_native['source_evidence_sha256'] if added_native else None,
+                  review_overhead=dict(REVIEW_OVERHEAD))
+    result['models'] = [row for row in result['models'] if row['model_id'] in display]
+    for row in result['models']:
+        mid = row['model_id']
+        model = display[mid]
+        increment = resources.get(mid)
+        if increment is None:
+            planned = len(ROUNDS)
+            unknown = adoption['models'].get(mid, {}).get('round_dispatches', 0) if adoption else 0
+            if external_adoption:
+                unknown += external_adoption['models'].get(mid, {}).get('round_dispatches', 0)
+            if native_adoption:
+                unknown += native_adoption['models'].get(mid, {}).get('round_dispatches', 0)
+            coverage = dict(planned=planned, complete=0, partial=0, missing=unknown, not_run=planned - unknown)
+            candidate_cost = dict(total_usd=None, known_usd=0, status='partial')
+        else:
+            coverage, candidate_cost = increment['coverage'], increment
+        row.update(combine_costs(row, candidate_cost))
+        row['coverage'] = {key: row['coverage'][key] + count for key, count in coverage.items()}
+        row['independent_research_resources'] = copy.deepcopy(increment)
+        for mode in SCORE_MODES:
+            report = model['retry']['combined'] if mode == 'partial' else model[mode]['nonlogical_retry_3']
+            metrics = report['metrics']
+            overall = metrics['overall']
+            row['scores'][mode] = {'value': metrics['earned']['confirmed'], 'complete': overall['exact'] is not None,
+                                  'lower': overall['lower'], 'upper': overall['upper']}
+    result['frontiers'] = _frontiers(result['models'])
     return result
 
 

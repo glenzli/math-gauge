@@ -1,6 +1,34 @@
 # 当前完整结果
 
-当前评分版为 **1.2.0**，已发布题包仍为1.0.0。新版按[中性续答规则](neutral-revision.md)采用非Lean失分题的一次续答：逐题80%首答＋20%续答，三个模式、家族权重与完整100分分母一致；Lean及三轮自查沿用。基础采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，续答组件 **0.1.0**；页面默认按SMC排序，指标顺序为SMC／RMC／MC。
+当前评测版为 **1.3.0**。原三个类别各占30分，独立开放研究占10分；同一口径下按数学品味与研究能力2:1形成新题分，再计入总榜一次。基础39题、Lean三轮及选定的80／20中性续答保持真实来源。详见[全部规则与评分入口](scoring-guide.md)。
+
+## 1.3.0：已采用的独立研究结果
+
+下表直接读取当前共享生成器的已采用结果；17个配置已有三稿及独立审核，未结算的Carbon medium不进入此表。人工数学审核待完成，评分不是新增候选作答。
+
+| 模型 | SMC | RMC | MC |
+|---|---:|---:|---:|
+| Sol 6.2 (max) | 90.79 | 93.75 | 93.85 |
+| Astra 6 (max) | 90.42 | 94.09 | 94.13 |
+| Sol 6.1 (max) | 90.19 | 93.51 | 93.86 |
+| Astra 6.2 (max) | 90.02 | 94.26 | 94.26 |
+| Astra 6.2 (xHigh) | 85.44 | 92.61 | 93.61 |
+| Sol 6.2 (xhigh) | 83.96 | 92.70 | 93.91 |
+| Astra 6 (xhigh) | 82.61 | 91.75 | 92.61 |
+| Sol 6.1 (xhigh) | 71.29 | 89.31 | 91.64 |
+| Terra 6.1 (max) | 70.29 | 82.16 | 83.81 |
+| Terra 6.1 (xhigh) | 66.43 | 80.17 | 81.37 |
+| Claude Opus 5.5 (max) | 60.74 | 89.68 | 92.88 |
+| Gemini 4 Neon (xhigh) | 59.99 | 85.90 | 92.63 |
+| Claude Opus 5.5 (xHigh) | 57.78 | 87.83 | 90.69 |
+| Claude Sonnet 5.5 (max) | 56.94 | 86.09 | 91.20 |
+| Gemini 4 Hydrogen (xhigh) | 49.17 | 77.66 | 89.53 |
+| Kimi 3.1 Pro (max) | 48.29 | 72.14 | 76.34 |
+| DeepSeek v4.1 Flash (max) | 26.92 | 63.26 | 75.89 |
+
+数学品味、研究能力和严格净信用的来源分别绑定。[通用规则](open-research-v130.md) · [外部五配置](independent-research-external.md) · [Hydrogen／Neon原生来源](independent-research-native.md) · [共同机会主动性](research-initiative.md)。下列1.2.0与1.1.0表保留原100分框架，跨版不能只用总分相减解释能力变化。
+
+基础评分版为 **1.2.0**，已发布题包仍为1.0.0。新版按[中性续答规则](neutral-revision.md)采用非Lean失分题的一次续答：逐题80%首答＋20%续答，三个模式、家族权重与完整100分分母一致；Lean及三轮自查沿用。基础采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，续答组件 **0.1.0**；页面默认按SMC排序，指标顺序为SMC／RMC／MC。
 
 本页成绩已纳入[六道 TX 原答复核更正](theorem-extension-review-corrections.md)，原答与旧评保持原字节。
 
@@ -17,6 +45,7 @@
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 81.33 | 91.70 | 92.70 | 6 | 100%（6／6） |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | 70.50 | 89.98 | 92.15 | 8 | 87.5%（7／8） |
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 68.63 | 81.38 | 83.11 | 9 | 88.9%（8／9） |
+| [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html?edition=1.2.0) | 66.32 | 82.94 | 94.01 | 15 | 33.3%（5／15） |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | 64.75 | 80.03 | 81.25 | 9 | 55.6%（5／9） |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 62.48 | 92.97 | 95.11 | 15 | 53.3%（8／15） |
 | [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | 61.17 | 86.98 | 93.52 | 18 | 11.1%（2／18） |
@@ -26,11 +55,11 @@
 | [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | 46.38 | 72.29 | 76.93 | 19 | 42.1%（8／19） |
 | [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | 26.25 | 64.09 | 76.93 | 26 | 3.8%（1／26） |
 
-共采用17个配置的206份续答，102份达到续答自身的三项满分。满分率的分母是各配置选中的全部续答题，失败交付也在分母内，首答三项全满的免测题不计入；各配置的失分集合不同，该比例不是同题排名。总分由共享评分器逐题80／20折算，仍保留首答失分和续答退步。全部采用续答已完成AI数学审核，人工数学审核仍待完成。
+共采用18个配置的221份续答，107份达到续答自身的三项满分。满分率的分母是各配置选中的全部续答题，失败交付也在分母内，首答三项全满的免测题不计入；各配置的失分集合不同，该比例不是同题排名。总分由共享评分器逐题80／20折算，仍保留首答失分和续答退步。全部采用续答已完成AI数学审核，人工数学审核仍待完成。
 
 Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 Hydrogen新增17份正常续答，其中1份续答本身通过严格评审、0份三项全满；AI审核由Sol 6.1（max）完成，人工审核待完成。GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon已从1.2.0下架，不再进入本版待测、画像名单或默认导出；1.1.0及更早成绩、原答与冻结包保留。其他入选配置继续等待回交，完整历史分发和采用经过见[续答说明](neutral-revision.md)。
 
-成本计入206份有效续答的完整费用，复用调用各计一次；确认的纯系统失败仅留重试历史。耗时比较17个已结算配置共有计时的同一12道公开非Lean题，另列整章形式化。累计作答时长与并行批次跨度分别保留，缺失时间或用量保持未知。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
+成本计入221份有效续答的完整费用，复用调用各计一次；确认的纯系统失败仅留重试历史。耗时比较18个已结算配置共有计时的同一12道公开非Lean题，另列整章形式化。累计作答时长与并行批次跨度分别保留，缺失时间或用量保持未知。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
 
 [数学画像](mathematical-profile-revision.md)对采用续答独立审核论证、忠实度、审辨、深度和闭合，再逐题80／20折算，覆盖原35个数学家族。研究主动性始终只看首答，严格完成度直接取所选阶段的正式SMC。三份首答画像的来源绑定更正仍用于两个当前视图，原件、历史1.1.0和三项主分不变。[开放研究能力](open-research.md)另看五个共同开放家族的实际研究交付，不由分数或主动性换算。 [形式化能力](formalization-profile.md)采用Lean整体SMC，包含语义审计、初答工程和三轮对齐自查，在两个阶段保持相同；当前画像共九轴。
 
@@ -113,7 +142,7 @@ Sol6.1Max审核22份非Lean首答、8份Lean首答与三轮自查及6份命题�
 
 51次有效尝试的完整原生用量合计46,604,269 tokens，按已留存Astra6.2 Standard短上下文费率折算为 **$77.744974**；基础42次为$63.7598564，续答9次为$13.9851176，续答资源全额计入。有效作答累计17,439.698899秒，确认系统重试的452.769696秒只留历史。初答中位数约3.26分钟，固定三轮另计；比较图仍采用原有12道共有公开非Lean题和独立整章计时，累计作答时长不当作同题速度或并行跨度。
 
-[模型详情与公开题证据](../site/models/astra-6.2-xhigh/index.html) · [首答记录](../results/v1.0.0/astra-6.2-xhigh/20261120/record.json) · [公开原答与评审](../results/v1.0.0/astra-6.2-xhigh/20261120/report.md) · [1.2.0续答采用层](../results/edition-reassessments/v1.2.0/astra-6.2-xhigh/20261120/public.json)。私有题文、原答、逐项判准与原生来源留在私库。
+[模型详情与公开题证据](../site/models/astra-6.2-xhigh/index.html) · [首答记录](../results/v1.0.0/astra-6.2-xhigh/20261120/record.json) · [公开原答与评审](../results/v1.0.0/astra-6.2-xhigh/20261120/record.json) · [1.2.0续答采用层](../results/edition-reassessments/v1.2.0/astra-6.2-xhigh/20261120/public.json)。私有题文、原答、逐项判准与原生来源留在私库。
 
 The completed Astra 6.2 xHigh answers and their original AI judgments are adopted without new candidate calls. All 39 initial tasks, three fixed self-checks and nine neutral revisions delivered normally. Its 1.1.0 baseline is SMC 82.6667 / RMC 91.5583 / MC 92.5583; edition 1.2.0 gives **SMC 85.2333 / RMC 92.9967 / MC 93.9967**, with eight of nine revisions full in all modes. Sol6.1Max and the root reviewer retain their actual review attribution; human mathematical review remains pending. Codex CLI0.169.1 used the OpenAI API's default service tier, with backend SKU and inner HTTP counts unknown. The 51 effective attempts cost **$77.744974** at the retained Standard short-context reference tariff and total 17,439.698899 seconds. Two confirmed system failures retain 452.769696 seconds in retry history only. First-answer content reliability is 100.00% and complete-goal attainment is 84.28%; four additional-result groups are verified across five first-answer manuscripts. Both remain first-answer diagnostics. The profile offers both stages, with strict completion 82.67 / 85.23 and unchanged initiative. Shared-task timing keeps the original 12-task sample and a separate chapter measurement.
 

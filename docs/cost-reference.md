@@ -1,5 +1,17 @@
 # 总成本参考
 
+## 1.3 独立开放研究
+
+当前候选成本在既有首答、自查及采用续答的完整费用上，加上独立开放研究三轮的有效开销。原生日志中的跨轮累计计数先按事件链核对并去重，不把每轮累计总数相加，也不按题目占分或品味／能力权重折算费用。费率沿用已冻结的 API 参考价；它是用量折算，不代表订阅账单或已认证后台 SKU。已测十个 GPT 配置新增费用合计 $25.4450848。未测项保留总额未知及已有成本下限。
+
+2026-11-24 外部五配置再新增 **$35.512417696**：Opus Max $11.2651446、Opus xHigh $14.4660992、Sonnet Max $6.9469012、Kimi Max $2.5847068、DeepSeek Max $0.249565896。Claude/Kimi 的三次用量快照属于同一 session 累计，最终累计只计一次；Kimi 按原用量和既有单价重算，不采用计价依据不明的原生估额。DeepSeek 已确认无效的系统运行不进入该增量。原包与逐轮差分保留在私有侧，公开端仅提供[外部资源聚合](../protocol/mathematical-taste/v1.3.0/external-resources.json)。这五配置与原十配置的资源来源分别绑定。
+
+The five external configurations add **$35.512417696** at the retained 1.2 API reference rates. Final cumulative session usage is counted once, including effective internal retries; confirmed invalid system runs are excluded. This is a usage-based reference, not a subscription invoice. The external resource component remains separate from the original ten-configuration source.
+
+评审与候选开销分开：当前评审缺少足以核实费用的原生用量，评审成本标为未知，不填零。公开资源投影只保存按配置的合计、覆盖和不透明来源哈希，原生证据与私有题目留在评审端。
+
+耗时继续使用同一组共有公开题和单列整章形式化，不纳入独立开放研究。成本／耗时—成绩图使用当前版本成绩，未知完整分保留已确认值与区间，资源或成绩不齐不进入完整 Pareto 前沿。纵轴下界按当前所选口径最低有效分向下取到 20 的整数倍，上界 100；刻度直接标示实际范围，原始分数与前沿计算不变。
+
 DeepSeek的26道采纳中性续答按原留存峰价新增 **$8.45211162**，与基础测试合计 **$14.86493916**。逐请求记录核对出非缓存输入4,069,652、缓存输入645,731,070、输出2,797,358 tokens，总计652,598,080；原input包含cache，未重复相加。26个有效作答内部共3,843次上游请求，全部纳入同一次作答的完整开销；两条原生工具参数JSON错误的响应保留用量，没有按502状态码直接排除为系统故障。该费用是API参考额，后台SKU未独立认证。
 
 Astra 6.2 xHigh（2026-11-20）采用39份初答、三轮固定自查和9份中性续答。按已留存Astra 6.2 Standard短上下文费率对51次有效尝试的完整原生用量各计一次，基础参考费用$63.7598564，续答$13.9851176，合计 **$77.744974**，共46,604,269 tokens。20%权重只用于数学成绩，续答资源全额计入。两次已确认容量／网络系统故障及独立预检不计有效用量、费用或时间；这两次缺少终态用量不使有效费用变成未知。原53次物理调用报告与原生失败记录保留，实际内部HTTP请求数仍未知。该值为统一API参考价，未冒充实际账单或已认证后端SKU。

@@ -9,6 +9,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge import independent_research_adoption as adoption
+from math_gauge import independent_research_external as external
+from math_gauge import independent_research_native as native
 from math_gauge import independent_research_item_weights as item_weights
 from math_gauge import independent_research_score_modes as modes
 from math_gauge import independent_research_strict_credit as credit
@@ -83,7 +85,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
                         adopted_bytes=None, overlay_bytes=None,
                         legacy_taste_strict_policy_path=legacy_taste_strict.POLICY_FILE,
                         legacy_taste_strict_bytes=None, value_policy_path=None, value_bytes=None,
-                        strict_credit_policy_path=None, strict_credit_bytes=None, item_weight_policy_path=None):
+                        strict_credit_policy_path=None, strict_credit_bytes=None, item_weight_policy_path=None,
+                        external_bytes=None, native_bytes=None):
     """Build versioned public rows, ability aggregates and group points from the same score result."""
     source = ROOT / 'site/data.json'
     raw = (source_bytes if source_bytes is not None else source.read_bytes() if source_data is None
@@ -161,6 +164,36 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
             item_weight_policy_path, value_binding=value_binding, strict_binding=strict_binding)
         projection_policy = dict(score_policy, item_weights=selected_weights)
 
+    external_models, external_binding = {}, None
+    if external_bytes is not None:
+        if item_weight_binding is None or adopted is None:
+            raise ValueError('External adoption requires the selected value, strict-credit and item-weight policies')
+        policy_hashes = dict(value=value_binding['policy_sha256'], strict_credit=strict_binding['policy_sha256'],
+                             item_weight=item_weight_binding['policy_sha256'])
+        added = external.validate_public(json.loads(external_bytes), policies=policy_hashes,
+            baseline_hash=source_binding['sha256'], model_ids=[m['id'] for m in data['models']])
+        if set(added['cohort']) & set(selected):
+            raise ValueError('Native and external adoption cohorts must remain disjoint')
+        external_models = added['models']
+        external_binding = dict(index_sha256=hashlib.sha256(external_bytes).hexdigest(),
+            adoption_sha256=added['source_binding']['adoption_sha256'], cohort=added['cohort'],
+            source_kind=added['source_kind'], policy_bindings=added['policy_bindings'], human_review='pending')
+
+    native_models, native_binding = {}, None
+    if native_bytes is not None:
+        if item_weight_binding is None or adopted is None:
+            raise ValueError('Native supplement requires the selected shared projection policies')
+        policy_hashes = dict(value=value_binding['policy_sha256'], strict_credit=strict_binding['policy_sha256'],
+                             item_weight=item_weight_binding['policy_sha256'])
+        added = native.validate_public(json.loads(native_bytes), policies=policy_hashes,
+            baseline_hash=source_binding['sha256'], model_ids=[m['id'] for m in data['models']])
+        if set(added['cohort']) & (set(selected) | set(external_models)):
+            raise ValueError('Separate research source cohorts must remain disjoint')
+        native_models = added['models']
+        native_binding = dict(index_sha256=hashlib.sha256(native_bytes).hexdigest(),
+            adoption_sha256=added['source_binding']['adoption_sha256'], cohort=added['cohort'],
+            source_kind=added['source_kind'], policy_bindings=added['policy_bindings'], human_review='pending')
+
     def order(model):
         ranks = model['ranking_values']
         return tuple((ranks.get(k) is None, -(ranks.get(k) or 0))
@@ -178,7 +211,12 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
                                           overlay=overlay.get(identifier))
         if strict_binding is not None:
             result = credit.project_scores(result, reports['SMC'], projection_policy, row=strict_models.get(identifier))
-        rows.append(public_row(identifier, model['label'], result, kind=kind))
+        if identifier in external_models:
+            result = external.project_model(reports, projection_policy, external_models[identifier])
+        if identifier in native_models:
+            result = native.project_model(reports, projection_policy, native_models[identifier])
+        row_kind = native.SOURCE_KIND if identifier in native_models else kind
+        rows.append(public_row(identifier, model['label'], result, kind=row_kind))
         profile_reports[identifier] = result
         category_points[identifier] = result['category_points']
     legacy_policy = json.loads(score_policy_raw)
@@ -187,6 +225,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
         board_schema = 'math-gauge.research-board-preview/v4'
     if item_weight_binding is not None:
         board_schema = 'math-gauge.research-board-preview/v5'
+    if external_binding is not None:
+        board_schema = 'math-gauge.research-board-preview/v6'
     board = dict(schema=board_schema, edition='1.3.0',
         kind=kind, category={k: legacy_policy['category'][k] for k in ('id', 'zh', 'en')}, rank_eligible=False,
         default_order='retained-base-SMC', weights_ratified=False,
@@ -205,6 +245,8 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
     profile_schema = STRICT_CREDIT_SCHEMA if strict_binding is not None else VALUE_SCHEMA if revised else PROFILE_SCHEMA
     if item_weight_binding is not None:
         profile_schema = ITEM_WEIGHT_SCHEMA
+    if external_binding is not None:
+        profile_schema = 'math-gauge.independent-research-abilities/v8'
     companion = dict(schema=profile_schema, edition='1.3.0', base_edition='1.2.0', source_stages=dict(STAGES),
         source_binding=source_binding, policy_sha256=policy_sha256, profile_policy_sha256=profile_policy_sha256,
         score_modes_policy_sha256=score_modes_policy_sha256,
@@ -228,6 +270,12 @@ def baseline_projection(source_data=None, *, policy_path=POLICY_FILE, profile_po
     if item_weight_binding is not None:
         board['item_weight_binding'] = item_weight_binding
         companion['item_weight_binding'] = item_weight_binding
+    if external_binding is not None:
+        board['external_binding'] = external_binding
+        companion['external_binding'] = external_binding
+    if native_binding is not None:
+        board['native_binding'] = native_binding
+        companion['native_binding'] = native_binding
     return board, companion, category_points
 
 

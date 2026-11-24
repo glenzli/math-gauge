@@ -169,6 +169,70 @@ function itemWeightedBoard(board = strictCreditBoard()) {
   return board;
 }
 
+test('external adoption has a separate bound cohort and cannot grant unmeasured rows scores', () => {
+  const board = itemWeightedBoard();
+  board.schema = 'math-gauge.research-board-preview/v6';
+  board.kind = 'settled-selected-configurations';
+  board.source_binding = {edition:'1.2.0',sha256:'1'.repeat(64)};
+  for (const row of board.rows) row.kind = board.kind;
+  const native = [board.rows[0].id, board.rows[2].id], added = board.rows[1].id;
+  board.adoption = {batch_sha256:'2'.repeat(64),index_sha256:'3'.repeat(64),
+    cohort:native,planned_cohort:native,human_review:'pending'};
+  board.external_binding = {index_sha256:'4'.repeat(64),adoption_sha256:'5'.repeat(64),cohort:[added],
+    source_kind:'external-handoff-operator-attestation',human_review:'pending',policy_bindings:{
+      value:board.value_binding.policy_sha256,strict_credit:board.strict_credit_binding.policy_sha256,
+      item_weight:board.item_weight_binding.policy_sha256}};
+  const originalNative = structuredClone(board.adoption);
+  assert.doesNotThrow(() => ui.validate(board));
+  assert.deepEqual(board.adoption, originalNative);
+  for (const mutate of [
+    data => {delete data.external_binding;},
+    data => {data.external_binding.cohort.push(native[0]);},
+    data => {data.external_binding.policy_bindings.value='6'.repeat(64);},
+    data => {data.external_binding.raw_answer='forbidden';},
+    data => {data.rows[3].components.taste={state:'reviewed',value:0,strict:false};}
+  ]) {
+    const changed=structuredClone(board);mutate(changed);assert.throws(() => ui.validate(changed));
+  }
+});
+
+test('a sealed native supplement initializes without changing the original cohort or accepting private fields', () => {
+  const board = itemWeightedBoard();
+  board.kind = 'settled-selected-configurations';
+  board.source_binding = {edition:'1.2.0',sha256:'1'.repeat(64)};
+  for (const row of board.rows) row.kind = board.kind;
+  const original = [board.rows[0].id,board.rows[2].id], added = board.rows[1];
+  board.adoption = {batch_sha256:'2'.repeat(64),index_sha256:'3'.repeat(64),
+    cohort:original,planned_cohort:original,human_review:'pending'};
+  const nativeKind = 'native-agy-same-conversation-sealed-finals';
+  board.native_binding = {index_sha256:'4'.repeat(64),adoption_sha256:'5'.repeat(64),cohort:[added.id],
+    source_kind:nativeKind,human_review:'pending',policy_bindings:{
+      value:board.value_binding.policy_sha256,strict_credit:board.strict_credit_binding.policy_sha256,
+      item_weight:board.item_weight_binding.policy_sha256}};
+  added.kind = nativeKind;
+  const frozen = structuredClone(board);
+  assert.doesNotThrow(() => ui.render(board));
+  assert.deepEqual(board,frozen,'display validation cannot rewrite source identities or scores');
+  for (const mutate of [
+    data => {delete data.native_binding;},
+    data => {data.native_binding.cohort.push(original[0]);},
+    data => {data.native_binding.policy_bindings.value='6'.repeat(64);},
+    data => {data.native_binding.raw_answer='forbidden';},
+    data => {data.rows[1].kind=data.kind;},
+    data => {data.rows.pop();data.native_binding.cohort.push(frozen.rows[3].id);}
+  ]) {
+    const changed=structuredClone(board);mutate(changed);assert.throws(() => ui.validate(changed));
+  }
+});
+
+test('the installed current edition is accepted by its actual display controller', () => {
+  const {readFileSync}=require('node:fs');
+  const data=JSON.parse(readFileSync(new URL('../site/versions/1.3.0/data.json',import.meta.url),'utf8'));
+  const projection={...data.research_preview};
+  for (const key of ['weight_frame','base_edition','condition']) delete projection[key];
+  assert.doesNotThrow(() => ui.validate(projection));
+});
+
 test('current category shows only scored taste and capacity with distinct evidence states', () => {
   const board = valueBoard();
   const table = ui.render(board,'?view-independent=table&independent-tab=autonomy');
@@ -249,7 +313,7 @@ test('v2 projections reject private nested fields, changed denominators, and unk
   }
 });
 
-test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older whole-task rule', async () => {
+test('the homepage guide selects current net-credit rules and preserves historical scoring', async () => {
   const {readFileSync} = await import('node:fs');
   const vm = await import('node:vm');
   const source = readFileSync(new URL('../scripts/templates/edition-notes.js',import.meta.url),'utf8');
@@ -260,7 +324,7 @@ test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older 
     insertRow(){const part=node('tr');this.append(part);return part;},
     insertCell(){const part=node('td');this.append(part);return part;}});
   const flatten = element => [element.textContent,...element.children.map(flatten)].filter(Boolean).join(' ');
-  const guide = (edition,lang,researchPreview={}) => {
+  const guide = (edition,lang,researchPreview={},initiative=false) => {
     const shell = node('details');
     Object.assign(shell.dataset,{tasks:'39',public:'25',private:'14',families:'35',total:'100'});
     const document={querySelector:selector=>selector==='[data-assessment-guide]'?shell:selector==='main'?{}:null,
@@ -268,12 +332,12 @@ test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older 
     const independent=edition==='1.3.0';
     const groups=['written','lean','research'].map((id,index)=>({id,weight:independent?30:index<2?35:30,children:[]}));
     if(independent)groups.push({id:'independent_open_research',weight:10,children:[]});
-    const d={benchmark_version:edition,research_preview:independent?researchPreview:null,models:[],policy:{groups,subcategories:[]}};
+    const d={benchmark_version:edition,research_preview:independent?researchPreview:null,research_initiative:initiative?{version:'0.1.0'}:undefined,models:[],policy:{groups,subcategories:[]}};
     vm.runInNewContext(source,{document,location:new URL('https://example.test/index.html'),URL,window:{addEventListener(){}},
       MG:{d,state:{lang},node,href:value=>value}});
     const descendants=element=>[element,...element.children.flatMap(descendants)];
     const taxonomy=descendants(shell).find(element=>element.tagName==='table');
-    return {text:flatten(shell),rows:taxonomy.children.find(element=>element.tagName==='tbody').children};
+    return {text:flatten(shell),rows:taxonomy.children.find(element=>element.tagName==='tbody').children,links:descendants(shell).filter(element=>element.tagName==='a')};
   };
   const current = guide('1.3.0','zh');
   assert.match(current.text,/25／25／50.*A 的2个门槛、T 的3个方面、C 的5个硬方向/);
@@ -290,6 +354,17 @@ test('the homepage guide explains checkpoint SMC in 1.3 and preserves the older 
   assert.match(retainedCredit.text,/全部通过时保留该项实际 RMC/);
   assert.match(retainedCredit.text,/检查结论保留在评审记录中/);
   assert.doesNotMatch(retainedCredit.text,/各自在分项内等权/);
+  const nativeExternal = itemWeightedBoard();nativeExternal.schema='math-gauge.research-board-preview/v6';
+  const live=guide('1.3.0','zh',nativeExternal,true);
+  assert.match(live.text,/数学品味 2 · 研究能力 1/);
+  assert.match(live.text,/全部通过时保留该项实际 RMC/);
+  assert.match(live.text,/28个共同机会独立审核，不由旧自主拓展档位换算/);
+  assert.doesNotMatch(live.text,/25／25／50|该项 SMC 为80|研究自主25%/);
+  assert.ok(live.links.some(link=>link.href.endsWith('/docs/scoring-guide.md')));
+  const liveEnglish=guide('1.3.0','en',nativeExternal,true);
+  assert.match(liveEnglish.text,/All checks passed preserves that component’s RMC/);
+  assert.match(liveEnglish.text,/28 common opportunities, without converting legacy extension levels/);
+  assert.doesNotMatch(liveEnglish.text,/25\/25\/50|capacity SMC of 80/);
   const older = guide('1.2.0','zh');
   assert.match(older.text,/每份交付按整题通过／不通过验收/);
   assert.doesNotMatch(older.text,/检查点/);
@@ -386,8 +461,8 @@ test('the lexical MG controller installs one native category and leaves the main
   assert.equal(body.cells.length,8,'main table retains only original overall columns');
   assert.ok(body.cells.every(c=>!Object.hasOwn(c.dataset,'independentCell')));
   assert.equal(new URL(link.href).searchParams.get('edition'),'1.2.0');
-  for(const heading of resourceHeadings)assert.match(heading.adjacent[0].textContent,/1\.2\.0/);
-  assert.match(resourceHeadings[2].adjacent[0].textContent,/成绩、成本和耗时/);
+  assert.match(resourceHeadings[1].adjacent[0].textContent,/共有计时任务 · 不含独立开放研究/);
+  assert.match(resourceHeadings[2].adjacent[0].textContent,/成绩、成本与耗时/);
   assert.equal(wrap.hidden,false); // fixture starts visible; controller must not force it on
   wrap.hidden=true;context.MGResearchPreview.decorate();assert.equal(wrap.hidden,true);
   assert.deepEqual(tabs.children,[tab]);
@@ -412,9 +487,10 @@ test('the lexical MG controller installs one native category and leaves the main
   vm.runInContext("MG.state.lang = 'en'; MGResearchPreview.decorate();",context);
   for(const heading of resourceHeadings){
     assert.equal(heading.adjacent.length,1,'rerender keeps one visible resource scope per panel');
-    assert.match(heading.adjacent[0].textContent,/1\.2\.0/);
+    assert.doesNotMatch(heading.adjacent[0].textContent,/1\.2\.0/);
   }
-  assert.match(resourceHeadings[2].adjacent[0].textContent,/Scores, costs and timings/);
+  assert.match(resourceHeadings[1].adjacent[0].textContent,/Shared timed tasks.*excludes independent open research/);
+  assert.match(resourceHeadings[2].adjacent[0].textContent,/Scores and resource use/);
   assert.deepEqual(scoreCells.map(cell=>cell.textContent),['','Insufficient evidence','Review pending','0.00']);
   assert.equal(scoreCells[0].attrs['aria-label'],'Not tested');
   assert.equal(supportingTab.textContent,'Supporting research');
@@ -424,4 +500,139 @@ test('the lexical MG controller installs one native category and leaves the main
   assert.equal(chartTitle.children.length,0);
   vm.runInNewContext("MG.state.lang = 'zh'; MGResearchPreview.decorate();",context);
   assert.equal(supportingTitle.textContent,'辅助研究排行榜');
+});
+
+test('native categories render saved score groups and retain Harness only on the current overall table', () => {
+  const {readFileSync}=require('node:fs'),{runInNewContext}=require('node:vm');
+  const scoreModes=[['strict','SMC'],['partial','RMC'],['capability','MC']].map(([id,abbreviation])=>({id,abbreviation}));
+  const key='independent_open_research';
+  function mount(edition){
+    const current=edition==='1.3.0';
+    const board=itemWeightedBoard();
+    board.weight_frame={[key]:10};
+    const roots=new Map(),events=new Map();
+    const walk=element=>element.children.flatMap(child=>[child,...walk(child)]);
+    class Element {
+      constructor(tag,text='',className=''){
+        Object.assign(this,{tag,textContent:text??'',className,children:[],dataset:{},attrs:{},style:{setProperty(){}}});
+        this.classList={add:value=>{this.className+=' '+value;}};
+      }
+      append(...children){for(const child of children)this.insertBefore(child,null);}
+      insertBefore(child,before){
+        child.remove();
+        this.children.splice(before==null?this.children.length:this.children.indexOf(before),0,child);
+        child.parentElement=this;
+      }
+      remove(){const parent=this.parentElement;if(parent){parent.children.splice(parent.children.indexOf(this),1);this.parentElement=null;}}
+      replaceChildren(...children){for(const child of [...this.children])child.remove();this.append(...children);}
+      setAttribute(name,value){this.attrs[name]=value;}
+      removeAttribute(name){delete this.attrs[name];delete this[name];}
+      get firstElementChild(){return this.children[0]??null;}
+      get nextElementSibling(){return this.parentElement.children[this.parentElement.children.indexOf(this)+1]??null;}
+      get cells(){return this.children;}
+      get rows(){return this.children;}
+      insertRow(){const child=new Element('tr');this.append(child);return child;}
+      insertCell(){const child=new Element('td');this.append(child);return child;}
+      querySelector(selector){
+        const [style,mode]=selector.split('[data-score-mode="');
+        return walk(this).find(child=>child.className===style.slice(1)&&(!mode||child.dataset.scoreMode===mode.split('"')[0]))??null;
+      }
+    }
+    const create=(id,tag='div')=>{const n=new Element(tag);roots.set(id,n);return n;};
+    const tableId=group=>'category-ranking-'+group;
+    for(const id of ['ranking','ranking-body','leaderboard-desc','score-explanation','downloads'])create(id);
+    const categories=current?['written',key]:['written'];
+    for(const group of categories){
+      const wrapper=new Element('div');wrapper.append(create(tableId(group),'table'));
+      create('category-tab-'+group,'button');create('category-panel-'+group,'section');
+    }
+    const sort=new Element('button');sort.dataset.chartSort=key;sort.dataset.sortValue='partial';
+    const scene={zero:0,ticks:[{label:'0',position:0},{label:'20',position:20}],bars:{}};
+    const chart=new Element('div'),groups=create('category-chart-groups-'+key);
+    chart.append(new Element('div',null,'score-x-axis'),groups);
+    for(const row of board.rows){
+      const group=new Element('div');group.dataset.model=row.id;groups.append(group);
+      scene.bars[row.id]={};
+      for(const mode of scoreModes){
+        const view=new Element('div',null,'metric-bar-row');view.dataset.scoreMode=mode.id;group.append(view);
+        view.append(new Element('span',null,'score-bar'),new Element('span',null,'chart-value'));
+        const grade=row.score_modes[mode.abbreviation].item;
+        scene.bars[row.id][mode.id]={...grade,value:grade.exact,text:String(grade.exact),left:0,width:0,interval:''};
+      }
+    }
+    const views=Object.fromEntries(scoreModes.map(({id,abbreviation})=>{
+      const saved=id==='partial'?[board.rows[1],board.rows[0],...board.rows.slice(2)]:board.rows;
+      return [id,saved.map((row,i)=>({...row.score_modes[abbreviation].item,model_id:row.id,
+        value:row.score_modes[abbreviation].item.exact,rank:i+1}))];
+    }));
+    const d={benchmark_version:edition,policy:{groups:categories.map(id=>({id}))},research_preview:current?board:undefined,
+      display_score_modes:scoreModes,score_modes:scoreModes.map(mode=>mode.id),chart_scenes:current?{['category-chart-groups-'+key]:scene}:{},
+      models:board.rows.map(row=>({...row,harness:{name:'Fixture harness'},theme:{ink:'fixture',tint:'fixture'},logo:{data_url:'fixture.svg'}})),
+      category_leaderboards:categories.map(id=>({id,views})),gap_diagnostics:{tables:[{id:'RG',rows:[]}]}};
+    const state={lang:'zh',score:'strict',condition:'nonlogical_retry_3'};
+    const location=new URL('https://example.test/index.html?edition='+edition+'&category='+key);
+    const el=id=>roots.get(id)??null;
+    const document={getElementById:el,baseURI:location.href,documentElement:new Element('html'),querySelector:()=>null,
+      querySelectorAll(selector){
+        if(selector==='[data-chart-sort]')return current?[sort]:[];
+        if(selector==='[data-research-score-label]'||selector==='[data-research-category-state]'){
+          const key=selector.includes('label')?'researchScoreLabel':'researchCategoryState';
+          return [...new Set([...roots.values()].flatMap(walk))].filter(n=>Object.hasOwn(n.dataset,key));
+        }
+        return [];
+      }};
+    const MG={d,state,modes:Object.fromEntries(scoreModes.map(mode=>[mode.id,mode])),el,f:v=>v==null?'—':v.toFixed(2),
+      node:(tag,text,cls)=>new Element(tag,text,cls),result:()=>({}),headline:()=>0,compareScores:()=>0,compareModelOrder:()=>0,
+      rankedScores:models=>models.map((model,i)=>({model,place:i+1})),short:model=>model.label,href:path=>new URL(path,location).href,
+      download:()=>'',presentationDefaultScore:'strict',start:render=>render(),
+      table(id,headers){
+        const t=el(id);t.replaceChildren();
+        t.tHead=new Element('thead');t.tBodies=[new Element('tbody')];t.append(t.tHead,t.tBodies[0]);
+        t.tHead.insertRow().append(...headers.map(text=>new Element('th',text)));
+        return t;
+      }};
+    const context={MG,MGBoards:boards,MGI18n:{apply(){}},document,location,URL,URLSearchParams,
+      history:{replaceState(_state,_title,url){location.href=url;}},
+      Event:class{constructor(type){this.type=type;}},
+      addEventListener(type,fn){events.set(type,[...(events.get(type)||[]),fn]);},
+      dispatchEvent(event){for(const fn of events.get(event.type)||[])fn(event);}};
+    context.window=context;
+    for(const name of ['research-preview.js','home-results.js'])
+      runInNewContext(readFileSync(new URL('../scripts/templates/'+name,import.meta.url),'utf8'),context);
+    context.MGResearchPreview.decorate();
+    return {board,state,sort,location,el,walk,groups,table:el(tableId(key)),decorate:context.MGResearchPreview.decorate};
+  }
+  const ui=mount('1.3.0');
+  const header=()=>ui.table.tHead.rows[0].cells.slice(2);
+  const rows=()=>ui.table.tBodies[0].rows;
+  const names=()=>rows().map(row=>row.cells[1].children[0].textContent);
+  const cells=row=>row.cells.slice(2).map(cell=>cell.children[0].textContent);
+  assert.deepEqual(header().map(cell=>cell.textContent),['综合','数学品味（2/3）','研究能力（1/3）']);
+  assert.deepEqual(ui.table.tHead.rows[1].cells.map(cell=>cell.textContent),['SMC','RMC','MC','SMC','RMC','MC','SMC','RMC','MC']);
+  assert.deepEqual(names(),ui.board.rows.map(row=>row.label));
+  const alpha=ui.board.rows[0];
+  const expected=['item','taste','capacity'].flatMap(axis=>scoreModes.map(({abbreviation})=>{
+    const view=alpha.score_modes[abbreviation],metric=axis==='item'?view.item:view.components[axis];
+    return metric.exact==null?'待评':metric.exact.toFixed(2);
+  }));
+  assert.deepEqual(cells(rows()[0]),expected);
+  assert.equal(cells(rows()[1])[4],'0.00');
+  assert.equal(cells(rows()[2])[4],'证据不足');
+  assert.deepEqual(cells(rows()[3]),Array(9).fill(''));
+  assert.equal(ui.el('category-ranking-written').tHead.rows[0].cells.some(cell=>cell.textContent==='Harness'),false);
+  assert.equal(ui.el('ranking-body').rows[0].cells[2].children[0].textContent,'Fixture harness');
+  const chart=ui.groups.children[0],details=()=>chart.children.filter(node=>node.className==='research-chart-subscores');
+  assert.equal(chart.children.filter(node=>node.className==='metric-bar-row').length,3);
+  assert.equal(details().length,0,'component scores belong only in the table');
+  ui.sort.onclick();
+  assert.equal(names()[0],ui.board.rows[1].label);
+  assert.equal(rows()[0].cells.filter(cell=>cell.className.includes('primary-score')).length,1);
+  ui.location.searchParams.set('show-'+key,'smc,mc');
+  ui.state.lang='en';ui.decorate();ui.decorate();
+  assert.deepEqual(header().map(cell=>[cell.textContent,cell.colSpan]),[['Composite',2],['Mathematical taste (2/3)',2],['Research capacity (1/3)',2]]);
+  assert.equal(rows()[2].cells[6].children[0].textContent,'Insufficient evidence');
+  assert.equal(details().length,0);
+  const archived=mount('1.2.0');
+  assert.equal(archived.el('category-ranking-written').tHead.rows[0].cells[2].textContent,'Harness');
+  assert.equal(archived.el('category-ranking-written').tBodies[0].rows[0].cells[2].textContent,'Fixture harness');
 });

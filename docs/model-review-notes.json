@@ -1,0 +1,142 @@
+{
+  "schema": "math-gauge.model-review-notes/v1",
+  "notes": [
+    {
+      "id": "carbon-original-comparison",
+      "model_ids": [
+        "gemini-4-carbon-medium",
+        "gemini-4-carbon-high"
+      ],
+      "review_date": "2026-11-25",
+      "source_edition": "1.1.0",
+      "condition": "nonlogical_retry_3",
+      "title": {
+        "zh": "High 与 Medium：原答复核",
+        "en": "High vs Medium: original-answer review"
+      },
+      "scope": {
+        "zh": "固定对照1.1.0采用的原答及C003原三轮自查，不含中性续答或1.3独立研究；此表不随页面计分口径、版本选择改变。",
+        "en": "Fixed comparison of the adopted 1.1.0 original answers and original three-round C003 trajectory. Neutral revisions and 1.3 independent research are excluded; this table does not follow the page’s score-mode or edition selector."
+      },
+      "conclusion": {
+        "zh": "重点失分点复核后，暂未发现足以补分的明确证据。High的有效数学内容较接近Medium，但严格验收、核心误判与附加结论错误拉开了成绩；不能把差距全归于GCP断流。",
+        "en": "The main loss points reveal no clear basis for restoring credit. High retains nearly as much valid mathematics as Medium, but strict acceptance failures, core misjudgments and erroneous extra claims widen the score gap. GCP disconnections do not explain the whole difference."
+      },
+      "source_manifests": {
+        "gemini-4-carbon-medium": {
+          "path": "results/edition-reassessments/v1.1.0/gemini-4-carbon-medium/20261115/shape-certificate/calibration.json",
+          "bytes": 6358,
+          "sha256": "63f630c801d34afe3341d4703075cac2292993930a3a5051bb96bdd5a087df57"
+        },
+        "gemini-4-carbon-high": {
+          "path": "results/edition-reassessments/v1.1.0/gemini-4-carbon-high/20261115/calibration.json",
+          "bytes": 6067,
+          "sha256": "3c5fa9d5c677d8b01e49d43e2d43b216c9b6604091361ff02538c75df60098a3"
+        }
+      },
+      "labels": [
+        {
+          "zh": "口径",
+          "en": "Score"
+        },
+        {
+          "zh": "Medium",
+          "en": "Medium"
+        },
+        {
+          "zh": "High",
+          "en": "High"
+        }
+      ],
+      "detail_summary": {
+        "zh": "查看失分原因、环境限制与外部对照",
+        "en": "Loss breakdown, environment limits and external comparisons"
+      },
+      "paragraphs": [
+        {
+          "zh": "SMC净差31.67分，其中C003初答7.50分、整条自查10分，四道背景核查合计10分；这三项共27.50分。仅看39道A1、不含自查，已得贡献的差为21.67个总分点，不重新归一化。",
+          "en": "The net SMC gap is31.67 points:7.50 from initial C003,10 from its full self-check trajectory, and10 across background checking. These account for27.50 points. The39 A1 tasks alone differ by21.67 full-benchmark points, without rescaling."
+        },
+        {
+          "zh": "C003两档都已核实92项形式化义务。High必交的对齐说明把实际为3的位移写成1，初答Strict失败；R1声称未发现对齐缺陷，漏诊使整条三轮轨迹失败。R2准确指出笔误，不能回填A1或R1。MC保留全部形式化正分；这不是整章Lean没有做出来。",
+          "en": "Both configurations verified all92 C003 formal obligations. High’s required alignment explanation states a displacement of1 where its definitions give3, failing initial Strict. R1 declares no alignment defect and misses it, failing the whole trajectory. R2 identifies the error accurately but cannot backfill A1 or R1. MC retains full formalization credit; the chapter was formalized."
+        },
+        {
+          "zh": "四道背景核查两档MC都是满分。High在附加说明中各有一个局部错误，每题RMC扣5个百分点并未通过Strict。例如BC002给任意正容限的层数公式可能为负，Medium明确截到0。当前规则没有普遍的“删去旁支即可Strict通过”例外，不能只对High放宽。",
+          "en": "All four background tasks earn full MC at both efforts. High adds one local error in each, costing5 task-level RMC points and failing Strict. For example, BC002’s depth formula can be negative for a loose positive tolerance, while Medium explicitly clamps it to0. Current rules have no general optional-error Strict exemption; High is not given a special waiver."
+        },
+        {
+          "zh": "AHR03的题面及30个附件完全相同。High把冗余全局推论封装、商对象接口等误当作题内缺陷；已有同输入域条件与域外吸收元足以把局部等价推出全局等价。有效分析获50 MC，但核心误拒使RMC为0。AHR01另有“反例已在Lean内核核验”的不实承诺，实际相关检查均失败，数学反例仍保留100 MC。AHR04则是High胜出，抵回2.50个SMC总分点。",
+          "en": "AHR03 has identical tasks and30 attachments. High treats redundant global-corollary wrappers and quotient interfaces as required missing mathematics; equal input domains and bottom outside the domain already bridge local to global equality. Valid analysis retains50 MC, but core false rejection caps RMC at0. AHR01 falsely claims its counterexample was kernel-verified despite failed checks, while retaining100 MC for its valid mathematics. High wins AHR04, offsetting2.50 SMC points."
+        },
+        {
+          "zh": "两档均为38道正常A1交卷、1道强收有内容，不能按High少交了许多题解释分差。已交卷答案也有真实的过强断言和误判；正常final不证明上下文处理毫无影响，但断流或checkpoint标记本身也不能证明错误由压缩造成。",
+          "en": "Both have38 normal A1 finals and one forced-content task, so a large delivery-count difference does not explain the gap. Delivered answers contain real overclaims and misjudgments. A normal final does not rule out context effects, but a disconnection or checkpoint marker alone does not establish compaction as their cause."
+        },
+        {
+          "zh": "历史AGY版本、续接路径与追加机会并不完全相同；High来源还记录了部分后继原生请求自行采用MEDIUM。这里没有只改变effort的受控实验。“主体成立后继续扩展，反而引入错误”与过度思考的表象相符，尚不能据此认定High effort本身必然更差。",
+          "en": "Historical AGY versions, continuation paths and extra opportunities differ. High’s provenance also records some later native requests selecting MEDIUM. This was not a controlled change of effort alone. Adding erroneous claims after a correct core resembles overthinking, but does not establish that High effort is inherently worse."
+        },
+        {
+          "zh": "截至2026-11-25，外部可核的成对结果没有呈现High普遍退步：Artificial Analysis指数60对58；CursorBench4.1为61.5%对60.4%；AutomationBench为53.9%对53.0%；Bug Hunt Bench各3次均值为57.3/105对56/105。它们更支持增益有限、依任务而异，不证明小差距有统计显著性，也不是数学证明验收的替代品。",
+          "en": "As checked on2026-11-25, paired external results do not show universal High regression: Artificial Analysis60 vs58; CursorBench4.1,61.5% vs60.4%; AutomationBench,53.9% vs53.0%; Bug Hunt Bench,57.3/105 vs56/105, each a three-run mean. Gains are modest and task-dependent; small differences need not be statistically significant and do not replace mathematical proof assessment."
+        },
+        {
+          "zh": "公开用户既报告过“续接工作正常，仍耗尽约262k生成额度而无答案”，也有两档都能干净完成工程的正面小样本。Antigravity论坛另有订阅工具回合异常及11月19日恢复的用户反馈；官方应用更新也修过长思考超时。不同通道存在变化，但这些材料不证明本批错误的统一原因，订阅模式也需先验证。",
+          "en": "Users report both working continuation that exhausts roughly262k generated tokens without an answer and small positive samples of clean completion at both efforts. An Antigravity forum thread also reports subscription tool-turn problems and a user-observed recovery on19 November; official app notes fix long-thinking timeouts. Serving conditions can change, but these sources do not establish a common cause for this batch’s errors. The subscription route needs its own check."
+        },
+        {
+          "zh": "若复测，先用短的非Lean边界与可靠性题、AHR03，再以私有手稿检查正常收尾，C003最后。判断effort效应需同订阅路径的新Medium对照。新样本单列为新条件，不用更好的新答案覆盖已正常交卷的旧错误；本轮没有重新调用候选。",
+          "en": "For retesting, start with short non-Lean boundary/reliability tasks and AHR03, then test final delivery on a private manuscript; leave C003 last. Testing effort requires fresh Medium controls on the same subscription route. New trials stay separate and do not replace normally delivered old errors. This review made no new candidate calls."
+        }
+      ],
+      "sources": [
+        {
+          "url": "https://artificialanalysis.ai/models/gemini-4-carbon",
+          "zh": "Artificial Analysis：分档成绩与生成量",
+          "en": "Artificial Analysis: effort scores and output"
+        },
+        {
+          "url": "https://prod.cursor.com/evals",
+          "zh": "CursorBench4.1：主办方榜单",
+          "en": "CursorBench4.1: creator leaderboard"
+        },
+        {
+          "url": "https://zapier.com/benchmarks/gemini-carbon-4-report",
+          "zh": "AutomationBench：同657题分档对照",
+          "en": "AutomationBench:657 matched tasks"
+        },
+        {
+          "url": "https://github.com/phuryn/bug-hunt-bench/blob/main/README.md",
+          "zh": "Bug Hunt Bench：三次均值与波动说明",
+          "en": "Bug Hunt Bench: three-run means and variation"
+        },
+        {
+          "url": "https://www.reddit.com/r/GeminiAI/comments/1xtbzvt/gemini_4_carbon_on_high_spent_45_minutes_and_262k/",
+          "zh": "无答卷长思考日志：用户自报",
+          "en": "Long thinking without delivery: user report"
+        },
+        {
+          "url": "https://www.reddit.com/r/google_antigravity/comments/1xszqoj/my_preliminary_results_on_carbon/",
+          "zh": "两档工程成功的小样本：用户自报",
+          "en": "Small successful coding sample: user report"
+        },
+        {
+          "url": "https://discuss.ai.google.dev/t/counter-data-tool-aware-minimal-thinking-is-measurably-degrading-output-quality-on-agy-gemini-4-carbon/200671/22",
+          "zh": "工具回合异常与后续恢复：论坛讨论",
+          "en": "Tool-turn issues and later recovery: forum discussion"
+        },
+        {
+          "url": "https://antigravity.google/docs/changelog#v2-33-0",
+          "zh": "Antigravity应用更新：长思考超时修复",
+          "en": "Antigravity app changelog: long-thinking timeout fix"
+        }
+      ],
+      "footer": {
+        "zh": "2026-11-25 · AI重点复核，人工待定；未重跑、未改正式分数。私有题只披露大类聚合。",
+        "en": "2026-11-25 · AI loss-focused review; human review pending. No reruns or official score changes. Private tasks remain aggregate-only."
+      },
+      "private_audit_sha256": "51953724783f3dfcc75b3f7cdddf0747e414afcf03dfb12e5fda0aa549f1b581"
+    }
+  ]
+}

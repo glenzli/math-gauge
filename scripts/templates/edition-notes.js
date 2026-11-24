@@ -3,7 +3,8 @@
  'use strict';
  const {d,state,node,result,f}=MG,main=document.querySelector('main');if(!main)return;
  const isIndependent=d.benchmark_version==='1.3.0'&&!!d.research_preview;
- const strictCredit=isIndependent&&['math-gauge.research-board-preview/v4','math-gauge.research-board-preview/v5'].includes(d.research_preview.schema);
+ const strictCredit=isIndependent&&['math-gauge.research-board-preview/v4','math-gauge.research-board-preview/v5','math-gauge.research-board-preview/v6'].includes(d.research_preview.schema);
+ const opportunityInitiative=isIndependent&&!!d.research_initiative;
  const valueRevision=strictCredit||isIndependent&&d.research_preview.schema==='math-gauge.research-board-preview/v3';
  const isRevision=d.benchmark_version==='1.2.0'||isIndependent,english=()=>state.lang==='en';
  const text=(zh,en)=>english()?en:zh;
@@ -45,9 +46,9 @@
  function table(panel,headers,rows){const wrap=node('div',null,'table-wrap'),table=node('table',null,'compact'),head=table.createTHead().insertRow(),body=table.createTBody();headers.forEach(title=>head.append(node('th',title)));rows.forEach(values=>{const row=body.insertRow();values.forEach(value=>{const cell=row.insertCell();typeof value==='string'?cell.textContent=value:cell.append(value)})});wrap.append(table);panel.append(wrap)}
  function revisionDetails(panel){
   const pending=d.pending_models,details=node('details',null,'guide-details');
-  details.append(node('summary',pending?text('首答诊断与待续答模型（'+pending.length+'）','First-answer diagnostics and pending models ('+pending.length+')'):text('首答诊断与评审详情','First-answer diagnostics and review details')));
-  if(d.models&&pending)details.append(node('p',text('本版已有'+d.models.length+'个模型完成；其余'+pending.length+'个待续答，不继承新成绩。','This edition has '+d.models.length+' completed models; '+pending.length+' remain pending and do not inherit new scores.')));
-  details.append(node('p',text('两率、额外研究观察与原错误明细仍是首答诊断；数学画像可独立切换首答和含续答。','Content rates, extra-research observations and original error details remain first-answer diagnostics; mathematical profiles have a separate first-answer / with-continuation selector.')));
+  details.append(node('summary',pending?(isIndependent?text('首答诊断与待研究模型（'+pending.length+'）','First-answer diagnostics and pending research ('+pending.length+')'):text('首答诊断与待续答模型（'+pending.length+'）','First-answer diagnostics and pending models ('+pending.length+')')):text('首答诊断与评审详情','First-answer diagnostics and review details')));
+  if(d.models&&pending)details.append(node('p',isIndependent?text('本版已采用'+d.models.length+'个模型的独立研究；其余'+pending.length+'个新研究待结算，原有来源版成绩保留。','Independent-research results are adopted for '+d.models.length+' models; '+pending.length+' remain pending for the new research task and retain their source-edition results.'):text('本版已有'+d.models.length+'个模型完成；其余'+pending.length+'个待续答，不继承新成绩。','This edition has '+d.models.length+' completed models; '+pending.length+' remain pending and do not inherit new scores.')));
+  details.append(node('p',isIndependent?text('两率、额外研究观察与原错误明细仍是首答诊断；当前数学画像采用含已接纳续答的能力阶段。','Content rates, extra-research observations and original error details remain first-answer diagnostics; the current mathematical profile includes adopted continuations.'):text('两率、额外研究观察与原错误明细仍是首答诊断；数学画像可独立切换首答和含续答。','Content rates, extra-research observations and original error details remain first-answer diagnostics; mathematical profiles have a separate first-answer / with-continuation selector.')));
   const reviewers=d.model?.neutral_revision?.reviewer_ids;
   if(reviewers?.length)details.append(node('p',text('续答审核者（公开原评记录）：','Continuation reviewers (public source reviews): ')+reviewers.join(' · ')));
   details.append(oldLink(text('查看1.1首答成绩与诊断 →','View 1.1 first-answer results and diagnostics →')));
@@ -94,13 +95,16 @@
     'MC, RMC and SMC each aggregate their own mode. Written proofs, Lean and supporting research contribute 30% each, and independent open research contributes 10%. Taste and capacity form one task with the relative weights shown above. MC uses verified positive credit. RMC accounts for supported reliability deductions. Unmeasured fields remain blank, and charts show confirmed contributions with unresolved intervals retained.'):text(
     'MC、RMC、SMC 各自汇总同口径分数。书面、Lean、辅助研究各占30%，独立开放研究题占10%。每种口径按25／25／50将 A／T／C 汇成一道题。MC 取独立补审的有效成果分，RMC 取连续可靠性评审分。未测分数留空，主榜柱图显示已确认贡献，完整分保留未知区间。',
     'MC, RMC and SMC each use scores from their own mode. Written proofs, Lean and supporting research contribute 30% each, and independent open research contributes 10%. Each mode combines A, T and C at 25/25/50 into one task. MC uses an independent review of valid results. RMC uses continuous reliability grades. Unmeasured fields remain blank, and the main chart shows confirmed credit with unresolved intervals retained.'));
-   overall.append(node('p',strictCredit?text(
-    '独立开放研究 SMC 只保留已通过检查部分的净信用。全部通过时保留该项实际 RMC，部分通过时按原成果与扣分归属保留通过部分的净信用。检查结论保留在评审记录中，未定证据保留固定区间。自主拓展档位只折算研究主动性。',
-    'Independent open research SMC retains the net credit of passed checks. All checks passed preserves that component’s RMC. For mixed outcomes, the retained credit and original deductions are allocated to the respective checks. Checkpoint verdicts remain in the review records. Unresolved evidence retains fixed bounds. Autonomous extension contributes only to research initiative.'):valueRevision?text(
+   overall.append(node('p',strictCredit?(text(
+    '独立开放研究 SMC 只保留已通过检查部分的净信用。全部通过时保留该项实际 RMC，部分通过时按原成果与扣分归属保留通过部分的净信用。检查结论保留在评审记录中，未定证据保留固定区间。',
+    'Independent open research SMC retains the net credit of passed checks. All checks passed preserves that component’s RMC. For mixed outcomes, the retained credit and original deductions are allocated to the respective checks. Checkpoint verdicts remain in the review records. Unresolved evidence retains fixed bounds.')+' '+(opportunityInitiative?text('研究主动性另按28个共同机会独立审核，不由旧自主拓展档位换算。','Research initiative is independently reviewed over 28 common opportunities, without converting legacy extension levels.'):text('自主拓展档位只折算研究主动性。','Autonomous extension contributes only to research initiative.'))):valueRevision?text(
     '独立开放研究 SMC 按检查点给分。数学品味的3项检查和研究能力的5项检查各自在分项内等权。全项通过另列为检查状态，未定检查点保留固定分母。自主拓展档位只折算数学画像的研究主动性。',
     'Independent open research SMC gives equal credit per check within each component, with three taste checks and five capacity checks. The all-checks flag is reported separately. Unresolved checks retain fixed denominators. The autonomous extension level contributes only to research initiative in the profile.'):text(
     '独立开放研究 SMC 按检查点给分。A 的2个门槛、T 的3个方面、C 的5个硬方向各自在项内等权。全项通过另列为检查状态。例如 C 通过4／5时，该项 SMC 为80，状态为「未全项通过」。未定检查点保留固定分母。',
     'Independent open research SMC awards credit by checkpoint, equally within each component: 2 autonomy, 3 taste and 5 required capacity checks. All-checks status is shown separately. Passing 4 of 5 capacity checks gives capacity SMC of 80 even though not all checks passed. Unresolved checks keep their fixed denominator.')));
+   overall.append(node('h4',text('研究能力的覆盖与深度','Research capacity: coverage and depth')),
+    node('p',text('研究能力按预设研究范围逐方向核验，既看覆盖，也看成果深度。每个方向须有可核实、有价值的结论，明确的条件、实质推导或证明及适用边界；仅提到方向或浅尝几步不构成充分完成，单一强项不能补齐缺失方向。参考研究只用于校准丰富度与深度，接受不同路线和真正新增的成果，不要求复现指定结论。',
+     'Capacity is reviewed direction by direction against a defined research scope, considering both coverage and depth. Each direction needs verifiable, valuable results, explicit conditions, substantive derivations or proofs, and clear limits. Merely naming a direction or taking a few preliminary steps is insufficient; strength in one direction cannot replace missing work in another. Reference research calibrates breadth and depth, while different routes and genuinely new results are accepted without requiring predetermined conclusions.')));
   }
   const flow=explain(text('作答流程','Answering process'),text('39项首答任务分别交付，按规定的有效尝试规则选卷。','The 39 initial tasks are delivered separately and selected under the prescribed effective-attempt rule.'));
   const branches=node('div',null,'guide-flow-branches');
@@ -130,7 +134,8 @@
    revision.append(node('p',text('例：某题MC或RMC首答80、续答100，最终计84。SMC先分别判定两次交付是否整题通过，再按80/20折算；Lean与原三轮自查不变。','Example: a task with first-answer MC or RMC of 80 and continuation credit of 100 yields 84. SMC first judges each delivery separately, then applies the 80/20 blend. Lean and its three self-check rounds are unchanged.')));
    const details=revisionDetails(guide);if(expanded)details.open=true;
   }
-  const method=node('a',text('详细执行与评审规则 →','Detailed execution and review rules →'),'guide-method-link');method.href=MG.href('method.html');guide.append(method);
+  const method=node('a',isIndependent?text('1.2基底执行与原答规则 →','1.2 baseline execution and source-answer rules →'):text('详细执行与评审规则 →','Detailed execution and review rules →'),'guide-method-link');method.href=MG.href('method.html');guide.append(method);
+  if(isIndependent){const current=node('a',text('1.3完整评分与十轴规则 →','Full 1.3 scoring and ten-axis rules →'),'guide-method-link');current.href='https://github.com/glenzli/math-gauge/blob/main/docs/scoring-guide.md';guide.append(current);}
   return true;
  }
  function header(){
@@ -157,12 +162,12 @@
     });
    }
    if(d.models?.some(model=>model.neutral_revision_delta)){
-    const delta=section('revision-score-change',text('续答增量','Continuation gains'),true),content=node('div',null,'revision-gains-body');
+    const delta=section('revision-score-change',isIndependent?text('1.2基底续答增量','Continuation gains · 1.2 baseline'):text('续答增量','Continuation gains'),true),content=node('div',null,'revision-gains-body');
     table(content,[text('模型','Model'),text('续答题数','Continued tasks'),text('满分率','Full-score rate'),'ΔSMC','ΔRMC','ΔMC'],[...d.models].sort(compareContinuation).map(model=>{
      const completion=completionFor(model),full=completion?.selected>0&&completion.full_rate?.exact===1&&completion.full_count?.exact===completion.selected;
      return [node('span',model.label),completion?String(completion.selected):'—',node('span',fullRate(completion),full?'revision-full-rate':''),...['strict','partial','capability'].map(mode=>signed(model.neutral_revision_delta?.[mode]))];
     }));
-    content.append(node('p',text('相对1.1首答、按20%计入总分的增量，可为负。满分率须续答三项未舍入分数全满；分母含未交卷，不含首答免测题。','Gains over 1.1 first answers, weighted at 20%; decreases remain. Full-score rate requires all three unrounded continuation scores to be full, includes failed deliveries, and excludes exempt first answers.')));
+    content.append(node('p',isIndependent?text('增量保留1.2基底的35／35／30框架，相对1.1首答按20%计入；不是1.3总分增量。满分率须续答自身三项未舍入分数全满，分母含未交卷、不含免测首答。','Gains retain the 1.2 baseline 35/35/30 frame, relative to 1.1 first answers and weighted at 20%; they are not 1.3 overall-score gains. Full-score rate requires all three own unrounded revision scores to be full, includes failed deliveries and excludes exempt first answers.'):text('相对1.1首答、按20%计入总分的增量，可为负。满分率须续答三项未舍入分数全满；分母含未交卷，不含首答免测题。','Gains over 1.1 first answers, weighted at 20%; decreases remain. Full-score rate requires all three unrounded continuation scores to be full, includes failed deliveries, and excludes exempt first answers.')));
     delta.append(content);
    }
   }

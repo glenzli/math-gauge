@@ -1,6 +1,18 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const {layout}=require('../scripts/templates/cost-label-layout.js');
+const {scoreDomain}=require('../scripts/templates/cost-reference.js');
+
+test('score axes quantize the current finite minimum without turning unknown into zero',()=>{
+ assert.deepEqual(scoreDomain([26.25,91.33,null,undefined,NaN]),{lower:20,upper:100,ticks:[20,40,60,80,100]});
+ assert.deepEqual(scoreDomain([57,90]).ticks,[40,60,80,100]);
+ assert.equal(scoreDomain([0,90]).lower,0);
+ assert.equal(scoreDomain([]).lower,0);
+ assert.deepEqual(scoreDomain([100,100]).ticks,[80,100]);
+ const modes={SMC:[26,92],RMC:[57,95],MC:[76,98]};
+ assert.deepEqual(Object.values(modes).map(values=>scoreDomain(values).lower),[20,40,60]);
+ assert.deepEqual(modes,{SMC:[26,92],RMC:[57,95],MC:[76,98]});
+});
 
 const bounds={left:62,top:30,right:1032,bottom:434};
 const densePoints=()=>[

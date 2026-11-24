@@ -93,12 +93,17 @@ def _judgment(row, key, finals):
     value._evidence(row['evidence'], finals, flow.ROUNDS)
 
 
-def _net_credit(points, deductions, original_roots, verdicts, grade, finals):
+def _net_credit(points, deductions, original_roots, verdicts, grade, finals, *, evidence_check=None):
     _need(_fields(deductions, original_roots), 'Allocate each previously accounted error root exactly once')
     net = {name: Fraction(str(credit)) for name, credit in points.items()}
     _need(sum(net.values()) == Fraction(str(grade['mc'])), 'Allocated positive credit must equal retained MC')
     for root, row in deductions.items():
-        _judgment(row, 'criterion', finals)
+        if evidence_check is None:
+            _judgment(row, 'criterion', finals)
+        else:
+            _need(_fields(row, ('criterion', 'reason', 'evidence')) and modes._text(row['reason']),
+                  'Each external allocation needs its original reason and evidence')
+            evidence_check(row['evidence'])
         criterion = row['criterion']
         _need(isinstance(criterion, str) and criterion in net, 'Each original root must charge one scored criterion')
         net[criterion] -= Fraction(str(original_roots[root]))

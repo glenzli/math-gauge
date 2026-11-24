@@ -1,28 +1,24 @@
 # 分类、题型和评测方式
 
-当前为benchmark **0.6.0封版**；分类聚合方法 **0.8.0**、Strict **0.2.0**、非逻辑重跑接纳 **0.1.0**。方法调整发生在观察已有答卷后，AI审核、人审待定，正式比较资格为false。
+当前1.3.0使用书面证明30、Lean30、辅助研究30、独立开放研究10的完整100分框架。逐项定义、分母、公式与所有辅助指标的入口统一见[规则与评分索引](scoring-guide.md)；[评测协议](../protocol/evaluation.md)说明执行和来源，[基础评分](../protocol/benchmark-scoring.md)保留原任务的具体判准。
 
-| 大类 | 子类 | 满分 | 公有题 | 私有题 | 聚合单位 |
-|---|---|---:|---:|---:|---|
-| 书面证明 35 | 书面论证 | 25 | 8 | 4 | 合并后12个数学家族 |
-| | 论证审阅 | 10 | 4 | 0 | 4个被审阅论证的父家族 |
-| Lean 35 | 语义审计 | 10 | 4 | 0 | 2个数学家族 |
-| | 形式化 | 15 | 4 | 0 | 2个数学家族 |
-| | 对齐自查 | 10 | 1题复用 | 0 | 同一92项题的固定三轮轨迹 |
-| 数学研究 30 | 背景核查 | 10 | 2 | 2 | 4个数学家族，独立A1 |
-| | 数学想法手稿化 | 10 | 1 | 4 | 5个数学家族（公1／私4），独立A1 |
-| | 命题拓展 | 10 | 2 | 4 | 6个数学家族，仅无提示A1 |
+| 类别 | 主要工作 | 聚合方式 |
+|---|---|---|
+| 书面证明 | 证明、反例、边界与论证审阅 | 论证12家族；审阅4个父家族，保留原25∶10子类比例 |
+| Lean | 语义审计、初答工程、三轮对齐自查 | 审计2家族；形式化2家族；自查验完整固定轨迹，保留原10∶15∶10比例 |
+| 辅助研究 | 背景核查、想法手稿化、命题拓展 | 分别4、5、6个家族，各占10分 |
+| 独立开放研究 | 同一会话三稿的研究成果、取舍与自审 | 数学品味与研究能力2∶1合成一道题，计入总榜一次 |
 
-主分类用于计分；题库的F01至F09标签是跨题能力索引，不另立权重。物理目录与原case合同保持原样，可由[catalog](../cases/catalog.json)的source_categories追溯；categories是当前三大类／八子类。私有研究探索原任务并入书面论证，不发布公私独立总分。
+基础1.0.0题包保持25公开／14私有、39道初答与35个数学家族，另有三轮Lean自查。1.3独立登记的新私有研究题增加一个家族、三次交付，合计40逻辑任务、45次规定交付；不同模型选中的非Lean中性续答另计。题目能力标签不是额外权重。
 
-书面论证要求有依据的证明、反例或条件化结论；论证审阅要求识别错误、定位证据并说明影响。Lean语义审计检查已给声明的意义，形式化要求交付真正对应目标的工程，对齐自查观察连续三轮真实修复、判断与退步。四档形式化8／20／40／92项只是相关规模变体，CH2三档先聚合，不能让规模档数变成额外家族权重。
+候选仅接收原题和明确提供的材料。所有正式题允许本地工具及预置公共依赖，禁止外部检索和工具联网；独立初答可并行，同一自查或研究轨迹顺序接续。题目、执行版本、实际harness、评分版与审核身份分别留证。
 
-研究的“背景核查”强调无专项提醒地审查资料：不能仅照着有问题的背景推出后果，也不能把明确假设当成错误；要给出可核验修正及其影响。“命题拓展”强调证明严格更强结论、更弱条件或统一结论，并识别继续拓展的障碍。三个子类分别侧重材料依据、研究稿的严格完成和数学结论的拓展。新题加入前冻结研究目标与成功判准，安排正确背景的控制样本、反例与误报判准；背景核查公2／私2，数学想法手稿化公1／私4；命题拓展保留6个家族的源绑定A1记录，明确标注为观察后选题和计分方法，不冒称新预注册。
+数学有效性、忠实性、严格完成与自我诊断分别核查。可编译不自动意味着语义对齐；完成原题不自动有额外研究增量；更长的回答也不自动更深入。有效替代路线需要交付原目标与新表示之间的桥梁。详细题文与量规从[公开目录](../cases/README.md)进入，私有逐题材料不投影到公开数据。
 
-数学想法手稿化从给定的数学想法或研究方案出发，要求明确概念与命题、补齐证明和边界、整理依赖，形成可检验的完整数学稿。组件0.5.0含5个等权家族（公1／私4），分享10分。各题保留实际冻结时点、允许修正与成功判准；分项按有效数学成果计分，SMC按各题冻结的实质要求与完整目标验收。公开MG-MCP003的题面与量规在试答前冻结，选入发生在观察后；严格且忠实地完成给定方向即可满分。
+1.0／1.1／1.2沿用各自的35／35／30来源框架。1.2逐题80%首答＋20%中性续答；1.3保留这一基底并调整类别权重。旧题SMC按整题或完整Lean轨迹验收；新研究题SMC按通过严格核查的净RMC信用计，检查数不直接换算分数。各版本原始数学审核、已发布资产和历史下载保持原身份，缺证据不补成满分。
 
-分项逐要求计分，Strict整题二值，均先聚合家族再按固定子类权重相加。Lean自查独立10分：分项固定三轮平均并扣误报，Strict评整段轨迹，不能仅看最后一份工程。命题拓展6题、背景核查4题与数学想法手稿化5题各占10分，题包权重覆盖100分。正式没有研究邀请；按首答R档位减B基础错误扣分，Strict要求B2/R3。主表为已确认贡献／100，未测题保留未知和固定分母，完整总分保持区间。[完整评分标准](../protocol/benchmark-scoring.md)和[机器政策](../protocol/scoring-policy.json)定义精确合同。
+## English
 
-现有材料是来源条件不同的观察后组合；新方法不是重新考试。题目、原答、工程和原审核不因重分类而改写；人审和运行认证仍待定。新运行须独立上下文、完整原返回与自评、封卷工程及明确预算，不以文件散列认证真实后端。
+Edition1.3.0 uses30/30/30/10 points for written proof, Lean, supporting research and independent open research. The sealed source suite stays39 initial tasks/35 families plus three Lean self-checks. One separately registered private research task adds a three-manuscript trajectory, giving40 logical tasks/36 families and45 fixed deliveries. Selected neutral revisions are additional.
 
-当前评分提供数学能力MC、可靠数学能力RMC（默认主分）和严格数学交付Strict，首次与允许重跑分别记录；原文的“分项”数学数值对应RMC。MC新增的正向换算不更改原答、源审核和原RMC/Strict分值，见[当前完整报告](results.md)。
+Related variants are combined within families before fixed category weights. Source-task grading and1.2’s80/20 original/revision blend are retained; independent research combines taste and capacity at2:1. Its SMC is strictly accepted net credit, distinct from source-task whole-task/trajectory SMC. Local tools are permitted; external retrieval/tool networking is not. Independent answers may run concurrently, but each trajectory is sequential. Use the [complete rules and metric index](scoring-guide.md#english) for every definition, denominator and detailed component document.
