@@ -406,15 +406,15 @@
       const delivery=value.delivery;
       const label=(delivery.unknown?'≥':'')+delivery.normal+'/'+delivery.planned+' · '+(delivery.normal/delivery.planned*100).toFixed(1)+'%';
       const cell=row.querySelector('.delivery-cell')||row.cells[3];
-      cell.textContent=label;cell.title='39项原初答＋3轮Lean自查＋3轮独立开放研究。仅首次正常final计入；原记录缺证据时保留未知。';
-      const mobile=row.querySelector('.mobile-delivery');if(mobile)mobile.textContent='整体交付 '+label;
+      cell.textContent=label;cell.title=en?'39 initial answers + 3 Lean self-checks + 3 independent-research manuscripts. Only first normal finals count; missing source evidence remains unknown.':'39项原初答＋3轮Lean自查＋3轮独立开放研究。仅首次正常final计入；原记录缺证据时保留未知。';
+      const mobile=row.querySelector('.mobile-delivery');if(mobile)mobile.textContent=(en?'Overall delivery ':'整体交付 ')+label;
     }
     for(const link of doc.querySelectorAll('a[href]')) {
       const u=new URL(link.href,doc.baseURI);
       if(u.origin===location.origin && /\/models\/|\/method\.html$/.test(u.pathname)){u.searchParams.set('edition','1.2.0');link.href=u.href;link.dataset.fixedEdition='';}
     }
     for(const legend of doc.querySelectorAll('#leaderboard .legend-item[data-display-mode]')) {
-      const labels={strict:'SMC综合',partial:'RMC综合',capability:scoreModeBoard(board)?'MC综合':'MC基准综合'};
+      const labels=en?{strict:'SMC composite',partial:'RMC composite',capability:scoreModeBoard(board)?'MC composite':'MC baseline composite'}:{strict:'SMC综合',partial:'RMC综合',capability:scoreModeBoard(board)?'MC综合':'MC基准综合'};
       if(legend.lastChild?.nodeType===3)legend.lastChild.textContent=labels[legend.dataset.displayMode];
     }
     for(const cell of doc.querySelectorAll('#ranking thead .delivery-cell'))cell.textContent=en?'Delivery rate / 45':'整体交付率 / 45';
