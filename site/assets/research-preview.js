@@ -11,7 +11,8 @@
   const valueSchema = 'math-gauge.research-board-preview/v3';
   const strictCreditSchema = 'math-gauge.research-board-preview/v4';
   const itemWeightSchema = 'math-gauge.research-board-preview/v5';
-  const strictCreditBoard = board => [strictCreditSchema, itemWeightSchema].includes(board.schema);
+  const externalSchema = 'math-gauge.research-board-preview/v6';
+  const strictCreditBoard = board => [strictCreditSchema, itemWeightSchema, externalSchema].includes(board.schema);
   const valueBoard = board => board.schema === valueSchema || strictCreditBoard(board);
   const scoreModeBoard = board => board.schema === scoreModeSchema || valueBoard(board);
   const boardAxes = board => valueBoard(board) ? axes.slice(1) : axes;
@@ -71,7 +72,9 @@
     const baseline = data.kind === 'existing-model-unmeasured';
     const settled = data.kind === 'settled-selected-configurations';
     const scoreModes = scoreModeBoard(data), revised = valueBoard(data), strictCredit = strictCreditBoard(data);
-    const weighted = data.schema === itemWeightSchema;
+    const hasExternal = data.schema === externalSchema;
+    const weighted = data.schema === itemWeightSchema || hasExternal;
+    const hasNative = Object.hasOwn(data, 'native_binding');
     const displayAxes = boardAxes(data), axisIds = displayAxes.map(([id]) => id);
     const fields = ['schema', 'edition', 'kind', 'category', 'rank_eligible', 'default_order', 'weights_ratified', 'rows'];
     if (baseline || settled) fields.push('source_binding');
@@ -80,6 +83,8 @@
     if (revised) fields.push('value_binding', 'item_weights');
     if (strictCredit) fields.push('strict_credit_binding');
     if (weighted) fields.push('item_weight_binding');
+    if (hasExternal) fields.push('external_binding');
+    if (hasNative) fields.push('native_binding');
     if (!keys(data, fields) ||
         (!scoreModes && data.schema !== 'math-gauge.research-board-preview/v1') || data.edition !== '1.3.0' || (!baseline && !settled && data.kind !== 'synthetic-fixture') ||
         data.rank_eligible !== false || data.weights_ratified !== false || data.default_order !== 'retained-base-SMC' ||
@@ -123,18 +128,45 @@
         !/^[a-f0-9]{64}$/.test(data.adoption.batch_sha256) || !/^[a-f0-9]{64}$/.test(data.adoption.index_sha256) ||
         data.adoption.human_review !== 'pending' || !uniqueIds(data.adoption.cohort) || !uniqueIds(data.adoption.planned_cohort) ||
         !data.adoption.cohort.every(id => data.adoption.planned_cohort.includes(id)))) throw new Error('Unbound configuration adoption');
+    const adoptedIds = new Set(settled ? data.adoption.cohort : []);
+    if (hasExternal) {
+      const binding = data.external_binding;
+      if (!settled || !keys(binding, ['index_sha256', 'adoption_sha256', 'cohort', 'source_kind', 'policy_bindings', 'human_review']) ||
+          !hash(binding.index_sha256) || !hash(binding.adoption_sha256) || !uniqueIds(binding.cohort) ||
+          binding.human_review !== 'pending' || binding.source_kind !== 'external-handoff-operator-attestation' ||
+          !keys(binding.policy_bindings, ['value', 'strict_credit', 'item_weight']) ||
+          binding.policy_bindings.value !== data.value_binding.policy_sha256 ||
+          binding.policy_bindings.strict_credit !== data.strict_credit_binding.policy_sha256 ||
+          binding.policy_bindings.item_weight !== data.item_weight_binding.policy_sha256 ||
+          binding.cohort.some(id => adoptedIds.has(id))) throw new Error('Unbound external adoption');
+      binding.cohort.forEach(id => adoptedIds.add(id));
+    }
+    const nativeKind = 'native-agy-same-conversation-sealed-finals';
+    const nativeIds = new Set();
+    if (hasNative) {
+      const binding = data.native_binding;
+      if (!settled || !weighted || !keys(binding, ['index_sha256', 'adoption_sha256', 'cohort', 'source_kind', 'policy_bindings', 'human_review']) ||
+          !hash(binding.index_sha256) || !hash(binding.adoption_sha256) || !uniqueIds(binding.cohort) ||
+          binding.human_review !== 'pending' || binding.source_kind !== nativeKind ||
+          !keys(binding.policy_bindings, ['value', 'strict_credit', 'item_weight']) ||
+          binding.policy_bindings.value !== data.value_binding.policy_sha256 ||
+          binding.policy_bindings.strict_credit !== data.strict_credit_binding.policy_sha256 ||
+          binding.policy_bindings.item_weight !== data.item_weight_binding.policy_sha256 ||
+          binding.cohort.some(id => adoptedIds.has(id))) throw new Error('Unbound native adoption');
+      binding.cohort.forEach(id => {nativeIds.add(id);adoptedIds.add(id);});
+    }
     const rowFields = ['id', 'label', 'kind', 'base_smc', 'components', 'task_strict', 'item', 'coverage', 'strict_overall', 'composite', 'composites', 'confirmed', 'strict_confirmed', 'delivery'];
     if (scoreModes) rowFields.push('score_modes', 'criteria');
     const seen = new Set();
     for (const row of data.rows) {
       if (!keys(row, rowFields) ||
-          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== data.kind || typeof row.label !== 'string' ||
+          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== (nativeIds.has(row.id) ? nativeKind : data.kind) || typeof row.label !== 'string' ||
           !(score(row.base_smc) || bounds(row.base_smc)) || !keys(row.components, axisIds) || !bounds(row.strict_overall) || !bounds(row.composite) || !keys(row.composites, ['MC','RMC','SMC']) || !Object.values(row.composites).every(bounds) || !keys(row.confirmed,['MC','RMC','SMC']) || !Object.values(row.confirmed).every(score) || !score(row.strict_confirmed) || !keys(row.delivery,['planned','normal','unknown']) || row.delivery.planned!==45 || !Number.isInteger(row.delivery.normal) || !Number.isInteger(row.delivery.unknown) || row.delivery.normal<0 || row.delivery.unknown<0 || row.delivery.normal+row.delivery.unknown>45 || !bounds(row.item) ||
           ![0, 100, null].includes(row.task_strict) || !keys(row.coverage, ['planned', 'reviewed', 'components_planned', 'components_reviewed']) ||
           row.coverage.planned !== 1 || row.coverage.components_planned !== axisIds.length || ![0, 1].includes(row.coverage.reviewed) ||
           !Number.isInteger(row.coverage.components_reviewed) || row.coverage.components_reviewed < 0 ||
           row.coverage.components_reviewed > axisIds.length) throw new Error('Unexpected row or private payload');
-      const unmeasured = baseline || (settled && !data.adoption.cohort.includes(row.id));
+      const unmeasured = baseline || (settled && !adoptedIds.has(row.id));
       if (unmeasured && (row.task_strict !== null || row.coverage.reviewed !== 0 || row.coverage.components_reviewed !== 0 || row.strict_overall.exact !== null || row.composite.exact !== null)) throw new Error('Unmeasured model acquired a research result');
       if (scoreModes) validateModes(row, axisIds, unmeasured, strictCredit);
       seen.add(row.id);
@@ -149,6 +181,8 @@
       }
     }
     if (settled && !data.adoption.planned_cohort.every(id => seen.has(id))) throw new Error('Missing planned configuration');
+    if (hasExternal && !data.external_binding.cohort.every(id => seen.has(id))) throw new Error('Missing external configuration');
+    if (hasNative && !data.native_binding.cohort.every(id => seen.has(id))) throw new Error('Missing native configuration');
     return data;
   }
   function componentCell(value) {
@@ -294,6 +328,37 @@
     const label = statuses[state][lang === 'en' ? 1 : 0];
     return {text:state === 'not-tested' ? '' : label, label};
   }
+  function categoryScoreLabel(board, axis, lang, weighted) {
+    const en = lang === 'en';
+    if (axis === 'item') return en ? 'Composite' : '综合';
+    const label = en ? labelsEn[axis] : axes.find(([id]) => id === axis)[1];
+    if (!weighted) return label;
+    const {taste, capacity} = board.item_weights;
+    const share = board.item_weights[axis]+'/'+(taste+capacity);
+    return en ? label+' ('+share+')' : label+'（'+share+'）';
+  }
+  function categoryComponents(data) {
+    const board = data.research_preview;
+    if (data.benchmark_version !== '1.3.0' || !board || !valueBoard(board)) return null;
+    const byModel = new Map(board.rows.map(row => [row.id, row]));
+    return {
+      id:categoryId, axes:boardAxes(board).map(([id]) => id),
+      label:(axis, lang, weighted) => categoryScoreLabel(board, axis, lang, weighted),
+      metric(id, mode, axis) {
+        const view = byModel.get(id)?.score_modes[mode];
+        const metric = axis === 'item' ? view?.item : view?.components[axis];
+        return metric ? {...metric, value:metric.exact} : {value:null, state:'unavailable'};
+      }
+    };
+  }
+  function localizeCategoryScores(doc, board, lang, count) {
+    for (const label of doc.querySelectorAll('[data-research-score-label]')) {
+      const grouped = Object.hasOwn(label.dataset, 'researchScoreGroup');
+      const text = categoryScoreLabel(board, label.dataset.researchScoreLabel, lang, grouped);
+      if (label.textContent !== text) label.textContent = text;
+      if (grouped && label.colSpan !== count) label.colSpan = count;
+    }
+  }
   function mountCategory(doc) {
     const template = doc.getElementById('independent-research-category-template');
     const tabs = doc.querySelector('#category-leaderboards .category-tabs');
@@ -316,9 +381,10 @@
     if (!table) return;
     doc.documentElement.setAttribute('data-independent-research-preview','');
     const en = mg.state.lang === 'en';
-    const referenceScope = en ? 'Reference for retained 1.2.0 answers' : '1.2.0 采用答卷参考';
-    const frontierScope = en ? 'Scores, costs and timings are all from 1.2.0' : '图中成绩、成本和耗时均来自 1.2.0';
-    for (const [headingId, text] of [['cost-title', referenceScope], ['timing-title', referenceScope], ['cost-frontier-title', frontierScope]]) {
+    const costScope = en ? 'Costs for retained evaluation runs' : '采用记录的评测成本';
+    const timingScope = en ? 'Shared timed tasks · excludes independent open research' : '共有计时任务 · 不含独立开放研究';
+    const frontierScope = en ? 'Scores and resource use from retained evaluation records' : '采用评测记录中的成绩、成本与耗时';
+    for (const [headingId, text] of [['cost-title', costScope], ['timing-title', timingScope], ['cost-frontier-title', frontierScope]]) {
       const heading = doc.getElementById(headingId);
       if (!heading) continue;
       const id = `${headingId}-baseline-scope`;
@@ -371,6 +437,10 @@
       const weight=board.weight_frame[categoryId];
       categoryDesc.textContent=en?`Category / 100 · overall weight ${weight}%`:`类内满分100 · 总榜权重${weight}%`;
     }
+    if (valueBoard(board)) {
+      const shown = root.MGBoards?.readBoard(location.search, categoryId).shown.length ?? modes.length;
+      localizeCategoryScores(doc, board, mg.state.lang, shown);
+    }
     for (const readout of doc.querySelectorAll('[data-research-category-state]')) {
       const display=categoryStatus(readout.dataset.researchCategoryState, mg.state.lang);
       if(display){readout.textContent=display.text;readout.setAttribute('aria-label',display.label)}
@@ -380,6 +450,7 @@
     }
   }
   api.categoryStatus = categoryStatus;
+  api.categoryComponents = categoryComponents;
   api.decorate = decorate;
   if (typeof document !== 'undefined') {
     root.addEventListener('mg:updated', decorate);

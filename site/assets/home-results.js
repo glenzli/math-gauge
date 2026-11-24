@@ -1,11 +1,26 @@
 (() => {
  const {d,state,modes,el,f,node,result,headline,compareScores,compareModelOrder,rankedScores,short,table,href,download,start}=MG;
  const harnessName=m=>m.harness_display_name||m.harness.name;
+ const categoryHarness=d.benchmark_version!=='1.3.0';
+ const research=window.MGResearchPreview?.categoryComponents?.(d);
  const visibleModels=(scope='overall')=>(scope==='initiative'?[...d.models,...(d.pending_models||[])]:d.models)
   .filter(m=>m.presentation_eligibility?.ranked!==false);
  const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
  const renderedViews=new Map();
  const displayKey=(key,score=state.score)=>JSON.stringify([key,state.condition,score]);
+ function scoreReadout(node,metric,text,interval,tooltip=node){
+  const status=metric.value==null?window.MGResearchPreview?.categoryStatus?.(metric.state,state.lang):null;
+  node.textContent=status?status.text:text;
+  if(metric.state!=='not-tested')tooltip.title=interval;
+  else tooltip.removeAttribute('title');
+  if(status){node.dataset.researchCategoryState=metric.state;node.setAttribute('aria-label',status.label)}
+  return status?status.label:text;
+ }
+ function researchLabel(element,axis,weighted){
+  element.dataset.original='';
+  element.dataset.researchScoreLabel=axis;
+  element.textContent=research.label(axis,state.lang,weighted);
+ }
  function editionCharts(){
   Object.entries(d.chart_scenes||{}).forEach(([id,scene])=>{
    const groups=el(id);if(!groups)return;
@@ -27,10 +42,10 @@
     const spoken=[];
     Object.entries(modes).forEach(([mode,value])=>{
      const row=group.querySelector('.metric-bar-row[data-score-mode="'+mode+'"]'),bar=row.querySelector('.score-bar'),readout=row.querySelector('.chart-value');
-     bar.dataset.score=value.value??'';bar.style.left=value.left+'%';bar.style.width=value.width+'%';readout.textContent=value.text;readout.title=value.interval;
-     spoken.push(modes[mode].text);
+     bar.dataset.score=value.value??'';bar.style.left=value.left+'%';bar.style.width=value.width+'%';
+     spoken.push(scoreReadout(readout,value,value.text,value.interval));
     });
-    const model=d.models.find(m=>m.id===mid);group.setAttribute('aria-label',model.label+' · '+['MC','RMC','SMC'].map((name,i)=>name+' '+Object.values(modes)[i].text).join('，'));
+    const model=d.models.find(m=>m.id===mid);group.setAttribute('aria-label',model.label+' · '+['MC','RMC','SMC'].map((name,i)=>name+' '+spoken[i]).join('，'));
    });
   });
  }
@@ -93,16 +108,45 @@
    const score=chartSort[g.id],key='category-'+g.id,value=displayKey(g.id,score);
    if(renderedViews.get(key)===value)return;
    renderedViews.set(key,value);
-   table('category-ranking-'+g.id,['#','模型','Harness',...d.display_score_modes.map(m=>m.abbreviation)],[]);
-   const t=el('category-ranking-'+g.id);t.tHead.rows[0].cells[2].className='category-harness';
-   d.display_score_modes.forEach((mode,index)=>t.tHead.rows[0].cells[index+3].dataset.displayMode=mode.id);
+   const grouped=research?.id===g.id,parts=grouped?['item',...research.axes]:['item'];
+   const t=table('category-ranking-'+g.id,['#','模型',...(categoryHarness?['Harness']:[])],[]);
+   const header=t.tHead.rows[0];
+   if(categoryHarness)header.cells[2].className='category-harness';
+   let modeHeader=header;
+   if(grouped){
+    t.classList.add('research-score-table');
+    t.parentElement.tabIndex=0;
+    t.parentElement.setAttribute('aria-labelledby','category-tab-'+g.id);
+    t.parentElement.setAttribute('role','region');
+    for(const cell of header.cells)cell.rowSpan=2;
+    for(const axis of parts){
+     const cell=node('th');cell.id='research-score-'+axis;
+     cell.colSpan=d.display_score_modes.length;cell.dataset.researchScoreGroup='';
+     researchLabel(cell,axis,true);header.append(cell);
+    }
+    modeHeader=t.tHead.insertRow();
+   }
+   for(const axis of parts)for(const mode of d.display_score_modes){
+    const cell=node('th',mode.abbreviation);cell.scope='col';cell.dataset.displayMode=mode.id;
+    if(grouped){
+     cell.id='research-score-'+axis+'-'+mode.id;cell.className='research-score-mode';
+     if(axis==='item'&&mode.id===score)cell.setAttribute('aria-sort','descending');
+    }
+    modeHeader.append(cell);
+   }
    const views=Object.fromEntries(d.score_modes.map(mode=>[mode,Object.fromEntries(g.views[mode].map(r=>[r.model_id,r]))]));
    const items=g.views[score].filter(item=>byId[item.model_id]);
    orderChart('category-chart-groups-'+g.id,items.map(item=>byId[item.model_id]));
    items.forEach(item=>{
     const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank??'—';r.insertCell().append(modelLink(m,score));
-    const harness=r.insertCell();harness.className='category-harness';harness.textContent=harnessName(m);
-    d.display_score_modes.forEach(mode=>{const v=views[mode.id][m.id],c=r.insertCell();c.dataset.displayMode=mode.id;c.className='numeric score-cell'+(mode.id===score?' primary-score':'');if(v.value<0)c.classList.add('negative');c.append(node('span',f(v.value),'score-number'));c.title='完整分区间 '+f(v.lower)+'–'+f(v.upper)});
+    if(categoryHarness){const harness=r.insertCell();harness.className='category-harness';harness.textContent=harnessName(m);}
+    for(const axis of parts)for(const mode of d.display_score_modes){
+     const v=grouped?research.metric(m.id,mode.abbreviation,axis):views[mode.id][m.id],c=r.insertCell();
+     c.dataset.displayMode=mode.id;c.className='numeric score-cell'+(axis==='item'&&mode.id===score?' primary-score':'');
+     if(grouped)c.setAttribute('headers','research-score-'+axis+' research-score-'+axis+'-'+mode.id);
+     if(v.value<0)c.classList.add('negative');
+     const text=node('span',null,'score-number');scoreReadout(text,v,f(v.value),v.lower==null?'':'完整分区间 '+f(v.lower)+'–'+f(v.upper),c);c.append(text);
+    }
    });
   });
   selectCategory(category,false);

@@ -2,7 +2,7 @@
 (() => {
  'use strict';
  const scores=[{id:'strict',key:'smc'},{id:'partial',key:'rmc'},{id:'capability',key:'mc'}];
- const series={overall:scores,written:scores,lean:scores,research:scores,
+ const series={overall:scores,written:scores,lean:scores,research:scores,independent_open_research:scores,
   gap:[{id:'RG',key:'rg'},{id:'DG',key:'dg'}],
   rates:[{id:'reliability',key:'reliability'},{id:'attainment',key:'attainment'}],
   initiative:[{id:'groups',key:'groups'},{id:'coverage',key:'coverage'}]};
