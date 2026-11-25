@@ -275,8 +275,29 @@ class CurrentSiteTests(unittest.TestCase):
                         target = 'downloads/engineering/' + source['sha256'] + '/' + name
                         downloads.add(target)
                         self.assertEqual(before[target], evidence_bytes(folder, item))
+            from math_gauge.dot_rerun_admission import MODEL as DOT_ID, load_public as load_dot
+            from math_gauge.dot_rerun_timings import load_public as load_dot_timings
+            dot = load_dot(ROOT)
+            dot_clock = load_dot_timings(ROOT)
+            if dot:
+                for mode, suffix in [('partial',''), ('capability','-capability'), ('strict','-strict')]:
+                    name = 'downloads/'+DOT_ID+'-combined'+suffix+'-retry.json'
+                    downloads.add(name)
+                    self.assertEqual(before[name], evidence_bytes(ROOT, dot['revised']['scores'][mode]))
+                    self.assertIn('versions/1.3.0/'+name, before)
+                    self.assertNotIn('versions/1.1.0/'+name, before)
+                first = json.loads(before['data/editions/1.1.0/index.json'])['data']['models']
+                self.assertNotIn(DOT_ID, {m['id'] for m in first})
+                self.assertIn(('data-model="'+DOT_ID+'"').encode(), before['index.html'])
+            if dot_clock is not None:
+                clock_path = f'downloads/{DOT_ID}-timings.json'
+                downloads.add(clock_path)
+                clock_download = json.loads(before[clock_path])
+                if receipt := dot_clock.get('clock_receipt'):
+                    self.assertEqual(clock_download.pop('replacement_observations'), receipt['subjects'])
+                    self.assertTrue(clock_download.pop('native_work_clock_scope'))
+                self.assertEqual(clock_download, dot_clock['report'])
             self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
-            from math_gauge.records import evidence_bytes
             for model in self.data['models']:
                 manifest = json.loads(evidence_bytes(ROOT, model['neutral_revision']['manifest']))
                 selected = manifest['scores']
@@ -297,6 +318,12 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertEqual({path for path in before if path.startswith('versions/1.1.0/downloads/')
                               and '-combined' in path}, source_downloads)
             timings=json.loads(before['downloads/timing-reference.json'])
+            if dot_clock is not None:
+                row = timings['models'].pop()
+                self.assertEqual(row['id'], DOT_ID)
+                self.assertEqual(row['summaries'], dot_clock['report']['summaries'])
+                self.assertEqual(row.get('chapter_bounds_seconds'), dot_clock.get('chapter_bounds_seconds'))
+                self.assertEqual(timings.pop('additions'), [dot_clock['source']])
             self.assertEqual(timings,SITE.build_reference(SITE.ROOT,display_data=self.data))
             owned = json.loads(before['generated-pages.json'])
             self.assertEqual(set(before), set(owned)|{'generated-pages.json'})

@@ -298,30 +298,36 @@ def validate_public(index, *, policies=None, baseline_hash=None, model_ids=None)
           and set(index['cohort']) <= set(CONFIGURATIONS)
           and (model_ids is None or set(index['cohort']) <= set(model_ids)), 'Unexpected native cohort')
     for row in index['models'].values():
-        _need(_fields(row, ('status', 'axes', 'criteria', 'strict_credit', 'extension_level', 'autonomy_score',
-                           'normal_rounds', 'round_dispatches', 'source_sha256'))
-              and row['status'] == 'reviewed' and row['normal_rounds'] == row['round_dispatches'] == 3
-              and adoption._is_hash(row['source_sha256']) and row['extension_level'] in value.EXTENSION
-              and modes._score(row['autonomy_score'])
-              and all(_fields(row[k], value.AXES) for k in ('axes', 'criteria', 'strict_credit')),
-              'Invalid native aggregate or leaked private inventory')
-        for axis in value.AXES:
-            grade, count, bound = row['axes'][axis], row['criteria'][axis], row['strict_credit'][axis]
-            _need(_fields(grade, ('mc', 'rmc', 'strict')) and modes._score(grade['mc'])
-                  and modes._score(grade['rmc']) and grade['rmc'] <= grade['mc']
-                  and _fields(count, ('planned', 'passed', 'unknown'))
-                  and all(type(v) is int and v >= 0 for v in count.values())
-                  and count['planned'] == (3 if axis == 'taste' else 5)
-                  and count['passed'] + count['unknown'] <= count['planned']
-                  and grade['strict'] is modes._criteria_flag(count), 'Invalid native axis score or coverage')
-            _need(_fields(bound, ('lower', 'upper', 'exact'))
-                  and all(modes._score(bound[k]) for k in ('lower', 'upper'))
-                  and bound['lower'] <= bound['upper'] <= grade['rmc']
-                  and (bound['exact'] is None or bound['lower'] == bound['upper'] == bound['exact']),
-                  'Invalid native strict net-credit interval')
-            direct = credit._direct(grade['rmc'], count)
-            _need(direct is None or bound == credit._bounds(direct), 'Direct native strict credit must retain its RMC')
+        validate_public_model(row)
     return index
+
+
+def validate_public_model(row):
+    """Validate anonymous native research credit without selecting a cohort."""
+    _need(_fields(row, ('status', 'axes', 'criteria', 'strict_credit', 'extension_level', 'autonomy_score',
+                       'normal_rounds', 'round_dispatches', 'source_sha256'))
+          and row['status'] == 'reviewed' and row['normal_rounds'] == row['round_dispatches'] == 3
+          and adoption._is_hash(row['source_sha256']) and row['extension_level'] in value.EXTENSION
+          and modes._score(row['autonomy_score'])
+          and all(_fields(row[k], value.AXES) for k in ('axes', 'criteria', 'strict_credit')),
+          'Invalid native aggregate or leaked private inventory')
+    for axis in value.AXES:
+        grade, count, bound = row['axes'][axis], row['criteria'][axis], row['strict_credit'][axis]
+        _need(_fields(grade, ('mc', 'rmc', 'strict')) and modes._score(grade['mc'])
+              and modes._score(grade['rmc']) and grade['rmc'] <= grade['mc']
+              and _fields(count, ('planned', 'passed', 'unknown'))
+              and all(type(v) is int and v >= 0 for v in count.values())
+              and count['planned'] == (3 if axis == 'taste' else 5)
+              and count['passed'] + count['unknown'] <= count['planned']
+              and grade['strict'] is modes._criteria_flag(count), 'Invalid native axis score or coverage')
+        _need(_fields(bound, ('lower', 'upper', 'exact'))
+              and all(modes._score(bound[k]) for k in ('lower', 'upper'))
+              and bound['lower'] <= bound['upper'] <= grade['rmc']
+              and (bound['exact'] is None or bound['lower'] == bound['upper'] == bound['exact']),
+              'Invalid native strict net-credit interval')
+        direct = credit._direct(grade['rmc'], count)
+        _need(direct is None or bound == credit._bounds(direct), 'Direct native strict credit must retain its RMC')
+    return row
 
 
 def load_public(root):

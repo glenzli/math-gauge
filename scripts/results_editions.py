@@ -422,7 +422,10 @@ def _neutral_payload(page, base, data, projections):
         result = project_payload(data)
         logos = {model['id']: model['logo'] for model in base['models']}
         for model in result['models']:
-            model['logo'] = copy.deepcopy(logos[model['id']])
+            mid = model['id']
+            if mid == 'dot-20261125':
+                mid = 'dot-underlying-model-20261108'
+            model['logo'] = copy.deepcopy(logos[mid])
         return result
     result = copy.deepcopy(base)
     result['benchmark_version'] = '1.2.0'
@@ -536,6 +539,11 @@ def prepare_neutral_publication(files, root, current_data, *, base_data, base_ti
             unavailable=payload.get('edition_unavailable', False), timing=current_timing, cost=current_cost)
         if page == 'index.html':
             logos = {model['id']: model['logo'] for model in base_envelope['data']['models']}
+            published_brands = {logo['sha256']: logo for logo in logos.values() if logo.get('sha256')}
+            for model in current_data['models']:
+                if model['id'] not in logos:
+                    logo = model['logo']
+                    logos[model['id']] = published_brands.get(logo.get('sha256'), logo)
             for name, id_key in [('timing-reference-data', 'id'), ('cost-reference-data', 'model_id')]:
                 if extra.get(name):
                     for model in extra[name]['models']:

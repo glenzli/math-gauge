@@ -57,7 +57,7 @@ The table follows the current1.2.0 cohort and compares two research traits witho
 | Astra 6.2 (xHigh) | 90.00 | 92.00 | 8.57 |
 | Astra 6 (max) | 100.00 | 100.00 | 15.71 |
 | Astra 6 (xhigh) | 100.00 | 100.00 | 17.86 |
-| Dot Underlying (2026-11-08) | 90.00 | — | 13.57 |
+| Dot (261108) | 90.00 | — | 13.57 |
 | Sol 6.2 (max) | 100.00 | 100.00 | 15.00 |
 | Sol 6.2 (xhigh) | 90.00 | 90.00 | 12.86 |
 | Sol 6.1 (max) | 100.00 | 100.00 | 18.57 |

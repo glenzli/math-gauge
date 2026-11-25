@@ -98,7 +98,7 @@ MODEL_LABELS = {
     "astra-6.2-max": "Astra 6.2 (max)",
     "sol-6.2-xhigh": "Sol 6.2 (xhigh)",
     "sol-6.2-max": "Sol 6.2 (max)",
-    "dot-underlying-model-20261108": "Dot Underlying (2026-11-08)",
+    "dot-underlying-model-20261108": "Dot (261108)",
     "glm-5.3-max": "GLM 5.3 (max)",
     "kimi-3.1-pro-max": "Kimi 3.1 Pro (max)",
     "astra-6-max": "Astra 6 (max)",
@@ -124,7 +124,7 @@ MODEL_SHORT_LABELS = {
     "astra-6.2-max": "Astra 6.2 (max)",
     "sol-6.2-xhigh": "Sol 6.2 (xhigh)",
     "sol-6.2-max": "Sol 6.2 (max)",
-    "dot-underlying-model-20261108": "Dot (2026-11-08)",
+    "dot-underlying-model-20261108": "Dot (261108)",
     "glm-5.3-max": "GLM (max)",
     "kimi-3.1-pro-max": "Kimi (max)",
     "astra-6-max": "Astra (max)",
@@ -799,9 +799,11 @@ def is_fully_evaluated(model):
 
 
 def render(data, *, timing_reference=None, cost_reference=None, anomaly_reference=None, attempt_reference=None,
-           continuation_resources=(), source_root=None):
+           continuation_resources=(), source_root=None, page_geometry=None):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
+    if page_geometry is not None:
+        data = page_geometry
     rows = []
     ordered = overall_places(data['models'])
     harness_names, harness_notes = scoped_harness_notes(data['models'])
@@ -895,12 +897,45 @@ def write_site(destination, *, source_root=ROOT):
         timings = build_reference(source_root, display_data=data, base_reference=expanded)
     costs = (build_cost_reference(source_root, display_data=data, timing_reference=timings,
                                  base_reference=base_costs) if neutral else base_costs)
+    from math_gauge.dot_rerun_admission import load_public as load_dot_rerun
+    from scripts.results_dot_admission import add_edition_120, detail_page
+    dot_rerun = load_dot_rerun(source_root)
+    if dot_rerun is not None:
+        add_edition_120(data, base_data, dot_rerun)
+        from math_gauge.dot_native_profiles import append_edition_120 as append_dot_profile
+        append_dot_profile(source_root, data)
+        from math_gauge.dot_rerun_timings import append_reference as append_dot_timing
+        dot_model = next(m for m in data['models'] if m['id'] == 'dot-20261125')
+        append_dot_timing(source_root, timings, dot_model)
+        if costs is not None:
+            from scripts.cost_reference import append_dot_subscription_cost
+            append_dot_subscription_cost(source_root,costs,timings,dot_model)
     anomalies = load_execution_anomalies(source_root)
     attempts = load_attempt_history(source_root)
     # Resolve all evidence before changing navigation or writing any page.
     files = build_detail_pages(base_data, source_root, anomaly_reference=anomalies)
+    if dot_rerun is not None:
+        files['models/dot-20261125/index.html'] = detail_page(dot_rerun, root=source_root)
+    from math_gauge.dot_rerun_timings import load_public as load_dot_timings
+    dot_clock = load_dot_timings(source_root)
+    if dot_clock is not None:
+        report = dot_clock['report']
+        if dot_clock.get('clock_receipt'):
+            report = dict(report, replacement_observations=dot_clock['clock_receipt']['subjects'],
+                          native_work_clock_scope='solver-side monotonic work to artifact seal; not inference-only')
+        files['downloads/dot-20261125-timings.json'] = json.dumps(report, ensure_ascii=False, indent=2)+'\n'
     resources = [model['revision_resources'] for model in data['models'] if model.get('revision_resources')]
-    files["index.html"] = render(base_data, timing_reference=base_timings, cost_reference=base_costs,
+    # The shared DOM needs rows for every selectable edition. Keep the frozen
+    # historical payload unchanged; its controller hides rows outside its cohort.
+    geometry = base_data
+    if dot_rerun is not None:
+        from copy import deepcopy
+        geometry = deepcopy(base_data)
+        geometry['models'].append(deepcopy(next(m for m in data['models'] if m['id'] == 'dot-20261125')))
+        geometry['gap_diagnostics'] = gap_diagnostics(geometry['models'])
+        geometry['category_leaderboards'] = category_rankings(
+            geometry['models'], geometry['policy']['groups'], result_selector=selected_result)
+    files["index.html"] = render(base_data, page_geometry=geometry, timing_reference=base_timings, cost_reference=base_costs,
                                  anomaly_reference=anomalies, attempt_reference=attempts,
                                  continuation_resources=resources, source_root=source_root)
     files['downloads/timing-reference.json'] = json.dumps(timings,ensure_ascii=False,indent=2)+'\n'
@@ -916,6 +951,10 @@ def write_site(destination, *, source_root=ROOT):
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     files['assets/execution-anomalies.css'] = (Path(__file__).parent/'templates/execution-anomalies.css').read_text()
     for model in data["models"]:
+        if dot_rerun is not None and model['id'] == 'dot-20261125':
+            # This list is first migrated into the historical 1.1 directory.
+            # The neutral publisher separately installs the new 1.2 reports.
+            continue
         for scope in ["combined"]:
             files["downloads/"+model["id"]+"-"+scope+".json"] = json.dumps(model[scope], ensure_ascii=False, indent=2)+"\n"
             files["downloads/"+model["id"]+"-"+scope+"-retry.json"] = json.dumps(model["retry"][scope], ensure_ascii=False, indent=2)+"\n"

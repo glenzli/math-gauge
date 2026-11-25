@@ -1,5 +1,9 @@
 # 逐题耗时留档
 
+经用户选定的计时证据补采后，Dot (261125) 的 12 道共有公开题计时齐全。加权均值为 **151.72 秒（2.53 分钟）**，中位数为 **120.29 秒（2.00 分钟）**。其中 5 道沿用原计时，7 道采用补采答卷的计时。整章 Lean 首答按可证派发时段的**上界约 23.3 分钟**显示和排序，原始记录保留约 22.6–23.3 分钟的区间。协调者从派发到观察到交卷的计时包含工具、等待和观察延迟。独立研究三轮的 686 秒单列。[补采来源](../results/dot-native-timings/v0.1.0/dot-20261125/evidence-replacement-v1/index.json)
+
+Dot (261125) has timing observations for all 12 shared public tasks, with a weighted mean of **151.72 s (2.53 min)** and a median of **120.29 s (2.00 min)**. Five use the original clocks and seven use the clocks for the newly retained answers. The whole-chapter Lean first answer is displayed and sorted at its observed **upper bound of about 23.3 minutes**. The timing record retains the range of about 22.6–23.3 minutes. Coordinator observations include tools, waits and observation overhead. The independent study took 686 s across three rounds and is reported separately. [Replacement source](../results/dot-native-timings/v0.1.0/dot-20261125/evidence-replacement-v1/index.json)
+
 Carbon medium 的1.3独立研究三稿有效作答累计 **5747.134697秒，约95.79分钟**：首轮原两段及追加10分钟、5分钟，后两轮分别约24分48秒、10分59秒。按六段原控制器时钟求和，暂停、配额等待与评审耗时不计入；本值作为单题运行记录，不加入共有公开题的加权均值或中位数。首轮强收、后两轮正常交卷，原生累计会话时长未重复相加。
 
 Carbon medium’s selected 1.3 research trajectory totals **95.79 minutes** of effective answer time across six authorized serial segments. R1 is a forced cutoff submission; R2/R3 are normal finals. Pauses, quota downtime and evaluator work are excluded. This single-case duration remains separate from the shared public-task timing sample.
@@ -146,7 +150,7 @@ HCH02后端回复明确宣称40/40完成并附源码、对齐表，但回复代�
 | [Astra 6 max](../results/v0.6.0/astra-6-max/20261109/answer-timings.json) | 39/39 | 9.22 | 10.30 | 37.20 | 6.69 | 3/3 |
 | [Claude Opus 5.5 max](../results/v0.6.0/claude-opus-5.5-max/20261109/answer-timings.json) | 39/39 | 15.63 | 18.24 | 76.72 | 11.85 | 3/3 |
 | [DeepSeek v4.1 Flash 1017](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/deepseek-v4.1-flash-1017/20261109/answer-timings.json) | 27/39 | 9.92 | 10.53 | 25.60 | 4.74 | 0/3 |
-| [Dot Underlying (2026-11-08)](../results/v0.6.0/dot-underlying-model-20261108/20261108/answer-timings.json) | 38/39 | 3.49 | 4.91 | 18.28 | 3.11 | 3/3 |
+| [Dot (261108)](../results/v0.6.0/dot-underlying-model-20261108/20261108/answer-timings.json) | 38/39 | 3.49 | 4.91 | 18.28 | 3.11 | 3/3 |
 
 Terra xhigh、Sol两档、Astra及Opus用原生首次终态口径。Terra max与Gemini 3.8混合原运行器耗时和历史恢复摘要；Dot为协调者观察间隔，可能多含轮询延迟；DeepSeek为操作者交回摘要。覆盖、题目构成、运行批次和计时精度不同，这张总表不能直接充作同条件速度排名。
 

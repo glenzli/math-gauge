@@ -122,7 +122,20 @@ def prepare_research_preview(files, root):
         if addition.resource_ref is not None:
             result[f'versions/1.3.0/downloads/native-additions/{addition.identifier}-resources.json'] = native.flow._read(
                 root, addition.resource_ref).decode('utf-8')
+    from math_gauge.dot_rerun_admission import MODEL as DOT_ID, load_public as load_dot_rerun
+    from scripts.results_dot_admission import add_edition_130
+    dot_rerun = load_dot_rerun(root)
+    dot_normal_rounds = add_edition_130(root, display_source, envelope, original, dot_rerun, board, abilities, category_points)
+    # The retained1.3 baseline keeps its original timing sample. Append only
+    # the new Dot observer row, with the same1.2 clocks and no cost entry.
+    dot_time = envelope.get('supplemental', {}).get('timing-reference-data')
+    if dot_rerun is not None and dot_time is not None and not any(m['id'] == DOT_ID for m in dot_time['models']):
+        from math_gauge.dot_rerun_timings import append_reference as append_dot_timing
+        append_dot_timing(root, dot_time, next(m for m in envelope['data']['models'] if m['id'] == DOT_ID))
     source_models={m['id']:m for m in display_source['models']}
+    if dot_rerun is not None:
+        dot_model = next(m for m in json.loads(baseline.current_raw)['models'] if m['id'] == DOT_ID)
+        source_models[DOT_ID] = dot_model
     added_native = {a.identifier: a for a in additions}
     for row in board['rows']:
         model=source_models[row['id']]
@@ -140,6 +153,8 @@ def prepare_research_preview(files, root):
             normal += adopted['models'][row['id']]['normal_rounds']
         elif external_index and row['id'] in external_index['models']:
             normal += external_index['models'][row['id']]['normal_rounds']
+        elif row['id'] == DOT_ID and dot_rerun is not None:
+            normal += dot_normal_rounds
         elif native_index and row['id'] in native_index['models']:
             normal += native_index['models'][row['id']]['normal_rounds']
         elif row['id'] in added_native:
@@ -155,6 +170,8 @@ def prepare_research_preview(files, root):
     structure = profile_structure.load_public(root, benchmark_version=EDITION)
     if structure is not None:
         envelope['data']['profile_structure'] = structure
+    from math_gauge.dot_native_profiles import append_edition_130 as append_dot_profile
+    append_dot_profile(root, envelope['data'])
     # Project new composite metrics from shared scoring, retaining all old payloads.
     from math_gauge.scoring import research_preview_contributions
     weights = board['weight_frame']
@@ -225,7 +242,11 @@ def prepare_research_preview(files, root):
             if initiative is not None:
                 download['research_initiative'] = dict(initiative,
                     models=[entry for entry in initiative['models'] if entry['id'] == identifier])
-            if adopted and addition is None:
+            if model['id'] == DOT_ID:
+                download['dot_binding'] = copy.deepcopy(board['dot_binding'])
+                download['source_binding'] = dict(edition='1.2.0',
+                                                  score_report=dot_rerun['revised']['scores'][mode])
+            if adopted and addition is None and model['id'] != DOT_ID:
                 download['adoption_binding'] = copy.deepcopy(board['adoption'])
             if 'score_modes_binding' in board:
                 download['score_modes_binding'] = copy.deepcopy(board['score_modes_binding'])

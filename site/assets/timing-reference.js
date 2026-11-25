@@ -15,7 +15,8 @@
   method:['典型题、权重与来源','Sample, weights & sources'],selection:['日常五题分别代表书面论证、论证审阅、背景核查、命题拓展和想法手稿化。加权均值沿用五类现有权重 25:10:10:10:10，中位数直接取五题的中位。','Five everyday tasks cover written argument, argument review, background check, theorem extension and manuscript completion. The mean uses their existing 25:10:10:10:10 weights; the median is over the five durations.'],
   missing:['五题计时须齐全才给出汇总，缺少的整章形式化计时留空。自查和额外重试不在本表内。','All five clocks are required for a summary; missing chapter-formalization clocks stay blank. Self-checks and extra retries are separate.'],
   other:['仅比较当前采用答卷，已废弃的重跑不展示、不计入汇总。Gemini 3.8 合计原始运行与同工程续作，两段间等待不计入。','Only selected answers are compared; abandoned reruns are excluded from this display and its summaries. Gemini 3.8 sums its initial run and continuation of the same engineering, excluding the pause between them.'],
-  doc:['完整计时说明 ↗','Full timing documentation ↗'],passed:['整题达标','SMC passed'],incomplete:['未完全达标','SMC not met'],delivered:['已交卷','Delivered'],nondelivery:['未正常交卷','No normal final answer'],notrun:['未运行','Not run'],missingClock:['无计时','No timing'],timed:['计时','Timed'],includes:['含','Includes']
+  doc:['完整计时说明 ↗','Full timing documentation ↗'],passed:['整题达标','SMC passed'],incomplete:['未完全达标','SMC not met'],delivered:['已交卷','Delivered'],nondelivery:['未正常交卷','No normal final answer'],notrun:['未运行','Not run'],missingClock:['无计时','No timing'],timed:['计时','Timed'],includes:['含','Includes'],
+  upperBound:['上界','Upper'],chapterUpperBound:['整章耗时按已知派发时段的上界显示','Whole-chapter time uses the upper bound from the observed dispatch window']
  };
  if(data.benchmark_version==='1.2.0')Object.assign(messages,{
   subtitle:[`各模型共有计时的 ${data.daily_case_ids.length} 道非 Lean 题，另列整章形式化。单位为分钟。`,
@@ -32,7 +33,11 @@
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const number=(value,digits=1)=>value.toLocaleString(state.lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:digits,maximumFractionDigits:digits});
  const duration=seconds=>seconds==null?'—':number(seconds/60);
- function value(model,key){return key==='lean'?model.summaries['MG-C003'].median_seconds:model.summaries.daily[key==='weighted'?'weighted_mean_seconds':'median_seconds']}
+ function chapterUpperBound(model){return model.summaries['MG-C003'].median_seconds==null?model.chapter_bounds_seconds?.[1]:undefined}
+ function value(model,key){
+  if(key==='lean')return model.summaries['MG-C003'].median_seconds??chapterUpperBound(model);
+  return model.summaries.daily[key==='weighted'?'weighted_mean_seconds':'median_seconds'];
+ }
  function scale(values){
   const maximum=Math.max(1,...values.filter(v=>v!=null).map(v=>v/60)),rough=maximum/4,power=10**Math.floor(Math.log10(rough));
   const step=([1,2,2.5,5,10].find(v=>v*power>=rough)||10)*power;
@@ -93,7 +98,9 @@
     cell.dataset.metric=key;cell.dataset.scaleMax=String(shared.maximum);cell.dataset.seconds=seconds==null?'':String(seconds);cell.setAttribute('role','group');cell.setAttribute('aria-label',t(key));
     const track=node('div',null,'timing-track');track.style.setProperty('--timing-grid-step',(shared.step/shared.maximum*100)+'%');track.setAttribute('aria-hidden','true');
     if(seconds!=null){const fill=node('div',null,'timing-fill');fill.style.width=(seconds/60/shared.maximum*100)+'%';track.append(fill)}
-    const readout=node('span',null,'timing-readout');readout.append(node('small',t(key+'Short')),node('span',duration(seconds),'timing-number'));
+    const usesUpperBound=key==='lean'&&chapterUpperBound(model)!=null;
+    const readout=node('span',null,'timing-readout');readout.append(node('small',t(usesUpperBound?'upperBound':key+'Short')),node('span',duration(seconds),'timing-number'));
+    if(usesUpperBound){readout.title=t('chapterUpperBound');cell.setAttribute('aria-label',t('chapterUpperBound'))}
     cell.append(track,readout);bars.append(cell);
    });row.append(bars);body.append(row);
   });chart.replaceChildren(caption,sharedAxis,body);

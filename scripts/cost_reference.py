@@ -207,6 +207,46 @@ def revision_reference(root, display_data, timing_reference, base_reference):
     return result
 
 
+def append_dot_subscription_cost(root, costs, timing_reference, model):
+    """Append only the expressly selected current Dot marginal-cost observation."""
+    import copy
+    from math_gauge.dot_rerun_timings import load_public
+    from math_gauge.dot_evidence_timing import COST_BASIS, COST_NOTE
+    selected=load_public(root)
+    if not selected or selected.get('cost') is None:
+        return
+    model_id=model['id']
+    if (model_id!='dot-20261125' or costs.get('benchmark_version')!='1.2.0'
+            or any(r['model_id']==model_id for r in costs['models'])
+            or selected['cost']['basis']!=COST_BASIS or selected['cost']['total_usd']!=0):
+        raise ValueError('Dot subscription cost belongs to the corrected current Dot record only')
+    # The 1.3 archived envelope may not carry the 1.2 Dot row yet,
+    # but the same source-bound timing companion is still available.
+    clock=next(m for m in timing_reference['models'] if m['id']==model_id) if timing_reference else selected['report']
+    delivered=model.get('answer_delivery') or model['retry']['combined'].get('submission_summary') or {}
+    # $0 is a subscription policy observation. Token coverage is unknown, not
+    # synthesized as complete usage. Coverage here is for incremental billing.
+    costs['models'].append(dict(model_id=model_id,record_id='20261125',label=model['label'],
+        status='observed',total_usd=0,known_usd=0,estimate_range_usd=None,
+        pricing_basis=COST_BASIS,cost_note=copy.deepcopy(COST_NOTE),cost_source=copy.deepcopy(selected['source']),
+        theme=model['theme'],logo=model['logo'],presentation_eligibility=model.get('presentation_eligibility',{}),
+        seconds=clock['summaries']['daily']['weighted_mean_seconds'],scores=_dot_cost_scores(model),
+        coverage=dict(planned=0,complete=0,partial=0,missing=0,not_run=0),
+        token_usage='unknown',answer_delivery=dict(planned=39,active_final=delivered.get('active_final'),
+            complete=delivered.get('active_final')==39)))
+    costs['frontiers']=_frontiers(costs['models'])
+
+
+def _dot_cost_scores(model):
+    result={}
+    for mode in SCORE_MODES:
+        report=model['retry']['combined'] if mode=='partial' else model[mode]['nonlogical_retry_3']
+        metrics=report['metrics']; overall=metrics['overall']
+        result[mode]=dict(value=metrics['earned']['confirmed'],complete=overall['exact'] is not None,
+                          lower=overall['lower'],upper=overall['upper'])
+    return result
+
+
 def independent_research_reference(root, display_data, base_reference, *, adoption, external_adoption=None,
                                    native_adoption=None, native_additions=()):
     """Use the 1.3 scores and add full candidate cost. Retain the shared timing sample."""
@@ -249,6 +289,9 @@ def independent_research_reference(root, display_data, base_reference, *, adopti
                 if selected is not None: reported_costs[addition.identifier] = selected
     display = {model['id']: model for model in display_data['models']}
     result = copy.deepcopy(base_reference)
+    dot=display.get('dot-20261125')
+    if dot is not None and not any(row['model_id']==dot['id'] for row in result['models']):
+        append_dot_subscription_cost(root,result,None,dot)
     result.update(benchmark_version='1.3.0', base_assessment_version='1.2.0',
                   independent_research_in_time_reference=False,
                   independent_research_resource_source=DATA_PATH if resource else None,
@@ -265,6 +308,13 @@ def independent_research_reference(root, display_data, base_reference, *, adopti
         mid = row['model_id']
         model = display[mid]
         increment = resources.get(mid)
+        if mid=='dot-20261125' and row.get('pricing_basis')=='subscription_marginal_zero':
+            # The explicitly authorized current subscription marginal price
+            # covers the same Dot record in both editions, including its
+            # retained study. Do not manufacture research token costs.
+            row['scores']=_dot_cost_scores(model)
+            row['independent_research_resources']=copy.deepcopy(increment)
+            continue
         if increment is None:
             planned = len(ROUNDS)
             unknown = adoption['models'].get(mid, {}).get('round_dispatches', 0) if adoption else 0

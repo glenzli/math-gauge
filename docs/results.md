@@ -4,7 +4,7 @@
 
 ## 1.3.0：已采用的独立研究结果
 
-下表使用共享生成器的已采用结果；18个配置已有三稿及独立审核。Carbon medium 保留首轮强收、后两轮正常交卷的真实来源。人工数学审核待完成。
+下表列出 19 个已采用三稿独立研究结果的配置。Carbon medium 采用首轮截止稿和后两轮正常答卷。新增研究结果经 AI 审核，人工数学审核待完成。[在线总榜](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 
 | 模型 | SMC | RMC | MC |
 |---|---:|---:|---:|
@@ -12,6 +12,7 @@
 | Astra 6 (max) | 90.42 | 94.09 | 94.13 |
 | Sol 6.1 (max) | 90.19 | 93.51 | 93.86 |
 | Astra 6.2 (max) | 90.02 | 94.26 | 94.26 |
+| [Dot (261125)](../site/models/dot-20261125/index.html) | 88.31 | 93.01 | 93.87 |
 | Astra 6.2 (xHigh) | 85.44 | 92.61 | 93.61 |
 | Sol 6.2 (xhigh) | 83.96 | 92.70 | 93.91 |
 | Astra 6 (xhigh) | 82.61 | 91.75 | 92.61 |
@@ -45,6 +46,7 @@ Carbon medium’s new task is **MC 83 / RMC 73.33 / SMC 53**, giving overall edi
 | [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | 91.33 | 94.93 | 95.01 | 7 | 100%（7／7） |
 | [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | 91.33 | 94.57 | 94.57 | 6 | 100%（6／6） |
 | [Astra 6.2 (max)](../site/models/astra-6.2-max/index.html) | 89.73 | 94.25 | 94.25 | 7 | 100%（7／7） |
+| [Dot (261125)](../site/models/dot-20261125/index.html?edition=1.2.0) | 88.33 | 93.29 | 94.29 | 6 | — |
 | [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | 85.23 | 93.00 | 94.00 | 9 | 88.9%（8／9） |
 | [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | 83.23 | 92.80 | 94.05 | 10 | 80%（8／10） |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 81.33 | 91.70 | 92.70 | 6 | 100%（6／6） |
@@ -60,11 +62,11 @@ Carbon medium’s new task is **MC 83 / RMC 73.33 / SMC 53**, giving overall edi
 | [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | 46.38 | 72.29 | 76.93 | 19 | 42.1%（8／19） |
 | [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | 26.25 | 64.09 | 76.93 | 26 | 3.8%（1／26） |
 
-共采用18个配置的221份续答，107份达到续答自身的三项满分。满分率的分母是各配置选中的全部续答题，失败交付也在分母内，首答三项全满的免测题不计入；各配置的失分集合不同，该比例不是同题排名。总分由共享评分器逐题80／20折算，仍保留首答失分和续答退步。全部采用续答已完成AI数学审核，人工数学审核仍待完成。
+已有 19 个配置结算。原 18 个配置共选中 221 道续答题，其中 107 份续答本身达到三项满分。Dot 新增 6 个已结算续答槽位，公开档案提供交付计数和总分。满分率的分母是各配置选中的续答题，包含失败交付；首答三项全满的题免测。各配置续答自己的失分题。总分按整题 80% 首答、20% 续答计算，续答退步也计入。采用的答卷经 AI 数学审核，人工数学审核待完成。[Dot 采用说明](dot-native-evidence-replacement.md)
 
 Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 Hydrogen新增17份正常续答，其中1份续答本身通过严格评审、0份三项全满；AI审核由Sol 6.1（max）完成，人工审核待完成。GLM 5.3、Gemini 3.8 Flash与Gemini 4 Argon已从1.2.0下架，不再进入本版待测、画像名单或默认导出；1.1.0及更早成绩、原答与冻结包保留。其他入选配置继续等待回交，完整历史分发和采用经过见[续答说明](neutral-revision.md)。
 
-成本计入221份有效续答的完整费用，复用调用各计一次；确认的纯系统失败仅留重试历史。耗时比较18个已结算配置共有计时的同一12道公开非Lean题，另列整章形式化。累计作答时长与并行批次跨度分别保留，缺失时间或用量保持未知。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
+成本计入有效续答的完整费用，复用调用各计一次；确认的纯系统失败仅留重试历史。耗时比较 19 个已结算配置共有计时的同一 12 道公开非 Lean 题，另列整章形式化。累计作答时长与并行批次跨度分别保留，缺失时间或用量保持未知。[续答包指南](neutral-revision-harness.md) · [计时说明](answer-timings.md)
 
 [数学画像](mathematical-profile-revision.md)对采用续答独立审核论证、忠实度、审辨、深度和闭合，再逐题80／20折算，覆盖原35个数学家族。研究主动性始终只看首答，严格完成度直接取所选阶段的正式SMC。三份首答画像的来源绑定更正仍用于两个当前视图，原件、历史1.1.0和三项主分不变。[开放研究能力](open-research.md)另看五个共同开放家族的实际研究交付，不由分数或主动性换算。 [形式化能力](formalization-profile.md)采用Lean整体SMC，包含语义审计、初答工程和三轮对齐自查，在两个阶段保持相同；当前画像共九轴。
 
@@ -86,7 +88,7 @@ Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 H
 | [Astra 6.2 (xHigh)](../site/models/astra-6.2-xhigh/index.html) | Codex CLI | 92.56 | 91.56 | 82.67 | 39／0／39 |
 | [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | Codex CLI | 92.59 | 91.34 | 80.17 | 39／0／39 |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
-| [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | Unknown¹ | 91.10 | 89.68 | 78.00 | 39／0／39 |
+| [Dot (261108)](../site/models/dot-underlying-model-20261108/index.html) | Unknown¹ | 91.10 | 89.68 | 78.00 | 39／0／39 |
 | [Claude Opus 5.5 (xHigh)](../site/models/claude-opus-5.5-xhigh/index.html) | Claude Code | 91.36 | 88.80 | 54.92 | 39／0／39 |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.68 | 88.51 | 68.00 | 39／0／39 |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
@@ -221,7 +223,7 @@ C003初答及三轮均核实92/92，原FULL／KEEP与源码分别保留。R1把�
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 94.22% | 85.84% |
 | [Sol 6.2 (xhigh)](../site/models/sol-6.2-xhigh/index.html) | 99.73% | 87.57% |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 98.68% | 87.36% |
-| [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | 99.65% | 85.29% |
+| [Dot (261108)](../site/models/dot-underlying-model-20261108/index.html) | 99.65% | 85.29% |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | 90.83% | 83.38% |
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | 98.93% | 82.61% |
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 97.93% | 72.51% |

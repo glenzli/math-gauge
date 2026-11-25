@@ -77,6 +77,7 @@
     const hasExternal = data.schema === externalSchema || hasAdditions && Object.hasOwn(data, 'external_binding');
     const weighted = data.schema === itemWeightSchema || hasExternal || hasAdditions;
     const hasNative = Object.hasOwn(data, 'native_binding');
+    const hasDot = Object.hasOwn(data, 'dot_binding');
     const displayAxes = boardAxes(data), axisIds = displayAxes.map(([id]) => id);
     const fields = ['schema', 'edition', 'kind', 'category', 'rank_eligible', 'default_order', 'weights_ratified', 'rows'];
     if (baseline || settled) fields.push('source_binding');
@@ -88,6 +89,7 @@
     if (hasExternal) fields.push('external_binding');
     if (hasNative) fields.push('native_binding');
     if (hasAdditions) fields.push('native_additions_binding');
+    if (hasDot) fields.push('dot_binding');
     if (!keys(data, fields) ||
         (!scoreModes && data.schema !== 'math-gauge.research-board-preview/v1') || data.edition !== '1.3.0' || (!baseline && !settled && data.kind !== 'synthetic-fixture') ||
         data.rank_eligible !== false || data.weights_ratified !== false || data.default_order !== 'retained-base-SMC' ||
@@ -147,6 +149,7 @@
     const nativeKind = 'native-agy-same-conversation-sealed-finals';
     const additionKind = 'user-selected-native-cutoff-deliveries';
     const nativeIds = new Set();
+    const dotId = 'dot-20261125', dotKind = 'dot-native-independent-research';
     if (hasNative) {
       const binding = data.native_binding;
       if (!settled || !weighted || !keys(binding, ['index_sha256', 'adoption_sha256', 'cohort', 'source_kind', 'policy_bindings', 'human_review']) ||
@@ -180,12 +183,24 @@
         nativeIds.add(id);adoptedIds.add(id);
       }
     }
+    if (hasDot) {
+      const binding = data.dot_binding;
+      const exactRef = (ref, path) => keys(ref, ['path','bytes','sha256']) && ref.path === path &&
+        Number.isInteger(ref.bytes) && ref.bytes > 0 && hash(ref.sha256);
+      if (!settled || !weighted || adoptedIds.has(dotId) ||
+          !keys(binding, ['selection','base','research_source_sha256']) ||
+          !exactRef(binding.selection, 'results/edition-admissions/v0.1.0/dot-20261125.json') ||
+          !['', 'evidence-replacement-v1/'].some(epoch =>
+            exactRef(binding.base, `results/v1.0.0/dot-20261125/20261125/${epoch}neutral-public.json`)) ||
+          !hash(binding.research_source_sha256)) throw new Error('Unbound additive Dot research item');
+      adoptedIds.add(dotId);
+    }
     const rowFields = ['id', 'label', 'kind', 'base_smc', 'components', 'task_strict', 'item', 'coverage', 'strict_overall', 'composite', 'composites', 'confirmed', 'strict_confirmed', 'delivery'];
     if (scoreModes) rowFields.push('score_modes', 'criteria');
     const seen = new Set();
     for (const row of data.rows) {
       if (!keys(row, rowFields) ||
-          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== (Object.hasOwn(data.native_additions_binding || {},row.id) ? additionKind : nativeIds.has(row.id) ? nativeKind : data.kind) || typeof row.label !== 'string' ||
+          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== (hasDot && row.id === dotId ? dotKind : Object.hasOwn(data.native_additions_binding || {},row.id) ? additionKind : nativeIds.has(row.id) ? nativeKind : data.kind) || typeof row.label !== 'string' ||
           !(score(row.base_smc) || bounds(row.base_smc)) || !keys(row.components, axisIds) || !bounds(row.strict_overall) || !bounds(row.composite) || !keys(row.composites, ['MC','RMC','SMC']) || !Object.values(row.composites).every(bounds) || !keys(row.confirmed,['MC','RMC','SMC']) || !Object.values(row.confirmed).every(score) || !score(row.strict_confirmed) || !keys(row.delivery,['planned','normal','unknown']) || row.delivery.planned!==45 || !Number.isInteger(row.delivery.normal) || !Number.isInteger(row.delivery.unknown) || row.delivery.normal<0 || row.delivery.unknown<0 || row.delivery.normal+row.delivery.unknown>45 || !bounds(row.item) ||
           ![0, 100, null].includes(row.task_strict) || !keys(row.coverage, ['planned', 'reviewed', 'components_planned', 'components_reviewed']) ||
           row.coverage.planned !== 1 || row.coverage.components_planned !== axisIds.length || ![0, 1].includes(row.coverage.reviewed) ||
@@ -209,6 +224,7 @@
     if (hasExternal && !data.external_binding.cohort.every(id => seen.has(id))) throw new Error('Missing external configuration');
     if (hasNative && !data.native_binding.cohort.every(id => seen.has(id))) throw new Error('Missing native configuration');
     if (hasAdditions && !Object.keys(data.native_additions_binding).every(id => seen.has(id))) throw new Error('Missing added native configuration');
+    if (hasDot && !seen.has(dotId)) throw new Error('Missing selected Dot configuration');
     return data;
   }
   function componentCell(value) {
@@ -396,7 +412,11 @@
   }
   function decorate() {
     const mg = typeof MG !== 'undefined' ? MG : root.MG;
-    if (!mg || mg.d.benchmark_version !== '1.3.0' || !mg.d.research_preview) return;
+    if (!mg || mg.d.benchmark_version !== '1.3.0' || !mg.d.research_preview) {
+      for (const headingId of ['cost-title','timing-title','cost-frontier-title'])
+        root.document?.getElementById(`${headingId}-baseline-scope`)?.remove();
+      return;
+    }
     const board = mg.d.research_preview;
     const projection = {...board};
     delete projection.weight_frame; delete projection.base_edition; delete projection.condition;
@@ -414,13 +434,15 @@
       const heading = doc.getElementById(headingId);
       if (!heading) continue;
       const id = `${headingId}-baseline-scope`;
-      let scope = doc.getElementById(id);
-      if (!scope) {
-        scope = doc.createElement('p');
-        scope.id = id;
-        scope.className = 'panel-desc';
-        heading.insertAdjacentElement('afterend', scope);
-      }
+      const existing = doc.getElementById(id);
+      const scope = existing || doc.createElement('p');
+      scope.id = id;
+      const target = headingId === 'cost-title' ? doc.getElementById('cost-notes-body') :
+        headingId === 'timing-title' ? doc.querySelector('#answer-times .timing-method > div') :
+        doc.getElementById('cost-frontier-note')?.parentElement;
+      scope.className = target ? 'panel-foot' : 'panel-desc';
+      if (target && scope.parentElement !== target) target.prepend(scope);
+      else if (!target && !existing) heading.insertAdjacentElement('afterend', scope);
       scope.textContent = text;
     }
     const rows = new Map(board.rows.map(r=>[r.id,r]));

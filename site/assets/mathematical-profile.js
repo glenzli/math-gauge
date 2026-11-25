@@ -133,9 +133,10 @@
     JSON.stringify(companion.native_additions_binding)===JSON.stringify(board.native_additions_binding)&&
     JSON.stringify(companion.native_binding)===JSON.stringify(board.native_binding)&&
     JSON.stringify(companion.external_binding)===JSON.stringify(board.external_binding)&&
+    JSON.stringify(companion.dot_binding)===JSON.stringify(board.dot_binding)&&
     Object.keys(companion).every(key=>['schema','edition','base_edition','source_stages','source_binding','policy_sha256',
      'profile_policy_sha256','score_modes_policy_sha256','taste_blend','by_model','legacy_taste_binding','score_modes_binding',
-     'value_binding','strict_credit_binding','item_weight_binding','external_binding','native_binding','native_additions_binding'].includes(key)));
+     'value_binding','strict_credit_binding','item_weight_binding','external_binding','native_binding','native_additions_binding','dot_binding'].includes(key)));
  }
  const profileViews={radar:['雷达图','Radar'],bars:['按轴排名','Axis ranking'],table:['表格','Table']};
  const profileViewCopy={mode:['画像展示方式','Profile view'],axis:['排名维度','Ranking axis'],

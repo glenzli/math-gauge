@@ -32,11 +32,12 @@ def _sha256(value):
     return isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value) is not None
 
 
-def validate_math_inputs(data, policy):
+def _validate_math_inputs(data, policy, *, fresh_dot=False):
     """Validate judgments independently of any unsupported execution attestation."""
     require(data.get('schema') == MATH_SCHEMA
-            and data.get('version') in (VERSION, SUPPLEMENTED_VERSION)
-            and data.get('benchmark_version') == '0.6.0', 'Unsupported native mathematical review')
+            and data.get('version') in ((SUPPLEMENTED_VERSION,) if fresh_dot else (VERSION, SUPPLEMENTED_VERSION))
+            and data.get('benchmark_version') == ('1.0.0' if fresh_dot else '0.6.0'),
+            'Unsupported native mathematical review')
     if data['version'] == SUPPLEMENTED_VERSION:
         require(_sha256(data.get('source_supplements_sha256')),
                 'Supplemented native mathematics needs its separate source manifest')
@@ -78,7 +79,8 @@ def validate_math_inputs(data, policy):
                     'Native core completion review needs its selected source contract')
         require(task.get('complete') is not True or points == maximum or core_review is not None,
                 'Complete native target contradicts original mathematical credit')
-        require(isinstance(task.get('response'), dict) and isinstance(task.get('review'), dict),
+        require((fresh_dot and task.get('response') is None or isinstance(task.get('response'), dict))
+                and isinstance(task.get('review'), dict),
                 'Native judgments need original answer and review bindings')
         if task['subcategory'] == 'theorem-extension':
             require(task.get('baseline_B') in (0, 1, 2) and task.get('research_R') in (0, 1, 2, 3),
@@ -98,6 +100,10 @@ def validate_math_inputs(data, policy):
     else:
         require(not core_tasks, 'Legacy native manuscript tasks cannot acquire a new completion contract')
     return data
+
+
+def validate_math_inputs(data, policy):
+    return _validate_math_inputs(data, policy)
 
 
 def validate_record(record, policy=None):

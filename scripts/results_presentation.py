@@ -5,6 +5,20 @@ from scripts.results_harness import scoped_harness_notes
 SCHEMA = "math-gauge.browser-presentation/v1"
 
 
+def display_model_names(value):
+    """Apply current display aliases without rewriting frozen source datasets."""
+    if isinstance(value, list):
+        return [display_model_names(item) for item in value]
+    if isinstance(value, dict):
+        view = {key: display_model_names(item) for key, item in value.items()}
+        if view.get('id', view.get('model_id')) == 'dot-underlying-model-20261108':
+            for key in ('label', 'short_label', 'model_label'):
+                if key in view:
+                    view[key] = 'Dot (261108)'
+        return view
+    return value
+
+
 def pick(value, keys):
     return {key: copy.deepcopy(value[key]) for key in keys if key in (value or {})}
 

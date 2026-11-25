@@ -29,7 +29,7 @@ Astra 6.2 xHigh adds four verified additional-result groups across five first-an
 | Astra 6 (max) | 4 | 5/5 |
 | Astra 6.2 (max) | 4 | 5/5 |
 | Astra 6.2 (xHigh) | 4 | 5/5 |
-| Dot Underlying (2026-11-08) | 4 | 5/5 |
+| Dot (261108) | 4 | 5/5 |
 | Terra 6.1 (xhigh) | 3 | 5/5 |
 | Gemini 4 Argon (high) | 2 | 5/5 |
 | Gemini 3.8 Flash (high) | 1 | 5/5 |

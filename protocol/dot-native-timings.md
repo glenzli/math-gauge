@@ -1,0 +1,15 @@
+# Dot (261125) observed answer times
+
+This independent companion adds observed times for the separately admitted 2026-11-25 Dot run. It changes no answer, mathematical score, profile or historical timing index. It does not estimate cost or add the new Dot row to cost comparisons.
+
+The retained coordinator log supplies launch-to-completion observation pairs. These may include polling, logging delay, tools and in-run waits. They are approximate wall-clock observations, not independently certified native inference clocks. File modification times, evaluator seals, later compilation, configured budgets and batch preparation envelopes are not substitutes for missing per-call measurements. No unproved wait interval is subtracted.
+
+Each private row binds the actual selected physical answer, request, parent where applicable, original source hashes and exact UTF-8 quotations from the retained controller. The adapter authenticates39 original answers, three prescribed C003 rounds, six adopted neutral continuations and the independent three-round trajectory. It never synthesizes a CLI record or native-observation record to satisfy a historical reader. Native source validation and the existing timing measurement validator remain separate from mathematical judgments.
+
+The current common comparison stays fixed at the existing12 public non-Lean tasks and their established weights. Five have observed complete first-answer-plus-adopted-revision times for this Dot run. Missing clocks stay unknown; the shared daily-summary helper therefore leaves its weighted mean and unweighted task median unknown. The adapter appends one row after the original sample and cost calculation, preserving every incumbent row, summary, sample ID and weight.
+
+The selected C003 initial delivery is the expressly admitted physical2 file. Its observation pair gives1729.13725 seconds, displayed as about28.8 minutes. Its normal-delivery marker is independent of mathematical SMC. The earlier physical1 clock is not reused. The same-solver reconnect remains inside the observed interval because no independently bounded inactive duration is available.
+
+The independent-study rounds have observation intervals322,184 and180 seconds, totaling686 seconds (about11.4 minutes). This is separate from the common public sample. Unknown clocks elsewhere prevent a complete resource total. Minute-only windows remain unknown scalars. Adopted continuations count their full observed time; the20% score blend never discounts resource use. Current1.3 inherits this timing companion from1.2.
+
+Public output contains public-task times, aggregate coverage and opaque private hashes. Private task identities, native contexts, requests and raw controller quotations stay evaluator-side. `math_gauge/dot_rerun_timings.py` owns this narrow source adapter and projection; `timings.py` and the shared timing-reference summaries retain measurement validation and arithmetic. No candidate calls, new mathematical judgments or human approval are created.

@@ -718,6 +718,8 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
     pages, downloads, markdown = {}, {}, EvidenceRenderer()
     for source_model in data['models']:
         model = dict(source_model, label=source_model.get('source_model_label', source_model['label']))
+        if model['id'] == 'dot-underlying-model-20261108':
+            model['label'] = source_model['label']
         folder = root / Path(model['source_record']).parent
         if model.get('record_kind') == 'paper_observation':
             record = json.loads((folder/'record.json').read_bytes())

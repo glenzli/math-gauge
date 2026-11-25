@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 import posixpath
 import re
 import tempfile
+from scripts.results_presentation import display_model_names
 
 
 def encoded(value):
@@ -146,7 +147,7 @@ def write_publication(destination, files, *, retired=()):
 
 
 def data_literal(value):
-    return json.dumps(value, ensure_ascii=False, separators=(',', ':')).replace('<','\\u003c').replace('&','\\u0026').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
+    return json.dumps(display_model_names(value), ensure_ascii=False, separators=(',', ':')).replace('<','\\u003c').replace('&','\\u0026').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
 
 
 class ProseBlocks(HTMLParser):

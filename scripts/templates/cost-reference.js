@@ -35,7 +35,7 @@
   costAxisButton:['成本—成绩','Cost vs score'],timeAxisButton:['耗时—成绩','Time vs score'],estimated:['估算','Estimated'],frontier:['完整数据的 Pareto 前沿','Pareto frontier of complete data'],
   fullSubmission:['完整交卷（39/39）','All 39 answers delivered normally'],partialSubmission:['未完整交卷','Incomplete normal submission'],normalSubmissions:['正常交卷','Normal submissions'],
   submissionNote:['实心表示39题均正常交卷，空心表示正常交卷不足39题；强制收取的内容不计为正常交卷。','Solid points mean all 39 tasks have normal final submissions. Hollow points have fewer than 39; forcibly collected content is excluded.'],
-  chartData:['查看图表数据','View chart data'],model:['模型','Model'],total:['总成本','Total cost'],timeLabel:['典型题耗时 / 分钟','Typical time / min'],unknown:['未取得成本','Cost unavailable'],partial:['用量不齐','Usage incomplete'],estimatedNote:['含用量估算','Includes imputed usage'],
+  notes:['费用口径与备注','Cost method and notes'],chartData:['图表数据与说明','Chart data and notes'],model:['模型','Model'],total:['总成本','Total cost'],timeLabel:['典型题耗时 / 分钟','Typical time / min'],unknown:['未取得成本','Cost unavailable'],partial:['用量不齐','Usage incomplete'],estimatedNote:['含用量估算','Includes imputed usage'],
   costAxis:['总成本 / 美元（线性刻度）','Total cost / USD (linear scale)'],timeAxis:['典型题耗时 / 分钟','Typical task time / min'],
   range:['估算范围','Scenario range'],minutes:['分钟','min'],
   costNote:['虚线连接费用已核对且具有完整成绩的 Pareto 前沿模型。','The dashed line connects Pareto-frontier models with verified costs and complete evaluations.'],
@@ -252,14 +252,16 @@
   document.getElementById('cost-estimate-legend').hidden=!hasEstimates;
   document.getElementById('cost-estimate-legend').style.display=hasEstimates?'':'none';
   document.getElementById('cost-frontier-note').textContent=t(axis==='cost'?'costNote':'timeNote');document.getElementById('cost-table-score').textContent=scoreName;
+  const notesBody=document.getElementById('cost-notes-body');
+  let review=document.getElementById('cost-review-overhead');
   if(data.review_overhead){
-   let review=document.getElementById('cost-review-overhead');
-   if(!review){review=node('p',null,'panel-foot');review.id='cost-review-overhead';document.getElementById('cost-unavailable').after(review)}
+   if(!review){review=node('p',null,'panel-foot');review.id='cost-review-overhead';notesBody.append(review)}
+   review.hidden=false;
    review.textContent=t('reviewCost')+'：'+(data.review_overhead.total_usd==null?t('reviewCostUnknown'):money(data.review_overhead.total_usd))+' · '+t('reviewSeparate');
-  }
+  }else if(review)review.hidden=true;
   const referenceNotes=costNoteRows(data.models,lang);let notes=document.getElementById('cost-reference-notes');
   if(referenceNotes.length){
-   if(!notes){notes=node('div',null,'panel-foot');notes.id='cost-reference-notes';document.getElementById('cost-unavailable').after(notes)}
+   if(!notes){notes=node('div',null,'panel-foot');notes.id='cost-reference-notes';notesBody.prepend(notes)}
    notes.replaceChildren(...referenceNotes.map(value=>{const note=node('p',value.marker+' '+value.text);note.dataset.costNote=value.model_id;return note}));
   }else if(notes)notes.remove();
   board.setAttribute('aria-label',t('title'));renderBoard();renderPlot();

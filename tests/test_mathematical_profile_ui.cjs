@@ -558,6 +558,24 @@ test('current profile uses adopted evidence and shows the whole eligible cohort 
  const withAddition=ui.prepare(added,compare),carbon=withAddition.models.find(model=>model.id==='gemini-4-carbon-medium');
  assert.equal(withAddition.axes.length,10);assert.equal(carbon.profile_metrics.completion.exact,76);
  assert.equal(carbon.profile_metrics.mathematical_taste.exact,null,'missing revision taste remains an interval');
+ const nativeDot=structuredClone(added),dotId='dot-20261125';
+ nativeDot.models.push({...structuredClone(nativeDot.models.find(row=>row.id===measured)),id:dotId,label:'Dot (261125)'});
+ for(const field of ['profile_models','mathematical_profile','mathematical_profile_baseline','mathematical_profile_revision','open_research','formalization_profile']){
+  const rows=Array.isArray(nativeDot[field])?nativeDot[field]:nativeDot[field]?.models;
+  if(rows){const inherited=rows.find(row=>row.id===measured);if(inherited)rows.push({...structuredClone(inherited),id:dotId});}
+ }
+ nativeDot.independent_research_abilities.by_model[dotId]=structuredClone(c.by_model[measured]);
+ const beforeNativeBinding=ui.prepare(nativeDot,compare);
+ nativeDot.independent_research_abilities.by_model[dotId].native_profile_binding={
+  path:'results/dot-native-profiles/v0.1.0/dot-20261125/index.json',bytes:123,sha256:'9'.repeat(64)};
+ const afterNativeBinding=ui.prepare(nativeDot,compare);
+ assert.equal(afterNativeBinding.models.find(row=>row.id===dotId).profile_metrics.completion.exact,76);
+ assert.equal(afterNativeBinding.models.find(row=>row.id===dotId).profile_metrics.discernment.exact,88);
+ assert.deepEqual(afterNativeBinding,beforeNativeBinding,'nested native profile provenance keeps the v9 source gate and every old/new mixed metric unchanged');
+ const invalidTopBinding=structuredClone(nativeDot);
+ invalidTopBinding.independent_research_abilities.dot_profile_binding=invalidTopBinding.independent_research_abilities.by_model[dotId].native_profile_binding;
+ assert.equal(ui.prepare(invalidTopBinding,compare).models.find(row=>row.id===measured).profile_metrics.completion.exact,null,
+  'the existing v9 allowlist still rejects an unsupported top-level provenance key');
  const damaged=structuredClone(added);
  damaged.independent_research_abilities.native_additions_binding['gemini-4-carbon-medium'].parent.private_quote='forbidden';
  damaged.research_preview.native_additions_binding=structuredClone(damaged.independent_research_abilities.native_additions_binding);
