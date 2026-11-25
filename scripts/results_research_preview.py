@@ -242,7 +242,7 @@ def prepare_research_preview(files, root):
             if initiative is not None:
                 download['research_initiative'] = dict(initiative,
                     models=[entry for entry in initiative['models'] if entry['id'] == identifier])
-            if model['id'] == DOT_ID:
+            if identifier == DOT_ID and dot_rerun is not None:
                 download['dot_binding'] = copy.deepcopy(board['dot_binding'])
                 download['source_binding'] = dict(edition='1.2.0',
                                                   score_report=dot_rerun['revised']['scores'][mode])
