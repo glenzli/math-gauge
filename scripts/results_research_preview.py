@@ -319,6 +319,10 @@ def prepare_research_preview(files, root):
         timing = supplemental['timing-reference-data']
         timing['data_link'] = 'versions/1.3.0/downloads/timing-reference.json'
         result[timing['data_link']] = json.dumps(timing, ensure_ascii=False, indent=2)+'\n'
+    from scripts.results_exploration_orientation import attach_public, download_files, render_panel
+    attach_public(data, root)
+    orientation = data.get('exploration_orientation')
+    result.update(download_files(orientation))
     result['versions/1.3.0/data.json']=json.dumps(envelope['data'],ensure_ascii=False,indent=2)+'\n'
     literal = data_literal(envelope)
     digest = hashlib.sha256(literal.encode()).hexdigest()
@@ -337,6 +341,13 @@ def prepare_research_preview(files, root):
     notes_path='assets/versioned/edition-notes.'+hashlib.sha256(notes.encode()).hexdigest()[:12]+'.js'
     result[notes_path]=notes;result['assets/edition-notes.js']=notes
     page = str(result['index.html'])
+    if orientation is not None:
+        # The retained homepage owns the ten-axis panel. Add this independent
+        # observation immediately after it, without rewriting historical shells.
+        marker = '<details class="panel subboard download-disclosure" id="data-downloads"'
+        if page.count(marker) != 1:
+            raise ValueError('Need the retained profile/download boundary for exploration orientation')
+        page = page.replace(marker, render_panel(orientation)+'\n'+marker, 1)
     if 'id="category-leaderboards"' in page:
         from scripts.render_results_site import render_category_board
         tab, panel = render_category_board(data, item_board, subcategories=False)
@@ -360,6 +371,12 @@ def prepare_research_preview(files, root):
     profile_style = re.compile(r'(?<=href=")assets/versioned/mathematical-profile\.[a-f0-9]+\.css(?=")')
     if profile_style.search(page):
         page = profile_style.sub(_versioned_asset(result, root, 'mathematical-profile.css'), page)
+    if orientation is not None:
+        controller = _versioned_asset(result, root, 'exploration-orientation.js')
+        config['scripts'] = [script for script in config['scripts']
+                             if not _controller_match('exploration-orientation').search(script)] + [controller]
+        style = _versioned_asset(result, root, 'exploration-orientation.css')
+        page = page.replace('</head>', '<link rel="stylesheet" href="'+style+'">\n</head>', 1)
     config['latest'] = EDITION
     scripts = [path for path in config['scripts'] if not _controller_match('research-preview').search(path)]
     # The shared board controllers discover their controls on startup.

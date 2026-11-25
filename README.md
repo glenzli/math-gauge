@@ -53,6 +53,8 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 1.3.0 榜单收录 **19 个已结算配置**，默认按 SMC 排序，并提供分类成绩、十轴数学画像和历史版本。已采用的结果经 AI 审核，另有部分人工抽审。独立开放研究的人工数学审核仍待完成。 [完整结果](docs/results.md) · [审核方式](docs/review-process.md)
 
+数学画像后另有默认收起的[探索取向](protocol/exploration-orientation.md)：从横向拓展、纵向深挖、结构重构、边界探查和实验探索，观察模型在同一三轮研究中的选择方式。它描述本次研究取向，不计总分。
+
 [![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 
 <details>

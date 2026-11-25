@@ -53,6 +53,8 @@ A non-Lean base task gets one neutral revision when any of its three scores is c
 
 The 1.3.0 leaderboard lists **19 settled configurations**, ranks by SMC by default and includes category results, ten-axis profiles and historical editions. Adopted results use AI review with some human spot checks. Human mathematical review of the independent research is pending. [Full results](docs/results.md) · [Review process](docs/review-process.md)
 
+A separate, collapsed [exploration-orientation portrait](protocol/exploration-orientation.md#exploration-orientation) follows the capability profile. It observes horizontal expansion, vertical deepening, structural reframing, boundary probing and experimental exploration across the same three-round research task. These describe choices in this task and add no overall score.
+
 [![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en)
 
 <details>

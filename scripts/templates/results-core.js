@@ -57,7 +57,7 @@ window.MG = (() => {
   const value=knownValue(v);
   return value==null?'—':f(value)+'/'+weight;
  }
- function href(path){const u=new URL(path,document.baseURI),current=new URLSearchParams(location.search);u.searchParams.set('score',state.score);u.searchParams.set('condition',state.condition);u.searchParams.set('lang',state.lang);if(window.MGEdition)u.searchParams.set('edition',window.MGEdition.selected);[...u.searchParams.keys()].filter(key=>key==='complete'||key.startsWith('complete-')).forEach(key=>u.searchParams.delete(key));const keys=new Set(['show','category','sort-written','sort-lean','sort-research','sort-gap','sort-rates','cost-axis','cost-score','profile-models','profile-stage',...current.keys(),...u.searchParams.keys()]);keys.forEach(key=>{if(!/^(show(?:-|$)|category$|sort-|view-|cost-(?:axis|score)$|profile-(?:models|stage|view|axis)$)/.test(key))return;if(current.has(key))u.searchParams.set(key,current.get(key));else u.searchParams.delete(key)});if(u.pathname.endsWith('/method.html'))['review-process','content-rate-method'].forEach(id=>{if(u.hash==='#'+id||u.hash==='#'+id+'-en')u.hash='#'+id+(state.lang==='en'?'-en':'')});return u.href}
+ function href(path){const u=new URL(path,document.baseURI),current=new URLSearchParams(location.search);u.searchParams.set('score',state.score);u.searchParams.set('condition',state.condition);u.searchParams.set('lang',state.lang);if(window.MGEdition)u.searchParams.set('edition',window.MGEdition.selected);[...u.searchParams.keys()].filter(key=>key==='complete'||key.startsWith('complete-')).forEach(key=>u.searchParams.delete(key));const keys=new Set(['show','category','sort-written','sort-lean','sort-research','sort-gap','sort-rates','cost-axis','cost-score','profile-models','profile-stage','exploration-models',...current.keys(),...u.searchParams.keys()]);keys.forEach(key=>{if(!/^(show(?:-|$)|category$|sort-|view-|cost-(?:axis|score)$|profile-(?:models|stage|view|axis)$|exploration-models$)/.test(key))return;if(current.has(key))u.searchParams.set(key,current.get(key));else u.searchParams.delete(key)});if(u.pathname.endsWith('/method.html'))['review-process','content-rate-method'].forEach(id=>{if(u.hash==='#'+id||u.hash==='#'+id+'-en')u.hash='#'+id+(state.lang==='en'?'-en':'')});return u.href}
  function refreshModelLinks(){
   document.querySelectorAll('a[href]').forEach(link=>{
    if(link.hasAttribute('data-fixed-edition'))return;
@@ -95,5 +95,5 @@ window.MG = (() => {
   window.addEventListener('mg:updated',()=>{refreshModelLinks();renderKey=signature()});
   update();
  }
- return {d,state,modes,presentationDefaultScore,presentationScoreOrder,scorePreference,el,f,node,result,headline,compareScores,compareModelOrder,rankedScores,knownValue,short,conditionLabel,table,points,href,download,taskValue,start};
+ return {d,state,modes,presentationDefaultScore,presentationScoreOrder,scorePreference,el,f,node,result,headline,compareScores,compareModelOrder,rankedScores,knownValue,short,conditionLabel,table,points,href,refreshModelLinks,download,taskValue,start};
 })();
