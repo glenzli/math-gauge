@@ -1,5 +1,9 @@
 # 逐题耗时留档
 
+Carbon medium 的1.3独立研究三稿有效作答累计 **5747.134697秒，约95.79分钟**：首轮原两段及追加10分钟、5分钟，后两轮分别约24分48秒、10分59秒。按六段原控制器时钟求和，暂停、配额等待与评审耗时不计入；本值作为单题运行记录，不加入共有公开题的加权均值或中位数。首轮强收、后两轮正常交卷，原生累计会话时长未重复相加。
+
+Carbon medium’s selected 1.3 research trajectory totals **95.79 minutes** of effective answer time across six authorized serial segments. R1 is a forced cutoff submission; R2/R3 are normal finals. Pauses, quota downtime and evaluator work are excluded. This single-case duration remains separate from the shared public-task timing sample.
+
 DeepSeek的26道采纳中性续答全部有操作者控制器时钟，合计25,152.619431秒，并行批次跨度7,044.162946秒。24题正常交卷，2题按2700秒截止；恢复附件不增加作答或耗时。原生事件无独立高精度终态时间戳，因此保留控制器原elapsed口径，不推造精确首终态时钟。1.2.0仅把采纳续答耗时加到对应的共有题；两项已生成但格式错误的工具参数响应未被认定纯系统故障。[本批记录](../results/edition-reassessments/v1.2.0/deepseek-v4.1-flash-1017/20261110/REPORT.md)
 
 Astra 6.2 xHigh（2026-11-20）的39份初答及三轮自查均绑定实际启动至首个原生终态的时钟，基础有效42次累计12,681.258348秒，初答中位数195.383704秒；9份续答另计4,758.440551秒，合计17,439.698899秒。两个已确认系统故障的452.769696秒只保留在物理重试记录，未计入有效资源或共有题样本。原53次物理调用汇总保持原字节；页面用同一12道共有公开非Lean题计算可比均值与无权中位数，整章初答另列。[逐项附件](../results/v1.0.0/astra-6.2-xhigh/20261120/answer-timings.json)。

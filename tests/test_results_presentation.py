@@ -74,6 +74,20 @@ class BrowserProjectionTests(unittest.TestCase):
         browser_payload = json.loads(page.removeprefix(opening).removesuffix(closing))
         self.assertLess(len(json.dumps(browser_payload)), len(json.dumps(data)) / 5)
 
+    def test_harness_notes_follow_selected_cohort_without_rewriting_source(self):
+        data = copy.deepcopy(self.archive)
+        deepseek = next(model for model in data['models']
+                        if 'DeepSeek Harness' in model.get('harness', {}).get('note_text', ''))
+        agy = next(model for model in data['models'] if model['harness']['name'] == 'AGY CLI')
+        data['models'] = [deepseek, agy]
+        before = copy.deepcopy(data)
+        projected = project_payload(data)
+        self.assertEqual(data, before)
+        self.assertEqual(projected['models'][0]['harness_display_name'], 'Codex CLI¹')
+        self.assertEqual(projected['models'][1]['harness_display_name'], 'AGY CLI')
+        self.assertEqual([note['marker'] for note in projected['harness_notes']], ['¹'])
+        self.assert_views(projected['models'][0], deepseek)
+
     def test_public_case_view_keeps_partial_unknown_and_strict_separate(self):
         value = {'completion': {'exact': None, 'lower': 0, 'upper': 1},
                  'strict_pass': None, 'response_sha256': 'evidence-byte-hash'}

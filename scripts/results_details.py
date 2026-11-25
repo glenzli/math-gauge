@@ -12,7 +12,7 @@ from math_gauge.records import evidence_bytes, load_public_task_scores
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.evidence_retention import source_location, read_bytes as retained_bytes, is_file as retained_file
 from scripts.results_i18n import language_switch
-from scripts.results_harness import display_harness_labels
+from scripts.results_harness import display_harness_labels, scoped_harness_notes, render_harness_notes
 from scripts.results_presentation import project_payload
 from scripts.results_anomalies import render_model_details as render_operational_details
 from scripts.results_attempt_history import load_public as load_attempt_history
@@ -217,6 +217,19 @@ def render_model_review_notes(model, root):
         return ('<span data-lang-content="zh">'+html.escape(value['zh'])+'</span>'
                 '<span data-lang-content="en" hidden>'+html.escape(value['en'])+'</span>')
 
+    followup = document.get('followups', {}).get(model['id'])
+    followup_html = ''
+    if followup is not None:
+        if (followup.get('model_id') != model['id']
+                or followup.get('schema') != 'math-gauge.model-followup-notice/v1'
+                or re.fullmatch(r'[0-9a-f]{64}', followup.get('selection_policy_sha256', '')) is None):
+            raise ValueError('Model follow-up notice needs its own model and selection-policy binding')
+        followup_html = ('<section class="panel" id="carbon-high-optimistic-followup" data-source-sha256="'
+                         +followup['selection_policy_sha256']+'"><div class="panel-head"><h2>'
+                         +bilingual(followup['title'])+'</h2></div><article class="prose">'
+                         +''.join(interface_paragraph(row['zh'], row['en']) for row in followup['paragraphs'])
+                         +'</article><p class="panel-foot">'+bilingual(followup['footer'])+'</p></section>')
+
     rows = ''.join('<tr><th scope="row">'+label+'</th>'
                    + ''.join('<td>'+f'{scores[mid][mode]:.2f}'+'</td>' for mid in note['model_ids'])
                    + '</tr>' for mode, label in (('capability', 'MC'), ('partial', 'RMC'), ('strict', 'SMC')))
@@ -227,7 +240,7 @@ def render_model_review_notes(model, root):
             raise ValueError('Model comparison references require HTTPS')
         links.append('<li><a href="'+html.escape(source['url'], quote=True)
                      +'" target="_blank" rel="noreferrer">'+bilingual(source)+'</a></li>')
-    return ('<section class="panel" id="'+html.escape(note['id'], quote=True)+'">'
+    return (followup_html+'<section class="panel" id="'+html.escape(note['id'], quote=True)+'">'
             '<div class="panel-head"><h2>'+bilingual(note['title'])+'</h2></div>'
             '<article class="prose">'+interface_paragraph(note['scope']['zh'], note['scope']['en'])
             +interface_paragraph(note['conclusion']['zh'], note['conclusion']['en'])+'</article>'
@@ -671,9 +684,9 @@ def render_model(page, data, model, cases, record, folder, markdown, *, download
     body += panel('可靠性审核', '<div id="model-penalties" class="metric-grid"></div><details class="nested evidence-fold"><summary>公开题的错误承诺与扣罚理由</summary><div id="model-findings" class="prose"></div></details>',
         '同根因扣罚去重；具体依据见逐题说明。')
     source = source_link(model['source_record'],page,'正式档案 ↗',root=root)
-    harness_note = ('<p class="panel-foot">'+html.escape(model['harness']['note_marker']+' '+model['harness']['note_text'])+'</p>'
-                    if model['harness'].get('note_text') else '')
-    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness_display_name'])+'</p>'
+    harness_names, harness_notes = scoped_harness_notes([model])
+    harness_note = render_harness_notes(harness_notes)
+    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(harness_names[model['id']])+'</p>'
         +interface_paragraph(model['harness']['tool_usage'], model['harness'].get('tool_usage_en'))+'</div>'
         +harness_note+'<details class="nested evidence-fold"><summary>运行版本与来源</summary>'
         '<div class="prose">'+interface_paragraph(model['harness']['detail'], model['harness'].get('detail_en'))

@@ -1,5 +1,6 @@
 """Browser projections of retained display values; no scoring or evidence loading."""
 import copy
+from scripts.results_harness import scoped_harness_notes
 
 SCHEMA = "math-gauge.browser-presentation/v1"
 
@@ -95,6 +96,8 @@ def project_payload(data):
                    for condition, view in views.items()} for mode, views in case["views"].items()}}
     elif "model" in data:
         shared["model"] = model_view(data["model"], model_page=True)
+        harness_names, shared['harness_notes'] = scoped_harness_notes([data['model']])
+        shared['model']['harness_display_name'] = harness_names[data['model']['id']]
         shared["cases"] = [{**pick(item, ("id", "title", "category_title")), "views": {
             mode: {condition: pick(view, ("completion", "strict_pass", "neutral_revision"))
                    for condition, view in views.items()} for mode, views in item["views"].items()}}
@@ -112,6 +115,9 @@ def project_payload(data):
         if data.get('formalization_profile') is not None:
             shared['formalization_profile'] = copy.deepcopy(data['formalization_profile'])
         shared["models"] = [model_view(model) for model in data["models"]]
+        harness_names, shared['harness_notes'] = scoped_harness_notes(data['models'])
+        for model in shared['models']:
+            model['harness_display_name'] = harness_names[model['id']]
         shared["category_leaderboards"] = [pick(board, ("id", "views"))
                                             for board in data["category_leaderboards"]]
         shared["gap_diagnostics"] = {"tables": [{"id": table["id"], "rows": [

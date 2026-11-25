@@ -469,3 +469,117 @@ class CostReferenceTest(unittest.TestCase):
             source.write_text('{"changed":true}')
             with self.assertRaises(ValueError):
                 build_reference(root, display_data=display, timing_reference=timings)
+
+
+from copy import deepcopy
+from types import SimpleNamespace
+from scripts import cost_reference as costs
+from math_gauge import independent_research_admitted_delivery as admitted
+from tempfile import TemporaryDirectory
+CARBON_COST_TEST_ROOT=Path(__file__).resolve().parents[1]
+
+class CarbonReportedCostTests(unittest.TestCase):
+    def setUp(self):
+        temp=TemporaryDirectory();self.addCleanup(temp.cleanup);self.root=Path(temp.name)
+        self.mid=costs._CARBON_MODEL
+        for reference in (costs._CARBON_COST_RESOURCES,costs._CARBON_COST_ADOPTION):
+            path=self.root/reference['path'];path.parent.mkdir(parents=True,exist_ok=True)
+            path.write_bytes((CARBON_COST_TEST_ROOT/reference['path']).read_bytes())
+        for name in admitted.external.POLICY_PATHS.values():
+            path=self.root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes((CARBON_COST_TEST_ROOT/name).read_bytes())
+        self.resource_raw=(self.root/costs._CARBON_COST_RESOURCES['path']).read_bytes()
+        self.adoption_raw=(self.root/costs._CARBON_COST_ADOPTION['path']).read_bytes()
+        self.resource=json.loads(self.resource_raw)['models'][self.mid]
+        self.addition=SimpleNamespace(identifier=self.mid,parent=dict(sha256='999c0e41748eb730a8ac38fc2f99718a306c49de9dc8b04caa8c126e3c18d559'),
+            index=json.loads(self.adoption_raw),index_raw=self.adoption_raw,index_ref=deepcopy(costs._CARBON_COST_ADOPTION),
+            resource_ref=deepcopy(costs._CARBON_COST_RESOURCES))
+        self.auth='f'*64
+        self.patch=patch.object(costs,'CARBON_REPORTED_COST_AUTHORIZATION',self.auth);self.patch.start();self.addCleanup(self.patch.stop)
+        self.choice=dict(schema='math-gauge.carbon-reported-usage-cost-selection/v1',edition='1.3.0',model_id=self.mid,
+            selection='reported_native_usage_reference',source_resource=deepcopy(costs._CARBON_COST_RESOURCES),
+            source_adoption=deepcopy(costs._CARBON_COST_ADOPTION),authorization_sha256=self.auth,
+            reported_cost_usd=6.8454724,unreported_generation_operations_not_counted=3,unreported_token_usage='unknown',
+            token_usage_modified=False,cost_note=deepcopy(costs._CARBON_COST_NOTE))
+
+    def select(self,choice=None):
+        path=self.root/costs.CARBON_REPORTED_COST_SELECTION
+        path.write_text(json.dumps(choice or self.choice,ensure_ascii=False,indent=2)+'\n')
+
+    def check(self,increment=None,addition=None):
+        return costs._carbon_reported_research_reference(self.root,addition or self.addition,
+            self.resource if increment is None else increment)
+
+    def reference(self,include_other=False):
+        report=dict(metrics=dict(earned=dict(confirmed=60),overall=dict(exact=60,lower=60,upper=60)))
+        model=lambda mid:dict(id=mid,retry=dict(combined=deepcopy(report)),strict=dict(nonlogical_retry_3=deepcopy(report)),
+            capability=dict(nonlogical_retry_3=deepcopy(report)))
+        row=dict(model_id=self.mid,status='observed',total_usd=81.8786706,known_usd=81.8786706,estimate_range_usd=None,
+            coverage=dict(planned=57,complete=56,partial=1,missing=0,not_run=0),seconds=1642.2857946762751,
+            pricing_basis='reported_native_usage_reference',scores={})
+        models=[model(self.mid)];rows=[row]
+        if include_other:
+            models.append(model('synthetic-other'))
+            rows.append(dict(row,model_id='synthetic-other',status='partial',total_usd=None,known_usd=12))
+        original=deepcopy(rows)
+        value=costs.independent_research_reference(self.root,dict(benchmark_version='1.3.0',models=models),
+            dict(benchmark_version='1.2.0',models=rows),adoption=None,native_additions=(self.addition,))
+        self.assertEqual(rows,original)
+        return value
+
+    def test_exact_recorded_reference_is_selected_without_claiming_complete_usage(self):
+        self.select();before=deepcopy(self.resource)
+        selected=self.check()
+        self.assertEqual(selected['cost'],dict(status='observed',total_usd=6.8454724,known_usd=6.8454724))
+        row=self.reference()['models'][0]
+        self.assertEqual(row['status'],'observed');self.assertAlmostEqual(row['total_usd'],88.724143)
+        self.assertEqual(row['cost_note']['marker'],'*')
+        self.assertEqual(row['independent_research_resources'],before)
+        self.assertEqual(row['coverage'],dict(planned=60,complete=58,partial=2,missing=0,not_run=0))
+        self.assertIsNone(row['independent_research_resources']['tokens'])
+        self.assertEqual(row['seconds'],1642.2857946762751)
+        self.assertEqual((self.root/costs._CARBON_COST_RESOURCES['path']).read_bytes(),self.resource_raw)
+        self.assertEqual((self.root/costs._CARBON_COST_ADOPTION['path']).read_bytes(),self.adoption_raw)
+
+    def test_no_user_selection_preserves_old_partial_reference(self):
+        self.assertIsNone(self.check())
+        row=self.reference()['models'][0]
+        self.assertEqual(row['status'],'partial');self.assertIsNone(row['total_usd'])
+        self.assertAlmostEqual(row['known_usd'],88.724143);self.assertNotIn('cost_note',row)
+
+    def test_wrong_source_model_auth_or_zero_inference_is_rejected(self):
+        for mutate in [lambda v:v.update(model_id='foreign'),lambda v:v.update(authorization_sha256='0'*64),
+            lambda v:v.update(reported_cost_usd=0),lambda v:v.update(unreported_token_usage=0),
+            lambda v:v.update(token_usage_modified=True),lambda v:v.update(unreported_generation_operations_not_counted=0),
+            lambda v:v.update(tokens={}),lambda v:v['source_resource'].update(sha256='0'*64),
+            lambda v:v['source_adoption'].update(sha256='0'*64)]:
+            choice=deepcopy(self.choice);mutate(choice);self.select(choice)
+            with self.assertRaises(ValueError):self.check()
+
+    def test_rewritten_or_substituted_raw_usage_never_gains_reference_credit(self):
+        self.select();changed=deepcopy(self.resource);changed['known_tokens']['output_tokens']=0
+        with self.assertRaises(ValueError):self.check(changed)
+        wrong=deepcopy(self.addition);wrong.identifier='other'
+        with self.assertRaises(ValueError):self.check(addition=wrong)
+        path=self.root/costs._CARBON_COST_RESOURCES['path']
+        path.write_bytes(b'{}')
+        with self.assertRaises(ValueError):self.check()
+
+    def test_other_model_scores_cost_gaps_and_delivery_marks_are_untouched(self):
+        before=self.reference(include_other=True)
+        self.select();after=self.reference(include_other=True)
+        self.assertEqual(after['models'][1],before['models'][1])
+        self.assertEqual(after['models'][0]['scores'],before['models'][0]['scores'])
+        self.assertEqual(after['models'][0]['independent_research_resources'],before['models'][0]['independent_research_resources'])
+
+    def test_private_or_symlinked_selection_is_rejected(self):
+        choice=deepcopy(self.choice);choice['private_case']='forbidden';self.select(choice)
+        with self.assertRaises(ValueError):self.check()
+        path=self.root/costs.CARBON_REPORTED_COST_SELECTION;path.unlink()
+        raw=self.root/'elsewhere.json';raw.write_text(json.dumps(self.choice));path.symlink_to(raw)
+        with self.assertRaises(ValueError):self.check()
+
+    def test_cost_marker_and_bilingual_footnote_contract(self):
+        import subprocess
+        script="const test=require('node:test');\nconst assert=require('node:assert/strict');\nconst {formatReferenceCost,costNoteRows}=require('./scripts/templates/cost-reference.js');\nconst note={marker:'*',text:{zh:'Carbon：费用按已记录用量统计，少量中断用量可能未计入。',en:'Carbon: costs use recorded usage; a small amount of interrupted usage may be uncounted.'}};\n\ntest('selected reported usage displays the recorded total with asterisk, without lower-bound qualifier',()=>{\n const row={model_id:'gemini-4-carbon-medium',label:'Carbon Medium',status:'observed',total_usd:88.724143,known_usd:88.724143,cost_note:note};\n assert.equal(formatReferenceCost(row,'zh'),'$88.72*');assert.equal(formatReferenceCost(row,'en'),'$88.72*');\n assert.equal(row.status,'observed');\n assert.deepEqual(costNoteRows([row],'en'),[{model_id:row.model_id,label:row.label,marker:'*',text:note.text.en}]);\n assert.equal(costNoteRows([row],'zh')[0].text,note.text.zh);\n});\n\ntest('unselected missing usage and estimates retain their existing qualifiers',()=>{\n assert.equal(formatReferenceCost({status:'partial',total_usd:null,known_usd:88.724143}),'≥ $88.72');\n assert.equal(formatReferenceCost({status:'estimated',total_usd:12.34,known_usd:12}),'≈ $12.34');\n assert.equal(formatReferenceCost({status:'partial',total_usd:null,known_usd:null}),'—');\n assert.deepEqual(costNoteRows([{model_id:'another',status:'partial'}]),[]);\n});\n"
+        result=subprocess.run(['node','-e',script],cwd=CARBON_COST_TEST_ROOT,capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)

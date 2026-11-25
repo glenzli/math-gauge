@@ -19,6 +19,7 @@ EDITION = '1.3.0'
 CONDITION = 'nonlogical_retry_3'
 DIRECTORY = 'results/research-initiative/v' + VERSION
 INDEX_PATH = DIRECTORY + '/index.json'
+ADDITIONS = {'gemini-4-carbon-medium': DIRECTORY + '/additions/gemini-4-carbon-medium.json'}
 POLICY_PATH = 'protocol/research-initiative.json'
 CONTRACT_PATH = 'protocol/research-initiative/v' + VERSION + '/contracts-v2.json'
 DELIVERY_SUPPLEMENTS = 'protocol/research-initiative/v' + VERSION + '/delivery-supplements.json'
@@ -462,6 +463,54 @@ def validate_public(report, policy, policy_hash):
     return report
 
 
+def validate_addition(addition, original, original_ref, root, policy, policy_hash):
+    """Admit one independently reviewed opportunity without rewriting the old index."""
+    from . import independent_research_admitted_delivery as admitted
+    from . import independent_research_external as external
+
+    fields = {'schema', 'version', 'edition', 'model_id', 'condition', 'policy_sha256',
+              'base_profile', 'admitted_results', 'admitted_selection_sha256',
+              'independent_review', 'profile', *BOUNDARIES}
+    _need(isinstance(addition, dict) and set(addition) == fields
+          and addition['schema'] == 'math-gauge.research-initiative-addition/v1'
+          and addition['version'] == VERSION and addition['edition'] == EDITION
+          and addition['model_id'] in ADDITIONS and addition['model_id'] == original['model_id']
+          and addition['condition'] == CONDITION and addition['policy_sha256'] == policy_hash
+          and all(type(addition[k]) is type(v) and addition[k] == v for k, v in BOUNDARIES.items()),
+          'Invalid aggregate-only initiative addition')
+    _need(isinstance(original_ref, dict) and set(original_ref) == {'path', 'bytes', 'sha256'}
+          and addition['base_profile'] == original_ref
+          and json.loads(source_bytes(root, original_ref)) == original,
+          'Initiative addition must bind the unchanged indexed profile')
+    ref = addition['admitted_results']
+    _need(isinstance(ref, dict) and set(ref) == {'path', 'bytes', 'sha256'}
+          and ref['path'] == admitted.PUBLIC_PATH.as_posix()
+          and type(ref['bytes']) is int and ref['bytes'] >= 0 and _hash(ref['sha256']),
+          'Initiative addition requires its exact public admitted-delivery aggregate')
+    delivered = admitted.validate_public(json.loads(source_bytes(root, ref)),
+        policies=external.policy_bindings(root), model_ids=[addition['model_id']])
+    _need(_hash(addition['admitted_selection_sha256'])
+          and addition['admitted_selection_sha256'] == delivered['source_binding']['adoption_sha256'],
+          'Initiative addition binds a different admitted selection')
+    primary = addition['independent_review']
+    _need(isinstance(primary, dict) and set(primary) == {'primary_ai_review_sha256',
+              'coordinator_selection_sha256', 'normalization_sha256', 'grade_0_to_4'}
+          and all(_hash(primary[k]) for k in ('primary_ai_review_sha256',
+              'coordinator_selection_sha256', 'normalization_sha256'))
+          and type(primary['grade_0_to_4']) is int and primary['grade_0_to_4'] == 0,
+          'Initiative addition requires the independent zero-grade AI judgment, not an E conversion')
+    report = validate_public(addition['profile'], policy, policy_hash)
+    _need(report['model_id'] == original['model_id']
+          and original['extension_metric'] == _metric([{'grade': None}])
+          and report['extension_metric'] == _metric([{'grade': primary['grade_0_to_4']}])
+          and report['legacy_metric'] == original['legacy_metric']
+          and report['metric']['confirmed'] == original['metric']['confirmed']
+          and report['metric']['coverage']['reviewed'] == original['metric']['coverage']['reviewed'] + 1
+          and all(report[k] != original[k] for k in ('private_review_sha256', 'private_materials_sha256')),
+          'Initiative addition may settle only the unknown independent opportunity; legacy judgments stay unchanged')
+    return report
+
+
 def load_public(root, *, benchmark_version):
     root = Path(root)
     if benchmark_version != EDITION or not (root / INDEX_PATH).is_file():
@@ -475,13 +524,21 @@ def load_public(root, *, benchmark_version):
           and len(index['models']) == 20
           and index.get('policy_sha256') == policy_hash and all(index.get(k) == v for k, v in BOUNDARIES.items()),
           'Invalid initiative index')
-    models = []
+    models, additions = [], []
     for mid, ref in index['models'].items():
         report = validate_public(json.loads(source_bytes(root, ref)), policy, policy_hash)
         _need(report['model_id'] == mid, 'Initiative aggregate belongs to another model')
+        addition_path = ADDITIONS.get(mid)
+        if addition_path and (root / addition_path).is_file():
+            addition_raw = read_bytes(root / addition_path)
+            report = validate_addition(json.loads(addition_raw), report, ref, root, policy, policy_hash)
+            additions.append(dict(path=addition_path, bytes=len(addition_raw), sha256=digest(addition_raw)))
         models.append(dict(id=mid, **{k: deepcopy(report[k]) for k in
                            ('metric', 'legacy_metric', 'extension_metric', 'legacy_weight', 'extension_weight')}))
-    return dict(schema='math-gauge.research-initiative/v1', version=VERSION,
+    result = dict(schema='math-gauge.research-initiative/v1', version=VERSION,
                 benchmark_version=EDITION, policy_sha256=policy_hash,
                 source=dict(path=INDEX_PATH, bytes=len(raw), sha256=digest(raw)),
                 models=models, **BOUNDARIES)
+    if additions:
+        result['additions'] = additions
+    return result

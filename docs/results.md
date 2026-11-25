@@ -4,7 +4,7 @@
 
 ## 1.3.0：已采用的独立研究结果
 
-下表直接读取当前共享生成器的已采用结果；17个配置已有三稿及独立审核，未结算的Carbon medium不进入此表。人工数学审核待完成，评分不是新增候选作答。
+下表使用共享生成器的已采用结果；18个配置已有三稿及独立审核。Carbon medium 保留首轮强收、后两轮正常交卷的真实来源。人工数学审核待完成。
 
 | 模型 | SMC | RMC | MC |
 |---|---:|---:|---:|
@@ -18,6 +18,7 @@
 | Sol 6.1 (xhigh) | 71.29 | 89.31 | 91.64 |
 | Terra 6.1 (max) | 70.29 | 82.16 | 83.81 |
 | Terra 6.1 (xhigh) | 66.43 | 80.17 | 81.37 |
+| Gemini 4 Carbon (medium) | 64.53 | 81.54 | 92.57 |
 | Claude Opus 5.5 (max) | 60.74 | 89.68 | 92.88 |
 | Gemini 4 Neon (xhigh) | 59.99 | 85.90 | 92.63 |
 | Claude Opus 5.5 (xHigh) | 57.78 | 87.83 | 90.69 |
@@ -25,6 +26,10 @@
 | Gemini 4 Hydrogen (xhigh) | 49.17 | 77.66 | 89.53 |
 | Kimi 3.1 Pro (max) | 48.29 | 72.14 | 76.34 |
 | DeepSeek v4.1 Flash (max) | 26.92 | 63.26 | 75.89 |
+
+Carbon medium 新题三分为 **MC 83／RMC 73.33／SMC 53**；数学品味为86／77／54，研究能力为77／66／51。首轮截止稿和后两轮原生正常答卷均按原数学标准审核，强收不自动判数学零分。新增有效作答约95.79分钟，已记录用量对应新增API参考额$6.8454724，总额 **$88.72**\*。**\* Carbon：费用按已记录用量统计，少量中断用量可能未计入。** [本次采用说明](../protocol/mathematical-taste/v1.3.0/selected-delivery-admission.md)。
+
+Carbon medium’s new task is **MC 83 / RMC 73.33 / SMC 53**, giving overall edition1.3 scores of **MC 92.57 / RMC 81.54 / SMC 64.53**. Its selected R1 cutoff manuscript and normal R2/R3 submissions use the existing mathematical standards. Effective answer time is95.79 minutes; recorded usage adds$6.8454724 for a total reference of **$88.72**\*. **\* Carbon: costs use recorded usage; a small amount of interrupted usage may be uncounted.**
 
 数学品味、研究能力和严格净信用的来源分别绑定。[通用规则](open-research-v130.md) · [外部五配置](independent-research-external.md) · [Hydrogen／Neon原生来源](independent-research-native.md) · [共同机会主动性](research-initiative.md)。下列1.2.0与1.1.0表保留原100分框架，跨版不能只用总分相减解释能力变化。
 
@@ -86,15 +91,19 @@ Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 H
 | [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.68 | 88.51 | 68.00 | 39／0／39 |
 | [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
 | [Gemini 4 Neon (xHigh)](../site/models/gemini-4-neon-xhigh/index.html) | AGY CLI | 92.47 | 85.97 | 60.42 | 39／0／39 |
-| [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 92.89 | 80.85 | 64.50 | 38／1／39 |
+| [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | AGY CLI | 92.89 | 80.85 | 64.50 | 38／1／39 |
 | [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | Codex CLI | 82.07 | 80.30 | 65.67 | 39／0／39 |
 | [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
-| [Gemini 4 Hydrogen (xhigh)](../site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 88.36 | 77.37 | 47.92 | 39／0／39 |
-| [Gemini 4 Carbon (high)](../site/models/gemini-4-carbon-high/index.html) | AGY CLI⁴ | 89.62 | 75.89 | 32.83 | 38／1／39 |
-| [Gemini 4 Argon (high)](../site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 86.89 | 70.80 | 37.92 | 38／1／39 |
+| [Gemini 4 Hydrogen (xhigh)](../site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI | 88.36 | 77.37 | 47.92 | 39／0／39 |
+| [Gemini 4 Carbon (high)](../site/models/gemini-4-carbon-high/index.html) | AGY CLI | 89.62 | 75.89 | 32.83 | 38／1／39 |
+| [Gemini 4 Argon (high)](../site/models/gemini-4-argon/index.html) | AGY CLI | 86.89 | 70.80 | 37.92 | 38／1／39 |
 | [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
 | [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
-| [Gemini 3.8 Flash (high)](../site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 59.39 | 39.21 | 13.75 | 38／1／39 |
+| [Gemini 3.8 Flash (high)](../site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 59.39 | 39.21 | 13.75 | 38／1／39 |
+
+¹ Dot原生独立运行方式。
+
+² 使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。
 
 总榜默认按 SMC、RMC、MC 依次比较。切到其他口径时，所选分数排第一，其余两项仍按 SMC、RMC、MC 的优先级比较。分项榜使用本项成绩独立排序。三项均已结算且公布到两位小数相同的模型共享名次，例如第 1、1、3 名。
 
@@ -105,8 +114,6 @@ Gemini 4 Neon新增18份正常续答，其中2份自身三项全满。Gemini 4 H
 ### 部分测试：GLM
 
 [GLM 5.3 (max)](../site/models/glm-5.3-max/index.html)退出主榜及分项排行，保留详情和已有证据。39道初答中21份正常交卷、5份强收有内容，三轮Lean自查未执行。按1.1.0的已确认贡献为MC42.04、RMC27.90、SMC14.08／100，完整区间见模型页；这些数值不表示所有规定测项已完成。退出排行依据是测试流程尚未完成，不设数学低分剔除门槛，原有失败与未测状态不重判。
-
-⁴ AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。
 
 ## Gemini 4 Neon xHigh · 2026-11-22
 

@@ -8,6 +8,10 @@
 
 The five external configurations add **$35.512417696** at the retained 1.2 API reference rates. Final cumulative session usage is counted once, including effective internal retries; confirmed invalid system runs are excluded. This is a usage-based reference, not a subscription invoice. The external resource component remains separate from the original ten-configuration source.
 
+Carbon medium 新增独立研究的40条唯一响应已核回 **12,160,567 tokens**（含缓存），按既有费率计入 **$6.8454724**；与既有测试合计，当前费用参考为 **$88.724143**\*（页面显示 **$88.72**\*）。按用户选择，以已记录用量统计，首轮三段未返回用量的中断尾部不另补估。**\* Carbon：费用按已记录用量统计，少量中断用量可能未计入。** 原始未知用量保留，不补零，累计快照不重复相加；原生诊断、控制器排查和评审开销不计候选成本。[本次资源聚合](../protocol/mathematical-taste/v1.3.0/native-additions/gemini-4-carbon-medium-resources.json)与[费用口径选择](../protocol/mathematical-taste/v1.3.0/native-additions/gemini-4-carbon-medium-cost-selection.json)分别留存。
+
+Carbon medium’s new research trajectory adds **$6.8454724** for **12,160,567 tokens**, including cache reads, at the retained API reference tariff. The user-selected recorded-usage reference totals **$88.724143**\*, displayed as **$88.72**\*. **\* Carbon: costs use recorded usage; a small amount of interrupted usage may be uncounted.** The three unreported R1 tail generations are not imputed; original unknown usage remains unknown, and cumulative usage is counted once. Diagnostic and evaluator calls remain separate.
+
 评审与候选开销分开：当前评审缺少足以核实费用的原生用量，评审成本标为未知，不填零。公开资源投影只保存按配置的合计、覆盖和不透明来源哈希，原生证据与私有题目留在评审端。
 
 耗时继续使用同一组共有公开题和单列整章形式化，不纳入独立开放研究。成本／耗时—成绩图使用当前版本成绩，未知完整分保留已确认值与区间，资源或成绩不齐不进入完整 Pareto 前沿。纵轴下界按当前所选口径最低有效分向下取到 20 的整数倍，上界 100；刻度直接标示实际范围，原始分数与前沿计算不变。

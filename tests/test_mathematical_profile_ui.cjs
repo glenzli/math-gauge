@@ -541,6 +541,30 @@ test('current profile uses adopted evidence and shows the whole eligible cohort 
  companion.item_weight_binding.policy_sha256='b'.repeat(64);
  assert.equal(ui.prepare(weighted,compare).models.find(model=>model.id===measured).profile_metrics.completion.exact,null);
 
+ const added=structuredClone(weighted),c=added.independent_research_abilities,b=added.research_preview;
+ c.schema='math-gauge.independent-research-abilities/v9';b.schema='math-gauge.research-board-preview/v7';
+ c.item_weight_binding={...b.item_weight_binding};
+ c.source_binding=b.source_binding={edition:'1.2.0',sha256:'1'.repeat(64)};
+ c.value_binding={policy_sha256:'2'.repeat(64)};c.strict_credit_binding={policy_sha256:'3'.repeat(64)};
+ const parentHash='4'.repeat(64);
+ c.native_additions_binding={'gemini-4-carbon-medium':{parent:{edition:'1.2.0',
+  path:`results/independent-research-baselines/v0.1.0/${parentHash}/data.json`,bytes:123,sha256:parentHash},
+  index_sha256:'5'.repeat(64),adoption_sha256:'6'.repeat(64),human_review:'pending',
+  legacy_taste_sha256:null,source_kind:'user-selected-native-cutoff-deliveries',policy_bindings:{
+   value:c.value_binding.policy_sha256,strict_credit:c.strict_credit_binding.policy_sha256,
+   item_weight:c.item_weight_binding.policy_sha256}}};
+ b.native_additions_binding=structuredClone(c.native_additions_binding);
+ c.by_model['gemini-4-carbon-medium']=structuredClone(c.by_model[measured]);
+ const withAddition=ui.prepare(added,compare),carbon=withAddition.models.find(model=>model.id==='gemini-4-carbon-medium');
+ assert.equal(withAddition.axes.length,10);assert.equal(carbon.profile_metrics.completion.exact,76);
+ assert.equal(carbon.profile_metrics.mathematical_taste.exact,null,'missing revision taste remains an interval');
+ const damaged=structuredClone(added);
+ damaged.independent_research_abilities.native_additions_binding['gemini-4-carbon-medium'].parent.private_quote='forbidden';
+ damaged.research_preview.native_additions_binding=structuredClone(damaged.independent_research_abilities.native_additions_binding);
+ assert.equal(ui.prepare(damaged,compare).models.find(model=>model.id==='gemini-4-carbon-medium').profile_metrics.completion.exact,null);
+ const rebound=structuredClone(added);rebound.independent_research_abilities.native_additions_binding['gemini-4-carbon-medium'].parent.sha256='7'.repeat(64);
+ assert.equal(ui.prepare(rebound,compare).models.find(model=>model.id==='gemini-4-carbon-medium').profile_metrics.completion.exact,null);
+
  const oldWithCompanion={...original,independent_research_abilities:data.independent_research_abilities};
  const oldQuery='?edition=1.2.0'+query,old=fixture(original,oldQuery),same=fixture(oldWithCompanion,oldQuery);
  const tableText=page=>nodesBelow(page.el('values')).map(node=>[node.tagName,node.textContent]);
@@ -626,4 +650,79 @@ test('initiative coverage uses opportunities separately from family coverage and
  assert.match(f.el('meanings-scope').textContent,/28 common extension opportunities/);
  assert.equal(new URL(f.win.location.href).searchParams.get('profile-axis'),'initiative');
  assert.deepEqual(f.controller.selected(),[ids[2]]);
+});
+
+function structureFixture(){
+ const data=opportunityFixture(),shape={depth:{unit:'depth_family',planned:28,weight:69},open_research:{unit:'open_research_opportunity',planned:6,weight:11}};
+ const metric=(axis,value,pending=false)=>{const s=shape[axis],missing=pending?3:0,upper=pending?300/s.weight:value;
+  return {exact:pending?null:value,confirmed:pending?0:value,lower:pending?0:value,upper,unknown_weight:pending?upper:0,
+   coverage:{unit:s.unit,planned:s.planned,reviewed:s.planned-(pending?1:0),weight_planned:s.weight,weight_reviewed:s.weight-missing}}};
+ data.profile_structure={schema:'math-gauge.profile-structure/v1',version:'0.1.0',benchmark_version:'1.3.0',condition:'nonlogical_retry_3',
+  reviewer_kind:'ai',human_review:'pending',post_observation:true,formal_comparison_eligible:false,new_candidate_calls:0,
+  main_scores_modified:false,original_bytes_rewritten:false,policy_sha256:'c'.repeat(64),source:{sha256:'d'.repeat(64)},
+  planned:{depth:28,open_research:6},weights:{depth:69,open_research:11},
+  axes:[{id:'depth',label:{zh:'数学深度',en:'Mathematical depth'},description:{zh:'题内机制与结构。',en:'Mechanisms and structure in prescribed problems.'}},
+   {id:'open_research',label:{zh:'开放研究能力',en:'Open research capability'},description:{zh:'开放请求中的可用成果。',en:'Usable results under open requests.'}}],
+  models:data.models.map((model,index)=>{const make=()=>({depth:metric('depth',index===1?0:83,index===2),open_research:metric('open_research',index===1?0:71,index===2)});
+   return {id:model.id,first:make(),revision:make()}})};
+ return data;
+}
+
+test('independent structure source replaces only depth and open research without changing old scores or other axes',()=>{
+ const data=structureFixture(),original=structuredClone(data),without=structuredClone(data);delete without.profile_structure;
+ const old=ui.prepare(without,compare),current=ui.prepare(data,compare);
+ for(const model of current.models){
+  const prior=old.models.find(row=>row.id===model.id),source=data.profile_structure.models.find(row=>row.id===model.id);
+  assert.deepEqual(model.profile_metrics.depth,source.revision.depth);
+  assert.deepEqual(model.profile_metrics.open_research,source.revision.open_research);
+  for(const axis of current.axes.filter(axis=>!['depth','open_research'].includes(axis.id)))
+   assert.deepEqual(model.profile_metrics[axis.id],prior.profile_metrics[axis.id]);
+ }
+ assert.deepEqual(data,original);
+ const changed=structuredClone(data),mixed=(unit,planned)=>({lower:4,upper:4,exact:4,confirmed:4,base_coverage:{unit,planned,reviewed:planned}});
+ const stage=()=>({depth_v130:mixed('mathematical_family',35),open_research_v130:mixed('open_research_family',5),
+  discernment_v130:mixed('mathematical_family',35),initiative_v130:mixed('mathematical_family',35)});
+ changed.independent_research_abilities={schema:'math-gauge.independent-research-abilities/v2',edition:'1.3.0',
+  source_stages:{first:'first-answer',revision:'revision-inclusive'},
+  by_model:Object.fromEntries(changed.models.map(model=>[model.id,{stages:{first:stage(),revision:stage()}}]))};
+ const legacyChanged=structuredClone(changed);delete legacyChanged.profile_structure;
+ assert.equal(ui.prepare(legacyChanged,compare).models[0].profile_metrics.depth.exact,4);
+ assert.deepEqual(ui.prepare(changed,compare).models.map(row=>[row.profile_metrics.depth,row.profile_metrics.open_research]),
+  current.models.map(row=>[row.profile_metrics.depth,row.profile_metrics.open_research]),'old capacity/profile mixtures cannot influence the new source');
+});
+
+test('new structure zeros remain known and a missing model uses fixed unknowns without old-capacity fallback',()=>{
+ const data=structureFixture(),models=new Map(ui.prepare(data,compare).models.map(row=>[row.id,row]));
+ assert.equal(models.get(ids[1]).profile_metrics.depth.exact,0);
+ assert.equal(models.get(ids[1]).profile_metrics.open_research.exact,0);
+ assert.equal(models.get(ids[2]).profile_metrics.depth.coverage.planned,28);
+ assert.equal(models.get(ids[2]).profile_metrics.open_research.coverage.planned,6);
+ data.profile_structure.models=data.profile_structure.models.filter(row=>row.id!==ids[0]);
+ const missing=ui.prepare(data,compare).models.find(row=>row.id===ids[0]);
+ for(const axis of ['depth','open_research'])assert.deepEqual([missing.profile_metrics[axis].exact,missing.profile_metrics[axis].lower,missing.profile_metrics[axis].upper],[null,0,100]);
+});
+
+test('structural source rejects wrong denominators, weights, identities and unknown markers',()=>{
+ const changes=[d=>d.profile_structure.weights.depth=70,d=>d.profile_structure.models[0].revision.depth.coverage.planned=35,
+  d=>d.profile_structure.models[0].revision.open_research.coverage.weight_planned=12,d=>d.profile_structure.policy_sha256='bad',
+  d=>d.profile_structure.models.push(d.profile_structure.models[0]),d=>d.profile_structure.models[0].revision.depth.coverage.reviewed=27];
+ for(const change of changes){const data=structureFixture();change(data);assert.equal(ui.prepare(data,compare),null)}
+});
+
+test('current depth and open research keep separate coverage while preserving language and URL model selection',()=>{
+ const f=fixture(structureFixture(),'?edition=1.3.0&profile-models='+ids[2]+'&profile-axis=depth&profile-view=radar&score=strict');
+ const legend=()=>nodesBelow(f.el('legend')).map(node=>node.textContent).join(' ');
+ assert.match(legend(),/深度家族 · 27\/28/);assert.match(legend(),/开放研究机会 · 5\/6/);assert.doesNotMatch(legend(),/27–35\/35/);
+ assert.match(f.el('meanings-scope').textContent,/28个给定问题家族/);
+ f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');
+ assert.match(legend(),/Depth families · 27\/28/);assert.match(legend(),/Open research opportunities · 5\/6/);
+ assert.equal(new URL(f.win.location.href).searchParams.get('profile-axis'),'depth');assert.deepEqual(f.controller.selected(),[ids[2]]);
+});
+
+test('historical profile editions ignore the current-only structural overlay',()=>{
+ for(const edition of ['1.1.0','1.2.0']){
+  const withSource=structureFixture();withSource.benchmark_version=edition;
+  const without=structuredClone(withSource);delete without.profile_structure;
+  assert.deepEqual(ui.prepare(withSource,compare,'first'),ui.prepare(without,compare,'first'));
+ }
 });

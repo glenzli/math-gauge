@@ -6,7 +6,18 @@
   const lower=Math.min(80,Math.max(0,Math.floor(minimum/20)*20));
   return {lower,upper:100,ticks:Array.from({length:(100-lower)/20+1},(_,i)=>lower+i*20)};
  }
- if(typeof module!=='undefined'&&module.exports)module.exports={scoreDomain};
+ function formatReferenceCost(model,language='zh'){
+  const value=model.total_usd??(model.status==='partial'?model.known_usd:null);
+  if(value==null)return '—';
+  const qualifier=model.status==='estimated'?'≈ ':model.status==='partial'?'≥ ':'';
+  const marker=model.cost_note?.marker==='*'?'*':'';
+  return qualifier+'$'+value.toLocaleString(language==='en'?'en-US':'zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2})+marker;
+ }
+ function costNoteRows(models,language='zh'){
+  return models.filter(model=>model.cost_note?.marker==='*'&&typeof model.cost_note.text?.[language]==='string')
+   .map(model=>({model_id:model.model_id,label:model.label,marker:'*',text:model.cost_note.text[language]}));
+ }
+ if(typeof module!=='undefined'&&module.exports)module.exports={scoreDomain,formatReferenceCost,costNoteRows};
  if(typeof document==='undefined')return;
  const source=document.getElementById('cost-reference-data');if(!source)return;
  const data=JSON.parse(source.textContent),board=document.getElementById('cost-board'),plot=document.getElementById('cost-plot');
@@ -60,7 +71,7 @@
  const t=key=>labels[key][lang==='en'?1:0],locale=()=>lang==='en'?'en-US':'zh-CN';
  const money=v=>'$'+v.toLocaleString(locale(),{minimumFractionDigits:2,maximumFractionDigits:2});
  const amount=m=>m.total_usd??(m.status==='partial'?m.known_usd:null);
- const costText=m=>amount(m)==null?'—':(m.status==='estimated'?'≈ ':m.status==='partial'?'≥ ':'')+money(amount(m));
+ const costText=m=>formatReferenceCost(m,lang);
  const scoreText=m=>{
   const score=m.scores[mode],value=score.value.toFixed(2);
   if(score.complete)return value;
@@ -171,7 +182,8 @@
    if(id==null){tooltip.hidden=true;return}
    const state=states.get(id),m=state.m,score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+scoreText(m);
    tooltip.textContent=m.label+'\n'+state.delivery+'\n'+t('total')+' '+costText(m)+'\n'+score+(m.seconds==null?'':'\n'+t('timeLabel')+' '+(m.seconds/60).toFixed(1))+
-    (m.status==='estimated'?'\n'+t('range')+' '+m.estimate_range_usd.map(money).join('–'):m.status==='partial'?'\n'+t('lowerBound'):'');
+    (m.status==='estimated'?'\n'+t('range')+' '+m.estimate_range_usd.map(money).join('–'):m.status==='partial'?'\n'+t('lowerBound'):'')+
+    (m.cost_note?.text?.[lang]?'\n'+m.cost_note.marker+' '+m.cost_note.text[lang]:'');
    tooltip.hidden=false;
    const box=wrap.getBoundingClientRect(),pbox=state.p.getBoundingClientRect(),px=event?.clientX??pbox.left+pbox.width/2,py=event?.clientY??pbox.top;
    tooltip.style.left=Math.max(wrap.scrollLeft+4,Math.min(px-box.left+wrap.scrollLeft+12,wrap.scrollLeft+box.width-tooltip.offsetWidth-8))+'px';
@@ -245,6 +257,11 @@
    if(!review){review=node('p',null,'panel-foot');review.id='cost-review-overhead';document.getElementById('cost-unavailable').after(review)}
    review.textContent=t('reviewCost')+'：'+(data.review_overhead.total_usd==null?t('reviewCostUnknown'):money(data.review_overhead.total_usd))+' · '+t('reviewSeparate');
   }
+  const referenceNotes=costNoteRows(data.models,lang);let notes=document.getElementById('cost-reference-notes');
+  if(referenceNotes.length){
+   if(!notes){notes=node('div',null,'panel-foot');notes.id='cost-reference-notes';document.getElementById('cost-unavailable').after(notes)}
+   notes.replaceChildren(...referenceNotes.map(value=>{const note=node('p',value.marker+' '+value.text);note.dataset.costNote=value.model_id;return note}));
+  }else if(notes)notes.remove();
   board.setAttribute('aria-label',t('title'));renderBoard();renderPlot();
  }
  document.querySelectorAll('[data-cost-axis],[data-cost-score]').forEach(b=>b.addEventListener('click',()=>{const u=new URL(location.href);if(b.dataset.costAxis)u.searchParams.set('cost-axis',b.dataset.costAxis);else u.searchParams.set('cost-score',b.dataset.costScore);history.replaceState(null,'',u);render()}));

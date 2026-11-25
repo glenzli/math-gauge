@@ -4319,3 +4319,78 @@ def research_preview_contributions(contributions, original_policy, preview_polic
                 if result[key].get(field) is not None:
                     result[key][field] = float(Fraction(str(result[key][field])) * ratio)
     return result
+
+
+def score_profile_structure(inputs):
+    """Fixed task-opportunity grades for two independent current-edition traits."""
+    from .profile_structure import ProfileStructureInputs, AXES, VERSION, EDITION, CONDITION, independent_case
+    if not isinstance(inputs, ProfileStructureInputs):
+        raise ValueError('Structural profiles require authenticated independent source judgments')
+    extra = independent_case(inputs.contracts)
+    canonical = lambda cid: extra if cid == 'independent-research' else cid
+    rows = {(r['axis'], canonical(r['case_id']), r['stage']): r for r in inputs.review['rows']}
+    available = inputs.materials['revision_available']
+    original_weight = Fraction(inputs.policy['revision']['original_weight'])
+    revision_weight = Fraction(inputs.policy['revision']['revision_weight'])
+
+    def value(axis, cid, stage):
+        row = rows.get((axis, cid, stage))
+        grade = row['grade'] if row is not None else None
+        return _interval(None) if grade is None else (Fraction(grade, 4),) * 3
+
+    def staged(axis, cid):
+        if cid == extra:
+            result = value(axis, cid, 'independent')
+            return result, result
+        first = value(axis, cid, 'first')
+        if cid not in inputs.revision_eligible:
+            return first, first
+        if not available:
+            return first, _interval(None)
+        if (axis, cid, 'revision') in rows:
+            revised = _average([first, value(axis, cid, 'revision')], [original_weight, revision_weight])
+            return first, revised
+        return first, first
+
+    values = {axis: {} for axis in AXES}
+    for binding in inputs.contracts['depth']['task_bindings']:
+        cid = binding['case_id']
+        values['depth'][cid] = staged('depth', cid)
+    for opportunity in inputs.contracts['open_research']['opportunities']:
+        cid = opportunity['case_id']
+        values['open_research'][cid] = staged('open_research', cid)
+    metrics = {stage: {} for stage in ('first', 'revision')}
+    private_tasks = {axis: {} for axis in AXES}
+    for index, stage in enumerate(('first', 'revision')):
+        for axis in AXES:
+            groups = []
+            if axis == 'depth':
+                for family in inputs.contracts['depth']['families']:
+                    interval = _average([values[axis][cid][index] for cid in family['case_ids']])
+                    groups.append((family['weight'], interval))
+            else:
+                groups = [(item['opportunity_factor'], values[axis][item['case_id']][index])
+                          for item in inputs.contracts[axis]['opportunities']]
+            denominator = sum(weight for weight, _ in groups)
+            if denominator != inputs.policy['weights'][axis]:
+                raise ValueError('Structural profile lost its fixed opportunity denominator')
+            low, high, exact = _average([v for _, v in groups], [w for w, _ in groups])
+            numeric = _percent(exact)
+            metrics[stage][axis] = dict(lower=_bound(low, lower=True) if numeric is None else numeric,
+                upper=_bound(high, lower=False) if numeric is None else numeric, exact=numeric,
+                confirmed=_percent(low), unknown_weight=_percent(high-low),
+                coverage=dict(unit='depth_family' if axis == 'depth' else 'open_research_opportunity',
+                    planned=len(groups), reviewed=sum(v[2] is not None for _, v in groups),
+                    weight_planned=denominator, weight_reviewed=sum(w for w, v in groups if v[2] is not None)))
+            private_tasks[axis][stage] = {cid: dict(zip(('lower', 'upper', 'exact'),
+                [None if part is None else _percent(part) for part in pair[index]]))
+                for cid, pair in values[axis].items()}
+    revisions = [r for r in inputs.review['rows'] if r['stage'] == 'revision']
+    reviewed = sum(r['grade'] is not None for r in revisions)
+    delivery = next(r for r in inputs.materials['rows'] if r['stage'] == 'independent')
+    return dict(schema='math-gauge.profile-structure-score/v1', version=VERSION, edition=EDITION,
+        model_id=inputs.review['model_id'], condition=CONDITION, **metrics, tasks=private_tasks,
+        revision_coverage=dict(status='adopted' if available else 'not-adopted', selected=len(revisions),
+                               reviewed=reviewed, unknown=len(revisions)-reviewed),
+        independent_delivery=dict(source_status=delivery['source_status'], classification=delivery['classification'],
+            planned_rounds=3, last_round_selected=bool(delivery['evidence_source_ids'])))

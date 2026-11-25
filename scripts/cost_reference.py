@@ -12,6 +12,63 @@ from math_gauge.records import evidence_bytes
 DATA_PATH = "results/costs/v0.1.0/current.json"
 SCORE_MODES = ("capability", "partial", "strict")
 
+CARBON_REPORTED_COST_SELECTION = Path('protocol/mathematical-taste/v1.3.0/native-additions/gemini-4-carbon-medium-cost-selection.json')
+CARBON_REPORTED_COST_AUTHORIZATION = '4ffa24a5380167ded3281b26235d009de8d291380d11582d61eb682a4d135edc'
+_CARBON_MODEL = 'gemini-4-carbon-medium'
+_CARBON_COST_RESOURCES = dict(path='protocol/mathematical-taste/v1.3.0/native-additions/gemini-4-carbon-medium-resources.json',
+    bytes=1051,sha256='3eca8c10b73a0f6a2bdfbda01ccd4964b1ff044833771798c09b30e112411f24')
+_CARBON_COST_ADOPTION = dict(path='protocol/mathematical-taste/v1.3.0/native-additions/gemini-4-carbon-medium.json',
+    bytes=2891,sha256='a588f1a69506fbb97bedda1bf89aac241a67b1a0a443515f8676bb08bd68d741')
+_CARBON_COST_NOTE = dict(marker='*',text=dict(
+    zh='Carbon：费用按已记录用量统计，少量中断用量可能未计入。',
+    en='Carbon: costs use recorded usage; a small amount of interrupted usage may be uncounted.'))
+
+
+def _carbon_reported_research_reference(root, addition, increment):
+    """Apply one explicit reported-usage cost selection; raw usage stays partial."""
+    from math_gauge import independent_research_admitted_delivery as admitted
+    from scripts.results_independent_research_resources import validate_native_public
+    path = admitted.flow._contained(Path(root),CARBON_REPORTED_COST_SELECTION.as_posix())
+    if not path.exists():
+        return None
+    if not path.is_file():
+        raise ValueError('Reported-usage cost selection must be a regular file')
+    raw = path.read_bytes()
+    choice = json.loads(raw)
+    fields = {'schema','edition','model_id','selection','source_resource','source_adoption',
+              'authorization_sha256','reported_cost_usd','unreported_generation_operations_not_counted',
+              'unreported_token_usage','token_usage_modified','cost_note'}
+    if (not isinstance(choice,dict) or set(choice) != fields or choice['schema'] != 'math-gauge.carbon-reported-usage-cost-selection/v1'
+            or choice['edition'] != '1.3.0' or choice['model_id'] != _CARBON_MODEL
+            or choice['selection'] != 'reported_native_usage_reference'
+            or choice['source_resource'] != _CARBON_COST_RESOURCES
+            or choice['source_adoption'] != _CARBON_COST_ADOPTION
+            or choice['authorization_sha256'] != CARBON_REPORTED_COST_AUTHORIZATION
+            or choice['reported_cost_usd'] != 6.8454724
+            or type(choice['unreported_generation_operations_not_counted']) is not int
+            or choice['unreported_generation_operations_not_counted'] != 3
+            or choice['unreported_token_usage'] != 'unknown' or choice['token_usage_modified'] is not False
+            or choice['cost_note'] != _CARBON_COST_NOTE):
+        raise ValueError('Invalid Carbon reported-usage cost selection or private/unsupported fields')
+    resource_raw = evidence_bytes(Path(root), choice['source_resource'])
+    adoption_raw = evidence_bytes(Path(root), choice['source_adoption'])
+    if (addition.identifier != _CARBON_MODEL or addition.resource_ref != choice['source_resource']
+            or addition.index_ref != choice['source_adoption'] or addition.index_raw != adoption_raw
+            or addition.index != json.loads(adoption_raw)):
+        raise ValueError('Reported-usage cost selection binds another model or adopted source')
+    resource = validate_native_public(json.loads(resource_raw), addition.index, hashlib.sha256(adoption_raw).hexdigest())
+    original = resource['models'][_CARBON_MODEL]
+    if (original != increment or original['status'] != 'partial' or original['total_usd'] is not None
+            or original['tokens'] is not None or original['known_usd'] != choice['reported_cost_usd']
+            or original['coverage'] != dict(planned=3,complete=2,partial=1,missing=0,not_run=0)):
+        raise ValueError('Reported-usage cost selection cannot rewrite tokens, raw gaps or the recorded fee')
+    # This is a cost-reference scope, not an assertion of complete native usage.
+    # Only these three cost fields enter the existing combination helper.
+    return dict(cost=dict(total_usd=original['known_usd'],known_usd=original['known_usd'],status='observed'),
+        note=choice['cost_note'],source=dict(path=CARBON_REPORTED_COST_SELECTION.as_posix(),bytes=len(raw),
+            sha256=hashlib.sha256(raw).hexdigest(),authorization_sha256=choice['authorization_sha256']))
+
+
 
 def _frontiers(rows):
     result = {}
@@ -151,7 +208,7 @@ def revision_reference(root, display_data, timing_reference, base_reference):
 
 
 def independent_research_reference(root, display_data, base_reference, *, adoption, external_adoption=None,
-                                   native_adoption=None):
+                                   native_adoption=None, native_additions=()):
     """Use the 1.3 scores and add full candidate cost. Retain the shared timing sample."""
     import copy
     from scripts.results_independent_research_resources import (DATA_PATH, EXTERNAL_DATA_PATH, NATIVE_DATA_PATH, ROUNDS,
@@ -172,6 +229,24 @@ def independent_research_reference(root, display_data, base_reference, *, adopti
         if resources.keys() & added_native['models'].keys():
             raise ValueError('Separate native resource cohorts overlap')
         resources.update(added_native['models'])
+    added_dispatches, addition_sources, reported_costs = {}, [], {}
+    for addition in native_additions:
+        from math_gauge import independent_research_native as native
+        from math_gauge import independent_research_admitted_delivery as admitted
+        from scripts.results_independent_research_resources import validate_native_public
+        admitted.validate_public(addition.index, policies=admitted.external.policy_bindings(root),
+            baseline_hash=addition.parent['sha256'], model_ids=[addition.identifier])
+        if addition.identifier in resources or addition.identifier in added_dispatches:
+            raise ValueError('Additional native resource cohorts overlap')
+        added_dispatches[addition.identifier] = addition.index['models'][addition.identifier]['round_dispatches']
+        if addition.resource_ref is not None:
+            raw = native.flow._read(Path(root), addition.resource_ref)
+            document = validate_native_public(json.loads(raw), addition.index, native.digest(addition.index_raw))
+            resources.update(document['models'])
+            addition_sources.append(copy.deepcopy(addition.resource_ref))
+            if addition.identifier == _CARBON_MODEL:
+                selected = _carbon_reported_research_reference(root,addition,document['models'][addition.identifier])
+                if selected is not None: reported_costs[addition.identifier] = selected
     display = {model['id']: model for model in display_data['models']}
     result = copy.deepcopy(base_reference)
     result.update(benchmark_version='1.3.0', base_assessment_version='1.2.0',
@@ -183,6 +258,8 @@ def independent_research_reference(root, display_data, base_reference, *, adopti
                   native_research_resource_source=NATIVE_DATA_PATH if added_native else None,
                   native_research_source_sha256=added_native['source_evidence_sha256'] if added_native else None,
                   review_overhead=dict(REVIEW_OVERHEAD))
+    if native_additions:
+        result['additional_native_research_resource_sources'] = addition_sources
     result['models'] = [row for row in result['models'] if row['model_id'] in display]
     for row in result['models']:
         mid = row['model_id']
@@ -195,11 +272,19 @@ def independent_research_reference(root, display_data, base_reference, *, adopti
                 unknown += external_adoption['models'].get(mid, {}).get('round_dispatches', 0)
             if native_adoption:
                 unknown += native_adoption['models'].get(mid, {}).get('round_dispatches', 0)
+            unknown += added_dispatches.get(mid, 0)
             coverage = dict(planned=planned, complete=0, partial=0, missing=unknown, not_run=planned - unknown)
             candidate_cost = dict(total_usd=None, known_usd=0, status='partial')
         else:
             coverage, candidate_cost = increment['coverage'], increment
+        reported = reported_costs.get(mid)
+        if reported is not None:
+            candidate_cost = reported['cost']
         row.update(combine_costs(row, candidate_cost))
+        if reported is not None:
+            row['pricing_basis'] = 'reported_native_usage_reference'
+            row['cost_note'] = copy.deepcopy(reported['note'])
+            row['reported_usage_cost_selection'] = copy.deepcopy(reported['source'])
         row['coverage'] = {key: row['coverage'][key] + count for key, count in coverage.items()}
         row['independent_research_resources'] = copy.deepcopy(increment)
         for mode in SCORE_MODES:

@@ -25,7 +25,7 @@ from scripts.results_rankings import (
 from scripts.results_i18n import javascript_catalog, language_switch
 from scripts.results_surplus import load_observations, render_subboard
 from scripts.results_delivery import delivery_progress, load_legacy_projections
-from scripts.results_harness import display_harness_labels
+from scripts.results_harness import display_harness_labels, scoped_harness_notes, render_harness_notes
 from scripts.results_presentation import project_payload
 from scripts.results_publication import prepare_publication, write_publication
 from scripts.timing_reference import build_reference, render_panel
@@ -804,14 +804,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
     ordered = overall_places(data['models'])
-    harness_notes = {}
-    for model, _ in ordered:
-        harness = model['harness']
-        if harness.get('note_text'):
-            marker = harness['note_marker']
-            if marker in harness_notes and harness_notes[marker]['harness']['note_text'] != harness['note_text']:
-                raise ValueError('Shared harness note markers must have the same explanation')
-            harness_notes.setdefault(marker, model)
+    harness_names, harness_notes = scoped_harness_notes(data['models'])
     for model, place in ordered:
         source = html.escape('models/'+model['id']+'/index.html?score=partial&condition=nonlogical_retry_3', quote=True)
         progress = model['evaluation_progress']['nonlogical_retry_3']
@@ -826,8 +819,8 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
                 '<span class="score-number">'+('—' if value is None else f'{value:.2f}')+'</span></td>')
         rows.append('<tr><td class="rank">'+('—' if place is None else str(place))+'</td><td class="model-name"><a href="'+source+'">'
             +html.escape(model['label'])+'</a><span class="mobile-harness">'
-            +html.escape(harness_display_name(model))+'</span><span class="mobile-delivery">交卷 '+delivered+'</span></td>'
-            '<td class="harness-cell">'+html.escape(harness_display_name(model))+'</td>'
+            +html.escape(harness_names[model['id']])+'</span><span class="mobile-delivery">交卷 '+delivered+'</span></td>'
+            '<td class="harness-cell">'+html.escape(harness_names[model['id']])+'</td>'
             '<td class="numeric delivery-cell">'+delivered+'</td>'+''.join(score_cells)
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
     retries = render_run_history(anomaly_reference, models=data['models'], attempt_reference=attempt_reference,
@@ -849,11 +842,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
               "GAP_CHART": render_gap_chart(data),
               "CONTENT_RATES": render_content_rates(data),
               "CATEGORY_RANKINGS": render_category_leaderboards(data),
-              "MODEL_NOTES": ('<p class="panel-foot" data-model-note="dot-underlying-model-20261108">¹ Dot原生独立运行方式</p>'
-                                     if any(m.get('record_kind') == 'native_harness' for m in data['models']) else '')
-                                  + ''.join('<p class="panel-foot" data-model-note="'+html.escape(m['id'], quote=True)+'">'
-                                             +html.escape(m['harness']['note_marker']+' '+m['harness']['note_text'])+'</p>'
-                                             for m in sorted(harness_notes.values(), key=lambda m: m['harness']['note_marker'])),
+              "MODEL_NOTES": render_harness_notes(harness_notes),
               "MODE_CONTROLS": ''.join(
                   '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)
                   +'" aria-pressed="'+str(m['id']=='strict').lower()+'"><span class="mode-name">'

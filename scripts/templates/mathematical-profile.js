@@ -99,15 +99,43 @@
  const strictCreditTasteSchema='math-gauge.independent-research-abilities/v6';
  const itemWeightTasteSchema='math-gauge.independent-research-abilities/v7';
  const externalTasteSchema='math-gauge.independent-research-abilities/v8';
- const strictCreditTasteCompanion=companion=>[strictCreditTasteSchema,itemWeightTasteSchema,externalTasteSchema].includes(companion?.schema);
+ const additionTasteSchema='math-gauge.independent-research-abilities/v9';
+ const strictCreditTasteCompanion=companion=>[strictCreditTasteSchema,itemWeightTasteSchema,externalTasteSchema,additionTasteSchema].includes(companion?.schema);
  const valueTasteCompanion=companion=>companion?.schema===valueTasteSchema||strictCreditTasteCompanion(companion);
  const strictTasteCompanion=companion=>companion?.schema===strictTasteSchema||valueTasteCompanion(companion);
+ function validAdditionSources(companion,board){
+  const keys=(object,fields)=>object&&Object.keys(object).sort().join('|')===[...fields].sort().join('|');
+  const hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+  const additions=companion.native_additions_binding;
+  if(!keys(additions,['gemini-4-carbon-medium']))return false;
+  const binding=additions['gemini-4-carbon-medium'],parent=binding?.parent;
+  return keys(binding,['parent','index_sha256','adoption_sha256','source_kind','legacy_taste_sha256','policy_bindings','human_review'])&&
+   keys(parent,['edition','path','bytes','sha256'])&&parent.edition==='1.2.0'&&hash(parent.sha256)&&
+   parent.sha256!==board?.source_binding?.sha256&&Number.isInteger(parent.bytes)&&parent.bytes>=0&&
+   parent.path===`results/independent-research-baselines/v0.1.0/${parent.sha256}/data.json`&&
+   hash(binding.index_sha256)&&hash(binding.adoption_sha256)&&binding.human_review==='pending'&&
+   binding.source_kind==='user-selected-native-cutoff-deliveries'&&
+   (binding.legacy_taste_sha256===null||hash(binding.legacy_taste_sha256))&&
+   keys(binding.policy_bindings,['value','strict_credit','item_weight'])&&
+   binding.policy_bindings.value===companion.value_binding?.policy_sha256&&
+   binding.policy_bindings.strict_credit===companion.strict_credit_binding?.policy_sha256&&
+   binding.policy_bindings.item_weight===companion.item_weight_binding?.policy_sha256;
+ }
  function matchesItemWeightSource(companion,board){
   const expected=board?.item_weight_binding,binding=companion.item_weight_binding;
   return expected?.version==='0.1.0'&&binding&&Object.keys(expected).length===Object.keys(binding).length&&
    Object.entries(expected).every(([key,value])=>binding[key]===value)&&
    (companion.schema!==externalTasteSchema||board?.schema==='math-gauge.research-board-preview/v6'&&
-    JSON.stringify(companion.external_binding)===JSON.stringify(board.external_binding));
+    JSON.stringify(companion.external_binding)===JSON.stringify(board.external_binding))&&
+   (companion.schema!==additionTasteSchema||board?.schema==='math-gauge.research-board-preview/v7'&&
+    validAdditionSources(companion,board)&&
+    JSON.stringify(companion.source_binding)===JSON.stringify(board.source_binding)&&
+    JSON.stringify(companion.native_additions_binding)===JSON.stringify(board.native_additions_binding)&&
+    JSON.stringify(companion.native_binding)===JSON.stringify(board.native_binding)&&
+    JSON.stringify(companion.external_binding)===JSON.stringify(board.external_binding)&&
+    Object.keys(companion).every(key=>['schema','edition','base_edition','source_stages','source_binding','policy_sha256',
+     'profile_policy_sha256','score_modes_policy_sha256','taste_blend','by_model','legacy_taste_binding','score_modes_binding',
+     'value_binding','strict_credit_binding','item_weight_binding','external_binding','native_binding','native_additions_binding'].includes(key)));
  }
  const profileViews={radar:['雷达图','Radar'],bars:['按轴排名','Axis ranking'],table:['表格','Table']};
  const profileViewCopy={mode:['画像展示方式','Profile view'],axis:['排名维度','Ranking axis'],
@@ -176,6 +204,36 @@
  function validMetric(metric){return metric&&finite(metric.confirmed)&&finite(metric.lower)&&finite(metric.upper)&&metric.lower<=metric.upper&&
   (metric.exact===null||finite(metric.exact)&&metric.exact>=metric.lower&&metric.exact<=metric.upper)&&
   metric.coverage&&Number.isInteger(metric.coverage.reviewed)&&Number.isInteger(metric.coverage.planned)&&metric.coverage.reviewed>=0&&metric.coverage.planned>=metric.coverage.reviewed}
+ const structureAxes={depth:{unit:'depth_family',planned:28,weight:69},open_research:{unit:'open_research_opportunity',planned:6,weight:11}};
+ const structureMessages={
+  scope:['数学深度按28个给定问题家族的结构机会重新评审，检查机制、桥接、条件与统一解释；开放研究能力按五道手稿与一次独立研究共6个机会，另审目标、机制、范围与成果闭合。深度总权重69，开放研究总权重11；两轴不由旧能力分或主榜成绩换算。研究主动性仍使用28个共同拓展机会，其他轴和主榜成绩保持各自来源。',
+   'Mathematical depth is independently assessed on structural opportunities in 28 prescribed-problem families: mechanisms, bridges, conditions and unification. Open research separately assesses formulation, mechanisms, scope and closure across five manuscripts and one independent study. Fixed opportunity weights total 69 and 11. Neither axis is converted from old capacity or leaderboard scores. Initiative retains 28 common extension opportunities; other axes and main scores keep their sources.'],
+  coverage:['深度按28个家族、开放研究按6个机会及其固定权重分别显示覆盖。未评或未测保留未知，已结算空白为已知0；不使用旧C混合值补缺。',
+   'Depth reports 28-family coverage; open research reports six-opportunity coverage and their fixed weights. Missing or unreviewed evidence remains unknown, settled blanks are known zero, and old capacity blends never fill gaps.'],
+  depthFamilies:['深度家族','Depth families'],openResearchOpportunities:['开放研究机会','Open research opportunities'],reviewedWeight:['已评权重','Reviewed weight']};
+ function unknownStructureMetric(axis){const shape=structureAxes[axis];return {exact:null,confirmed:0,lower:0,upper:100,unknown_weight:100,
+  coverage:{unit:shape.unit,planned:shape.planned,reviewed:0,weight_planned:shape.weight,weight_reviewed:0}}}
+ function structuralProjection(data){
+  if(data.benchmark_version!=='1.3.0'||!Object.hasOwn(data,'profile_structure'))return null;
+  const source=data.profile_structure,hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+  const valid=(metric,axis)=>{const shape=structureAxes[axis],coverage=metric?.coverage;return validMetric(metric)&&
+   metric.confirmed>=metric.lower&&metric.confirmed<=metric.upper&&finite(metric.unknown_weight)&&
+   Math.abs(metric.unknown_weight-(metric.upper-metric.lower))<1e-8&&coverage.unit===shape.unit&&coverage.planned===shape.planned&&
+   coverage.weight_planned===shape.weight&&Number.isInteger(coverage.weight_reviewed)&&coverage.weight_reviewed>=0&&coverage.weight_reviewed<=shape.weight&&
+   (metric.exact===null)===(coverage.reviewed<shape.planned)&&
+   (coverage.reviewed===shape.planned)===(coverage.weight_reviewed===shape.weight)&&
+   (metric.exact===null||metric.lower===metric.exact&&metric.upper===metric.exact)};
+  if(source?.schema!=='math-gauge.profile-structure/v1'||source.version!=='0.1.0'||source.benchmark_version!=='1.3.0'||
+   source.condition!=='nonlogical_retry_3'||source.reviewer_kind!=='ai'||source.human_review!=='pending'||source.post_observation!==true||
+   source.formal_comparison_eligible!==false||source.new_candidate_calls!==0||source.main_scores_modified!==false||source.original_bytes_rewritten!==false||
+   !hash(source.policy_sha256)||!hash(source.source?.sha256)||!Array.isArray(source.axes)||source.axes.length!==2||
+   new Set(source.axes.map(axis=>axis.id)).size!==2||source.axes.some(axis=>!Object.hasOwn(structureAxes,axis.id)||!axis.label?.zh||!axis.label?.en||!axis.description?.zh||!axis.description?.en)||
+   source.planned?.depth!==28||source.planned?.open_research!==6||source.weights?.depth!==69||source.weights?.open_research!==11||
+   !Array.isArray(source.models)||new Set(source.models.map(row=>row.id)).size!==source.models.length||
+   source.models.some(row=>typeof row.id!=='string'||['first','revision'].some(stage=>!row[stage]||
+    Object.keys(row[stage]).length!==2||Object.keys(structureAxes).some(axis=>!valid(row[stage][axis],axis)))))return false;
+  return {axes:new Map(source.axes.map(axis=>[axis.id,axis])),models:new Map(source.models.map(row=>[row.id,row]))};
+ }
  function opportunityProjection(data){
   if(data.benchmark_version!=='1.3.0'||!Object.hasOwn(data,'research_initiative'))return null;
   const source=data.research_initiative,hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
@@ -293,7 +351,7 @@
    const descriptions=valueTasteCompanion(companion)?valueDescriptions:versionedDescriptions;
    const blended=strict||companion?.schema==='math-gauge.independent-research-abilities/v3';
    const strictSources=!strict||companion.taste_blend?.independent_mode==='SMC'&&companion.taste_blend?.legacy_component_version==='0.2.0';
-   const weightSource=![itemWeightTasteSchema,externalTasteSchema].includes(companion?.schema)||matchesItemWeightSource(companion,data.research_preview);
+   const weightSource=![itemWeightTasteSchema,externalTasteSchema,additionTasteSchema].includes(companion?.schema)||matchesItemWeightSource(companion,data.research_preview);
    const byModel=strictSources&&weightSource&&(blended||companion?.schema==='math-gauge.independent-research-abilities/v2')&&companion.edition==='1.3.0'&&
     companion.source_stages?.[stage]===(revised?'revision-inclusive':'first-answer')?companion.by_model:null;
    const weight=companion?.taste_blend?.legacy_percent;
@@ -314,6 +372,13 @@
    axes=axes.map(axis=>axis.id==='initiative'?{...axis,description:opportunityDescription}:axis);
    models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,initiative:initiative.get(model.id)||{
     exact:null,lower:0,upper:100,confirmed:0,coverage:{unit:'research_opportunity',planned:28,reviewed:0}}}}));
+  }
+  const structure=structuralProjection(data);
+  if(structure===false)return null;
+  if(structure){
+   axes=axes.map(axis=>structure.axes.has(axis.id)?{...axis,...structure.axes.get(axis.id)}:axis);
+   models=models.map(model=>({...model,profile_metrics:{...model.profile_metrics,
+    ...Object.fromEntries(Object.keys(structureAxes).map(axis=>[axis,structure.models.get(model.id)?.[stage]?.[axis]||unknownStructureMetric(axis)]))}}));
   }
   return models.length?{profile,axes,models,stage}:null;
  }
@@ -342,14 +407,17 @@
    valueTasteCompanion(tasteCompanion)?valueTasteMessages:strictTaste?strictTasteMessages:
    tasteCompanion?.schema==='math-gauge.independent-research-abilities/v3'?blendedTasteMessages:tasteMessages;
   const opportunityBased=current&&!!data.research_initiative;
-  const t=key=>(opportunityBased&&opportunityMessages[key]||axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
+  const structureBased=current&&!!data.profile_structure;
+  const t=key=>(structureBased&&structureMessages[key]||opportunityBased&&opportunityMessages[key]||axes.some(axis=>axis.id===tasteAxis.id)&&tasteCopy[key]||axes.some(axis=>axis.id==='formalization')&&formalizationMessages[key]||axes.some(axis=>axis.id==='open_research')&&researchMessages[key]||copy[key])[lang==='en'?1:0],format=value=>value.toLocaleString(lang==='en'?'en-US':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1});
   const viewText=pair=>pair[lang==='en'?1:0];
   const views=current?buildViews():null;
   const compactCoverage=current;
   const coverageNames={lean_subcategory:'formalization',open_research_family:'openResearch',benchmark_subcategory:'smc',
-   fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste',research_opportunity:'initiativeOpportunities'};
+   fixed_weighted_category:'smc',manuscript:'tasteManuscripts',theorem_extension_family:'legacyTaste',research_opportunity:'initiativeOpportunities',depth_family:'depthFamilies',open_research_opportunity:'openResearchOpportunities'};
   const coverage=metric=>{const {unit,reviewed,planned}=metric.coverage,count=reviewed+'/'+planned,key=coverageNames[unit];
    const base=compactCoverage&&reviewed===planned?'':key?t(key)+' · '+count:count+' '+t('settled');
+   if(structureBased&&['depth_family','open_research_opportunity'].includes(unit)&&reviewed<planned)
+    return base+' · '+t('reviewedWeight')+' '+metric.coverage.weight_reviewed+'/'+metric.coverage.weight_planned;
    const taste=metric.taste_coverage;
    if(taste){
     const checkpoints=taste.unit==='taste_checkpoint';
@@ -366,7 +434,7 @@
     compactCoverage&&task.reviewed===task.planned&&!componentsMissing?'':t('newTask')+' '+task.reviewed+'/'+task.planned;
    const components=task.components_planned>1&&(!compactCoverage||componentsMissing)?' ('+t('components')+' '+task.components_reviewed+'/'+task.components_planned+')':'';
    return [metric.base_coverage?base:t('baseUnknown'),observed+components].filter(Boolean).join(' · ');};
-  const separateCoverage=['formalization','open_research',tasteAxis.id,...(opportunityBased?['initiative']:[])];
+  const separateCoverage=['formalization','open_research',tasteAxis.id,...(opportunityBased?['initiative']:[]),...(structureBased?['depth']:[])];
   const settledCoverage=model=>{const counts=axes.filter(axis=>axis.id!=='completion'&&!separateCoverage.includes(axis.id)).map(axis=>model.profile_metrics[axis.id].coverage.reviewed),low=Math.min(...counts),high=Math.max(...counts);
    const families=compactCoverage&&low===35?'':(low===high?low:low+'–'+high)+'/35 '+t('settled');
    return [families,...separateCoverage.filter(id=>model.profile_metrics[id]).map(id=>coverage(model.profile_metrics[id]))].filter(Boolean).join(' · ')};

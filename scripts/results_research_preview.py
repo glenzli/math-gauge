@@ -8,10 +8,10 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection
+from scripts.preview_open_research_v130 import ABILITY_FIELD, baseline_projection, append_native_additions
 from scripts.results_publication import atomic_write, data_literal
 from scripts.results_research_baseline import (CURRENT_PATH, baseline_homepage,
-    retain_publication_sources, select_baseline)
+    retain_publication_sources, select_baseline, select_additions, display_baseline)
 from math_gauge import independent_research_item_weights as item_weights
 from math_gauge import independent_research_external as external
 from math_gauge import independent_research_native as native
@@ -20,6 +20,7 @@ from math_gauge import independent_research_strict_credit as credit
 from math_gauge import independent_research_value as value_revision
 from math_gauge import legacy_taste_strict
 from math_gauge import research_initiative
+from math_gauge import profile_structure
 from math_gauge.research_profile import POLICY_PATH as PROFILE_POLICY_PATH, VALUE_POLICY_PATH
 
 EDITION = '1.3.0'
@@ -88,7 +89,9 @@ def prepare_research_preview(files, root):
     overlay_bytes = overlay_path.read_bytes() if overlay_path.is_file() else None
     adopted = json.loads(adopted_bytes) if adopted_bytes is not None else None
     baseline = select_baseline(files, root, adopted)
-    envelope = baseline_homepage(original, baseline, root)
+    additions = select_additions(root, baseline)
+    display_source = display_baseline(baseline, additions)
+    envelope = baseline_homepage(original, baseline, root, display_data=display_source)
     envelope['edition'] = EDITION
     envelope['data']['benchmark_version'] = EDITION
     external_path = root / external.PUBLIC_PATH
@@ -109,7 +112,18 @@ def prepare_research_preview(files, root):
         strict_credit_bytes=strict_path.read_bytes() if strict_path.is_file() else None,
         item_weight_policy_path=item_weight_policy_path if item_weight_policy_path.is_file() else None,
         external_bytes=external_bytes, native_bytes=native_bytes)
-    source_models={m['id']:m for m in baseline.data['models']}
+    board, abilities, category_points = append_native_additions(board, abilities, category_points, additions, root)
+    for addition in additions:
+        result[f'versions/1.3.0/downloads/native-additions/{addition.identifier}.json'] = addition.index_raw.decode('utf-8')
+        result[f'versions/1.3.0/downloads/baselines/{addition.parent["sha256"]}.json'] = addition.raw.decode('utf-8')
+        if addition.legacy_taste_ref is not None:
+            result[f'versions/1.3.0/downloads/native-additions/{addition.identifier}-legacy-taste.json'] = native.flow._read(
+                root, addition.legacy_taste_ref).decode('utf-8')
+        if addition.resource_ref is not None:
+            result[f'versions/1.3.0/downloads/native-additions/{addition.identifier}-resources.json'] = native.flow._read(
+                root, addition.resource_ref).decode('utf-8')
+    source_models={m['id']:m for m in display_source['models']}
+    added_native = {a.identifier: a for a in additions}
     for row in board['rows']:
         model=source_models[row['id']]
         normal=model.get('answer_delivery',{}).get('active_final')
@@ -128,6 +142,8 @@ def prepare_research_preview(files, root):
             normal += external_index['models'][row['id']]['normal_rounds']
         elif native_index and row['id'] in native_index['models']:
             normal += native_index['models'][row['id']]['normal_rounds']
+        elif row['id'] in added_native:
+            normal += added_native[row['id']].index['models'][row['id']]['normal_rounds']
         else:
             unknown += 3
         row['delivery']=dict(planned=45,normal=normal,unknown=unknown)
@@ -136,6 +152,9 @@ def prepare_research_preview(files, root):
     initiative = research_initiative.load_public(root, benchmark_version=EDITION)
     if initiative is not None:
         envelope['data']['research_initiative'] = initiative
+    structure = profile_structure.load_public(root, benchmark_version=EDITION)
+    if structure is not None:
+        envelope['data']['profile_structure'] = structure
     # Project new composite metrics from shared scoring, retaining all old payloads.
     from math_gauge.scoring import research_preview_contributions
     weights = board['weight_frame']
@@ -148,6 +167,14 @@ def prepare_research_preview(files, root):
     for model in envelope['data']['models']:
         identifier = model['id']
         row = by_id[identifier]
+        addition = added_native.get(identifier)
+        if addition is not None:
+            admitted_row = addition.index['models'][identifier]
+            model['independent_research_delivery'] = dict(
+                schema='math-gauge.independent-research-delivery-method/v1',
+                normal_rounds=admitted_row['normal_rounds'], forced_rounds=admitted_row['forced_rounds'],
+                round_dispatches=admitted_row['round_dispatches'], delivery_kinds=copy.deepcopy(admitted_row['delivery_kinds']),
+                method=copy.deepcopy(addition.index['method']))
         model_abilities = abilities['by_model'][identifier]
         download_abilities = dict(abilities, by_model={identifier: model_abilities})
         # Attach the official SMC coverage before writing any score-mode download.
@@ -185,10 +212,20 @@ def prepare_research_preview(files, root):
                 independent_research=copy.deepcopy(row),source_binding=copy.deepcopy(board['source_binding']),
                 candidate_calls=0,rank_eligible=False)
             download[ABILITY_FIELD] = download_abilities
+            if structure is not None:
+                download['profile_structure'] = dict(structure,
+                    models=[entry for entry in structure['models'] if entry['id'] == identifier])
+            addition = added_native.get(identifier)
+            if addition is not None:
+                download['source_binding'] = dict(edition='1.2.0', sha256=addition.parent['sha256'])
+                download['independent_research_delivery'] = copy.deepcopy(model['independent_research_delivery'])
+                download['baseline_parent'] = copy.deepcopy(addition.parent)
+                download['baseline_parent_download'] = 'baselines/'+addition.parent['sha256']+'.json'
+                download['native_additions_binding'] = {identifier: copy.deepcopy(board['native_additions_binding'][identifier])}
             if initiative is not None:
                 download['research_initiative'] = dict(initiative,
                     models=[entry for entry in initiative['models'] if entry['id'] == identifier])
-            if adopted:
+            if adopted and addition is None:
                 download['adoption_binding'] = copy.deepcopy(board['adoption'])
             if 'score_modes_binding' in board:
                 download['score_modes_binding'] = copy.deepcopy(board['score_modes_binding'])
@@ -225,7 +262,7 @@ def prepare_research_preview(files, root):
     item_board = _independent_category(data, item_group)
     data['policy']['groups'].append(item_group)
     data['category_leaderboards'].append(item_board)
-    scene_source = copy.deepcopy(baseline.data)
+    scene_source = copy.deepcopy(display_source)
     scene_source.update(models=data['models'], category_leaderboards=[item_board])
     scenes = chart_scenes(scene_source)
     item_chart = 'category-chart-groups-'+modes.ITEM
@@ -242,7 +279,7 @@ def prepare_research_preview(files, root):
         from scripts.cost_reference import independent_research_reference
         supplemental['cost-reference-data'] = independent_research_reference(
             root, data, supplemental['cost-reference-data'], adoption=adopted, external_adoption=external_index,
-            native_adoption=native_index)
+            native_adoption=native_index, native_additions=additions)
         if baseline.retained:
             result['versions/1.3.0/downloads/cost-reference.json'] = json.dumps(
                 supplemental['cost-reference-data'], ensure_ascii=False, indent=2)+'\n'

@@ -393,6 +393,11 @@ class SharedHomepageEditionTests(unittest.TestCase):
         root=flow.POLICY_FILE.parents[3]
         names=('index.html','editions.json','data.json','data/editions/1.2.0/index.json')
         original={name:subprocess.check_output(['git','show','HEAD:site/'+name],cwd=root).decode() for name in names}
+        # This fixture has no retained-baseline selector: use the current1.2
+        # data that matches its current1.2 envelope, rather than the separately
+        # preserved17-model research parent at site/data.json.
+        original['data.json']=subprocess.check_output(
+            ['git','show','HEAD:site/versions/1.2.0/data.json'],cwd=root).decode()
         before=deepcopy(original)
         # This scenario has no adopted research evidence, regardless of which
         # real configurations have since been settled in the local workspace.

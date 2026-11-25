@@ -115,6 +115,8 @@ MESSAGES = {
     '查看完整方法与数据说明 →': 'Full method & data →',
     'Math Gauge · 原答与原评审保留': 'Math Gauge · Original answers and reviews retained',
     '¹ Dot原生独立运行方式': '¹ Dot’s independent native harness',
+    '使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。':
+        'Several tasks exhausted the output budget during lengthy reasoning in DeepSeek Harness (DSH), so execution moved to Codex CLI.',
     '² 使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。':
         '² Several tasks exhausted the output budget during lengthy reasoning in DeepSeek Harness (DSH), so execution moved to Codex CLI.',
     '此前使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，随后改用Codex CLI。':

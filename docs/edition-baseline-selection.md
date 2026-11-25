@@ -38,3 +38,9 @@ The original bytes remain at `site/data.json`. Current 1.2.0 full data is publis
 The explicit selection component binds both the original baseline and settled index by path, byte count and SHA-256. Missing or damaged sources, substituted indexes, unsafe paths, symlinks, removed retained models and any modification to a retained model object fail validation. All existing mathematical and source validators remain strict. Without the component, the original exact-baseline requirement still applies; there is no search or fallback after a mismatch.
 
 Scores, categories, profiles, cohort and timing sample all use the selected baseline. Timing and base costs are rebuilt for that same cohort by their existing owners; adopted independent-research cost is added once in full. The separate 1.3.0 timing reference continues to exclude independent research. Its timing and cost downloads have version-specific paths. This is a publication-source choice, not a new execution receipt, mathematical reassessment or candidate call.
+
+## Carbon medium 的独立新增来源
+
+原17配置的采用层和父数据保持原字节。Carbon medium 另通过 `baseline-additions.json` 绑定当前18配置的完整1.2父快照、独立截止稿采用索引、旧题品味补充及资源投影。生成器逐一核实原17个模型和画像对象仍完全相同，再将新增配置加入展示。新研究三稿及评分独立绑定，不从旧基底继承新题成绩。
+
+The Carbon medium addition binds its own immutable 18-configuration 1.2 parent, admitted-delivery index, legacy-taste supplement and resources. The original 17-model adoption and parent bytes stay unchanged. The generator verifies retained model/profile equality before joining the additional configuration; no research score is inherited from a baseline.

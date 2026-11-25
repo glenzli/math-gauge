@@ -233,6 +233,39 @@ test('the installed current edition is accepted by its actual display controller
   assert.doesNotThrow(() => ui.validate(projection));
 });
 
+test('an added native parent is explicit, disjoint, and rejected when rebound or carrying private fields', () => {
+  const board=itemWeightedBoard();
+  board.schema='math-gauge.research-board-preview/v7';
+  board.kind='settled-selected-configurations';
+  board.source_binding={edition:'1.2.0',sha256:'1'.repeat(64)};
+  for(const row of board.rows)row.kind=board.kind;
+  const added=board.rows[1];added.id='gemini-4-carbon-medium';
+  added.kind='user-selected-native-cutoff-deliveries';
+  const original=[board.rows[0].id,board.rows[2].id];
+  board.adoption={batch_sha256:'2'.repeat(64),index_sha256:'3'.repeat(64),
+    cohort:original,planned_cohort:original,human_review:'pending'};
+  const parentHash='4'.repeat(64);
+  board.native_additions_binding={'gemini-4-carbon-medium':{
+    parent:{edition:'1.2.0',path:`results/independent-research-baselines/v0.1.0/${parentHash}/data.json`,bytes:123,sha256:parentHash},
+    index_sha256:'5'.repeat(64),adoption_sha256:'6'.repeat(64),
+    legacy_taste_sha256:null,source_kind:'user-selected-native-cutoff-deliveries',human_review:'pending',policy_bindings:{
+      value:board.value_binding.policy_sha256,strict_credit:board.strict_credit_binding.policy_sha256,
+      item_weight:board.item_weight_binding.policy_sha256}}};
+  const frozen=structuredClone(board);
+  assert.doesNotThrow(()=>ui.validate(board));
+  assert.deepEqual(board,frozen);
+  for(const mutate of [
+    b=>{b.native_additions_binding['gemini-4-carbon-medium'].parent.path='site/data.json';},
+    b=>{b.native_additions_binding['gemini-4-carbon-medium'].parent.private_quote='forbidden';},
+    b=>{b.native_additions_binding['gemini-4-carbon-medium'].policy_bindings.value='9'.repeat(64);},
+    b=>{b.adoption.cohort.push('gemini-4-carbon-medium');b.adoption.planned_cohort.push('gemini-4-carbon-medium');},
+    b=>{b.native_additions_binding['withdrawn-model']=b.native_additions_binding['gemini-4-carbon-medium'];},
+    b=>{b.rows[1].kind=b.kind;}
+  ]){
+    const changed=structuredClone(board);mutate(changed);assert.throws(()=>ui.validate(changed));
+  }
+});
+
 test('current category shows only scored taste and capacity with distinct evidence states', () => {
   const board = valueBoard();
   const table = ui.render(board,'?view-independent=table&independent-tab=autonomy');

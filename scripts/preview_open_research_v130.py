@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Project published baselines as unmeasured new-task rows, plus synthetic fixtures."""
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -11,6 +12,8 @@ sys.path.insert(0, str(ROOT))
 from math_gauge import independent_research_adoption as adoption
 from math_gauge import independent_research_external as external
 from math_gauge import independent_research_native as native
+from math_gauge import independent_research_admitted_delivery as admitted
+from math_gauge import legacy_taste_addition
 from math_gauge import independent_research_item_weights as item_weights
 from math_gauge import independent_research_score_modes as modes
 from math_gauge import independent_research_strict_credit as credit
@@ -284,6 +287,90 @@ def baseline_data(source_data=None, *, policy_path=POLICY_FILE, source_bytes=Non
                                   source_bytes=source_bytes, adopted=adopted)
     del board['weight_frame']
     return board
+
+
+def append_native_additions(board, companion, category_points, additions, root):
+    """Join independently validated parents after their original projection gates.
+
+    This does not make the original adopted index accept another baseline.
+    Mathematical arithmetic stays in native.project_model and research_profile.
+    """
+    if not additions:
+        return board, companion, category_points
+    root = Path(root)
+    board, companion, category_points = map(copy.deepcopy, (board, companion, category_points))
+    policy, policy_hash = value_revision.load_policy(root / value_revision.POLICY_PATH)
+    if (policy_hash != board['value_binding']['policy_sha256']
+            or board['strict_credit_binding']['index_sha256'] is None):
+        raise ValueError('Added native projection requires the same validated value and strict-credit policies')
+    weights, weight_binding = item_weights.load_policy(root / item_weights.POLICY_PATH,
+        value_binding=board['value_binding'], strict_binding=board['strict_credit_binding'])
+    if weight_binding != board['item_weight_binding']:
+        raise ValueError('Added native projection changed the selected item weights')
+    projection_policy = dict(policy, item_weights=weights)
+    profile_policy, profile_hash = load_profile_policy(root / VALUE_POLICY_PATH)
+    if profile_hash != companion['profile_policy_sha256']:
+        raise ValueError('Added native projection changed the profile policy')
+    denominators = json.loads((root / 'protocol/mathematical-taste/v1.3.0/policy.json').read_bytes())['new_axis_denominators']
+    legacy_rows = {}
+    legacy_path = root / legacy_taste_strict.PUBLIC_PATH
+    if legacy_path.is_file():
+        # The old first-answer source remains validated against its old parent.
+        # A missing revision is retained as unknown; no new judgment is inferred.
+        from scripts.results_research_baseline import _read
+        old_raw = _read(root, 'site/data.json')
+        taste_policy, taste_hash = legacy_taste_strict.load_policy(root / legacy_taste_strict.POLICY_PATH)
+        legacy_rows = legacy_taste_strict.validate_public(json.loads(legacy_path.read_bytes()), taste_hash,
+            json.loads(old_raw), hashlib.sha256(old_raw).hexdigest(), policy=taste_policy)['models']
+    bindings = {}
+    seen = {row['id'] for row in board['rows']}
+    for addition in additions:
+        identifier, index = addition.identifier, addition.index
+        if json.loads(addition.raw) != addition.data or json.loads(addition.index_raw) != index:
+            raise ValueError('Added native projection differs from its supplied source bytes')
+        if identifier in seen:
+            raise ValueError('An added native model overlaps an existing projection')
+        admitted.validate_public(index, policies=external.policy_bindings(root),
+            baseline_hash=hashlib.sha256(addition.raw).hexdigest(), model_ids=[identifier])
+        if index['source_binding']['baseline'] != addition.parent:
+            raise ValueError('Added native model has a different immutable parent')
+        [model] = [row for row in addition.data['models'] if row['id'] == identifier]
+        reports = dict(MC=model['capability']['nonlogical_retry_3'], RMC=model['retry']['combined'],
+                       SMC=model['strict']['nonlogical_retry_3'])
+        result = admitted.project_model(reports, projection_policy, index['models'][identifier])
+        board['rows'].append(public_row(identifier, model['label'], result, kind=admitted.SOURCE_KIND))
+        model_taste = legacy_rows.get(identifier, {})
+        if addition.legacy_taste_ref is not None:
+            taste_raw = admitted.flow._read(root, addition.legacy_taste_ref)
+            taste_source = legacy_taste_addition.validate_public(json.loads(taste_raw), parent=addition.parent,
+                policy_sha256=legacy_taste_strict.load_policy(root / legacy_taste_strict.POLICY_PATH)[1])
+            own_taste = taste_source['models'][identifier]
+            if model_taste and own_taste['first'] != model_taste['first']:
+                raise ValueError('Added taste source changed the original first-answer metric')
+            model_taste = own_taste
+        profiles = project_models(addition.data, {identifier: result}, profile_policy, denominators,
+                                  legacy_taste_strict={identifier: model_taste})
+        # This added model has not yet received the separately coordinated
+        # depth/open-research re-review. Do not publish the retired C injection.
+        for stage in ('first', 'revision'):
+            for axis in ('depth_v130', 'open_research_v130'):
+                metric = profiles[identifier]['stages'][stage][axis]
+                metric.update(lower=0, upper=100, exact=None, confirmed=0, base_metric=None, base_coverage=None)
+                metric['task_metric'].update(lower=0, upper=100, exact=None, confirmed=0)
+                metric['task_coverage'].update(reviewed=0, components_reviewed=0)
+        companion['by_model'][identifier] = profiles[identifier]
+        category_points[identifier] = result['category_points']
+        bindings[identifier] = dict(parent=dict(edition='1.2.0', **addition.parent),
+            index_sha256=hashlib.sha256(addition.index_raw).hexdigest(),
+            adoption_sha256=index['source_binding']['adoption_sha256'], source_kind=admitted.SOURCE_KIND,
+            legacy_taste_sha256=addition.legacy_taste_ref['sha256'] if addition.legacy_taste_ref else None,
+            policy_bindings=copy.deepcopy(index['policy_bindings']), human_review='pending')
+        seen.add(identifier)
+    board['schema'] = 'math-gauge.research-board-preview/v7'
+    companion['schema'] = 'math-gauge.independent-research-abilities/v9'
+    board['native_additions_binding'] = bindings
+    companion['native_additions_binding'] = copy.deepcopy(bindings)
+    return board, companion, category_points
 
 
 def main():

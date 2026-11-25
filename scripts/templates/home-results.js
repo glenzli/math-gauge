@@ -173,6 +173,10 @@
   syncSorts();renderView('ranking',ranking);categoryRanking();auxiliaryCharts();
   orderChart('chart-groups',visibleModels().sort(compareScores));
   const visibleIds=new Set(visibleModels().map(m=>m.id)),initiativeIds=new Set(visibleModels('initiative').map(m=>m.id));
+  const harnessNotes=el('harness-notes');
+  if(harnessNotes&&Array.isArray(d.harness_notes))harnessNotes.replaceChildren(...d.harness_notes
+   .filter(note=>note.model_ids.some(id=>visibleIds.has(id)))
+   .map(note=>{const p=node('p',note.marker+' '+note.text[state.lang==='en'?'en':'zh'],'panel-foot');p.dataset.harnessNote=note.marker;return p}));
   const historyIds=new Set([...d.models,...(d.pending_models||[]),...(d.partial_models||[])].map(m=>m.id));
   document.querySelectorAll('[data-model-note]').forEach(n=>{
    n.hidden=n.closest('.run-history-snapshot')?d.benchmark_version==='1.2.0'&&!historyIds.has(n.dataset.modelNote):!(n.closest('[data-board="initiative"]')?initiativeIds:visibleIds).has(n.dataset.modelNote);
