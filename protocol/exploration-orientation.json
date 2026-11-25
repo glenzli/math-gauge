@@ -1,0 +1,733 @@
+{
+  "action_unit": {
+    "episode_rule": "One question/route family is one episode. Revisions link actions, not repeated independent units; declarations, tool calls and output lines are not units.",
+    "exclusions": [
+      "empty direction list",
+      "unsupported assertion without actual operations",
+      "future intention",
+      "routine helper",
+      "mere retained content",
+      "unsubmitted workspace",
+      "hidden thought",
+      "unselected attempt"
+    ],
+    "minimum_fields": [
+      "question_or_choice",
+      "concrete_operation",
+      "actual_observation_or_failure_location",
+      "prompt_relation_and_requiredness",
+      "source_quotes"
+    ],
+    "no_new_action_roles": [
+      "retained_only",
+      "routine_checked"
+    ],
+    "no_requirement_for_question_mark_or_self_praise": true,
+    "optional_when_present": [
+      "consequent_choice",
+      "parent_action_id",
+      "later_correction_or_retraction"
+    ],
+    "primary_vs_secondary_axis_assignments": "Each assignment needs a distinct trigger/organizing-role reason and quote; overlap is allowed but no independent-result double counting.",
+    "question_may_be_inferred_from_explicit_mathematics": true,
+    "quote_contract": {
+      "byte_offsets": "UTF-8 bytes, inclusive start and exclusive end",
+      "leaf_keys": [
+        "source_id",
+        "sha256",
+        "start",
+        "end",
+        "quote"
+      ],
+      "locator": [
+        "start",
+        "end",
+        "quote"
+      ],
+      "one_span_may_support_multiple_unit_fields": true,
+      "source_identity": "source_id from the selected round/A1 map plus its exact sha256",
+      "task_boundary_source_required": true
+    },
+    "stage_fields": [
+      "first_seen_round",
+      "round",
+      "prompt_relation",
+      "stage_role",
+      "parent_action_id",
+      "deduplication_cluster"
+    ],
+    "stage_roles": [
+      "new",
+      "developed",
+      "restructured",
+      "checked",
+      "corrected",
+      "retained_only",
+      "abandoned",
+      "stalled",
+      "unresolved"
+    ],
+    "trajectory_labels_examples": [
+      "breadth_then_depth",
+      "reframing_then_return",
+      "boundary_probe_stalled",
+      "experiment_guided_revision"
+    ]
+  },
+  "blinded_pre_registration": false,
+  "calibration_examples": {
+    "examples": [
+      {
+        "id": "empty-direction-list",
+        "judgment": "No positive axis evidence; do not infer a direction from a list.",
+        "situation": "Mentions random cases, limits and simulation without carrying out any action."
+      },
+      {
+        "id": "local-neighbor",
+        "judgment": "Horizontal1or2depending its actual organizing role, not its theorem correctness.",
+        "situation": "Actually explores one adjacent object class, then returns to an unrelated main route."
+      },
+      {
+        "id": "failed-core-inquiry",
+        "judgment": "Vertical3or4may be supported; verification=substantive_attempt_unclosed; no proved-depth claim.",
+        "situation": "One central mechanism is pursued through actual derivations to a precise but unsolved bottleneck."
+      },
+      {
+        "id": "failed-representation",
+        "judgment": "Reframing role may be central; attach refuted_claim/invalid_operation, never claim the bridge established.",
+        "situation": "A proposed alternative representation organizes the main investigation, but its necessary correspondence is refuted."
+      },
+      {
+        "id": "failed-counterexample",
+        "judgment": "Boundary role is judged from the genuine attempted investigation; no verified obstruction is asserted.",
+        "situation": "Optional weakening is actually tested by a concrete counterexample candidate; its failure is located."
+      },
+      {
+        "id": "experiment-led-wrong-conjecture",
+        "judgment": "Experimental centrality can be4with a retained truth warning; dataset size adds nothing.",
+        "situation": "A controlled finite search with actual outcomes changes the principal conjecture and later analysis; the conjecture is false."
+      },
+      {
+        "id": "r3-routine-audit",
+        "judgment": "audit/retained_only; no new action or automatic boundary/reframing credit.",
+        "situation": "R3 checks hypotheses as requested, drops unproved claims and reissues retained proofs."
+      },
+      {
+        "id": "mandatory-counterexample",
+        "judgment": "Required work, excluded from unsolicited27-family corroboration.",
+        "situation": "A fixed legacy task requires a necessity counterexample and receives one."
+      },
+      {
+        "id": "routine-local-tools",
+        "judgment": "Routine/required; no experimental orientation unit.",
+        "situation": "Compiles supplied Lean or runs exactly the computation required by the task."
+      },
+      {
+        "id": "missing-round",
+        "judgment": "Keep confirmed partial observations; missing source is not0and other tasks do not fill the main anchor.",
+        "situation": "Two manuscripts show actual experiments but a prescribed round source is absent."
+      }
+    ],
+    "synthetic_not_model_outputs": true
+  },
+  "cohort": {
+    "automatic_future_inclusion": false,
+    "expected_configurations": 19,
+    "freeze_required": [
+      "exact cohort ids",
+      "selected trajectory manifests and source hashes"
+    ],
+    "historical_views": "unchanged",
+    "scope": "only the currently settled1.3cohort selected by the user",
+    "selected_configurations": [
+      "sol-6.1-max",
+      "sol-6.2-max",
+      "terra-6.1-max",
+      "astra-6-max",
+      "astra-6-xhigh",
+      "astra-6.2-max",
+      "sol-6.1-xhigh",
+      "sol-6.2-xhigh",
+      "terra-6.1-xhigh",
+      "claude-opus-5.5-max",
+      "claude-opus-5.5-xhigh",
+      "claude-sonnet-5.5-max",
+      "kimi-3.1-pro-max",
+      "astra-6.2-xhigh",
+      "deepseek-v4.1-flash-1017",
+      "gemini-4-neon-xhigh",
+      "gemini-4-hydrogen-xhigh",
+      "gemini-4-carbon-medium",
+      "dot-20261125"
+    ]
+  },
+  "construct": {
+    "axes": [
+      {
+        "anchors": {
+          "0": "在来源齐全、整体可识别且该轴自由度可用的主语境中，未观察到实质横向拓展。",
+          "1": "偶发地实际检查一个有动机的邻近对象、情境或问题，没有组织后续研究。",
+          "2": "将一个不同对象类、目标或相邻问题展开成有实质操作与解释的局部分支。",
+          "3": "扩展对象、情境或问题之间的关系组织一条持续实质主线，并影响后续比较或推导。",
+          "4": "以探索相连问题或范围作为中心策略，扩展或比较框架实际决定主要选题与取舍；一条统一对象族路线即可，不按分支数量升级。"
+        },
+        "exclusions": [
+          "Lists of possible directions without action",
+          "Several values of the same routine example",
+          "Directions already explicitly required by a legacy task"
+        ],
+        "id": "horizontal_expansion",
+        "label": {
+          "en": "Horizontal expansion",
+          "zh": "横向拓展"
+        },
+        "trigger": "Changing or connecting substantive objects, contexts, target questions or problem families."
+      },
+      {
+        "anchors": {
+          "0": "在来源齐全、整体可识别且该轴自由度可用的主语境中，未观察到进一步纵向追查。",
+          "1": "对一个现象多追问一步并实际推导，但没有组织后续研究。",
+          "2": "深入一个局部机制、瓶颈或定量问题，形成从属于主议程的小路线。",
+          "3": "围绕同一核心问题持续追查机制、依赖或更精确说明，实际后续动作由该问题牵引。",
+          "4": "主要议程以追透一个机制或明确瓶颈为中心策略，形成可追踪的递进研究链；可以诚实停在未闭合处，不要求已证深度。"
+        },
+        "exclusions": [
+          "Lengthy calculations alone",
+          "Correctness or sophistication alone",
+          "Routine completion of a missing requested proof step"
+        ],
+        "id": "vertical_deepening",
+        "label": {
+          "en": "Vertical deepening",
+          "zh": "纵向深挖"
+        },
+        "trigger": "Following a chosen core question into further mechanisms, dependencies, precision or a concrete bottleneck."
+      },
+      {
+        "anchors": {
+          "0": "在来源齐全、整体可识别且该轴自由度可用的主语境中，未观察到概念性重构。",
+          "1": "偶发实际试用一个不同视角，内容超过改记号。",
+          "2": "一个局部分支改换对象、表示、不变量或问题分解，并实际操作其关系。",
+          "3": "替代表示驱动持续主线的推导或探查，原对象与新表示的对应被实际提出并检验。",
+          "4": "概念重组是中心策略，可指出原问题、新表示、对应或障碍、后续路径选择的链；桥梁成立与否另记verification。"
+        },
+        "exclusions": [
+          "Renaming",
+          "Formatting",
+          "More advanced terminology without a changed mathematical organization"
+        ],
+        "id": "structural_reframing",
+        "label": {
+          "en": "Structural reframing",
+          "zh": "结构重构"
+        },
+        "trigger": "Changing the conceptual object, representation, invariant or problem decomposition and actually working through the relationship."
+      },
+      {
+        "anchors": {
+          "0": "在来源齐全、整体可识别且该轴自由度可用的主语境中，未观察到额外边界探查。",
+          "1": "偶发实际检查一个非必需端点、假设或反例候选。",
+          "2": "将一个条件、锐性或可行性问题系统展开成局部分支。",
+          "3": "条件放松、退化、必要性或障碍构成持续主线，实际影响后续主张或路线。",
+          "4": "研究主要围绕成立与不成立的分界组织，反例搜索或不可能性路线作为中心策略；是否得到严格障碍另记。"
+        },
+        "exclusions": [
+          "Task-required boundary classifications or counterexamples",
+          "Routine well-definedness checks",
+          "R3 compulsory hypothesis audit without a discretionary research action"
+        ],
+        "id": "boundary_probing",
+        "label": {
+          "en": "Boundary probing",
+          "zh": "边界探查"
+        },
+        "trigger": "Testing optional hypotheses, limiting or degenerate regimes, sharpness, feasibility, counterexample candidates or obstructions."
+      },
+      {
+        "anchors": {
+          "0": "在来源齐全、整体可识别且该轴自由度可用的主语境中，未观察到实际探索实验。",
+          "1": "偶发进行一次有问题指向且有实际结果的探索探针。",
+          "2": "一组局部试验具有可说明的设计、实际结果与解释，但不组织主要议程。",
+          "3": "有结构的实际试验支持持续主线，结果影响猜想、推导目标或后续检验。",
+          "4": "实验反馈是中心策略，实际探查、判断及再研究组织关键问题或路径；一个短而完整的循环即可，样本量或工具次数不升级。"
+        },
+        "exclusions": [
+          "Tool permission alone",
+          "Tool-call counts",
+          "Routine compilation",
+          "Required computations",
+          "Unexecuted code or an unexecuted experimental plan without observed outcomes"
+        ],
+        "id": "experimental_exploration",
+        "label": {
+          "en": "Experimental exploration",
+          "zh": "实验探索"
+        },
+        "trigger": "Actual informative numerical, symbolic, finite-enumeration or structured manual probes with a concrete question and observed outcomes."
+      }
+    ],
+    "axis_count": 5,
+    "context_label": {
+      "en": "Exploration orientation in this open-research trajectory",
+      "zh": "本次开放研究中的探索取向"
+    },
+    "label": {
+      "en": "Exploration orientation",
+      "zh": "探索取向"
+    },
+    "meaning": "Observed organizing roles of discretionary research actions in one invited task; not research capability, quality, unsolicited initiative or a stable preference estimate.",
+    "scale": {
+      "area_metric": null,
+      "labels": {
+        "0": "本次未观察",
+        "1": "偶发探针",
+        "2": "局部路线",
+        "3": "持续主线",
+        "4": "中心策略"
+      },
+      "maximum": 4,
+      "mean": null,
+      "minimum": 0,
+      "percent_conversion": false,
+      "rank": null,
+      "total": null,
+      "type": "ordinal_organizing_role",
+      "weights": null
+    }
+  },
+  "created_at_utc": "2026-11-25T16:05:44.548989+00:00",
+  "cross_task_corroboration": {
+    "core_failure_does_not_erase_independent_extra_attempt": true,
+    "counting": {
+      "counts_are_not_grades_percentages_or_ranks": true,
+      "insufficient_reason_counts_separate_source_missing_from_reviewed_no_fragment": true,
+      "main_null": "Retain observed-fragment count and coverage; support/difference relation counts remain null. Do not infer a main grade from supplemental observations.",
+      "maximum_per_family": 1,
+      "no_counting_of_units_words_declarations_tool_calls_or_variants": true,
+      "no_inference_of_equal_grade_intensity": true,
+      "partition": [
+        "support",
+        "difference",
+        "insufficient"
+      ],
+      "partition_total": 27,
+      "partition_total_applies_when": "main axis is numeric and all27families have completed screening",
+      "unit": "unique mathematical family per axis"
+    },
+    "family_categories": {
+      "background_checks": 4,
+      "manuscripts": 5,
+      "theorem_extensions": 6,
+      "written_arguments": 12
+    },
+    "feeds_main_radar": false,
+    "legacy_families": 27,
+    "main_null_cannot_be_filled_from_corroboration": true,
+    "neutral_revisions": "excluded because invitations and loss sets differ",
+    "per_axis_family_labels": {
+      "difference": "Main axis=0and another task contains an actual substantive autonomous fragment on this axis. Means observed in a different context, not a refuted preference.",
+      "insufficient": "Required-only/no eligible action, constrained opportunity, missing source or unresolved review; reason retained.",
+      "support": "Main axis>0and another task contains an actual substantive autonomous fragment on this axis. No claim of the same0to4intensity."
+    },
+    "private_contract_notes_binding": {
+      "bytes": 1319,
+      "sha256": "585d5d6c9b29a65d88d6e62c1dfe51878bada78ee5b605b870d12e0c1e7a4940"
+    },
+    "public_examples_cap_per_axis": {
+      "difference": 1,
+      "support": 1
+    },
+    "public_labels": [
+      "跨题亦见",
+      "异境亦见",
+      "补证不足"
+    ],
+    "requiredness": "Strictly outside actual required goals and necessary dependencies; use task request and frozen boundaries, never prior grades.",
+    "requiredness_exclusions": [
+      "specified generalizations",
+      "required classifications",
+      "required sharpness/counterexamples",
+      "background correction needed by task",
+      "necessary bridges",
+      "routine proof/tool work"
+    ],
+    "same_root_repetitions": "Tag common independence_cluster across tasks/rounds; cross-task occurrence is not independent replication or cross-domain stability.",
+    "source": "Rule-selected A1 and its explicit/admitted same-attempt delivery only.",
+    "stronger_result_dual_use": "Allowed only with a substantive independently useful extra question; serving the original proof alone neither includes nor excludes it.",
+    "task_boundary_contract_sha256": "612c380a7e2a95be873a3325347eb72af9b6de9fdd73a31944af7ec3f684b947",
+    "weight": null
+  },
+  "edition": "1.3.0",
+  "existing_ten_axes_modified": false,
+  "forbidden_inputs_to_grade": [
+    "MC",
+    "RMC",
+    "SMC",
+    "B/R",
+    "old initiative",
+    "E",
+    "old depth",
+    "taste",
+    "old capability grades",
+    "completion fractions",
+    "word counts",
+    "theorem counts",
+    "tool-call counts",
+    "runtime",
+    "cost"
+  ],
+  "formal_comparison_eligible": false,
+  "frozen_at_utc": "2026-11-25T16:07:17.562178+00:00",
+  "historical_editions_modified": false,
+  "human_review": "pending",
+  "main_anchor": {
+    "centrality_test": "Removing this class of research action would materially change the principal agenda/path organization, not merely remove one example. This is a behavioral classification test, never mathematical error deletion.",
+    "earlier_serious_action_survives_later_retraction_as_action_only": true,
+    "evidence": "Exact adopted trajectory/first selected delivery of each round, explicit delivered companions and already-admitted same-attempt cutoff evidence.",
+    "grade3_4_required_chain": [
+      "identify substantive main line",
+      "cite actual operations",
+      "explain influence on subsequent research choices"
+    ],
+    "grade4_extra_requirement": "Explain and evidence central agenda/path organizing role.",
+    "kind": "one common independently-open three-round research trajectory",
+    "length_rounds_theorems_tool_counts_not_thresholds": true,
+    "no_best_round_selection": true,
+    "no_episode_max_formula": true,
+    "no_round_arithmetic": true,
+    "not_a_union_of_proved_results": true,
+    "organization_judgment": "One source-bound holistic organizational-role judgment per axis over the entire actual trajectory.",
+    "prompt_bindings": {
+      "R1": {
+        "bytes": 952,
+        "sha256": "e964b2e85613100da75bfae3226afdca2ff9cbf76c8b5b3feb44d35bd7b0544d"
+      },
+      "R2": {
+        "bytes": 550,
+        "sha256": "5a65e34ab191f143849e393d5b98c57f2118beb84d51128ff12ed0deb8cea4ae"
+      },
+      "R3": {
+        "bytes": 529,
+        "sha256": "b6d1294b1c59e953d4e106cbe2bfdc449c492d2eb37ba2c85a3b2e0fdc065840"
+      }
+    },
+    "round_weights": null,
+    "rounds": [
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "rule_binding": {
+      "bytes": 371,
+      "sha256": "6d50fa3a494941c786d667c7f1637120f6963809ccc8ee8acae44d1400c1a549"
+    },
+    "scope": "Discretionary in-task choices are eligible; no requirement to exceed hidden capacity directions.",
+    "stages": {
+      "R1": {
+        "all_five_axes_advertised_as_available": true,
+        "delegated_choices": [
+          "fitting_object",
+          "fitting_standard",
+          "research_questions",
+          "mathematical_route"
+        ],
+        "elicitation": "open_research_invitation",
+        "exclusion": "Routine delivery/well-definedness alone is not orientation; specific in-task choices may be.",
+        "required_delivery": [
+          "self-contained manuscript",
+          "definitions",
+          "stated assumptions",
+          "proofs for main claims",
+          "separation of established and unestablished ideas"
+        ]
+      },
+      "R2": {
+        "delegated_choices": [
+          "new_direction_or_existing_direction",
+          "most_valuable_next_question",
+          "route_and_stopping_boundary"
+        ],
+        "elicitation": "elicited_expansion_or_deepening",
+        "exclusion": "The expansion/deepening invitation is recorded and never relabeled unsolicited initiative.",
+        "required_delivery": [
+          "actual new or corrected work",
+          "no restatement as progress",
+          "explain concrete limits if stalled"
+        ]
+      },
+      "R3": {
+        "delegated_choices": [
+          "which results to retain",
+          "whether a concrete new probe/reframing is useful"
+        ],
+        "elicitation": "elicited_self_audit_and_selection",
+        "exclusion": "Routine checks, pruning, rewriting and retained-only content do not create a new exploratory action.",
+        "required_delivery": [
+          "audit proof/assumptions/scope",
+          "remove unsupported or repetitive claims",
+          "self-contained selected final manuscript"
+        ]
+      }
+    }
+  },
+  "main_scores_modified": false,
+  "new_candidate_calls": 0,
+  "overlap": {
+    "axes_mutually_exclusive": false,
+    "constant_sum_required": false,
+    "example": "Changing a hypothesis and actually enumerating counterexamples can support boundary and experimental roles; a notation change alone cannot support several axes.",
+    "one_episode_multiple_axes": "Allowed only with separate actual mathematical triggers and organizing-role evidence; identify one shared episode, not multiple independent achievements.",
+    "same_axis_repeat_rule": "No upgrade from restatements, splitting one chain into many units, or round repetition."
+  },
+  "post_observation": true,
+  "prior_context_disclosure": "Post-observation descriptive assessment. The rubric proposer had prior evaluation context; the coordinator read source contracts and three A1 boundary examples before freezing. No model-level five-axis grades were created before this freeze. Existing public or private scores do not determine this rubric.",
+  "proposal_provenance": {
+    "bytes": 29907,
+    "sha256": "6832cf0a82c7b15c31a1a539b84b053524f668dc215e42cbd66edc89b02b2470"
+  },
+  "publication": {
+    "axis_order": [
+      "horizontal_expansion",
+      "vertical_deepening",
+      "structural_reframing",
+      "boundary_probing",
+      "experimental_exploration"
+    ],
+    "axis_scale": [
+      0,
+      4
+    ],
+    "context_warning": "含受邀推进；只描述本次研究选择，不代表能力或稳定偏好。",
+    "default_collapsed": true,
+    "do_not_change": [
+      "main three scores",
+      "original ten axes",
+      "historical editions",
+      "model ordering",
+      "source answers",
+      "original reviews"
+    ],
+    "no_area_or_axis_rank": true,
+    "no_main_score_mode_coupling": true,
+    "only_current_1_3": true,
+    "placement": "immediately after the original mathematical-profile panel",
+    "private_only": [
+      "task inventory",
+      "precise questions/actions",
+      "private per-case judgments",
+      "quotes",
+      "raw outputs",
+      "file paths",
+      "mathematical verification reasons"
+    ],
+    "public_fields": [
+      "aggregate five organizing-role grades/status",
+      "context limits",
+      "non-topical behavioral tags",
+      "27-family corroboration counts",
+      "opaque source/policy/review hashes"
+    ],
+    "small_radar": true,
+    "unknown": "gap or missing point, never a zero or silently closed polygon"
+  },
+  "quality_separation": {
+    "correct_result_not_automatically_four": true,
+    "execution_support_states": [
+      "native_or_tool_receipt",
+      "reported_in_delivered_answer",
+      "checkable_manual_probe",
+      "execution_not_established"
+    ],
+    "experimental_positive_requires": "An actual informative probe with concrete observed outcomes or a located attempted-execution failure. A script/design alone does not establish execution.",
+    "failed_proof_not_automatically_zero": true,
+    "main_quality_judgments_retained": true,
+    "negative_result_requires_for_obstruction_label": "An independently checked valid counterexample or impossibility argument in the actual claimed scope.",
+    "no_claim_of_proved_depth_from_unclosed_attempt": true,
+    "no_proof_core_cap2_in_this_behavioral_construct": true,
+    "serious_failed_attempt_eligibility": [
+      "specific meaningful target",
+      "actual nonroutine mathematical operations",
+      "traceable intermediate work or failure location",
+      "evidence of its real organizing role"
+    ],
+    "verification_record_fields": [
+      "state",
+      "source_quote",
+      "mathematical_reason",
+      "existing_hash_bound_review_ref_if_reused",
+      "claim_limits"
+    ],
+    "verification_required_for_every_positive_action": true,
+    "verification_states": [
+      "verified_result",
+      "verified_obstruction",
+      "substantive_attempt_unclosed",
+      "refuted_claim",
+      "invalid_operation",
+      "unresolved"
+    ]
+  },
+  "review_workflow": [
+    "Root freezes rubric, task freedom/requiredness boundaries, exact19cohort and selected source manifests before answer review.",
+    "First pass reads actual selected task and manuscripts/action chains without prior numeric scores or profile grades.",
+    "Second pass can reuse hash-bound mathematical checks to annotate verification, not convert their scores into orientation.",
+    "Coordinator checks organizing roles,0/null boundaries, prompting labels, overlap, partition counts and source quotes.",
+    "Record actual reviewer identity, post-observation status and human-pending state."
+  ],
+  "reviewer_kind": "ai",
+  "schema": "math-gauge.exploration-orientation-policy/v1",
+  "source_inputs": {
+    "anchor_prompt_hashes_only": {
+      "R1": {
+        "bytes": 952,
+        "sha256": "e964b2e85613100da75bfae3226afdca2ff9cbf76c8b5b3feb44d35bd7b0544d"
+      },
+      "R2": {
+        "bytes": 550,
+        "sha256": "5a65e34ab191f143849e393d5b98c57f2118beb84d51128ff12ed0deb8cea4ae"
+      },
+      "R3": {
+        "bytes": 529,
+        "sha256": "b6d1294b1c59e953d4e106cbe2bfdc449c492d2eb37ba2c85a3b2e0fdc065840"
+      }
+    },
+    "new_private_support_contract": {
+      "bytes": 102239,
+      "sha256": "97e118db3867252f26919262a8bec681a2bb1056a43debba4906703faeac8adc"
+    },
+    "private_common_boundary_contract": {
+      "bytes": 532381,
+      "sha256": "612c380a7e2a95be873a3325347eb72af9b6de9fdd73a31944af7ec3f684b947"
+    },
+    "public_protocol_and_task_refs": [
+      {
+        "bytes": 10483,
+        "path": "protocol/evaluation.md",
+        "repository": "public",
+        "sha256": "c0a8ff13b5c99182afca48d35a4b2422a5e9f3430f7fe61cdd498054a8351f3b"
+      },
+      {
+        "bytes": 31026,
+        "path": "protocol/result-record.md",
+        "repository": "public",
+        "sha256": "00fa62327eee040ed2f2c3caeb48bd0d9b62dc321c4e12088e94bfd0c4ca4bd8"
+      },
+      {
+        "bytes": 7631,
+        "path": "protocol/research-initiative.md",
+        "repository": "public",
+        "sha256": "3858e97cc64823e979654a06a721da8f6d1ac3bfb07146ab6b96c34e90630ab7"
+      },
+      {
+        "bytes": 1598,
+        "path": "protocol/research-initiative.json",
+        "repository": "public",
+        "sha256": "37e1be78953680312e672e49f89d3ac8f2bc48e92c0eff214c5e211a94faa1d6"
+      },
+      {
+        "bytes": 10522,
+        "path": "protocol/profile-structure.md",
+        "repository": "public",
+        "sha256": "811c2146ec3d82438958f9495146156fc84513757ce19a1e811b4a378e03d5f5"
+      },
+      {
+        "bytes": 3712,
+        "path": "protocol/profile-structure.json",
+        "repository": "public",
+        "sha256": "d8cc5b34e5869c48f9ff780b472472c1293a2e0587caa81719348028d807f925"
+      },
+      {
+        "bytes": 7267,
+        "path": "protocol/open-research.md",
+        "repository": "public",
+        "sha256": "7b092ff6d637b826b4c757db4e84b6152006c123f3f5c8ea9910a0e6b0673c72"
+      },
+      {
+        "bytes": 4991,
+        "path": "protocol/mathematical-profile-revision.md",
+        "repository": "public",
+        "sha256": "20dbb3e14767e8413bb42e1a6466e78c23136fd92411cc731855fabd00bbcc1b"
+      },
+      {
+        "bytes": 650,
+        "path": "cases/theorem-extension/MG-TX001/task.md",
+        "repository": "public",
+        "sha256": "5d37d58b4f2067b339ed4b580a2c8dbb5b6e23b7ed64b3d4907fc165efb00fcf"
+      },
+      {
+        "bytes": 884,
+        "path": "cases/theorem-extension/MG-TX002/task.md",
+        "repository": "public",
+        "sha256": "2e499a6a924181afa9d13db24f78bdd25ca6e266a25c8f14c2cc93aa059153de"
+      },
+      {
+        "bytes": 2021,
+        "path": "cases/background-check/MG-BC001/task.md",
+        "repository": "public",
+        "sha256": "07bb02318d5fe35f5f7fb005de996ed7b49cbd4a832b0a2fd1e68d68c6ea75a6"
+      },
+      {
+        "bytes": 1993,
+        "path": "cases/background-check/MG-BC002/task.md",
+        "repository": "public",
+        "sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af"
+      },
+      {
+        "bytes": 2550,
+        "path": "cases/manuscript-completion/MG-MCP003/task.md",
+        "repository": "public",
+        "sha256": "394108946a8285599803d21c03ef6d62faddf3144691a09b6f30161be28229ce"
+      },
+      {
+        "bytes": 1012,
+        "path": "cases/proofs/MG-PS001/task.md",
+        "repository": "public",
+        "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7"
+      }
+    ]
+  },
+  "status": "frozen-before-new-orientation-coding",
+  "version": "0.1.0",
+  "zero_and_unknown": {
+    "admitted_cutoff_evidence": "Actual admitted actions can be coded. Determine whether a cutoff hides evidence relevant to an axis; neither all-zero nor all-unknown follows solely from terminal status.",
+    "axis_record_fields": [
+      "grade_or_null",
+      "state",
+      "organizing_role_reason",
+      "action_refs",
+      "source_coverage",
+      "freedom_and_elicitation",
+      "coding_confidence",
+      "verification_summary",
+      "unknown_reason_if_null",
+      "reviewed_absence_reason_if_zero"
+    ],
+    "coding_confidence": {
+      "high": "Direct trace and organizing-role evidence.",
+      "moderate": "Choice/role inferred from explicit mathematical operations; inference stated.",
+      "unresolved": "Leave grade null and record the disputed classification."
+    },
+    "null_reasons": [
+      "not_identifiable",
+      "missing_source",
+      "unsettled_source",
+      "incomplete_trajectory",
+      "unobservable_freedom",
+      "exposure_blocked",
+      "classification_unresolved",
+      "review_pending"
+    ],
+    "partial_positive_observations": "Retain as source-bound partial observations, not substitutes for the complete main-axis value.",
+    "settled_blank_is_not_preference_zero": true,
+    "stable_preference_probability_or_confidence_interval": null,
+    "whole_profile_not_identifiable_when": "Full source contains only required/routine work or no eligible exploratory action classifiable on these five axes; all five values null, never five preference zeros.",
+    "zero_meaning": "No such action observed in this trajectory only; no inference of dislike, inability, low initiative or stable preference.",
+    "zero_requires_all": [
+      "all prescribed allowed source content read and source-bound",
+      "overall main context has at least one eligible classifiable exploratory action",
+      "this axis has available discretionary choice space",
+      "no material unresolved source/exposure blocker for observing this axis",
+      "explicit full-scope reviewed-absence reason, not keyword absence"
+    ]
+  }
+}
