@@ -12,7 +12,8 @@
   const strictCreditSchema = 'math-gauge.research-board-preview/v4';
   const itemWeightSchema = 'math-gauge.research-board-preview/v5';
   const externalSchema = 'math-gauge.research-board-preview/v6';
-  const strictCreditBoard = board => [strictCreditSchema, itemWeightSchema, externalSchema].includes(board.schema);
+  const additionSchema = 'math-gauge.research-board-preview/v7';
+  const strictCreditBoard = board => [strictCreditSchema, itemWeightSchema, externalSchema, additionSchema].includes(board.schema);
   const valueBoard = board => board.schema === valueSchema || strictCreditBoard(board);
   const scoreModeBoard = board => board.schema === scoreModeSchema || valueBoard(board);
   const boardAxes = board => valueBoard(board) ? axes.slice(1) : axes;
@@ -72,8 +73,9 @@
     const baseline = data.kind === 'existing-model-unmeasured';
     const settled = data.kind === 'settled-selected-configurations';
     const scoreModes = scoreModeBoard(data), revised = valueBoard(data), strictCredit = strictCreditBoard(data);
-    const hasExternal = data.schema === externalSchema;
-    const weighted = data.schema === itemWeightSchema || hasExternal;
+    const hasAdditions = data.schema === additionSchema;
+    const hasExternal = data.schema === externalSchema || hasAdditions && Object.hasOwn(data, 'external_binding');
+    const weighted = data.schema === itemWeightSchema || hasExternal || hasAdditions;
     const hasNative = Object.hasOwn(data, 'native_binding');
     const displayAxes = boardAxes(data), axisIds = displayAxes.map(([id]) => id);
     const fields = ['schema', 'edition', 'kind', 'category', 'rank_eligible', 'default_order', 'weights_ratified', 'rows'];
@@ -85,6 +87,7 @@
     if (weighted) fields.push('item_weight_binding');
     if (hasExternal) fields.push('external_binding');
     if (hasNative) fields.push('native_binding');
+    if (hasAdditions) fields.push('native_additions_binding');
     if (!keys(data, fields) ||
         (!scoreModes && data.schema !== 'math-gauge.research-board-preview/v1') || data.edition !== '1.3.0' || (!baseline && !settled && data.kind !== 'synthetic-fixture') ||
         data.rank_eligible !== false || data.weights_ratified !== false || data.default_order !== 'retained-base-SMC' ||
@@ -142,6 +145,7 @@
       binding.cohort.forEach(id => adoptedIds.add(id));
     }
     const nativeKind = 'native-agy-same-conversation-sealed-finals';
+    const additionKind = 'user-selected-native-cutoff-deliveries';
     const nativeIds = new Set();
     if (hasNative) {
       const binding = data.native_binding;
@@ -155,12 +159,33 @@
           binding.cohort.some(id => adoptedIds.has(id))) throw new Error('Unbound native adoption');
       binding.cohort.forEach(id => {nativeIds.add(id);adoptedIds.add(id);});
     }
+    if (hasAdditions) {
+      const additions = data.native_additions_binding;
+      if (!settled || !keys(additions, ['gemini-4-carbon-medium'])) throw new Error('Unselected native addition');
+      for (const [id, binding] of Object.entries(additions)) {
+        const parent = binding?.parent;
+        if (!keys(binding, ['parent','index_sha256','adoption_sha256','source_kind','legacy_taste_sha256','policy_bindings','human_review']) ||
+            !keys(parent, ['edition','path','bytes','sha256']) || parent.edition !== '1.2.0' ||
+            !hash(parent.sha256) || !Number.isInteger(parent.bytes) || parent.bytes < 0 ||
+            parent.path !== `results/independent-research-baselines/v0.1.0/${parent.sha256}/data.json` ||
+            parent.sha256 === data.source_binding.sha256 || !hash(binding.index_sha256) || !hash(binding.adoption_sha256) ||
+            (binding.legacy_taste_sha256 !== null && !hash(binding.legacy_taste_sha256)) ||
+            binding.source_kind !== additionKind || binding.human_review !== 'pending' ||
+            !keys(binding.policy_bindings, ['value','strict_credit','item_weight']) ||
+            binding.policy_bindings.value !== data.value_binding.policy_sha256 ||
+            binding.policy_bindings.strict_credit !== data.strict_credit_binding.policy_sha256 ||
+            binding.policy_bindings.item_weight !== data.item_weight_binding.policy_sha256 || adoptedIds.has(id)) {
+          throw new Error('Unbound immutable native parent');
+        }
+        nativeIds.add(id);adoptedIds.add(id);
+      }
+    }
     const rowFields = ['id', 'label', 'kind', 'base_smc', 'components', 'task_strict', 'item', 'coverage', 'strict_overall', 'composite', 'composites', 'confirmed', 'strict_confirmed', 'delivery'];
     if (scoreModes) rowFields.push('score_modes', 'criteria');
     const seen = new Set();
     for (const row of data.rows) {
       if (!keys(row, rowFields) ||
-          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== (nativeIds.has(row.id) ? nativeKind : data.kind) || typeof row.label !== 'string' ||
+          !((baseline || settled) ? /^[a-z0-9.-]+$/.test(row.id) : /^fixture-[a-z]+$/.test(row.id)) || seen.has(row.id) || row.kind !== (Object.hasOwn(data.native_additions_binding || {},row.id) ? additionKind : nativeIds.has(row.id) ? nativeKind : data.kind) || typeof row.label !== 'string' ||
           !(score(row.base_smc) || bounds(row.base_smc)) || !keys(row.components, axisIds) || !bounds(row.strict_overall) || !bounds(row.composite) || !keys(row.composites, ['MC','RMC','SMC']) || !Object.values(row.composites).every(bounds) || !keys(row.confirmed,['MC','RMC','SMC']) || !Object.values(row.confirmed).every(score) || !score(row.strict_confirmed) || !keys(row.delivery,['planned','normal','unknown']) || row.delivery.planned!==45 || !Number.isInteger(row.delivery.normal) || !Number.isInteger(row.delivery.unknown) || row.delivery.normal<0 || row.delivery.unknown<0 || row.delivery.normal+row.delivery.unknown>45 || !bounds(row.item) ||
           ![0, 100, null].includes(row.task_strict) || !keys(row.coverage, ['planned', 'reviewed', 'components_planned', 'components_reviewed']) ||
           row.coverage.planned !== 1 || row.coverage.components_planned !== axisIds.length || ![0, 1].includes(row.coverage.reviewed) ||
@@ -183,6 +208,7 @@
     if (settled && !data.adoption.planned_cohort.every(id => seen.has(id))) throw new Error('Missing planned configuration');
     if (hasExternal && !data.external_binding.cohort.every(id => seen.has(id))) throw new Error('Missing external configuration');
     if (hasNative && !data.native_binding.cohort.every(id => seen.has(id))) throw new Error('Missing native configuration');
+    if (hasAdditions && !Object.keys(data.native_additions_binding).every(id => seen.has(id))) throw new Error('Missing added native configuration');
     return data;
   }
   function componentCell(value) {
