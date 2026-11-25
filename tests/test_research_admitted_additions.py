@@ -315,5 +315,3 @@ class NativeParentAdditionTests(unittest.TestCase):
         self.manifest['additions'][0]['resources']=descriptor(path,self.root)
         self.write(ADDITIONS_PATH,encoded(self.manifest))
         with self.assertRaises(ValueError):select_additions(self.root,self.selected)
-
-
