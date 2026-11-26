@@ -53,18 +53,18 @@ A non-Lean base task gets one neutral revision when any of its three scores is c
 
 The 1.3.0 leaderboard lists **19 settled configurations**, ranks by SMC by default and includes category results, ten-axis profiles and historical editions. Adopted results use AI review with some human spot checks. Human mathematical review of the independent research is pending. [Full results](docs/results.md) · [Review process](docs/review-process.md)
 
-A separate, collapsed [exploration-orientation portrait](protocol/exploration-orientation.md#exploration-orientation) follows the capability profile. It observes horizontal expansion, vertical deepening, structural reframing, boundary probing and experimental exploration across the same three-round research task. These describe choices in this task and add no overall score.
+The [exploration-orientation subproject](protocol/exploration-orientation.md#exploration-orientation) shares the mathematical profile’s model multiselect and highlighting controls. It observes horizontal expansion, vertical deepening, structural reframing, boundary probing and experimental exploration across the same three-round research task. These describe choices in this task and add no overall score.
 
 [![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en)
 
 <details>
 <summary>Cost and timing screenshots</summary>
 
-Both plots use RMC. [Cost method](docs/cost-reference.md) · [Timing method](docs/answer-timings.md)
+Both plots show SMC on the vertical axis. [Cost method](docs/cost-reference.md) · [Timing method](docs/answer-timings.md)
 
-[![Math Gauge English cost–RMC frontier](docs/screenshots/cost-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=cost&cost-score=partial#cost-frontier)
+[![Math Gauge English cost–SMC frontier](docs/screenshots/cost-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=cost&cost-score=strict#cost-frontier)
 
-[![Math Gauge English time–RMC frontier](docs/screenshots/time-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=time&cost-score=partial#cost-frontier)
+[![Math Gauge English time–SMC frontier](docs/screenshots/time-frontier-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en&cost-axis=time&cost-score=strict#cost-frontier)
 
 </details>
 

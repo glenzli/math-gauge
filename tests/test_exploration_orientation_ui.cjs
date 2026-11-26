@@ -1,17 +1,30 @@
-/* Synthetic aggregate fixtures; no actual mathematical answers. */
+/* Synthetic public aggregates only; no model evaluation or mathematical answers. */
 const assert=require('node:assert/strict');
+const {test}=require('node:test');
 const ui=require('../scripts/templates/exploration-orientation.js');
 const POLICY='3affe9a8ad2a7e3af36279bac65a04adec242a5453858a57f01f2e01455e4f7b';
 const ids=['sol-6.1-max','sol-6.2-max','terra-6.1-max','astra-6-max','astra-6-xhigh','astra-6.2-max','sol-6.1-xhigh','sol-6.2-xhigh','terra-6.1-xhigh','claude-opus-5.5-max','claude-opus-5.5-xhigh','claude-sonnet-5.5-max','kimi-3.1-pro-max','astra-6.2-xhigh','deepseek-v4.1-flash-1017','gemini-4-neon-xhigh','gemini-4-hydrogen-xhigh','gemini-4-carbon-medium','dot-20261125'];
 function fixture(){return {benchmark_version:'1.3.0',models:ids.map(id=>({id,label:id})),exploration_orientation:{schema:'math-gauge.exploration-orientation/v1',edition:'1.3.0',policy_sha256:POLICY,axis_order:ui.AXES,scale:[0,4],source_index:{path:'results/exploration-orientation/v0.1.0/index.json',sha256:'a'.repeat(64)},models:ids.map(id=>({model_id:id,policy_sha256:POLICY,is_score:false,higher_is_better:null,axes:Object.fromEntries(ui.AXES.map(a=>[a,{grade:2,state:'reviewed'}])),corroboration:Object.fromEntries(ui.AXES.map(a=>[a,{support:0,difference:0,insufficient:27,observed_fragment_families:0,screened_families:27}]))}))}}}
-let count=0;function test(name,fn){fn();count++;console.log('ok '+name)}
-test('only current1.3 and exact policy cohort',()=>{const d=fixture();assert(ui.prepare(d));d.benchmark_version='1.2.0';assert.equal(ui.prepare(d),null);d.benchmark_version='1.3.0';d.exploration_orientation.models.pop();assert.equal(ui.prepare(d),null)});
-test('own URL selection is capped and filters stale models',()=>{const m=fixture().models;assert.deepEqual(ui.readSelection(m,'https://x/?exploration-models=dot-underlying-model-20261108,sol-6.1-max,sol-6.2-max,terra-6.1-max,astra-6-max'),ids.slice(0,3));assert.deepEqual(ui.readSelection(m,'https://x/?exploration-models='),[])});
-test('parent selection is initial fallback only',()=>{const m=fixture().models;assert.deepEqual(ui.readSelection(m,'https://x/?profile-models=dot-20261125'),['dot-20261125']);assert.deepEqual(ui.readSelection(m,'https://x/?profile-models=dot-20261125&exploration-models=sol-6.1-max'),['sol-6.1-max'])});
-test('default represents three existing brands without orientation ranking',()=>{assert.deepEqual(ui.readSelection(fixture().models,'https://x/'),['sol-6.1-max','claude-opus-5.5-max','gemini-4-neon-xhigh']);assert.deepEqual(ui.readSelection(fixture().models,'https://x/?profile-models=sol-6.2-max'),['sol-6.2-max'])});
-test('selection preserves edition language and unrelated score stage state',()=>{const u=new URL(ui.selectionUrl('https://x/?edition=1.3.0&lang=en&score=partial&profile-stage=first',ids.slice(0,2)));assert.equal(u.searchParams.get('score'),'partial');assert.equal(u.searchParams.get('profile-stage'),'first');assert.equal(u.searchParams.get('lang'),'en');assert.equal(u.searchParams.get('exploration-models'),ids.slice(0,2).join(','))});
-test('null leaves actual gaps instead of zero or closed polygon',()=>{const g=ui.geometry([4,null,2,3,null]);assert.equal(g.points[1],null);assert.equal(g.segments.length,1);assert.equal(ui.geometry([4,4,4,4,4]).segments.length,5);assert.equal(ui.geometry([null,null,null,null,null]).segments.length,0)});
-test('same-brand three variants keep brand color and distinct line point shapes',()=>{const s=ui.styles(fixture().models.slice(0,3));assert.equal(new Set(s.map(x=>x.color)).size,1);assert.equal(new Set(s.map(x=>x.dash)).size,3);assert.equal(new Set(s.map(x=>x.marker)).size,3)});
-class Element{constructor(tag){this.tagName=tag;this.children=[];this.attrs={};this.events={};this.style={setProperty(){}};this.hidden=false;this.textContent=''}appendChild(n){this.children.push(n);return n}get firstChild(){return this.children[0]||null}removeChild(n){this.children.splice(this.children.indexOf(n),1)}setAttribute(k,v){this.attrs[k]=String(v)}getAttribute(k){return this.attrs[k]}addEventListener(k,f){this.events[k]=f}querySelector(q){return this.nodes?.[q.match(/data-eo="([^"]+)"/)[1]]||null}}
-test('mount keeps rewritten links, language, collapsed shell and edition visibility',()=>{const section=new Element('details');section.open=false;section.nodes=Object.fromEntries(['summary','context','empty','scale','support-title','method-link','json-link','review','picker','chart','values','legend','support'].map(k=>[k,new Element('div')]));section.nodes['method-link'].setAttribute('href','https://github.example/method');section.nodes['json-link'].setAttribute('href','https://host.example/data.json');const events={},win={MG:{d:fixture()},location:{href:'https://x/?lang=zh'},document:{documentElement:{lang:'zh'},getElementById:()=>section,createElement:t=>new Element(t),createElementNS:(_,t)=>new Element(t)},history:{replaceState:(_,__,url)=>{win.location.href=url}},addEventListener:(k,f)=>{events[k]=f}};const mounted=ui.mount(win);assert.equal(section.hidden,false);assert.equal(section.open,false);assert.equal(section.nodes['method-link'].getAttribute('href'),'https://github.example/method');mounted.setSelection(['dot-20261125']);assert.deepEqual(mounted.selected(),['dot-20261125']);win.location.href='https://x/?lang=en&exploration-models=dot-20261125';events['popstate']();assert.match(section.nodes.summary.textContent,/Exploration orientation/);assert.equal(section.nodes['json-link'].getAttribute('href'),'https://host.example/data.json');win.MG.d.benchmark_version='1.1.0';events['mg:updated']();assert.equal(section.hidden,true);win.MG.d.benchmark_version='1.3.0';events['mg:updated']();assert.equal(section.hidden,false);win.location.href='https://x/?lang=en#exploration-orientation';events['popstate']();assert.equal(section.open,true)});
-console.log(count+' exploration UI checks passed');
+test('only the exact current cohort and unchanged descriptive policy can register',()=>{
+ const d=fixture();assert(ui.prepare(d));d.benchmark_version='1.2.0';assert.equal(ui.prepare(d),null);
+ d.benchmark_version='1.3.0';d.exploration_orientation.models.pop();assert.equal(ui.prepare(d),null);
+ const other=fixture();other.exploration_orientation.models[0].is_score=true;assert.equal(ui.prepare(other),null);
+});
+test('the display adapter preserves integer levels, genuine zero and unknown without rewriting the source',()=>{
+ const data=fixture(),report=data.exploration_orientation.models[0];report.axes.horizontal_expansion={grade:0,state:'reviewed_absence'};
+ report.axes.experimental_exploration={grade:null,state:'missing_source'};
+ const before=structuredClone(data),project=ui.createProject(ui.prepare(data));
+ assert.equal(project.maximum,4);assert.deepEqual(project.ticks,[1,2,3,4]);
+ assert.equal(project.metrics[ids[0]].horizontal_expansion.exact,0);
+ assert.equal(project.metrics[ids[0]].experimental_exploration.exact,null);
+ assert.equal(project.coverage(project.metrics[ids[0]].horizontal_expansion,'en'),'Not observed here');
+ assert.equal(project.coverage(project.metrics[ids[0]].experimental_exploration,'en'),'Source missing');
+ assert.deepEqual(data,before);
+});
+test('mount delegates to the existing profile controller instead of creating another picker or selection state',()=>{
+ const data=fixture(),extras={hidden:true},registered=[];
+ const win={MG:{d:data},document:{getElementById:()=>extras},MGMathematicalProfile:{controller:{registerProject(project){registered.push(project);return true}}}};
+ const project=ui.mount(win);assert.equal(registered[0],project);assert.equal(project.extras,extras);
+ assert.equal(ui.readSelection,undefined);assert.equal(ui.selectionUrl,undefined);
+ delete win.MGMathematicalProfile;assert.equal(ui.mount(win),null);
+});

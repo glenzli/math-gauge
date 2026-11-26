@@ -1,6 +1,8 @@
 # 探索取向 · 0.1.0
 
-这是数学画像后的独立子画像，描述模型在同一开放研究任务中如何选择和组织研究。它不增加主榜分数，也不加入现有十轴。
+这是数学画像内的独立子项，描述模型在同一开放研究任务中如何选择和组织研究。它不增加主榜分数，也不加入现有十轴。
+
+页面默认显示“总览”，可切换到“探索取向”。两项共用模型多选、品牌样式和悬停／固定高亮；切换子项会保留所选模型。档位与原评分来源保持不变。
 
 主图统一审读已采用的三轮研究稿及明确交付的附件。第一轮允许自行选择对象、标准和问题，第二轮明确邀请继续拓展或深挖，第三轮要求核查和取舍。因此，图中包含受邀推进；它描述本次研究中的选择，不代表稳定偏好，也不能直接等同于未经提示的主动性。
 
@@ -48,7 +50,9 @@
 
 ## Exploration orientation
 
-This independent subportrait describes how a model chooses and organizes work in the same open-research task. It adds neither a benchmark score nor an eleventh capability axis.
+This independent subproject of the mathematical profile describes how a model chooses and organizes work in the same open-research task. It adds neither a benchmark score nor an eleventh capability axis.
+
+The panel opens on Overview and can switch to Exploration orientation. Both share model multiselect, stable brand styles and hover/pinned emphasis; switching keeps the same selected models. The levels and their original assessment sources remain unchanged.
 
 The anchor is the complete adopted three-round trajectory, including explicitly delivered companions. Round one delegates the objects, standards and questions; round two explicitly invites expansion or deeper work; round three requests review and selection. The portrait therefore includes elicited exploration. It describes choices in this task, rather than a stable preference or unsolicited initiative.
 

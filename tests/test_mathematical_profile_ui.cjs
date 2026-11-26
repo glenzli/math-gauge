@@ -744,3 +744,49 @@ test('historical profile editions ignore the current-only structural overlay',()
   assert.deepEqual(ui.prepare(withSource,compare,'first'),ui.prepare(without,compare,'first'));
  }
 });
+
+function orientationProject(data){
+ const adapter=require('../scripts/templates/exploration-orientation.js');
+ // Shared-renderer fixture only; actual source admission is tested by the adapter.
+ return adapter.createProject({models:data.models.map((model,index)=>({...model,profile:{
+  axes:Object.fromEntries(adapter.AXES.map((axis,i)=>[axis,{grade:i===0?0:i===1?4:2,state:i===0?'reviewed_absence':'reviewed'}])),tags:[]
+ }}))});
+}
+
+test('profile child projects share unlimited multiselect, stable styles and pinned emphasis',()=>{
+ const data=structureFixture(),before=structuredClone(data),f=fixture(data,'?edition=1.3.0&profile-models='+ids.slice(0,6).join(','));
+ const selected=f.controller.selected(),styles=f.series().map(row=>[row.getAttribute('data-profile-model'),row.getAttribute('data-profile-dash'),row.getAttribute('data-profile-marker')]);
+ const checkboxes=nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox');
+ f.el('legend').children[0].fire('click');
+ assert(f.controller.registerProject(orientationProject(data)));
+ const choose=key=>nodesBelow(f.el('')).find(node=>node.dataset.profileProject===key).fire('click');
+ choose('exploration');assert.equal(f.controller.project(),'exploration');assert.deepEqual(f.controller.selected(),selected);assert.equal(f.series().length,6);
+ assert.deepEqual(f.series().map(row=>[row.getAttribute('data-profile-model'),row.getAttribute('data-profile-dash'),row.getAttribute('data-profile-marker')]),styles);
+ assert.equal(f.series()[0].getAttribute('data-focused'),'true');
+ assert.equal(nodesBelow(f.series()[0]).filter(node=>node.getAttribute('data-profile-point')).length,5);
+ assert.deepEqual(nodesBelow(f.el('choices')).filter(node=>node.type==='checkbox'),checkboxes);
+ f.controller.setSelection(ids);assert.equal(f.series().length,ids.length);
+ choose('overview');assert.equal(f.controller.project(),'overview');assert.equal(f.series().length,ids.length);
+ assert.deepEqual(data,before);
+});
+
+test('ordinal child axes use their actual0–4coordinates and never expose a capability ranking',()=>{
+ const data=structureFixture(),f=fixture(data,'?edition=1.3.0&profile-view=bars&profile-project=exploration&profile-models='+ids[0]);
+ const project=orientationProject(data);project.metrics[ids[0]].experimental_exploration={exact:null,lower:0,upper:4,confirmed:0,state:'missing_source',coverage:{planned:1,reviewed:0}};
+ assert(f.controller.registerProject(project));
+ const points=nodesBelow(f.series()[0]).filter(node=>node.getAttribute('data-profile-point'));
+ assert.equal(points.length,4);assert(points.some(node=>node.getAttribute('data-value')==='0'));assert(points.some(node=>node.getAttribute('data-value')==='4'));
+ assert(!points.some(node=>node.getAttribute('data-value')==='100'));
+ const buttons=nodesBelow(f.el('')).filter(node=>node.dataset.profileView);
+ assert.equal(buttons.find(node=>node.dataset.profileView==='bars').hidden,true);
+ assert.equal(buttons.find(node=>node.dataset.profileView==='radar').getAttribute('aria-pressed'),'true');
+ const shape=ui.geometry(project.axes,project.metrics[ids[0]],4);assert.equal(shape.vertices[4],null);assert.equal(shape.intervals.length,0);
+});
+
+test('child selection, language and history use the parent URL while old exploration links migrate',()=>{
+ const data=structureFixture(),f=fixture(data,'?edition=1.3.0&lang=zh&score=strict&profile-models='+ids.slice(0,5).join(',')+'&exploration-models='+ids[6]+'#exploration-orientation');
+ const original=f.controller.selected();assert(f.controller.registerProject(orientationProject(data)));
+ let url=new URL(f.win.location.href);assert.equal(url.searchParams.get('profile-project'),'exploration');assert(!url.searchParams.has('exploration-models'));assert.equal(url.hash,'#mathematical-profile');assert.deepEqual(f.controller.selected(),original);
+ f.win.location.searchParams.set('lang','en');f.win.fire('mg:updated');assert.equal(f.el('title').textContent,'Mathematical profile');assert.match(f.el('description').textContent,/0–4/);
+ f.win.location.searchParams.set('profile-project','overview');f.win.fire('popstate');assert.equal(f.controller.project(),'overview');assert.deepEqual(f.controller.selected(),original);assert.equal(new URL(f.win.location.href).searchParams.get('score'),'strict');
+});

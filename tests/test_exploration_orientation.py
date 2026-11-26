@@ -238,15 +238,14 @@ class ExplorationOrientationTests(unittest.TestCase):
         self.assertIn('abandoned_route', report['tags'])
         self.assertNotIn('invited_followup', report['tags'])
 
-    def test_standalone_shell_download_link_is_generated_and_no_private_content_is_inserted(self):
+    def test_child_supplement_download_link_and_privacy_contract(self):
         path = Path(owner.__file__).resolve().parents[1] / 'scripts/results_exploration_orientation.py'
         spec = importlib.util.spec_from_file_location('exploration_adapter_fixture', path)
         adapter = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(adapter)
         component = dict(edition='1.3.0', private_only_marker='never-render-this')
         shell = adapter.render_panel(component)
-        self.assertIn('<details id="exploration-orientation"', shell)
-        self.assertNotIn(' open', shell)
+        self.assertIn('id="exploration-orientation"', shell)
         self.assertNotIn('never-render-this', shell)
         report = owner.project_public(self.review, self.material, private_review_sha256='a' * 64)
         envelope = dict(schema='math-gauge.exploration-orientation/v1', version=owner.VERSION, edition='1.3.0', policy_sha256=owner.POLICY_SHA256, source_index=dict(path=owner.PUBLIC_INDEX, bytes=1, sha256='b' * 64), axis_order=list(owner.AXIS_IDS), scale=[0, 4], models=[report], human_review='pending', post_observation=True)

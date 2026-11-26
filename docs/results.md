@@ -34,7 +34,7 @@ Carbon medium’s new task is **MC 83 / RMC 73.33 / SMC 53**, giving overall edi
 
 数学品味、研究能力和严格净信用的来源分别绑定。[通用规则](open-research-v130.md) · [外部五配置](independent-research-external.md) · [Hydrogen／Neon原生来源](independent-research-native.md) · [共同机会主动性](research-initiative.md)。下列1.2.0与1.1.0表保留原100分框架，跨版不能只用总分相减解释能力变化。
 
-当前19个配置另有独立的[探索取向子画像](../protocol/exploration-orientation.md)，在主页数学画像后默认收起。它按同题三轮原稿观察五种研究方式，其他题只作补证；不改变本页三分、十轴能力画像或历史结果。 [五轴公开汇总](../results/exploration-orientation/v0.1.0/index.json)
+当前19个配置另有独立的[探索取向子画像](../protocol/exploration-orientation.md)，在主页数学画像内通过“总览／探索取向”切换，共用模型多选和高亮交互。它按同题三轮原稿观察五种研究方式，其他题只作补证；不改变本页三分、十轴能力画像或历史结果。 [五轴公开汇总](../results/exploration-orientation/v0.1.0/index.json)
 
 基础评分版为 **1.2.0**，已发布题包仍为1.0.0。新版按[中性续答规则](neutral-revision.md)采用非Lean失分题的一次续答：逐题80%首答＋20%续答，三个模式、家族权重与完整100分分母一致；Lean及三轮自查沿用。基础采用聚合 **0.9.0**／MC **0.3.0**／SMC **0.2.0**，续答组件 **0.1.0**；页面默认按SMC排序，指标顺序为SMC／RMC／MC。
 
